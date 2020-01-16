@@ -104,3 +104,4 @@ cloud/production/hosts
 ktz-rh-vpn
 galaxy_roles
 .vault-password
+vault.yaml
