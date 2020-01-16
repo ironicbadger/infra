@@ -1,0 +1,25 @@
+---
+
+- name: disks
+  include: disks.yml
+  tags:
+    - disks
+
+- name: file-sharing
+  include: file-sharing.yml
+  tags:
+    - file-sharing
+
+- name: telegraf docker fix
+  include: telegraf-fix.yaml
+  
+- name: sysctl
+  include: sysctl.yaml
+  tags:
+    - sysctl
+
+# perhaps a generic 'node' monitoring setup role?
+# - name: monitoring
+#   include: monitoring.yml
+#   tags:
+#     - monitoring

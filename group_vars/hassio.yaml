@@ -1,0 +1,40 @@
+---
+
+# ironicbadger.ansible_users
+users:
+  - username: "{{ main_username }}"
+    github_username: ironicbadger
+    name: "{{ main_username }}"
+    groups: ['wheel','docker']
+    uid: "{{ main_uid }}"
+groups_to_create:
+  - name: "{{ main_groupname }}"
+    gid: "{{ main_gid }}"
+  - name: wheel
+  - name: docker
+
+# grog.package
+package_list:
+  - name: apparmor-utils 
+  - name: apt-transport-https 
+  - name: avahi-daemon 
+  - name: bash-completion
+  - name: ca-certificates 
+  - name: curl
+  - name: dbus 
+  - name: htop
+  - name: jq
+  - name: mutt
+  - name: net-tools
+  - name: network-manager 
+  - name: nmap
+  - name: openssh-server
+  - name: python
+  - name: qemu-guest-agent
+  - name: screen
+  - name: socat 
+  - name: software-properties-common
+  - name: sudo
+  - name: tmux
+  - name: tree
+  - name: wget

@@ -1,0 +1,60 @@
+---
+
+target_os: debian
+
+# ktz-apcupsd
+ktz_apcupsd_ups_name: awesomo
+ktz_apcupsd_influxdb_ip: "{{ influxdb_ip }}"
+ktz_apcupsd_influxdb_port: "{{ influxdb_port }}"
+ktz_apcupsd_influxdb_ups_db_name: "ups_awesomo"
+
+# grog.package
+package_list:
+  - name: apcupsd
+  - name: apt-transport-https
+  - name: bash-completion
+  - name: curl
+  - name: lm-sensors
+  - name: php
+  - name: sendmail
+
+# ironicbadger.ansible_users
+users: {}
+
+## telegraf
+telegraf_influxdb_urls:
+  - "http://{{ influxdb_ip }}:{{ influxdb_port }}"
+telegraf_influxdb_database: telegraf
+telegraf_influxdb_username: root
+telegraf_influxdb_password: root
+telegraf_plugins_base:
+  - name: mem
+  - name: system
+  - name: cpu
+    options:
+      percpu: "true"
+      totalcpu: "true"
+      collect_cpu_time: "false"
+      report_active: "false"
+  - name: disk
+    options:
+      ignore_fs:
+        - "tmpfs"
+        - "devtmpfs"
+        - "devfs"
+      mountpoints:
+        - "/"
+        - "/ssp1"
+        - "/samsung860"
+        - "/mx500_1tb"
+  - name: diskio
+    options:
+      skip_serial_number: "true"
+  - name: kernel
+  - name: processes
+  - name: hddtemp
+  - name: net
+    options:
+      interfaces:
+        - "ens192"
+  - name: sensors

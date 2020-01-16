@@ -1,0 +1,53 @@
+---
+
+  - hosts: all
+    roles:
+      - role: ironicbadger.ansible_users
+      - role: ferrarimarco.bash-aliases
+      - role: grog.package
+      - role: geerlingguy.security
+      - role: weareinteractive.environment
+      - role: geerlingguy.ntp
+
+  - hosts: mb
+    roles:
+      - role: geerlingguy.security
+
+  - hosts: adguard
+    roles:
+      - role: geerlingguy.security
+
+  - hosts: cartman
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: geerlingguy.docker
+      - role: ironicbadger.ansible_role_snapraid
+      - role: ironicbadger.ansible_role_hddtemp
+      - role: rossmcdonald.telegraf
+      - role: ktz-cartman
+      - role: ironicbadger.ansible_role_docker_compose_generator
+        tags: compose
+      - role: ironicbadger.ansible_role_nginx_configs
+        tags: compose
+
+  - hosts: quassel
+    roles:
+      #- role: ktz-rh-vpn # not committed for privacy reasons
+      - role: ironicbadger.ansible_role_docker_compose_generator
+        tags: compose
+
+  # - hosts: awesomo
+  #   roles:
+  #     - role: ironicbadger.ansible_role_proxmox_nag_removal
+  #     - role: ironicbadger.ansible_role_hddtemp
+  #     - role: rossmcdonald.telegraf
+  #     - role: ktz-apcupsd
+
+  - hosts: hassio
+    roles:
+      - role: geerlingguy.docker
+
+  - hosts: db
+    roles:
+      - role: geerlingguy.docker

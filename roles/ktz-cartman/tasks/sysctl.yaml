@@ -1,0 +1,8 @@
+---
+
+- name: configure sysctl for shinobi
+  sysctl:
+    name: fs.inotify.max_user_watches
+    value: 524288
+    state: present
+    reload: yes

@@ -1,0 +1,50 @@
+---
+
+target_os: debian
+
+# ironicbadger.ansible_users
+users:
+  - username: "{{ main_username }}"
+    github_username: ironicbadger
+    name: "{{ main_username }}"
+    groups: ['wheel']
+    uid: "{{ main_uid }}"
+  - username: cat
+    github_username: dropcat13
+    name: cat
+    groups: []
+    uid: 1098
+groups_to_create:
+  - name: "{{ main_groupname }}"
+    gid: "{{ main_gid }}"
+  - name: wheel
+
+# ferrarimarco.bash-aliases
+bash_aliases:
+  - { alias: "sshclear", command: "rm ~/.ssh/multiplex/* -f && echo SSH connection cache cleared;"}
+  - { alias: "sshlist", command: "echo Currently open ssh connections && echo && l ~/.ssh/multiplex/"}
+
+# grog.package
+package_list:
+  - name: bash-completion
+  - name: curl
+  - name: htop
+  - name: mutt
+  - name: net-tools
+  - name: nmap
+  - name: openssh-server
+  - name: python
+  - name: qemu-guest-agent
+  - name: screen
+  - name: sudo
+  - name: tmux
+  - name: tree
+  - name: wget
+
+# geerlingguy.security
+security_ssh_port: 27222
+security_ssh_password_authentication: "no"
+security_ssh_permit_root_login: "no"
+security_ssh_usedns: "no"
+security_autoupdate_enabled: true
+security_fail2ban_enabled: true
