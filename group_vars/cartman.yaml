@@ -722,6 +722,19 @@ containers:
     nginx_configs_rp_type: "subdom"
     include_global_env_vars: false
     restart: unless-stopped
+  - service_name: jellyfin
+    active: true
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    network_mode: host
+    volumes:
+      - "{{ appdata_path_zfs }}/jellyfin/config:/config"
+      - "{{ appdata_path_zfs }}/jellyfin/cache:/cache"
+      - "/mnt/storage:/media"
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: ""
+    include_global_env_vars: false
+    restart: unless-stopped
 
 
 
