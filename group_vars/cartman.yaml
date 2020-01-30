@@ -735,7 +735,23 @@ containers:
     nginx_configs_rp_type: ""
     include_global_env_vars: false
     restart: unless-stopped
-
+  - service_name: bookstack
+    active: true
+    image: linuxserver/bookstack
+    container_name: bookstack
+    ports:
+      - 6875:80
+    volumes:
+      - "{{ appdata_path_zfs }}/bookstack:/config }}"
+    environment:
+      - DB_USERNAME=root
+      - "DB_PASSWORD={{ container_mysql_password}}"
+      - DB_HOST=mysql
+      - DB_DATABASE=bookstack
+    nginx_configs_rp_enabled: true
+    nginx_configs_rp_type: "subdom"
+    include_global_env_vars: true
+    restart: unless-stopped
 
 
   # template for docker-compose services
