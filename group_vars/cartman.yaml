@@ -723,7 +723,7 @@ containers:
     include_global_env_vars: false
     restart: unless-stopped
   - service_name: jellyfin
-    active: true
+    active: false
     image: jellyfin/jellyfin
     container_name: jellyfin
     network_mode: host
@@ -736,7 +736,7 @@ containers:
     include_global_env_vars: false
     restart: unless-stopped
   - service_name: bookstack
-    active: true
+    active: false
     image: linuxserver/bookstack
     container_name: bookstack
     ports:
@@ -748,8 +748,52 @@ containers:
       - "DB_PASSWORD={{ container_mysql_password}}"
       - DB_HOST=mysql
       - DB_DATABASE=bookstack
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: "subdom"
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: wikijs
+    active: false
+    image: requarks/wiki:2
+    container_name: wikijs
+    ports:
+      - 8282:80
+      - 8283:3000
+    depends_on:
+      - mysql
+    environment:
+      - DB_TYPE=mysql
+      - DB_PORT=3306
+      - DB_USER=root
+      - "DB_PASS={{ container_mysql_password}}"
+      - DB_HOST=mysql
+      - DB_NAME=wikijs
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: ""
+    include_global_env_vars: false
+    restart: unless-stopped
+  - service_name: tiddlywiki
+    active: true
+    image: mazzolino/tiddlywiki
+    container_name: tiddlywiki
+    ports:
+      - 8088:8080
+    volumes:
+      - "{{ appdata_path_zfs }}/tiddlywiki:/var/lib/tiddlywiki" 
     nginx_configs_rp_enabled: true
     nginx_configs_rp_type: "subdom"
+    include_global_env_vars: false
+    restart: unless-stopped
+  - service_name: grocy
+    active: false
+    image: linuxserver/grocy
+    container_name: grocy
+    ports:
+      - 9283:80
+    volumes:
+      - "{{ appdata_path_zfs }}/grocy:/config }}"
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: ""
     include_global_env_vars: true
     restart: unless-stopped
 
