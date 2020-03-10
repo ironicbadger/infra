@@ -3,7 +3,7 @@
   - hosts: all
     roles:
       - role: ironicbadger.ansible_users
-      - role: ferrarimarco.bash-aliases
+      - role: ironicbadger.ansible_role_bash_aliases
       - role: grog.package
       - role: geerlingguy.security
       - role: weareinteractive.environment
