@@ -272,19 +272,15 @@ containers:
     # ports:
     #   - "3579:3579"
     restart: unless-stopped
-  - service_name: hass
-    active: false
-    nginx_configs_rp_enabled: false
+  - service_name: ha
+    active: true
+    nginx_configs_rp_enabled: true
     nginx_configs_rp_type: "subdom"
-    container_name: hass
-    image: homeassistant/home-assistant
-    network_mode: host
-    volumes:
-      - "{{ appdata_path_zfs }}/hass:/config"
+    container_name: hassfake
+    image: hello-world
     # ports:
     #   - "8123:8123"
     include_global_env_vars: false
-    restart: unless-stopped
   - service_name: dockermon
     active: true
     nginx_configs_rp_enabled: false
