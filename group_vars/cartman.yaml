@@ -753,7 +753,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: wikijs
-    active: false
+    active: true
     image: requarks/wiki:2
     container_name: wikijs
     ports:
