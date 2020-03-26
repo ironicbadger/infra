@@ -67,7 +67,9 @@ cartman_main_storage_path: /mnt/storage
 
 extra_mountpoints:
   - { path: "{{ cartman_main_storage_path }}" }
-  - { path: /opt, diskbyid: /dev/disk/by-id/nvme-SAMSUNG_MZVKW512HMJP-000L7_S35BNX0K509438-part1, fs: ext4, opts: "defaults,discard" }
+  #- { path: /opt, diskbyid: /dev/disk/by-id/nvme-SAMSUNG_MZVKW512HMJP-000L7_S35BNX0K509438-part1, fs: ext4, opts: "defaults,discard" }
+  - { path: /opt, diskbyid: "UUID=b8e63455-b4eb-430b-a714-c4f36cd513a5", fs: ext4, opts: "defaults,discard" }
+  
 
 parity_disks:
   - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G0Z7RZ-part1, fs: xfs, opts: defaults }
@@ -82,14 +84,14 @@ data_disks:
   - { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ1EJAW-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk7, diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ3JB4W-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk8, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0N54S-part1, fs: xfs, opts: defaults, content: false }
-  #- { path: /mnt/disk9, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0NN0R-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk9, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0NN0R-part1, fs: xfs, opts: defaults, content: false }
 
 zfs_disks:
   #- { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ373DD-part1, fs: xfs, opts: defaults, content: false }
   #- { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ7E2VD-part1, fs: xfs, opts: defaults, content: false }
 
 fstab_mergerfs:
-  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,allow_other,direct_io,use_ino,hard_remove,minfreespace=250G,fsname=mergerfs" }
+  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,allow_other,direct_io,use_ino,hard_remove,minfreespace=200G,fsname=mergerfs" }
 
 snapraid_email_address: alexktz@gmail.com
 snapraid_gmail_pass: "{{ gmail_password }}"
@@ -318,7 +320,7 @@ containers:
     ports:
       - "8086:8086"
     volumes:
-      - "/mnt/tank/appdata/influxdb:/var/lib/influxdb"
+      - "{{ appdata_path_zfs }}/influxdb:/var/lib/influxdb"
     include_global_env_vars: false
     restart: unless-stopped
   - service_name: smokeping
@@ -378,7 +380,7 @@ containers:
     active: true
     nginx_configs_rp_enabled: true
     nginx_configs_rp_type: "subdom"
-    image: nextcloud:16
+    image: nextcloud:17
     depends_on:
       - mysql
     container_name: nc
@@ -749,7 +751,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: wikijs
-    active: true
+    active: false
     image: requarks/wiki:2
     container_name: wikijs
     ports:
@@ -772,8 +774,8 @@ containers:
     active: true
     image: mazzolino/tiddlywiki
     container_name: tiddlywiki
-    ports:
-      - 8088:8080
+    # ports:
+    #   - 8088:8080
     volumes:
       - "{{ appdata_path_zfs }}/tiddlywiki:/var/lib/tiddlywiki" 
     nginx_configs_rp_enabled: true
@@ -781,15 +783,15 @@ containers:
     include_global_env_vars: false
     restart: unless-stopped
   - service_name: grocy
-    active: false
+    active: true
     image: linuxserver/grocy
     container_name: grocy
-    ports:
-      - 9283:80
+    # ports:
+    #   - 9283:80
     volumes:
       - "{{ appdata_path_zfs }}/grocy:/config }}"
-    nginx_configs_rp_enabled: false
-    nginx_configs_rp_type: ""
+    nginx_configs_rp_enabled: true
+    nginx_configs_rp_type: "subdom"
     include_global_env_vars: true
     restart: unless-stopped
 
