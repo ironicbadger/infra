@@ -9,9 +9,10 @@
       - role: weareinteractive.environment
       - role: geerlingguy.ntp
 
-  - hosts: mb
+  - hosts: bastion
     roles:
       - role: geerlingguy.security
+      - role: geerlingguy.docker
 
   - hosts: adguard
     roles:

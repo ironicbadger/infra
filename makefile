@@ -1,8 +1,8 @@
 all:
 	echo blah
 
-mb:
-	ansible-playbook -b run.yaml --limit mb --ask-become-pass --vault-password-file .vault-password
+bastion:
+	ansible-playbook -b run.yaml --limit bastion --ask-become-pass --vault-password-file .vault-password
 
 c:
 	ansible-playbook -b run.yaml --limit cartman --ask-become-pass --vault-password-file .vault-password

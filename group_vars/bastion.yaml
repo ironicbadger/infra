@@ -33,8 +33,8 @@ package_list:
   - name: net-tools
   - name: nmap
   - name: openssh-server
+  - name: open-vm-tools
   - name: python
-  - name: qemu-guest-agent
   - name: screen
   - name: sudo
   - name: tmux
