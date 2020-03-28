@@ -1,5 +1,4 @@
 ---
-
   - hosts: all
     roles:
       - role: ironicbadger.ansible_users
@@ -13,10 +12,6 @@
     roles:
       - role: geerlingguy.security
       - role: geerlingguy.docker
-
-  - hosts: adguard
-    roles:
-      - role: geerlingguy.security
 
   - hosts: cartman
     vars_files:
@@ -37,18 +32,3 @@
       #- role: ktz-rh-vpn # not committed for privacy reasons
       - role: ironicbadger.ansible_role_docker_compose_generator
         tags: compose
-
-  # - hosts: awesomo
-  #   roles:
-  #     - role: ironicbadger.ansible_role_proxmox_nag_removal
-  #     - role: ironicbadger.ansible_role_hddtemp
-  #     - role: rossmcdonald.telegraf
-  #     - role: ktz-apcupsd
-
-  - hosts: hassio
-    roles:
-      - role: geerlingguy.docker
-
-  - hosts: db
-    roles:
-      - role: geerlingguy.docker
