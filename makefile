@@ -7,9 +7,6 @@ c:
 ccomp:
 	ansible-playbook -b run.yaml --limit cartman --ask-become-pass --vault-password-file .vault-password --tags compose
 
-awesomo:
-	ansible-playbook -b run.yaml --limit awesomo --ask-become-pass --vault-password-file .vault-password
-
 q:
 	ansible-playbook -b run.yaml --limit quassel --ask-become-pass --vault-password-file .vault-password
 
