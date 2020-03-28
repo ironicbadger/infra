@@ -69,6 +69,7 @@ extra_mountpoints:
   - { path: "{{ cartman_main_storage_path }}" }
   #- { path: /opt, diskbyid: /dev/disk/by-id/nvme-SAMSUNG_MZVKW512HMJP-000L7_S35BNX0K509438-part1, fs: ext4, opts: "defaults,discard" }
   - { path: /opt, diskbyid: "UUID=b8e63455-b4eb-430b-a714-c4f36cd513a5", fs: ext4, opts: "defaults,discard" }
+  - { path: /mnt/nvme350, diskbyid: "UUID=67e2f248-51af-4c00-979f-11ead4e2d85c", fs: ext4, opts: "defaults,discard" }
   
 
 parity_disks:
@@ -131,7 +132,7 @@ containers:
       - gitea
       - hc
       - invoiceninja
-      - brent_invoiceninja
+      #- brent_invoiceninja
       - librespeed
       #- qbittorrent
     include_global_env_vars: true
@@ -333,7 +334,7 @@ containers:
     include_global_env_vars: true
     volumes:
       - "{{ appdata_path_zfs }}/smokeping/config:/config"
-      - "{{ appdata_path_zfs }}/smokeping/data:/config"
+      - "{{ appdata_path_zfs }}/smokeping/data:/data"
     # ports:
     #   - "8080:80"
     restart: unless-stopped
@@ -407,7 +408,7 @@ containers:
     command: "--transaction-isolation=READ-COMMITTED --binlog-format=ROW"
     restart: unless-stopped
   - service_name: brent_mysql
-    active: true
+    active: false
     nginx_configs_rp_enabled: false
     nginx_configs_rp_type: ""
     image: mariadb
@@ -688,7 +689,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: brent_invoiceninja
-    active: true
+    active: false
     image: invoiceninja/invoiceninja
     container_name: brent_invoiceninja
     volumes:
