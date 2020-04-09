@@ -69,7 +69,7 @@ extra_mountpoints:
   - { path: "{{ cartman_main_storage_path }}" }
   #- { path: /opt, diskbyid: /dev/disk/by-id/nvme-SAMSUNG_MZVKW512HMJP-000L7_S35BNX0K509438-part1, fs: ext4, opts: "defaults,discard" }
   - { path: /opt, diskbyid: "UUID=b8e63455-b4eb-430b-a714-c4f36cd513a5", fs: ext4, opts: "defaults,discard" }
-  - { path: /mnt/nvme350, diskbyid: "UUID=67e2f248-51af-4c00-979f-11ead4e2d85c", fs: ext4, opts: "defaults,discard" }
+  - { path: /mnt/nvme350, diskbyid: "UUID=82d03ae9-5efe-4da2-bc14-9de173d4151f", fs: ext4, opts: "defaults,discard" }
   
 
 parity_disks:
