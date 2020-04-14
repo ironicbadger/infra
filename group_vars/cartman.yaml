@@ -523,7 +523,7 @@ containers:
     network_mode: service:openvpn
     restart: unless-stopped
   - service_name: shinobi
-    active: true
+    active: false
     container_name: shinobi
     image: alexphillips/shinobi
     nginx_configs_rp_enabled: false
