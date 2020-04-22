@@ -1,0 +1,71 @@
+version: "3.3"
+services:
+  traefik:
+    image: traefik:latest
+    container_name: traefik
+    restart: always
+    networks:
+      default:
+    command:
+      #- "--log.level=debug"
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
+      #- "--certificatesresolvers.cloudflare.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
+      - "--certificatesresolvers.cloudflare.acme.email=alexktz@gmail.com"
+      - "--certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json"
+    environment:
+      - "CF_API_EMAIL=alexktz@gmail.com"
+      - "CF_DNS_API_TOKEN=<secret>"
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - "/root/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  nginx:
+    image: linuxserver/nginx
+    container_name: my-web-nginx
+    depends_on: 
+        - traefik    
+    environment:
+        - PUID=1000
+        - PGID=1000
+    restart: unless-stopped
+    labels:
+        - traefik.enable=true
+        - traefik.http.routers.nginx.rule=(Host(`test.ktz.cloud`) && Path(`/nginx`))
+        - traefik.http.routers.nginx.entrypoints=websecure
+        - traefik.http.routers.nginx.tls.certresolver=cloudflare
+        - traefik.http.services.nginx.loadbalancer.server.port=80
+  nzbget:
+    container_name: nzbget
+    image: linuxserver/nzbget:latest
+    restart: unless-stopped
+    environment:
+        - PUID=1000
+        - PGID=1000
+    labels:
+        - traefik.enable=true
+        - traefik.http.routers.nzbget.rule=(Host(`test.ktz.cloud`) && PathPrefix(`/nzbget`))
+        - traefik.http.routers.nzbget.entrypoints=websecure
+        - traefik.http.routers.nzbget.tls.certresolver=cloudflare
+        - traefik.http.services.nzbget.loadbalancer.server.port=6789
+  radarr:
+    container_name: radarr
+    image: linuxserver/radarr:preview
+    restart: unless-stopped
+    environment:
+        - PUID=1000
+        - PGID=1000
+    labels:
+        - traefik.enable=true
+        - traefik.http.routers.radarr.rule=(Host(`test.ktz.cloud`) && PathPrefix(`/radarr`))
+        - traefik.http.routers.radarr.entrypoints=websecure
+        - traefik.http.routers.radarr.tls.certresolver=cloudflare
+        - traefik.http.services.radarr.loadbalancer.server.port=7878
