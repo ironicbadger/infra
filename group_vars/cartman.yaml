@@ -166,8 +166,6 @@ containers:
     network_mode: host
     volumes:
       - "{{ appdata_path_opt }}/plex/config:/config"
-      - "{{ appdata_path_opt }}/plex/transcode:/transcode"
-      - "{{ appdata_path_opt }}/plex/tmp:/tmp"
       - "/mnt/storage:/data"
     include_global_env_vars: true
     restart: unless-stopped
@@ -879,7 +877,7 @@ telegraf_plugins_base:
         - "/mnt/disk6"
         - "/mnt/disk7"
         - "/mnt/disk8"
-        #- "/mnt/disk9"
+        - "/mnt/disk9"
         - "/mnt/parity1"
         - "/mnt/parity2"
         - "/mnt/storage"
