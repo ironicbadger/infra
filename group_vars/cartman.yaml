@@ -688,39 +688,6 @@ containers:
     nginx_configs_rp_type: "subdom"
     include_global_env_vars: true
     restart: unless-stopped
-  - service_name: brent_invoiceninja
-    active: false
-    image: invoiceninja/invoiceninja
-    container_name: brent_invoiceninja
-    volumes:
-      - "{{ appdata_path_zfs }}/brent/invoiceninja/storage:/var/www/app/storage"
-      - "{{ appdata_path_zfs }}/brent/invoiceninja/public/logo:/var/www/app/logo"
-      - "{{ appdata_path_zfs }}/brent/invoiceninja/public:/var/www/app/public"
-    ports:
-      - 9003:9000
-    environment:
-      - MYSQL_DATABASE=ninja
-      - "MYSQL_ROOT_PASSWORD={{ container_mysql_password}}"
-      - APP_DEBUG=0
-      - "APP_URL={{ invoice_ninja_brent_app_url }}"
-      - "APP_KEY={{ invoice_ninja_app_key }}"
-      - APP_CIPHER=AES-256-CBC
-      - DB_USERNAME=root
-      - "DB_PASSWORD={{ container_mysql_password}}"
-      - DB_HOST=brent_mysql
-      - DB_DATABASE=ninja
-      - MAIL_HOST=smtp.gmail.com
-      - "MAIL_USERNAME={{ gmail_address }}"
-      - "MAIL_PASSWORD={{ gmail_password }}"
-      - MAIL_DRIVER=smtp
-      - MAIL_FROM_NAME="Alex K"
-      - "MAIL_FROM_ADDRESS={{ gmail_address }}"
-      - REQUIRE_HTTPS=true
-      - "TRUSTED_PROXIES='*'"
-    nginx_configs_rp_enabled: true
-    nginx_configs_rp_type: "subdom"
-    include_global_env_vars: false
-    restart: unless-stopped
   - service_name: jellyfin
     active: false
     image: jellyfin/jellyfin
@@ -790,12 +757,66 @@ containers:
     # ports:
     #   - 9283:80
     volumes:
-      - "{{ appdata_path_zfs }}/grocy:/config }}"
+      - "{{ appdata_path_zfs }}/grocy:/config"
     nginx_configs_rp_enabled: true
     nginx_configs_rp_type: "subdom"
     include_global_env_vars: true
     restart: unless-stopped
-
+  - service_name: beets
+    active: true
+    image: linuxserver/beets
+    container_name: beets
+    ports:
+      - 8337:8337
+    volumes:
+      - "{{ appdata_path_zfs }}/beets:/config"
+      - /mnt/storage/music/flac:/music
+      - /opt/downloads/complete/music:/downloads
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: ""
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: musicbrainz
+    active: true
+    image: linuxserver/musicbrainz
+    container_name: musicbrainz
+    ports:
+      - 5000:5000
+    volumes:
+      - "{{ appdata_path_zfs }}/musicbrainz/config:/config"
+      - "{{ appdata_path_zfs }}/musicbrainz/data:/data" 
+    environment:
+      - "BRAINZCODE={{ musicbrainz_token }}"
+      - WEBADDRESS=192.168.1.10
+      - NPROC=20
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: ""
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: lidarrlad
+    active: true
+    image: randomninjaatk/lidarr-lad
+    container_name: lidarrlad
+    ports:
+      - 8686:8686
+    volumes:
+      - "{{ appdata_path_zfs }}/lidarrlad:/config"
+      - "/mnt/storage/music/deez:/storage"
+      - /mnt/storage/music/flac:/flac
+    environment:
+      - UMASK_SET=022
+      - "ARL_TOKEN={{ deezer_arl_token }}"
+      - quality=FLAC
+      - VerifyTrackCount=true
+      - CONCURRENCY=16
+      - FolderPermissions=777
+      - FilePermissions=666
+      - TagWithBeets=false
+      - RequireQuality=true
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: ""
+    include_global_env_vars: false
+    restart: unless-stopped
 
   # template for docker-compose services
   # - service_name:
