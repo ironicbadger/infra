@@ -580,18 +580,18 @@ containers:
     include_global_env_vars: false
     restart: unless-stopped
   - service_name: funkwhale
-    active: false
-    image: funkwhale/all-in-one:0.19.1
+    active: true
+    image: funkwhale/all-in-one:0.21
     container_name: funkwhale
     ports:
-      - 5000:80
+      - 5001:80
     volumes:
       - "{{ appdata_path_zfs }}/funkwhale:/data"
       - "{{ cartman_main_storage_path }}/music/flac:/music:ro"
     environment:
       - FUNKWHALE_HOSTNAME=funk.ktz.me
       - FUNKWHALE_PROTOCOL=https
-      - FUNKWHALE_VERSION=0.19.1
+      #- FUNKWHALE_VERSION=0.21
       - FUNKWHALE_API_IP=127.0.0.1
       - FUNKWHALE_API_PORT=5000
       - "DJANGO_SECRET_KEY={{ funkwhale_django_secret }}"
@@ -814,6 +814,19 @@ containers:
     nginx_configs_rp_enabled: false
     nginx_configs_rp_type: ""
     include_global_env_vars: false
+    restart: unless-stopped
+  - service_name: filtr
+    active: true
+    image: alexphillips/filter
+    container_name: filtr
+    ports:
+      - 3005:3000
+    volumes:
+      - "{{ appdata_path_zfs }}/filtr:/config"
+      - /mnt/storage/photos/images:/photos:ro
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: ""
+    include_global_env_vars: true
     restart: unless-stopped
 
   # template for docker-compose services
