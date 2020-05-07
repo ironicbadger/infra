@@ -681,7 +681,7 @@ containers:
     environment:
       - MODE=standalone
       - TELEMETRY=true
-      - PASSWORD=badger1
+      - "PASSWORD={{ librespeed_password }}"
     nginx_configs_rp_enabled: true
     nginx_configs_rp_type: "subdom"
     include_global_env_vars: true
@@ -827,6 +827,20 @@ containers:
     nginx_configs_rp_enabled: false
     nginx_configs_rp_type: ""
     include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: lancache
+    active: true
+    image: lancachenet/monolithic:latest
+    container_name: lancache
+    ports:
+      - 
+    volumes:
+      - 
+    environment:
+      -
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: ""
+    include_global_env_vars: false
     restart: unless-stopped
 
   # template for docker-compose services
