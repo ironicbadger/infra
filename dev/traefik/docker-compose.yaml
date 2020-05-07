@@ -20,7 +20,9 @@ services:
       - "--certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json"
     environment:
       - "CF_API_EMAIL=alexktz@gmail.com"
-      - "CF_DNS_API_TOKEN=<secret>"
+      - "CF_DNS_API_TOKEN=secret"
+    extra_hosts: 
+      - host.docker.internal:172.17.0.1
     ports:
       - "80:80"
       - "443:443"
@@ -69,3 +71,21 @@ services:
         - traefik.http.routers.radarr.entrypoints=websecure
         - traefik.http.routers.radarr.tls.certresolver=cloudflare
         - traefik.http.services.radarr.loadbalancer.server.port=7878
+  plex:
+    image: linuxserver/plex
+    container_name: plex-pms
+    tmpfs:
+      - /tmp
+    network_mode: host
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - VERSION=latest
+      - UMASK_SET=022
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.plex.rule=Host(`plex.ktz.cloud`)
+      - traefik.http.routers.plex.entrypoints=websecure
+      - traefik.http.routers.plex.tls.certresolver=cloudflare
+      - traefik.http.services.plex.loadbalancer.server.port=32400
