@@ -121,7 +121,6 @@ containers:
     cap_add:
       - NET_ADMIN
     depends_on:
-      - heimdall
       - nzbget
       - sonarr
       - radarr
@@ -132,9 +131,7 @@ containers:
       - gitea
       - hc
       - invoiceninja
-      #- brent_invoiceninja
       - librespeed
-      #- qbittorrent
     include_global_env_vars: true
     environment:
       - EMAIL=alexktz@gmail.com
@@ -147,7 +144,7 @@ containers:
       - DNSPLUGIN=cloudflare
     mem_limit: 256m
   - service_name: heimdall
-    active: true
+    active: false
     nginx_configs_rp_enabled: true
     nginx_configs_rp_type: subdom
     image: linuxserver/heimdall
@@ -283,7 +280,7 @@ containers:
     #   - "8123:8123"
     include_global_env_vars: false
   - service_name: dockermon
-    active: true
+    active: false
     nginx_configs_rp_enabled: false
     nginx_configs_rp_type: ""
     container_name: dockermon
@@ -291,7 +288,7 @@ containers:
     image: philhawthorne/ha-dockermon
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "{{ appdata_path_zfs }}/config:/config"
+      - "{{ appdata_path_zfs }}/dockermon:/config"
     ports:
       - "8126:8126"
     restart: unless-stopped
@@ -352,7 +349,7 @@ containers:
       - /mnt/tank:/source/tank
       - /opt:/source/opt
     include_global_env_vars: true
-    restart: always
+    restart: unless-stopped
   - service_name: hc
     active: true
     nginx_configs_rp_enabled: true
@@ -386,8 +383,8 @@ containers:
     include_global_env_vars: false
     volumes:
       - "{{ appdata_path_zfs }}/nextcloud:/var/www/html"
-    ports:
-      - "8081:80"
+    # ports:
+    #   - "8081:80"
     restart: unless-stopped
   - service_name: mysql
     active: true
@@ -403,22 +400,6 @@ containers:
       - MYSQL_USER=nextcloud
     volumes:
       - "{{ appdata_path_zfs }}/mysql:/var/lib/mysql"
-    command: "--transaction-isolation=READ-COMMITTED --binlog-format=ROW"
-    restart: unless-stopped
-  - service_name: brent_mysql
-    active: false
-    nginx_configs_rp_enabled: false
-    nginx_configs_rp_type: ""
-    image: mariadb
-    container_name: brent_mysql
-    include_global_env_vars: false
-    environment:
-      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
-      - "MYSQL_PASSWORD={{ container_mysql_password }}"
-      - MYSQL_DATABASE=ninja
-      - MYSQL_USER=root
-    volumes:
-      - "{{ appdata_path_zfs }}/brent/mysql:/var/lib/mysql"
     command: "--transaction-isolation=READ-COMMITTED --binlog-format=ROW"
     restart: unless-stopped
   - service_name: gitea
@@ -462,7 +443,7 @@ containers:
       - "{{ appdata_path_zfs }}/monica/data:/var/www/monica/storage"
     restart: unless-stopped
   - service_name: prometheus
-    active: true
+    active: false
     nginx_configs_rp_enabled: false
     nginx_configs_rp_type: ""
     image: prom/prometheus
@@ -474,7 +455,7 @@ containers:
     ports:
       - "9090:9090"
   - service_name: sync
-    active: true
+    active: false
     nginx_configs_rp_enabled: false
     nginx_configs_rp_type: ""
     image: linuxserver/resilio-sync
@@ -580,7 +561,7 @@ containers:
     include_global_env_vars: false
     restart: unless-stopped
   - service_name: funkwhale
-    active: true
+    active: false
     image: funkwhale/all-in-one:0.21
     container_name: funkwhale
     ports:
@@ -598,40 +579,6 @@ containers:
       - NESTED_PROXY=1
     nginx_configs_rp_enabled: true
     nginx_configs_rp_type: "subdom"
-    include_global_env_vars: true
-    restart: unless-stopped
-  - service_name: varken
-    active: false
-    image: boerderij/varken
-    container_name: varken
-    hostname: varken
-    volumes:
-      - "{{ appdata_path_zfs }}/varken:/config"
-    depends_on:
-      - influxdb
-    environment:
-      - VRKN_GLOBAL_TAUTULLI_SERVER_IDS=1
-      - VRKN_GLOBAL_OMBI_SERVER_IDS=false
-      - VRKN_GLOBAL_SONARR_SERVER_IDS=false
-      - VRKN_GLOBAL_RADARR_SERVER_IDS=false
-      - VRKN_GLOBAL_SICKCHILL_SERVER_IDS=false
-      - VRKN_GLOBAL_UNIFI_SERVER_IDS=false
-      - "VRKN_INFLUXDB_URL={{ influxdb_ip }}"
-      - "VRKN_INFLUXDB_PORT={{ influxdb_port }}"
-      - VRKN_INFLUXDB_SSL=false
-      - VRKN_INFLUXDB_VERIFY_SSL=false
-      - "VRKN_INFLUXDB_USERNAME={{ telegraf_influxdb_username }}"
-      - "VRKN_INFLUXDB_PASSWORD={{ telegraf_influxdb_password }}"
-      - VRKN_TAUTULLI_1_URL=tautulli:8181/tautulli
-      - "VRKN_TAUTULLI_1_APIKEY={{ tautulli_api_key }}"
-      - VRKN_TAUTULLI_1_SSL=false
-      - VRKN_TAUTULLI_1_VERIFY_SSL=false
-      - VRKN_TAUTULLI_1_GET_ACTIVITY=true
-      - VRKN_TAUTULLI_1_GET_ACTIVITY_RUN_SECONDS=30
-      - VRKN_TAUTULLI_1_GET_STATS=true
-      - VRKN_TAUTULLI_1_GET_STATS_RUN_SECONDS=3600
-    nginx_configs_rp_enabled: false
-    nginx_configs_rp_type: ""
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: esphome
@@ -661,7 +608,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: chowdown
-    active: true
+    active: false
     image: gregyankovoy/chowdown
     container_name: chowdown
     ports:
@@ -816,7 +763,7 @@ containers:
     include_global_env_vars: false
     restart: unless-stopped
   - service_name: filtr
-    active: true
+    active: false
     image: alexphillips/filter
     container_name: filtr
     ports:
@@ -828,20 +775,20 @@ containers:
     nginx_configs_rp_type: ""
     include_global_env_vars: true
     restart: unless-stopped
-  - service_name: lancache
-    active: true
-    image: lancachenet/monolithic:latest
-    container_name: lancache
-    ports:
-      - 
-    volumes:
-      - 
-    environment:
-      -
-    nginx_configs_rp_enabled: false
-    nginx_configs_rp_type: ""
-    include_global_env_vars: false
-    restart: unless-stopped
+  # - service_name: lancache
+  #   active: true
+  #   image: lancachenet/monolithic:latest
+  #   container_name: lancache
+  #   ports:
+  #     - 
+  #   volumes:
+  #     - 
+  #   environment:
+  #     -
+  #   nginx_configs_rp_enabled: false
+  #   nginx_configs_rp_type: ""
+  #   include_global_env_vars: false
+  #   restart: unless-stopped
 
   # template for docker-compose services
   # - service_name:

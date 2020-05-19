@@ -40,6 +40,7 @@ package_list:
   - name: tmux
   - name: tree
   - name: wget
+  - name: wireguard
 
 # geerlingguy.security
 security_ssh_port: 27222
