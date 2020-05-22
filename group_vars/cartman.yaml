@@ -376,7 +376,7 @@ containers:
     active: true
     nginx_configs_rp_enabled: true
     nginx_configs_rp_type: "subdom"
-    image: nextcloud:17
+    image: nextcloud:18
     depends_on:
       - mysql
     container_name: nc
