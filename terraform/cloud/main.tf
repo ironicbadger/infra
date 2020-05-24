@@ -35,3 +35,76 @@ resource "digitalocean_droplet" "cloud" {
   ]
 
 }
+
+## firewall
+resource "digitalocean_firewall" "cloud" {
+  name = "cloud"
+  droplet_ids = [digitalocean_droplet.cloud.id]
+
+  # ssh
+  inbound_rule {
+    protocol = "tcp"
+    port_range = "22"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # http
+  inbound_rule {
+    protocol = "tcp"
+    port_range = "80"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # https
+  inbound_rule {
+    protocol = "tcp"
+    port_range = "443"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # mysql (pubtrivia)
+  inbound_rule {
+    protocol = "tcp"
+    port_range = "3306"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # ub
+  inbound_rule {
+    protocol = "tcp"
+    port_range = "27280"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # ub/udp
+  inbound_rule {
+    protocol = "udp"
+    port_range = "3478"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  # wg
+  inbound_rule {
+    protocol = "udp"
+    port_range = "51820"
+    source_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "tcp"
+    port_range            = "1-65535"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "udp"
+    port_range            = "1-65535"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+  outbound_rule {
+    protocol              = "icmp"
+    destination_addresses = ["0.0.0.0/0", "::/0"]
+  }
+
+}

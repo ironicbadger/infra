@@ -1,5 +1,5 @@
 ---
 
-target_os: debian
+target_os: ubuntu
 
 # grog.package
