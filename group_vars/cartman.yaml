@@ -95,7 +95,7 @@ fstab_mergerfs:
   - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,allow_other,direct_io,use_ino,hard_remove,minfreespace=200G,fsname=mergerfs" }
 
 snapraid_email_address: alexktz@gmail.com
-snapraid_gmail_pass: "{{ gmail_password }}"
+snapraid_gmail_pass: "{{ snapraid_email_password }}"
 snapraid_healthcheck_io_uuid: "{{ snapraid_healthcheck_secret }}"
 
 # ironicbadger.docker_compose_generator
