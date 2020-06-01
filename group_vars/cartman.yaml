@@ -775,20 +775,19 @@ containers:
     nginx_configs_rp_type: ""
     include_global_env_vars: true
     restart: unless-stopped
-  # - service_name: lancache
-  #   active: true
-  #   image: lancachenet/monolithic:latest
-  #   container_name: lancache
-  #   ports:
-  #     - 
-  #   volumes:
-  #     - 
-  #   environment:
-  #     -
-  #   nginx_configs_rp_enabled: false
-  #   nginx_configs_rp_type: ""
-  #   include_global_env_vars: false
-  #   restart: unless-stopped
+  - service_name: digikam
+    active: true
+    image: linuxserver/digikam
+    container_name: digikam
+    ports:
+      - 3334:3000
+    volumes:
+      - "{{ appdata_path_zfs }}/digikam:/config"
+      - /mnt/storage/photos/digikamtest:/photos
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: ""
+    include_global_env_vars: true
+    restart: unless-stopped
 
   # template for docker-compose services
   # - service_name:
@@ -798,7 +797,7 @@ containers:
   #   ports:
   #     -
   #   volumes:
-  #     - 
+  #     - "{{ appdata_path_zfs }}/app:/config" 
   #   environment:
   #     -
   #   nginx_configs_rp_enabled: false
