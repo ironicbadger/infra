@@ -529,7 +529,7 @@ containers:
     restart: unless-stopped
   - service_name: invoiceninja
     active: true
-    image: invoiceninja/invoiceninja
+    image: invoiceninja/invoiceninja:4.5.18
     container_name: invoiceninja
     volumes:
       - "{{ appdata_path_zfs }}/invoiceninja/storage:/var/www/app/storage"
