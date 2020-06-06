@@ -116,7 +116,6 @@ containers:
     volumes:
       - "{{ appdata_path_zfs }}/letsencrypt/config:/config"
       - "{{ appdata_path_zfs }}/invoiceninja:/var/www/app"
-      #- "{{ appdata_path_zfs }}/brent/invoiceninja:/var/www/app/brent"
     restart: always
     cap_add:
       - NET_ADMIN
