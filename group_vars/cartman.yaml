@@ -24,6 +24,7 @@ groups_to_create:
 package_list:
   - name: bash-completion
   - name: curl
+  - name: fio
   - name: git
   - name: htop
   - name: iftop
@@ -60,6 +61,7 @@ bash_aliases:
   - { alias: "sshclear", command: "rm ~/.ssh/multiplex/* -f && echo SSH connection cache cleared;" }
   - { alias: "sshlist", command: "echo Currently open ssh connections && echo && l ~/.ssh/multiplex/" }
   - { alias: "appdata", command: "cd /mnt/tank/appdata" }
+  - { alias: "zspace", command: "zfs list -o space" }
   - { alias: "zsnap", command: "zfs list -t snapshot" }
 
 # ktz-cartman
@@ -67,9 +69,8 @@ cartman_main_storage_path: /mnt/storage
 
 extra_mountpoints:
   - { path: "{{ cartman_main_storage_path }}" }
-  #- { path: /opt, diskbyid: /dev/disk/by-id/nvme-SAMSUNG_MZVKW512HMJP-000L7_S35BNX0K509438-part1, fs: ext4, opts: "defaults,discard" }
   - { path: /opt, diskbyid: "UUID=b8e63455-b4eb-430b-a714-c4f36cd513a5", fs: ext4, opts: "defaults,discard" }
-  - { path: /mnt/nvme350, diskbyid: "UUID=82d03ae9-5efe-4da2-bc14-9de173d4151f", fs: ext4, opts: "defaults,discard" }
+  #- { path: /mnt/nvme350, diskbyid: "UUID=82d03ae9-5efe-4da2-bc14-9de173d4151f", fs: ext4, opts: "defaults,discard" }
   
 
 parity_disks:
@@ -99,7 +100,7 @@ snapraid_gmail_pass: "{{ snapraid_email_password }}"
 snapraid_healthcheck_io_uuid: "{{ snapraid_healthcheck_secret }}"
 
 # ironicbadger.docker_compose_generator
-appdata_path_opt: /mnt/nvme350/appdata
+appdata_path_opt: /mnt/tank/appdata
 appdata_path_zfs: /mnt/tank/appdata
 appdata_path: "{{ appdata_path_zfs }}" #for nginx_configs role
 download_path: /opt/downloads
@@ -116,7 +117,7 @@ containers:
     volumes:
       - "{{ appdata_path_zfs }}/letsencrypt/config:/config"
       - "{{ appdata_path_zfs }}/invoiceninja:/var/www/app"
-    restart: always
+    restart: unless-stopped
     cap_add:
       - NET_ADMIN
     depends_on:
@@ -775,7 +776,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: digikam
-    active: true
+    active: false
     image: linuxserver/digikam
     container_name: digikam
     ports:
@@ -787,8 +788,37 @@ containers:
     nginx_configs_rp_type: ""
     include_global_env_vars: true
     restart: unless-stopped
+  - service_name: calibre
+    active: false
+    image: linuxserver/calibre
+    container_name: calibre
+    ports:
+      - 28080:8080
+      - 28081:8081
+    volumes:
+      - "{{ appdata_path_zfs }}/calibre:/config" 
+    environment:
+      - "GUAC_USER={{ calibre_guac_user }}"
+      - "GUAC_PASS={{ calibre_guac_pass }}"
+    nginx_configs_rp_enabled: true
+    nginx_configs_rp_type: "subfol"
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: calibre-web
+    active: true
+    image: linuxserver/calibre-web
+    container_name: calibre-web
+    ports:
+      - 28083:8083
+    volumes:
+      - "{{ appdata_path_zfs }}/calibre-web:/config" 
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: ""
+    include_global_env_vars: true
+    restart: unless-stopped
 
   # template for docker-compose services
+  #
   # - service_name:
   #   active:
   #   image:
