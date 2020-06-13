@@ -816,6 +816,30 @@ containers:
     nginx_configs_rp_type: ""
     include_global_env_vars: true
     restart: unless-stopped
+  - service_name: lychee
+    active: true
+    image: lycheeorg/lychee
+    container_name: lychee
+    ports:
+      - 90:80
+    depends_on:
+      - mysql
+    volumes:
+      - "{{ appdata_path_zfs }}/lychee/config:/config"
+      - "{{ appdata_path_zfs }}/lychee/uploads:/uploads"
+      - "{{ appdata_path_zfs }}/lychee/sym:/sym"
+    environment:
+      - PHP_TZ=America/New_York
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USERNAME=lychee
+      - DB_DATABASE=lychee
+      - "DB_PASSWORD={{ container_mysql_password }}"
+    nginx_configs_rp_enabled: true
+    nginx_configs_rp_type: "subdom"
+    include_global_env_vars: true
+    restart: unless-stopped
 
   # template for docker-compose services
   #
