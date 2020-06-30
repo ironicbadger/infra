@@ -4,6 +4,6 @@
   tasks:
     - name: import keys from github
       authorized_key:  
-        user: alex
+        user: "{{ ansible_user | default('alex') }}"
         state: present
         key: https://github.com/ironicbadger.keys
