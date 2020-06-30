@@ -840,6 +840,53 @@ containers:
     nginx_configs_rp_type: "subdom"
     include_global_env_vars: true
     restart: unless-stopped
+  - service_name: deepstack
+    active: true
+    image: deepquestai/deepstack
+    container_name: deepstack
+    ports:
+      - 5000:5000
+    volumes:
+      - "{{ appdata_path_zfs }}/deepstack:/datastore" 
+    environment:
+      - VISION-DETECTION=True
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: ""
+    include_global_env_vars: false
+    restart: unless-stopped
+  - service_name: aitrigger
+    active: true
+    image: danecreekphotography/node-deepstackai-trigger
+    container_name: aitrigger
+    ports:
+      - 5001:4242
+    depends_on: 
+      - deepstack
+    environment:
+      - VISION-DETECTION=True
+    volumes:
+      - "{{ appdata_path_zfs }}/deepstack-aitrigger:/config"
+      - /mnt/storage/videos/cctv/aiinput:/aiinput
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: ""
+    include_global_env_vars: false
+    restart: unless-stopped
+  - service_name: stikked
+    active: true
+    image: alexphillips/stikked
+    container_name: stikked
+    volumes:
+      - "{{ appdata_path_zfs }}/stikked/config:/config" 
+      - "{{ appdata_path_zfs }}/stikked/data:/data" 
+    environment:
+      - SITE_NAME=ktz.me
+      - BASE_URL=https://paste.ktz.me/
+      - DB_DATABASE=/data/stikked
+      - DB_DRIVER=sqlite
+    nginx_configs_rp_enabled: true
+    nginx_configs_rp_type: "subdom"
+    include_global_env_vars: false
+    restart: unless-stopped
 
   # template for docker-compose services
   #
