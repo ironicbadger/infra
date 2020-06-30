@@ -1,0 +1,9 @@
+---
+
+- hosts: servers
+  tasks:
+    - name: import keys from github
+      authorized_key:  
+        user: alex
+        state: present
+        key: https://github.com/ironicbadger.keys
