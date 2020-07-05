@@ -10,8 +10,8 @@ ccomp:
 q:
 	ansible-playbook -b run.yaml --limit quassel --ask-become-pass --vault-password-file .vault-password
 
-sshkeys:
-	ansible-playbook ssh-keys.yaml --limit servers --vault-password-file .vault-password
+update:
+	ansible-playbook update.yaml --limit servers --vault-password-file .vault-password
 
 reqs:
 	ansible-galaxy install -r requirements.yaml
