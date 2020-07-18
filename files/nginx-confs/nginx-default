@@ -18,7 +18,7 @@ server {
 server {
 	listen 443 ssl default_server;
 
-	root /config/www;
+	root /var/www/public;
 	index index.html index.htm index.php;
 
 	server_name _;

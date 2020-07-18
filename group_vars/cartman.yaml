@@ -93,7 +93,7 @@ zfs_disks:
   #- { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ7E2VD-part1, fs: xfs, opts: defaults, content: false }
 
 fstab_mergerfs:
-  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,allow_other,direct_io,use_ino,hard_remove,minfreespace=200G,fsname=mergerfs" }
+  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,allow_other,use_ino,cache.files=off,moveonenospc=true,dropcacheonclose=true,minfreespace=200G,fsname=mergerfs" }
 
 snapraid_email_address: alexktz@gmail.com
 snapraid_gmail_pass: "{{ snapraid_email_password }}"
@@ -116,6 +116,7 @@ containers:
       - 443:443
     volumes:
       - "{{ appdata_path_zfs }}/letsencrypt/config:/config"
+      - "{{ appdata_path_zfs }}/letsencrypt/www:/var/www/public"
       - "{{ appdata_path_zfs }}/invoiceninja:/var/www/app"
     restart: unless-stopped
     cap_add:
@@ -608,7 +609,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: chowdown
-    active: false
+    active: true
     image: gregyankovoy/chowdown
     container_name: chowdown
     ports:
@@ -617,7 +618,7 @@ containers:
       - "{{ appdata_path_zfs }}/chowdown:/config"
     nginx_configs_rp_enabled: false
     nginx_configs_rp_type: ""
-    include_global_env_vars: false
+    #include_global_env_vars: false
     restart: unless-stopped
   - service_name: librespeed
     active: true
