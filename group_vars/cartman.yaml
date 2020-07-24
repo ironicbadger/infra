@@ -46,6 +46,7 @@ package_list:
   - name: tmux
   - name: tree
   - name: wget
+  - name: wireguard-tools
   - name: zfsutils-linux
 
 # ferrarimarco.bash-aliases
@@ -78,22 +79,22 @@ parity_disks:
   - { path: /mnt/parity2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults }
 
 data_disks:
-  - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G10VZZ-part1, fs: xfs, opts: defaults, content: true }
-  - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YHV69AD-part1, fs: xfs, opts: defaults, content: true }
+  - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/scsi-SATA_WDC_WD100EMAZ-00_16G10VZZ-part1, fs: xfs, opts: defaults, content: true }
+  - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/scsi-SATA_WDC_WD100EMAZ-00_2YHV69AD-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk3, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ15VJD-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ2S3AD-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-HGST_HDN728080ALE604_R6GPPDTY-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ1EJAW-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk7, diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ3JB4W-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/scsi-SATA_HGST_HDN728080AL_R6GPPDTY-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk6, diskbyid: /dev/disk/by-id/scsi-SATA_WDC_WD80EZAZ-11T_7SJ1EJAW-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk7, diskbyid: /dev/disk/by-id/scsi-SATA_WDC_WD80EZAZ-11T_7SJ3JB4W-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk8, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0N54S-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk9, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0NN0R-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk9, diskbyid: /dev/disk/by-id/scsi-SATA_ST8000DM004-2CX1_WCT0NN0R-part1, fs: xfs, opts: defaults, content: false }
 
 zfs_disks:
   #- { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ373DD-part1, fs: xfs, opts: defaults, content: false }
   #- { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ7E2VD-part1, fs: xfs, opts: defaults, content: false }
 
 fstab_mergerfs:
-  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,allow_other,use_ino,cache.files=off,moveonenospc=true,dropcacheonclose=true,minfreespace=200G,fsname=mergerfs" }
+  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,cache.files=off,moveonenospc=true,dropcacheonclose=true,minfreespace=200G,fsname=mergerfs" }
 
 snapraid_email_address: alexktz@gmail.com
 snapraid_gmail_pass: "{{ snapraid_email_password }}"
@@ -121,18 +122,18 @@ containers:
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
-    depends_on:
-      - nzbget
-      - sonarr
-      - radarr
-      - lidarr
-      - smokeping
-      - booksonic
-      - grafana
-      - gitea
-      - hc
-      - invoiceninja
-      - librespeed
+    # depends_on:
+      # - nzbget
+      # - sonarr
+      # - radarr
+      # - lidarr
+      # - smokeping
+      # - booksonic
+      # - grafana
+      # - gitea
+      # - hc
+      # - invoiceninja
+      # - librespeed
     include_global_env_vars: true
     environment:
       - EMAIL=alexktz@gmail.com
@@ -257,7 +258,7 @@ containers:
     #   - "8181:8181"
     restart: unless-stopped
   - service_name: ombi
-    active: true
+    active: false
     nginx_configs_rp_enabled: true
     nginx_configs_rp_type: subfol
     image: linuxserver/ombi
@@ -352,7 +353,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: hc
-    active: true
+    active: false
     nginx_configs_rp_enabled: true
     nginx_configs_rp_type: "subdom"
     image: linuxserver/healthchecks
@@ -377,7 +378,7 @@ containers:
     active: true
     nginx_configs_rp_enabled: true
     nginx_configs_rp_type: "subdom"
-    image: nextcloud:18
+    image: nextcloud:19
     depends_on:
       - mysql
     container_name: nc
@@ -394,6 +395,8 @@ containers:
     image: mariadb
     container_name: mysql
     include_global_env_vars: false
+    ports:
+      - 3306:3306
     environment:
       - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
       - "MYSQL_PASSWORD={{ container_mysql_password }}"
@@ -697,7 +700,7 @@ containers:
     include_global_env_vars: false
     restart: unless-stopped
   - service_name: grocy
-    active: true
+    active: false
     image: linuxserver/grocy
     container_name: grocy
     # ports:
@@ -709,7 +712,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: beets
-    active: true
+    active: false
     image: linuxserver/beets
     container_name: beets
     ports:
@@ -740,7 +743,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: lidarrlad
-    active: true
+    active: false
     image: randomninjaatk/lidarr-lad
     container_name: lidarrlad
     ports:
@@ -806,7 +809,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: calibre-web
-    active: true
+    active: false
     image: linuxserver/calibre-web
     container_name: calibre-web
     ports:
@@ -856,7 +859,7 @@ containers:
     include_global_env_vars: false
     restart: unless-stopped
   - service_name: aitrigger
-    active: true
+    active: false
     image: danecreekphotography/node-deepstackai-trigger
     container_name: aitrigger
     ports:
@@ -873,7 +876,7 @@ containers:
     include_global_env_vars: false
     restart: unless-stopped
   - service_name: stikked
-    active: true
+    active: false
     image: alexphillips/stikked
     container_name: stikked
     volumes:
@@ -970,4 +973,3 @@ telegraf_plugins_base:
     options:
       interfaces:
         - "ens192"
-  - name: sensors
