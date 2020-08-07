@@ -7,11 +7,34 @@
       - role: geerlingguy.security
       - role: weareinteractive.environment
       - role: geerlingguy.ntp
+    tasks:
+      - name: remove ubuntu motd spam
+        become: true
+        file:
+          path: "/etc/update-motd.d/{{ item }}"
+          state: absent
+        loop:
+          - 80-livepatch
+          - 95-hwe-eol
+          - 10-help-text
+        when: ansible_distribution == 'Ubuntu'
 
   - hosts: bastion
-    roles:
-      - role: geerlingguy.security
-      - role: geerlingguy.docker
+    # roles:
+    #   - role: geerlingguy.security
+    #   - role: geerlingguy.docker
+    tasks:
+      - name: remove ubuntu motd spam
+        become: true
+        file:
+          path: "/etc/update-motd.d/{{ item }}"
+          state: absent
+        loop:
+          - 80-livepatch
+          - 95-hwe-eol
+          - 10-help-text
+          - 50-motd-news
+          - 50-landscape-sysinfo
 
   - hosts: cartman
     vars_files:
@@ -26,6 +49,18 @@
         tags: compose
       - role: ironicbadger.ansible_role_nginx_configs
         tags: compose
+    tasks:
+      - name: remove ubuntu motd spam
+        become: true
+        file:
+          path: "/etc/update-motd.d/{{ item }}"
+          state: absent
+        loop:
+          - 80-livepatch
+          - 95-hwe-eol
+          - 10-help-text
+          - 50-motd-news
+          - 50-landscape-sysinfo
 
   - hosts: quassel
     roles:
