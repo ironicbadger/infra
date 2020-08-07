@@ -12,11 +12,16 @@
 
 - name: telegraf docker fix
   include: telegraf-fix.yaml
-  
-- name: sysctl
-  include: sysctl.yaml
+
+- name: configure nginx
+  include: nginx.yaml
   tags:
-    - sysctl
+    - nginx
+
+# - name: sysctl
+#   include: sysctl.yaml
+#   tags:
+#     - sysctl
 
 # perhaps a generic 'node' monitoring setup role?
 # - name: monitoring
