@@ -459,7 +459,7 @@ containers:
     ports:
       - "9090:9090"
   - service_name: sync
-    active: false
+    active: true
     nginx_configs_rp_enabled: false
     nginx_configs_rp_type: ""
     image: linuxserver/resilio-sync
@@ -892,7 +892,7 @@ containers:
     include_global_env_vars: false
     restart: unless-stopped
   - service_name: syncthing
-    active: true
+    active: false
     image: syncthing/syncthing
     container_name: syncthing
     network_mode: host
