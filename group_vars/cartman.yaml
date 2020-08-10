@@ -79,15 +79,15 @@ parity_disks:
   - { path: /mnt/parity2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults }
 
 data_disks:
-  - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/scsi-SATA_WDC_WD100EMAZ-00_16G10VZZ-part1, fs: xfs, opts: defaults, content: true }
-  - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/scsi-SATA_WDC_WD100EMAZ-00_2YHV69AD-part1, fs: xfs, opts: defaults, content: true }
+  - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G10VZZ-part1, fs: xfs, opts: defaults, content: true }
+  - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YHV69AD-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk3, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ15VJD-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ2S3AD-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/scsi-SATA_HGST_HDN728080AL_R6GPPDTY-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk6, diskbyid: /dev/disk/by-id/scsi-SATA_WDC_WD80EZAZ-11T_7SJ1EJAW-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk7, diskbyid: /dev/disk/by-id/scsi-SATA_WDC_WD80EZAZ-11T_7SJ3JB4W-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-HGST_HDN728080ALE604_R6GPPDTY-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ1EJAW-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk7, diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ3JB4W-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk8, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0N54S-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk9, diskbyid: /dev/disk/by-id/scsi-SATA_ST8000DM004-2CX1_WCT0NN0R-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk9, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0NN0R-part1, fs: xfs, opts: defaults, content: false }
 
 zfs_disks:
   #- { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ373DD-part1, fs: xfs, opts: defaults, content: false }
@@ -890,6 +890,18 @@ containers:
     nginx_configs_rp_enabled: true
     nginx_configs_rp_type: "subdom"
     include_global_env_vars: false
+    restart: unless-stopped
+  - service_name: syncthing
+    active: true
+    image: syncthing/syncthing
+    container_name: syncthing
+    network_mode: host
+    volumes:
+      - "{{ appdata_path_zfs }}/syncthing:/var/syncthing"
+      - "{{ cartman_main_storage_path }}/photos/images:/mnt/storage/photos/images"
+    nginx_configs_rp_enabled: true
+    nginx_configs_rp_type: "subfol"
+    include_global_env_vars: true
     restart: unless-stopped
 
   # template for docker-compose services
