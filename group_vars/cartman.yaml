@@ -229,7 +229,7 @@ containers:
     active: true
     nginx_configs_rp_enabled: true
     nginx_configs_rp_type: subfol
-    image: linuxserver/booksonic
+    image: linuxserver/booksonic:1.2-ls75
     container_name: booksonic
     mem_limit: 1024m
     volumes:
