@@ -39,8 +39,9 @@ package_list:
   - name: openssh-server
   - name: open-vm-tools
   - name: python
-  - name: qemu-guest-agent
+  #- name: qemu-guest-agent
   - name: screen
+  - name: ssh-import-id
   - name: smartmontools
   - name: sudo
   - name: tmux
@@ -57,10 +58,7 @@ bash_aliases:
   - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml " }
   - { alias: "dprune", command: "docker image prune" }
   - { alias: "dprunesys", command: "docker system prune --all" }
-  - { alias: "bashreload", command: "source ~/.bashrc && echo Bash config reloaded;" }
-  - { alias: "ctop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop " }
-  - { alias: "sshclear", command: "rm ~/.ssh/multiplex/* -f && echo SSH connection cache cleared;" }
-  - { alias: "sshlist", command: "echo Currently open ssh connections && echo && l ~/.ssh/multiplex/" }
+  - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop " }
   - { alias: "appdata", command: "cd /mnt/tank/appdata" }
   - { alias: "zspace", command: "zfs list -o space" }
   - { alias: "zsnap", command: "zfs list -t snapshot" }
@@ -122,18 +120,6 @@ containers:
     restart: unless-stopped
     cap_add:
       - NET_ADMIN
-    # depends_on:
-      # - nzbget
-      # - sonarr
-      # - radarr
-      # - lidarr
-      # - smokeping
-      # - booksonic
-      # - grafana
-      # - gitea
-      # - hc
-      # - invoiceninja
-      # - librespeed
     include_global_env_vars: true
     environment:
       - EMAIL=alexktz@gmail.com
