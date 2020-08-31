@@ -604,7 +604,10 @@ containers:
     ports:
       - 4000:4000
     volumes:
-      - "{{ appdata_path_zfs }}/chowdown:/config"
+      - "{{ appdata_path_zfs }}/chowdown/config:/config"
+      - "{{ appdata_path_zfs }}/chowdown/recipes:/config/_recipes"
+      - "{{ appdata_path_zfs }}/chowdown/posts:/config/_posts"
+      - "{{ appdata_path_zfs }}/chowdown/images:/config/_images"
     nginx_configs_rp_enabled: false
     nginx_configs_rp_type: ""
     #include_global_env_vars: false
