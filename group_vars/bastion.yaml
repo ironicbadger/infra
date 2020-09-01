@@ -19,11 +19,6 @@ groups_to_create:
     gid: "{{ main_gid }}"
   - name: wheel
 
-# ferrarimarco.bash-aliases
-bash_aliases:
-  - { alias: "sshclear", command: "rm ~/.ssh/multiplex/* -f && echo SSH connection cache cleared;"}
-  - { alias: "sshlist", command: "echo Currently open ssh connections && echo && l ~/.ssh/multiplex/"}
-
 # grog.package
 package_list:
   - name: bash-completion
