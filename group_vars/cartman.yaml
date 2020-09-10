@@ -583,7 +583,7 @@ containers:
     include_global_env_vars: false
     restart: unless-stopped
   - service_name: netbootxyz
-    active: true
+    active: false
     image: linuxserver/netbootxyz
     container_name: netbootxyz
     ports:
