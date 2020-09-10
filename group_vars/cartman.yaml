@@ -607,10 +607,10 @@ containers:
       - "{{ appdata_path_zfs }}/chowdown/config:/config"
       - "{{ appdata_path_zfs }}/chowdown/recipes:/config/_recipes"
       - "{{ appdata_path_zfs }}/chowdown/posts:/config/_posts"
-      - "{{ appdata_path_zfs }}/chowdown/images:/config/_images"
+      - "{{ appdata_path_zfs }}/chowdown/images:/config/images"
     nginx_configs_rp_enabled: false
-    nginx_configs_rp_type: ""
-    #include_global_env_vars: false
+    nginx_configs_rp_type: "subfolder"
+    include_global_env_vars: false
     restart: unless-stopped
   - service_name: librespeed
     active: true
@@ -675,6 +675,19 @@ containers:
     nginx_configs_rp_enabled: false
     nginx_configs_rp_type: ""
     include_global_env_vars: false
+    restart: unless-stopped
+  - service_name: wikijs
+    active: false
+    image: linuxserver/wikijs
+    container_name: wikijs
+    volumes:
+      - "{{ appdata_path_zfs }}/wikijs/config:/config"
+      - "{{ appdata_path_zfs }}/wikijs/data:/data"
+    ports:
+      - 8283:3000
+    nginx_configs_rp_enabled: false
+    nginx_configs_rp_type: ""
+    include_global_env_vars: true
     restart: unless-stopped
   - service_name: tiddlywiki
     active: true
@@ -881,14 +894,15 @@ containers:
     include_global_env_vars: false
     restart: unless-stopped
   - service_name: syncthing
-    active: false
+    active: true
     image: syncthing/syncthing
     container_name: syncthing
     network_mode: host
     volumes:
       - "{{ appdata_path_zfs }}/syncthing:/var/syncthing"
       - "{{ cartman_main_storage_path }}/photos/images:/mnt/storage/photos/images"
-    nginx_configs_rp_enabled: true
+      - "{{ cartman_main_storage_path }}:/mnt/storage"
+    nginx_configs_rp_enabled: false
     nginx_configs_rp_type: "subfol"
     include_global_env_vars: true
     restart: unless-stopped
