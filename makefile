@@ -5,7 +5,7 @@ c:
 	ansible-playbook -b run.yaml --limit cartman --ask-become-pass --vault-password-file .vault-password
 
 ccomp:
-	ansible-playbook -b run.yaml --limit cartman --ask-become-pass --vault-password-file .vault-password --tags compose
+	ansible-playbook run.yaml --limit cartman --vault-password-file .vault-password --tags compose
 
 q:
 	ansible-playbook -b run.yaml --limit quassel --ask-become-pass --vault-password-file .vault-password
