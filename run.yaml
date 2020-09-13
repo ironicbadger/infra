@@ -50,33 +50,19 @@
       # - role: ironicbadger.ansible_role_nginx_configs
       #   tags: compose
     tasks:
-      - name: remove ubuntu motd spam
-        become: true
-        file:
-          path: "/etc/update-motd.d/{{ item }}"
-          state: absent
-        loop:
-          - 80-livepatch
-          - 95-hwe-eol
-          - 10-help-text
-          - 50-motd-news
-          - 50-landscape-sysinfo
       - name: copy traefik config
         copy:
           src: traefik/traefik.yaml
           dest: "{{ appdata_path }}/traefik/traefik.yaml"
-          owner: 1313
-          group: 1313
+          owner: "{{ main_uid }}"
+          group: "{{ main_gid }}"
         tags: compose
       - name: copy traefik rules
         copy:
           src: traefik/rules.yaml
           dest: "{{ appdata_path }}/traefik/rules.yaml"
-          owner: 1313
-          group: 1313
-        tags: compose
-      - name: docker-compose up
-        command: dcp up -d
+          owner: "{{ main_uid }}"
+          group: "{{ main_gid }}"
         tags: compose
 
   - hosts: quassel
