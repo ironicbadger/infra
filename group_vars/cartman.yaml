@@ -1,6 +1,7 @@
 ---
 
 target_os: ubuntu
+hostname_cartman: cartman
 
 # ironicbadger.ansible_users
 users:
@@ -250,7 +251,7 @@ containers:
   - service_name: duplicati
     active: true
     image: linuxserver/duplicati
-    hostname: cartman
+    hostname: "{{ hostname_cartman }}"
     container_name: duplicati
     labels:
       - traefik.enable=true
@@ -327,6 +328,98 @@ containers:
     ports:
       - "3333:3000"
       - "\"2222:2222\""
+    include_global_env_vars: false
+    restart: unless-stopped
+###
+  - service_name: sync
+    active: true
+    image: linuxserver/resilio-sync
+    container_name: sync
+    hostname: "{{ hostname_cartman }}"
+    volumes:
+      - "{{ appdata_path }}/sync:/config"
+      - "{{ cartman_main_storage_path }}:/sync"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.btsync.rule=Host(`sync.ktz.me`)
+      - traefik.http.routers.btsync.entrypoints=websecure
+      - traefik.http.routers.btsync.tls.certresolver=cloudflare
+      - traefik.http.services.btsync.loadbalancer.server.port=8888
+    ports:
+      - "55555:55555"
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: speedtest
+    active: true
+    container_name: speedtest
+    image: roest/docker-speedtest-analyser
+    volumes:
+      - "{{ appdata_path }}/speedtest:/var/www/html/data"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.speedtest.rule=Host(`speedtest.ktz.me`)
+      - traefik.http.routers.speedtest.entrypoints=websecure
+      - traefik.http.routers.speedtest.tls.certresolver=cloudflare
+      - traefik.http.services.speedtest.loadbalancer.server.port=80
+    include_global_env_vars: true
+    restart: unless-stopped
+###
+  - service_name: librespeed
+    active: true
+    image: linuxserver/librespeed
+    container_name: librespeed
+    ports:
+      - 8008:80
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.librespeed.rule=Host(`librespeed.ktz.me`)
+      - traefik.http.routers.librespeed.entrypoints=websecure
+      - traefik.http.routers.librespeed.tls.certresolver=cloudflare
+      - traefik.http.services.librespeed.loadbalancer.server.port=80
+    environment:
+      - MODE=standalone
+      - TELEMETRY=true
+      - "PASSWORD={{ librespeed_password }}"
+    include_global_env_vars: true
+    restart: unless-stopped
+###
+  - service_name: lychee
+    active: true
+    image: lycheeorg/lychee
+    container_name: lychee
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.lychee.rule=Host(`gallery.ktz.me`)
+      - traefik.http.routers.lychee.entrypoints=websecure
+      - traefik.http.routers.lychee.tls.certresolver=cloudflare
+      - traefik.http.services.lychee.loadbalancer.server.port=80
+    depends_on:
+      - mysql
+    volumes:
+      - "{{ appdata_path }}/lychee/config:/config"
+      - "{{ appdata_path }}/lychee/uploads:/uploads"
+      - "{{ appdata_path }}/lychee/sym:/sym"
+    environment:
+      - PHP_TZ=America/New_York
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USERNAME=lychee
+      - DB_DATABASE=lychee
+      - "DB_PASSWORD={{ container_mysql_password }}"
+    include_global_env_vars: true
+    restart: unless-stopped
+###
+  - service_name: deepstack
+    active: true
+    image: deepquestai/deepstack
+    container_name: deepstack
+    ports:
+      - 5000:5000
+    volumes:
+      - "{{ appdata_path }}/deepstack:/datastore" 
+    environment:
+      - VISION-DETECTION=True
     include_global_env_vars: false
     restart: unless-stopped
 
