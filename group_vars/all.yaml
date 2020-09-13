@@ -2,7 +2,7 @@
 # generic settings
 main_username: alex
 main_groupname: "{{ main_username }}"
-main_uid: 1313
+main_uid: "1313"
 main_gid: "{{ main_uid }}"
 
 # ferrarimarco.bash-aliases
