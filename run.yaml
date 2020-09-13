@@ -50,6 +50,9 @@
       # - role: ironicbadger.ansible_role_nginx_configs
       #   tags: compose
     tasks:
+      - name: ensure hostname is set correctly
+        hostname:
+          name: "{{ hostname_cartman }}"
       - name: copy traefik config
         copy:
           src: traefik/traefik.yaml
