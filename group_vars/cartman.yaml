@@ -148,6 +148,58 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
 ###
+  - service_name: nzbget
+    active: true
+    image: linuxserver/nzbget
+    container_name: nzbget
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nzbget.rule=(Host(`al.ktz.me`) && PathPrefix(`/nzbget`))
+      - traefik.http.routers.nzbget.entrypoints=websecure
+      - traefik.http.routers.nzbget.tls.certresolver=cloudflare
+      - traefik.http.services.nzbget.loadbalancer.server.port=6789
+    volumes:
+      - "{{ appdata_path }}/nzbget/config:/config"
+      - "{{ download_path }}:/downloads"
+    restart: unless-stopped
+    include_global_env_vars: true
+###
+  - service_name: sonarr
+    active: true
+    image: linuxserver/sonarr:preview
+    container_name: sonarr
+    depends_on:
+      - nzbget
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sonarr.rule=(Host(`al.ktz.me`) && PathPrefix(`/sonarr`))
+      - traefik.http.routers.sonarr.entrypoints=websecure
+      - traefik.http.routers.sonarr.tls.certresolver=cloudflare
+      - traefik.http.services.sonarr.loadbalancer.server.port=8989
+    volumes:
+      - "{{ appdata_path }}/sonarr:/config"
+      - "{{ download_path }}/complete/tv:/downloads/complete/tv"
+      - /mnt/storage/tv:/tv
+    restart: unless-stopped
+    include_global_env_vars: true
+###
+  - service_name: radarr
+    active: true
+    image: linuxserver/radarr
+    container_name: radarr
+    volumes:
+      - "{{ appdata_path }}/radarr:/config"
+      - "{{ cartman_main_storage_path }}/movies:/movies"
+      - "{{ download_path }}/complete/movies:/downloads/complete/movies"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.radarr.rule=(Host(`al.ktz.me`) && PathPrefix(`/radarr`))
+      - traefik.http.routers.radarr.entrypoints=websecure
+      - traefik.http.routers.radarr.tls.certresolver=cloudflare
+      - traefik.http.services.radarr.loadbalancer.server.port=7878
+    restart: unless-stopped
+    include_global_env_vars: true
+###
   - service_name: tiddlywiki
     active: true
     image: mazzolino/tiddlywiki
@@ -200,12 +252,9 @@ containers:
     image: linuxserver/duplicati
     hostname: cartman
     container_name: duplicati
-    ports:
-      - "8200:8200"
     labels:
       - traefik.enable=true
       - traefik.http.routers.duplicati.rule=Host(`duplicati.ktz.me`)
-      #- "traefik.http.routers.duplicati.rule=(Host(`{{ primary_domain }}`) && Path(`/duplicati`))"
       - traefik.http.routers.duplicati.entrypoints=websecure
       - traefik.http.routers.duplicati.tls.certresolver=cloudflare
       - traefik.http.services.duplicati.loadbalancer.server.port=8200
@@ -217,7 +266,69 @@ containers:
       - /opt:/source/opt
     include_global_env_vars: true
     restart: unless-stopped
-
+###
+  - service_name: booksonic
+    active: true
+    image: linuxserver/booksonic:1.2-ls75
+    container_name: booksonic
+    volumes:
+      - "{{ appdata_path }}/booksonic:/config"
+      - "{{ cartman_main_storage_path }}/audiobooks:/books"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.booksonic.rule=(Host(`al.ktz.me`) && PathPrefix(`/booksonic`))
+      - traefik.http.routers.booksonic.entrypoints=websecure
+      - traefik.http.routers.booksonic.tls.certresolver=cloudflare
+      - traefik.http.services.booksonic.loadbalancer.server.port=4040
+    environment:
+      - CONTEXT_PATH=booksonic
+    include_global_env_vars: true
+    restart: unless-stopped
+###
+  - service_name: smokeping
+    active: true
+    image: linuxserver/smokeping
+    container_name: smokeping
+    volumes:
+      - "{{ appdata_path }}/smokeping/config:/config"
+      - "{{ appdata_path }}/smokeping/data:/data"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.smokeping.rule=(Host(`al.ktz.me`) && PathPrefix(`/smokeping`))
+      - traefik.http.routers.smokeping.entrypoints=websecure
+      - traefik.http.routers.smokeping.tls.certresolver=cloudflare
+      - traefik.http.services.smokeping.loadbalancer.server.port=80
+    include_global_env_vars: true
+    restart: unless-stopped
+###
+  - service_name: gitea
+    active: true
+    image: gitea/gitea
+    container_name: gitea
+    depends_on:
+      - mysql
+    environment:
+      - "USER_UID={{ main_uid }}"
+      - "USER_GID={{ main_gid }}"
+      - "ROOT_URL=https://git.ktz.me"
+      - "SSH_DOMAIN=git.ktz.me"
+      - "APP_NAME=git.ktz.me"
+      - "SSH_PORT=2222"
+      - "DISABLE_REGISTRATION=true"
+      - "REQUIRE_SIGNIN_VIEW=true"
+    volumes:
+      - "{{ appdata_path }}/gitea:/data"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.git.rule=Host(`git.ktz.me`)
+      - traefik.http.routers.git.entrypoints=websecure
+      - traefik.http.routers.git.tls.certresolver=cloudflare
+      - traefik.http.services.git.loadbalancer.server.port=3000
+    ports:
+      - "3333:3000"
+      - "\"2222:2222\""
+    include_global_env_vars: false
+    restart: unless-stopped
 
   # template for docker-compose services
   #
@@ -238,831 +349,6 @@ containers:
 
 
 
-
-
-
-
-
-# containers:
-#   - service_name: le
-#     active: true
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     image: linuxserver/letsencrypt
-#     container_name: le
-#     ports:
-#       - 80:80
-#       - 443:443
-#     volumes:
-#       - "{{ appdata_path_zfs }}/letsencrypt/config:/config"
-#       - "{{ appdata_path_zfs }}/letsencrypt/www:/var/www/public"
-#       - "{{ appdata_path_zfs }}/invoiceninja:/var/www/app"
-#     restart: unless-stopped
-#     cap_add:
-#       - NET_ADMIN
-#     include_global_env_vars: true
-#     environment:
-#       - EMAIL=alexktz@gmail.com
-#       - URL=ktz.me
-#       - SUBDOMAINS=wildcard
-#       - ONLY_SUBDOMAINS=true
-#       - EXTRA_DOMAINS=nc.ktz.cloud
-#       - DHLEVEL=4096
-#       - VALIDATION=dns
-#       - DNSPLUGIN=cloudflare
-#     mem_limit: 256m
-#   - service_name: heimdall
-#     active: false
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: subdom
-#     image: linuxserver/heimdall
-#     container_name: heimdall
-#     mem_limit: 256m
-#     include_global_env_vars: true
-#     volumes:
-#       - "{{ appdata_path_zfs }}/heimdall:/config"
-#     restart: unless-stopped
-#   - service_name: plex
-#     active: true
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     image: plexinc/pms-docker
-#     container_name: plex
-#     network_mode: host
-#     volumes:
-#       - "{{ appdata_path_opt }}/plex/config:/config"
-#       - "/mnt/storage:/data"
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: nzbget
-#     active: true
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: subfol
-#     image: linuxserver/nzbget
-#     container_name: nzbget
-#     volumes:
-#       - "{{ appdata_path_zfs }}/nzbget/config:/config"
-#       - "{{ download_path }}:/downloads"
-#     # ports:
-#     #   - "6789:6789"
-#     restart: unless-stopped
-#     include_global_env_vars: true
-#   - service_name: sonarr
-#     active: true
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: subfol
-#     image: linuxserver/sonarr:preview
-#     container_name: sonarr
-#     depends_on:
-#       - nzbget
-#     volumes:
-#       - "{{ appdata_path_zfs }}/sonarr:/config"
-#       - "{{ download_path }}/complete/tv:/downloads/complete/tv"
-#       - /mnt/storage/tv:/tv
-#     # ports:
-#     #   - "8989:8989"
-#     restart: unless-stopped
-#     include_global_env_vars: true
-#   - service_name: radarr
-#     active: true
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: subfol
-#     image: linuxserver/radarr
-#     container_name: radarr
-#     volumes:
-#       - "{{ appdata_path_zfs }}/radarr:/config"
-#       - /mnt/storage/movies:/movies
-#       - "{{ download_path }}/complete/movies:/downloads/complete/movies"
-#     # ports:
-#     #   - "7878:7878"
-#     restart: unless-stopped
-#     include_global_env_vars: true
-#   - service_name: lidarr
-#     active: true
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: subfol
-#     image: linuxserver/lidarr
-#     container_name: lidarr
-#     volumes:
-#       - "{{ appdata_path_zfs }}/lidarr:/config"
-#       - /mnt/storage/music/flac:/flac
-#       - "{{ download_path }}/complete/music:/downloads/complete/music"
-#     # ports:
-#     #   - "8686:8686"
-#     restart: unless-stopped
-#     include_global_env_vars: true
-#   - service_name: booksonic
-#     active: true
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: subfol
-#     image: linuxserver/booksonic:1.2-ls75
-#     container_name: booksonic
-#     mem_limit: 1024m
-#     volumes:
-#       - "{{ appdata_path_zfs }}/booksonic:/config"
-#       - /mnt/storage/audiobooks:/books
-#     # ports:
-#     #   - "4040:4040"
-#     include_global_env_vars: true
-#     environment:
-#       - CONTEXT_PATH=booksonic
-#     restart: unless-stopped
-#   - service_name: tautulli
-#     active: true
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: subfol
-#     image: linuxserver/tautulli
-#     container_name: tautulli
-#     mem_limit: 512m
-#     depends_on:
-#       - plex
-#     include_global_env_vars: true
-#     volumes:
-#       - "{{ appdata_path_zfs }}/tautulli:/config"
-#       - "{{ appdata_path_opt }}/plex/Library/Application\ Support/Plex\ Media\ Server/Logs:/logs:ro"
-#     # ports:
-#     #   - "8181:8181"
-#     restart: unless-stopped
-#   - service_name: ombi
-#     active: false
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: subfol
-#     image: linuxserver/ombi
-#     container_name: ombi
-#     depends_on:
-#       - plex
-#     mem_limit: 512m
-#     include_global_env_vars: true
-#     volumes:
-#       - "{{ appdata_path_zfs }}/ombi:/config"
-#     # ports:
-#     #   - "3579:3579"
-#     restart: unless-stopped
-#   - service_name: ha
-#     active: true
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: "subdom"
-#     container_name: hassfake
-#     image: hello-world
-#     # ports:
-#     #   - "8123:8123"
-#     include_global_env_vars: false
-#   - service_name: dockermon
-#     active: false
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     container_name: dockermon
-#     include_global_env_vars: false
-#     image: philhawthorne/ha-dockermon
-#     volumes:
-#       - "/var/run/docker.sock:/var/run/docker.sock"
-#       - "{{ appdata_path_zfs }}/dockermon:/config"
-#     ports:
-#       - "8126:8126"
-#     restart: unless-stopped
-#   - service_name: grafana
-#     active: true
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: subfol
-#     include_global_env_vars: false
-#     image: grafana/grafana
-#     container_name: grafana
-#     environment:
-#       - "GF_SERVER_ROOT_URL=https://al.ktz.me/grafana"
-#       - "GF_SERVER_DOMAIN=https://al.ktz.me/"
-#     ports:
-#       - "3000:3000"
-#     volumes:
-#       - "{{ appdata_path_zfs }}/grafana/data:/var/lib/grafana"
-#     restart: unless-stopped
-#   - service_name: influxdb
-#     active: true
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     container_name: influx
-#     image: influxdb
-#     ports:
-#       - "8086:8086"
-#     volumes:
-#       - "{{ appdata_path_zfs }}/influxdb:/var/lib/influxdb"
-#     include_global_env_vars: false
-#     restart: unless-stopped
-#   - service_name: smokeping
-#     active: true
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: subfol
-#     image: linuxserver/smokeping
-#     container_name: smokeping
-#     mem_limit: 128m
-#     include_global_env_vars: true
-#     volumes:
-#       - "{{ appdata_path_zfs }}/smokeping/config:/config"
-#       - "{{ appdata_path_zfs }}/smokeping/data:/data"
-#     # ports:
-#     #   - "8080:80"
-#     restart: unless-stopped
-#   - service_name: duplicati
-#     active: true
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: "subdom"
-#     image: linuxserver/duplicati
-#     hostname: cartman
-#     container_name: duplicati
-#     ports:
-#       - "8200:8200"
-#     volumes:
-#       - "{{ appdata_path_zfs }}/duplicati:/config"
-#       - /mnt/storage/backups:/backups
-#       - /mnt/storage:/source/storage
-#       - /mnt/tank:/source/tank
-#       - /opt:/source/opt
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: hc
-#     active: false
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: "subdom"
-#     image: linuxserver/healthchecks
-#     container_name: hc
-#     include_global_env_vars: true
-#     environment:
-#       - SITE_ROOT=health.ktz.me
-#       - SITE_NAME=health.ktz.me
-#       - DEFAULT_FROM_EMAIL=alexktz@gmail.com
-#       - EMAIL_HOST=smtp.gmail.com
-#       - EMAIL_PORT=587
-#       - EMAIL_HOST_USER=alexktz@gmail.com
-#       - EMAIL_HOST_PASSWORD={{ gmail_password }}
-#       - EMAIL_USE_TLS=True
-#       - ALLOWED_HOSTS=["*"]
-#     volumes:
-#       - "{{ appdata_path_zfs }}/healthchecks:/config"
-#     ports:
-#       - "8000:8000"
-#     restart: unless-stopped
-#   - service_name: nextcloud
-#     active: true
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: "subdom"
-#     image: nextcloud:19
-#     depends_on:
-#       - mysql
-#     container_name: nc
-#     include_global_env_vars: false
-#     volumes:
-#       - "{{ appdata_path_zfs }}/nextcloud:/var/www/html"
-#     # ports:
-#     #   - "8081:80"
-#     restart: unless-stopped
-#   - service_name: mysql
-#     active: true
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     image: mariadb
-#     container_name: mysql
-#     include_global_env_vars: false
-#     ports:
-#       - 3306:3306
-#     environment:
-#       - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
-#       - "MYSQL_PASSWORD={{ container_mysql_password }}"
-#       - MYSQL_DATABASE=nextcloud
-#       - MYSQL_USER=nextcloud
-#     volumes:
-#       - "{{ appdata_path_zfs }}/mysql:/var/lib/mysql"
-#     command: "--transaction-isolation=READ-COMMITTED --binlog-format=ROW"
-#     restart: unless-stopped
-#   - service_name: gitea
-#     active: true
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: "subdom"
-#     image: gitea/gitea
-#     container_name: gitea
-#     include_global_env_vars: false
-#     depends_on:
-#       - mysql
-#     environment:
-#       - "USER_UID={{ main_uid }}"
-#       - "USER_GID={{ main_gid }}"
-#       - "ROOT_URL=https://git.ktz.me"
-#       - "SSH_DOMAIN=git.ktz.me"
-#       - "APP_NAME=git.ktz.me"
-#       - "SSH_PORT=2222"
-#       - "DISABLE_REGISTRATION=true"
-#       - "REQUIRE_SIGNIN_VIEW=true"
-#     restart: unless-stopped
-#     volumes:
-#       - "{{ appdata_path_zfs }}/gitea:/data"
-#     ports:
-#       - "3333:3000"
-#       - "\"2222:2222\""
-#   - service_name: monica
-#     active: false
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: "subfol"
-#     image: monicahq/monicahq
-#     container_name: monica
-#     env_file: 
-#       - "{{ appdata_path_zfs }}/monica/config/env"
-#     include_global_env_vars: false
-#     ports:
-#       - "8088:80"
-#     depends_on:
-#       - mysql
-#     volumes:
-#       - "{{ appdata_path_zfs }}/monica/data:/var/www/monica/storage"
-#     restart: unless-stopped
-#   - service_name: prometheus
-#     active: false
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     image: prom/prometheus
-#     container_name: prometheus
-#     include_global_env_vars: false
-#     volumes:
-#       - "{{ appdata_path_zfs }}/prometheus/data:/prometheus"
-#       - "{{ appdata_path_zfs }}/prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml"
-#     ports:
-#       - "9090:9090"
-#   - service_name: sync
-#     active: true
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     image: linuxserver/resilio-sync
-#     container_name: sync
-#     include_global_env_vars: true
-#     volumes:
-#       - "{{ appdata_path_zfs }}/sync:/config"
-#       - /mnt/storage:/sync
-#     hostname: cartman
-#     ports:
-#       - "27028:8888"
-#       - "55555:55555"
-#     restart: unless-stopped
-#   - service_name: openvpn
-#     active: false
-#     container_name: openvpn
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: true
-#     image: dperson/openvpn-client
-#     cap_add:
-#       - NET_ADMIN
-#     dns:
-#       - 1.1.1.1
-#     volumes:
-#       - /dev/net:/dev/net:z
-#       - "{{ appdata_path_zfs }}/openvpn:/vpn:ro"
-#     restart: unless-stopped
-#   - service_name: qbit
-#     active: false
-#     container_name: qbit
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     image: linuxserver/qbittorrent
-#     include_global_env_vars: true
-#     environment:
-#       - "WEBUI_PORT=8082"
-#     volumes:
-#       - "{{ appdata_path_zfs }}/qbit/config:/config"
-#       - "{{ appdata_path_zfs }}/qbit/downloads:/downloads"
-#       - "{{ appdata_path_zfs }}/qbit/torrents:/torrents"
-#     depends_on:
-#       - openvpn
-#     network_mode: service:openvpn
-#     restart: unless-stopped
-#   - service_name: shinobi
-#     active: false
-#     container_name: shinobi
-#     image: alexphillips/shinobi
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: true
-#     shm_size: "'2gb'"
-#     ports:
-#       - 9001:9001/tcp
-#     volumes:
-#       - "{{ appdata_path_zfs }}/shinobi/config:/config"
-#       - "{{ appdata_path_zfs }}/shinobi/data:/data"
-#     restart: unless-stopped
-#   - service_name: speedtest
-#     active: true
-#     container_name: speedtest
-#     image: roest/docker-speedtest-analyser
-#     ports:
-#       - 9002:80
-#     volumes:
-#       - "{{ appdata_path_zfs }}/speedtest:/var/www/html/data"
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: invoiceninja
-#     active: true
-#     image: invoiceninja/invoiceninja:4.5.18
-#     container_name: invoiceninja
-#     volumes:
-#       - "{{ appdata_path_zfs }}/invoiceninja/storage:/var/www/app/storage"
-#       - "{{ appdata_path_zfs }}/invoiceninja/public/logo:/var/www/app/logo"
-#       - "{{ appdata_path_zfs }}/invoiceninja/public:/var/www/app/public"
-#     ports:
-#       - 9000:9000
-#     environment:
-#       - MYSQL_DATABASE=ninja
-#       - "MYSQL_ROOT_PASSWORD={{ container_mysql_password}}"
-#       - APP_DEBUG=0
-#       - "APP_URL={{ invoice_ninja_app_url }}"
-#       - "APP_KEY={{ invoice_ninja_app_key }}"
-#       - APP_CIPHER=AES-256-CBC
-#       - DB_USERNAME=root
-#       - "DB_PASSWORD={{ container_mysql_password}}"
-#       - DB_HOST=mysql
-#       - DB_DATABASE=ninja
-#       - MAIL_HOST=smtp.gmail.com
-#       - "MAIL_USERNAME={{ gmail_address }}"
-#       - "MAIL_PASSWORD={{ gmail_password }}"
-#       - MAIL_DRIVER=smtp
-#       - MAIL_FROM_NAME="Alex K"
-#       - "MAIL_FROM_ADDRESS={{ gmail_address }}"
-#       - REQUIRE_HTTPS=true
-#       - "TRUSTED_PROXIES='*'"
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: "subdom"
-#     include_global_env_vars: false
-#     restart: unless-stopped
-#   - service_name: funkwhale
-#     active: false
-#     image: funkwhale/all-in-one:0.21
-#     container_name: funkwhale
-#     ports:
-#       - 5001:80
-#     volumes:
-#       - "{{ appdata_path_zfs }}/funkwhale:/data"
-#       - "{{ cartman_main_storage_path }}/music/flac:/music:ro"
-#     environment:
-#       - FUNKWHALE_HOSTNAME=funk.ktz.me
-#       - FUNKWHALE_PROTOCOL=https
-#       #- FUNKWHALE_VERSION=0.21
-#       - FUNKWHALE_API_IP=127.0.0.1
-#       - FUNKWHALE_API_PORT=5000
-#       - "DJANGO_SECRET_KEY={{ funkwhale_django_secret }}"
-#       - NESTED_PROXY=1
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: "subdom"
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: esphome
-#     active: false
-#     image: esphome/esphome
-#     container_name: esphome
-#     volumes:
-#       - "{{ appdata_path_zfs }}/esphome:/config"
-#     network_mode: host
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: false
-#     restart: unless-stopped
-#   - service_name: netbootxyz
-#     active: false
-#     image: linuxserver/netbootxyz
-#     container_name: netbootxyz
-#     ports:
-#       - "69:69/udp"
-#       - 3003:3000
-#       - 8080:80
-#     volumes:
-#       - "{{ appdata_path_zfs }}/netbootxyz/config:/config"
-#       - "{{ appdata_path_zfs }}/netbootxyz/assets:/assets"
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: chowdown
-#     active: true
-#     image: gregyankovoy/chowdown
-#     container_name: chowdown
-#     ports:
-#       - 4000:4000
-#     volumes:
-#       - "{{ appdata_path_zfs }}/chowdown/config:/config"
-#       - "{{ appdata_path_zfs }}/chowdown/recipes:/config/_recipes"
-#       - "{{ appdata_path_zfs }}/chowdown/posts:/config/_posts"
-#       - "{{ appdata_path_zfs }}/chowdown/images:/config/images"
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: "subfolder"
-#     include_global_env_vars: false
-#     restart: unless-stopped
-#   - service_name: librespeed
-#     active: true
-#     image: linuxserver/librespeed
-#     container_name: librespeed
-#     ports:
-#       - 8008:80
-#     environment:
-#       - MODE=standalone
-#       - TELEMETRY=true
-#       - "PASSWORD={{ librespeed_password }}"
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: "subdom"
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: jellyfin
-#     active: false
-#     image: jellyfin/jellyfin
-#     container_name: jellyfin
-#     network_mode: host
-#     volumes:
-#       - "{{ appdata_path_zfs }}/jellyfin/config:/config"
-#       - "{{ appdata_path_zfs }}/jellyfin/cache:/cache"
-#       - "/mnt/storage:/media"
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: false
-#     restart: unless-stopped
-#   - service_name: bookstack
-#     active: false
-#     image: linuxserver/bookstack
-#     container_name: bookstack
-#     ports:
-#       - 6875:80
-#     volumes:
-#       - "{{ appdata_path_zfs }}/bookstack:/config }}"
-#     environment:
-#       - DB_USERNAME=root
-#       - "DB_PASSWORD={{ container_mysql_password}}"
-#       - DB_HOST=mysql
-#       - DB_DATABASE=bookstack
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: "subdom"
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: wikijs
-#     active: false
-#     image: requarks/wiki:2
-#     container_name: wikijs
-#     ports:
-#       - 8282:80
-#       - 8283:3000
-#     depends_on:
-#       - mysql
-#     environment:
-#       - DB_TYPE=mysql
-#       - DB_PORT=3306
-#       - DB_USER=root
-#       - "DB_PASS={{ container_mysql_password}}"
-#       - DB_HOST=mysql
-#       - DB_NAME=wikijs
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: false
-#     restart: unless-stopped
-#   - service_name: wikijs
-#     active: false
-#     image: linuxserver/wikijs
-#     container_name: wikijs
-#     volumes:
-#       - "{{ appdata_path_zfs }}/wikijs/config:/config"
-#       - "{{ appdata_path_zfs }}/wikijs/data:/data"
-#     ports:
-#       - 8283:3000
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: tiddlywiki
-#     active: true
-#     image: mazzolino/tiddlywiki
-#     container_name: tiddlywiki
-#     # ports:
-#     #   - 8088:8080
-#     volumes:
-#       - "{{ appdata_path_zfs }}/tiddlywiki:/var/lib/tiddlywiki" 
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: "subdom"
-#     include_global_env_vars: false
-#     restart: unless-stopped
-#   - service_name: grocy
-#     active: false
-#     image: linuxserver/grocy
-#     container_name: grocy
-#     # ports:
-#     #   - 9283:80
-#     volumes:
-#       - "{{ appdata_path_zfs }}/grocy:/config"
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: "subdom"
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: beets
-#     active: false
-#     image: linuxserver/beets
-#     container_name: beets
-#     ports:
-#       - 8337:8337
-#     volumes:
-#       - "{{ appdata_path_zfs }}/beets:/config"
-#       - /mnt/storage/music/flac:/music
-#       - /opt/downloads/complete/music:/downloads
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: musicbrainz
-#     active: false
-#     image: linuxserver/musicbrainz
-#     container_name: musicbrainz
-#     ports:
-#       - 5000:5000
-#     volumes:
-#       - "{{ appdata_path_zfs }}/musicbrainz/config:/config"
-#       - "{{ appdata_path_zfs }}/musicbrainz/data:/data" 
-#     environment:
-#       - "BRAINZCODE={{ musicbrainz_token }}"
-#       - WEBADDRESS=192.168.1.10
-#       - NPROC=20
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: lidarrlad
-#     active: false
-#     image: randomninjaatk/lidarr-lad
-#     container_name: lidarrlad
-#     ports:
-#       - 8686:8686
-#     volumes:
-#       - "{{ appdata_path_zfs }}/lidarrlad:/config"
-#       - "/mnt/storage/music/deez:/storage"
-#       - /mnt/storage/music/flac:/flac
-#     environment:
-#       - UMASK_SET=022
-#       - "ARL_TOKEN={{ deezer_arl_token }}"
-#       - quality=FLAC
-#       - VerifyTrackCount=true
-#       - CONCURRENCY=16
-#       - FolderPermissions=777
-#       - FilePermissions=666
-#       - TagWithBeets=false
-#       - RequireQuality=true
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: false
-#     restart: unless-stopped
-#   - service_name: filtr
-#     active: false
-#     image: alexphillips/filter
-#     container_name: filtr
-#     ports:
-#       - 3005:3000
-#     volumes:
-#       - "{{ appdata_path_zfs }}/filtr:/config"
-#       - /mnt/storage/photos/images:/photos:ro
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: digikam
-#     active: false
-#     image: linuxserver/digikam
-#     container_name: digikam
-#     ports:
-#       - 3334:3000
-#     volumes:
-#       - "{{ appdata_path_zfs }}/digikam:/config"
-#       - /mnt/storage/photos/digikamtest:/photos
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: calibre
-#     active: false
-#     image: linuxserver/calibre
-#     container_name: calibre
-#     ports:
-#       - 28080:8080
-#       - 28081:8081
-#     volumes:
-#       - "{{ appdata_path_zfs }}/calibre:/config" 
-#     environment:
-#       - "GUAC_USER={{ calibre_guac_user }}"
-#       - "GUAC_PASS={{ calibre_guac_pass }}"
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: "subfol"
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: calibre-web
-#     active: false
-#     image: linuxserver/calibre-web
-#     container_name: calibre-web
-#     ports:
-#       - 28083:8083
-#     volumes:
-#       - "{{ appdata_path_zfs }}/calibre-web:/config" 
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: lychee
-#     active: true
-#     image: lycheeorg/lychee
-#     container_name: lychee
-#     ports:
-#       - 90:80
-#     depends_on:
-#       - mysql
-#     volumes:
-#       - "{{ appdata_path_zfs }}/lychee/config:/config"
-#       - "{{ appdata_path_zfs }}/lychee/uploads:/uploads"
-#       - "{{ appdata_path_zfs }}/lychee/sym:/sym"
-#     environment:
-#       - PHP_TZ=America/New_York
-#       - DB_CONNECTION=mysql
-#       - DB_HOST=mysql
-#       - DB_PORT=3306
-#       - DB_USERNAME=lychee
-#       - DB_DATABASE=lychee
-#       - "DB_PASSWORD={{ container_mysql_password }}"
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: "subdom"
-#     include_global_env_vars: true
-#     restart: unless-stopped
-#   - service_name: deepstack
-#     active: true
-#     image: deepquestai/deepstack
-#     container_name: deepstack
-#     ports:
-#       - 5000:5000
-#     volumes:
-#       - "{{ appdata_path_zfs }}/deepstack:/datastore" 
-#     environment:
-#       - VISION-DETECTION=True
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: false
-#     restart: unless-stopped
-#   - service_name: aitrigger
-#     active: false
-#     image: danecreekphotography/node-deepstackai-trigger
-#     container_name: aitrigger
-#     ports:
-#       - 5001:4242
-#     depends_on: 
-#       - deepstack
-#     environment:
-#       - VISION-DETECTION=True
-#     volumes:
-#       - "{{ appdata_path_zfs }}/deepstack-aitrigger:/config"
-#       - /mnt/storage/videos/cctv/aiinput:/aiinput
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: ""
-#     include_global_env_vars: false
-#     restart: unless-stopped
-#   - service_name: stikked
-#     active: false
-#     image: alexphillips/stikked
-#     container_name: stikked
-#     volumes:
-#       - "{{ appdata_path_zfs }}/stikked/config:/config" 
-#       - "{{ appdata_path_zfs }}/stikked/data:/data" 
-#     environment:
-#       - SITE_NAME=ktz.me
-#       - BASE_URL=https://paste.ktz.me/
-#       - DB_DATABASE=/data/stikked
-#       - DB_DRIVER=sqlite
-#     nginx_configs_rp_enabled: true
-#     nginx_configs_rp_type: "subdom"
-#     include_global_env_vars: false
-#     restart: unless-stopped
-#   - service_name: syncthing
-#     active: true
-#     image: syncthing/syncthing
-#     container_name: syncthing
-#     network_mode: host
-#     volumes:
-#       - "{{ appdata_path_zfs }}/syncthing:/var/syncthing"
-#       - "{{ cartman_main_storage_path }}/photos/images:/mnt/storage/photos/images"
-#       - "{{ cartman_main_storage_path }}:/mnt/storage"
-#     nginx_configs_rp_enabled: false
-#     nginx_configs_rp_type: "subfol"
-#     include_global_env_vars: true
-#     restart: unless-stopped
-
-  # template for docker-compose services
-  #
-  # - service_name:
-  #   active:
-  #   image:
-  #   container_name:
-  #   ports:
-  #     -
-  #   volumes:
-  #     - "{{ appdata_path_zfs }}/app:/config" 
-  #   environment:
-  #     -
-  #   nginx_configs_rp_enabled: false
-  #   nginx_configs_rp_type: ""
-  #   include_global_env_vars: false
-  #   restart: unless-stopped
 
 ## snapraid
 snapraid_config_excludes:
