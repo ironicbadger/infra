@@ -216,6 +216,26 @@ containers:
     include_global_env_vars: false
     restart: unless-stopped
 ###
+  - service_name: chowdown
+    active: true
+    image: gregyankovoy/chowdown
+    container_name: chowdown
+    ports:
+      - 4000:4000
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.chowdown.rule=(Host(`al.ktz.me`) && PathPrefix(`/chowdown`))
+      - traefik.http.routers.chowdown.entrypoints=websecure
+      - traefik.http.routers.chowdown.tls.certresolver=cloudflare
+      - traefik.http.services.chowdown.loadbalancer.server.port=4000
+    volumes:
+      - "{{ appdata_path }}/chowdown/config:/config"
+      - "{{ appdata_path }}/chowdown/recipes:/config/_recipes"
+      - "{{ appdata_path }}/chowdown/posts:/config/_posts"
+      - "{{ appdata_path }}/chowdown/images:/config/images"
+    include_global_env_vars: false
+    restart: unless-stopped
+###
   - service_name: nextcloud
     active: true
     image: nextcloud:19
