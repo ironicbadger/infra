@@ -1,0 +1,44 @@
+entryPoints:
+    web:
+        address: :80
+        http:
+          redirections:
+            entryPoint:
+              to: websecure
+              scheme: https
+    websecure:
+        address: :443
+    traefik:
+        address: ":8080"
+    
+ping: {}
+
+providers:
+    docker:
+        endpoint: unix:///var/run/docker.sock
+        watch: true
+        exposedByDefault: false
+    # file:
+    #   filename: /etc/traefik/file-provider.yml
+
+api:
+    dashboard: true
+    insecure: true
+
+log:
+    level: debug
+
+certificatesResolvers:
+    cloudflare:
+        acme:
+            email: alexktz@gmail.com
+            storage: /etc/traefik/acme.json
+            dnsChallenge:
+                provider: cloudflare
+                delayBeforeCheck: 0
+                resolvers:
+                - 1.1.1.1:53
+                - 1.0.0.1:53
+
+serversTransport:
+    insecureSkipVerify: true
