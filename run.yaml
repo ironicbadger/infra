@@ -47,8 +47,8 @@
       - role: ktz-cartman
       - role: ironicbadger.ansible_role_docker_compose_generator
         tags: compose
-      - role: ironicbadger.ansible_role_nginx_configs
-        tags: compose
+      # - role: ironicbadger.ansible_role_nginx_configs
+      #   tags: compose
     tasks:
       - name: remove ubuntu motd spam
         become: true
@@ -61,6 +61,23 @@
           - 10-help-text
           - 50-motd-news
           - 50-landscape-sysinfo
+      - name: copy traefik config
+        copy:
+          src: traefik/traefik.yaml
+          dest: "{{ appdata_path }}/traefik/traefik.yaml"
+          owner: 1313
+          group: 1313
+        tags: compose
+      - name: copy traefik rules
+        copy:
+          src: traefik/rules.yaml
+          dest: "{{ appdata_path }}/traefik/rules.yaml"
+          owner: 1313
+          group: 1313
+        tags: compose
+      - name: docker-compose up
+        command: dcp up -d
+        tags: compose
 
   - hosts: quassel
     roles:
