@@ -285,6 +285,33 @@ containers:
       - "--transaction-isolation=READ-COMMITTED --binlog-format=ROW"
     restart: unless-stopped
 ###
+  - service_name: grafana
+    active: true
+    image: grafana/grafana
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.grafana.rule=(Host(`al.ktz.me`) && PathPrefix(`/grafana`))
+      - traefik.http.routers.grafana.entrypoints=websecure
+      - traefik.http.routers.grafana.tls.certresolver=cloudflare
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+    environment:
+      - "GF_SERVER_ROOT_URL=https://al.ktz.me/grafana"
+      - "GF_SERVER_SERVE_FROM_SUB_PATH=true"
+      - "GF_SERVER_DOMAIN=al.ktz.me"
+    volumes:
+      - "{{ appdata_path }}/grafana/data:/var/lib/grafana"
+    restart: unless-stopped
+###
+  - service_name: influxdb
+    active: true
+    container_name: influx
+    image: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - "{{ appdata_path }}/influxdb:/var/lib/influxdb"
+    restart: unless-stopped
+###
   - service_name: duplicati
     active: true
     image: linuxserver/duplicati
