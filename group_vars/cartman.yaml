@@ -74,8 +74,8 @@ extra_mountpoints:
   
 
 parity_disks:
-  - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G0Z7RZ-part1, fs: xfs, opts: defaults }
-  - { path: /mnt/parity2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults }
+  - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G0Z7RZ-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/parity2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
 
 data_disks:
   - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G10VZZ-part1, fs: xfs, opts: defaults, content: true }
