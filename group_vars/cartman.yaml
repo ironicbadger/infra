@@ -107,20 +107,41 @@ primary_domain: al.ktz.me
 containers:
   ###
   - service_name: traefik
+    container_name: tr
     active: true
     image: traefik
-    container_name: tr
     ports:
       - 80:80
       - 443:443
       - 8080:8080
+    extra_hosts: 
+      - host.docker.internal:172.17.0.1
     environment:
       - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
       - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
     volumes:
       - "{{ appdata_path }}/traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    include_global_env_vars: false
+    restart: unless-stopped
+###
+  - service_name: authelia
+    active: false
+    image: authelia/authelia
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.authelia.rule=Host(`login.ktz.me`)
+      - traefik.http.routers.authelia.entrypoints=websecure
+      - traefik.http.routers.authelia.tls.certresolver=cloudflare
+      - traefik.http.services.authelia.loadbalancer.server.port=9091
+      - traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://login.ktz.me/
+      - traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true
+      - traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User, Remote-Groups
+    volumes:
+      - "{{ appdata_path }}/authelia:/config"
+    restart: unless-stopped
+  - service_name: redis
+    active: false
+    image: redis
     restart: unless-stopped
 ###
   - service_name: nginx
@@ -141,8 +162,13 @@ containers:
   - service_name: plex
     active: true
     image: plexinc/pms-docker
-    container_name: plex
     network_mode: host
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.plex.rule=Host(`plex.ktz.me`)
+      - traefik.http.routers.plex.entrypoints=websecure
+      - traefik.http.services.plex.loadbalancer.server.port=32400
+      - traefik.http.routers.plex.tls.certresolver=cloudflare
     volumes:
       - "{{ appdata_path }}/plex/config:/config"
       - "{{ cartman_main_storage_path }}:/data"
@@ -152,7 +178,6 @@ containers:
   - service_name: nzbget
     active: true
     image: linuxserver/nzbget
-    container_name: nzbget
     labels:
       - traefik.enable=true
       - traefik.http.routers.nzbget.rule=(Host(`al.ktz.me`) && PathPrefix(`/nzbget`))
@@ -168,7 +193,6 @@ containers:
   - service_name: sonarr
     active: true
     image: linuxserver/sonarr:preview
-    container_name: sonarr
     depends_on:
       - nzbget
     labels:
@@ -187,7 +211,6 @@ containers:
   - service_name: radarr
     active: true
     image: linuxserver/radarr
-    container_name: radarr
     volumes:
       - "{{ appdata_path }}/radarr:/config"
       - "{{ cartman_main_storage_path }}/movies:/movies"
@@ -204,7 +227,6 @@ containers:
   - service_name: tiddlywiki
     active: true
     image: mazzolino/tiddlywiki
-    container_name: tiddlywiki
     labels:
       - traefik.enable=true
       - "traefik.http.routers.tiddlywiki.rule=Host(`wiki.ktz.me`)"
@@ -213,15 +235,11 @@ containers:
       - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
     volumes:
       - "{{ appdata_path }}/tiddlywiki:/var/lib/tiddlywiki" 
-    include_global_env_vars: false
     restart: unless-stopped
 ###
   - service_name: chowdown
     active: true
     image: gregyankovoy/chowdown
-    container_name: chowdown
-    ports:
-      - 4000:4000
     labels:
       - traefik.enable=true
       - traefik.http.routers.chowdown.rule=(Host(`al.ktz.me`) && PathPrefix(`/chowdown`))
@@ -233,7 +251,6 @@ containers:
       - "{{ appdata_path }}/chowdown/recipes:/config/_recipes"
       - "{{ appdata_path }}/chowdown/posts:/config/_posts"
       - "{{ appdata_path }}/chowdown/images:/config/images"
-    include_global_env_vars: false
     restart: unless-stopped
 ###
   - service_name: nextcloud
@@ -241,8 +258,6 @@ containers:
     image: nextcloud:19
     depends_on:
       - mysql
-    container_name: nc
-    include_global_env_vars: false
     labels:
       - traefik.enable=true
       - "traefik.http.routers.nc.rule=Host(`nc.ktz.cloud`)"
@@ -256,8 +271,6 @@ containers:
   - service_name: mysql
     active: true
     image: mariadb
-    container_name: mysql
-    include_global_env_vars: false
     environment:
       - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
       - "MYSQL_PASSWORD={{ container_mysql_password }}"
@@ -272,7 +285,6 @@ containers:
     active: true
     image: linuxserver/duplicati
     hostname: "{{ hostname_cartman }}"
-    container_name: duplicati
     labels:
       - traefik.enable=true
       - traefik.http.routers.duplicati.rule=Host(`duplicati.ktz.me`)
@@ -309,7 +321,6 @@ containers:
   - service_name: smokeping
     active: true
     image: linuxserver/smokeping
-    container_name: smokeping
     volumes:
       - "{{ appdata_path }}/smokeping/config:/config"
       - "{{ appdata_path }}/smokeping/data:/data"
@@ -325,7 +336,6 @@ containers:
   - service_name: gitea
     active: true
     image: gitea/gitea
-    container_name: gitea
     depends_on:
       - mysql
     environment:
@@ -348,13 +358,11 @@ containers:
     ports:
       - "3333:3000"
       - "\"2222:2222\""
-    include_global_env_vars: false
     restart: unless-stopped
 ###
   - service_name: sync
     active: true
     image: linuxserver/resilio-sync
-    container_name: sync
     hostname: "{{ hostname_cartman }}"
     volumes:
       - "{{ appdata_path }}/sync:/config"
@@ -387,7 +395,6 @@ containers:
   - service_name: librespeed
     active: true
     image: linuxserver/librespeed
-    container_name: librespeed
     ports:
       - 8008:80
     labels:
@@ -406,7 +413,6 @@ containers:
   - service_name: lychee
     active: true
     image: lycheeorg/lychee
-    container_name: lychee
     labels:
       - traefik.enable=true
       - traefik.http.routers.lychee.rule=Host(`gallery.ktz.me`)
@@ -440,7 +446,6 @@ containers:
       - "{{ appdata_path }}/deepstack:/datastore" 
     environment:
       - VISION-DETECTION=True
-    include_global_env_vars: false
     restart: unless-stopped
 
   # template for docker-compose services
