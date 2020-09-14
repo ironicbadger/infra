@@ -278,7 +278,8 @@ containers:
       - MYSQL_USER=nextcloud
     volumes:
       - "{{ appdata_path }}/mysql:/var/lib/mysql"
-    command: "--transaction-isolation=READ-COMMITTED --binlog-format=ROW"
+    command: 
+      - "--transaction-isolation=READ-COMMITTED --binlog-format=ROW"
     restart: unless-stopped
 ###
   - service_name: duplicati
