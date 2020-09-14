@@ -1,5 +1,9 @@
 ---
 
+- name: ensure hostname is set correctly
+  hostname:
+    name: "{{ hostname_cartman }}"
+
 - name: disks
   include: disks.yml
   tags:
@@ -12,16 +16,6 @@
 
 - name: telegraf docker fix
   include: telegraf-fix.yaml
-
-- name: configure nginx
-  include: nginx.yaml
-  tags:
-    - nginx
-
-# - name: sysctl
-#   include: sysctl.yaml
-#   tags:
-#     - sysctl
 
 # perhaps a generic 'node' monitoring setup role?
 # - name: monitoring
