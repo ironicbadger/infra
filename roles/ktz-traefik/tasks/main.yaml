@@ -13,4 +13,5 @@
     dest: "{{ appdata_path }}/traefik/rules.yaml"
     owner: "{{ main_uid }}"
     group: "{{ main_gid }}"
+  when: enable_traefik_external_rules
   tags: traefik
