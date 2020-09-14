@@ -146,21 +146,6 @@ containers:
     active: false
     image: redis
     restart: unless-stopped
-###
-  - service_name: nginx
-    active: true
-    image: nginx
-    container_name: nginx
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.nginx.rule=Host(`{{ primary_domain }}`)"
-      - traefik.http.routers.nginx.entrypoints=websecure
-      - traefik.http.routers.nginx.tls.certresolver=cloudflare
-      - traefik.http.services.nginx.loadbalancer.server.port=80
-    volumes:
-      - "{{ appdata_path }}/nginx/www:/usr/share/nginx/html:ro"
-    include_global_env_vars: false
-    restart: unless-stopped
 ###  
   - service_name: plex
     active: true
@@ -274,6 +259,8 @@ containers:
   - service_name: mysql
     active: true
     image: mariadb
+    ports:
+      - 3306:3306
     environment:
       - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
       - "MYSQL_PASSWORD={{ container_mysql_password }}"
@@ -281,8 +268,8 @@ containers:
       - MYSQL_USER=nextcloud
     volumes:
       - "{{ appdata_path }}/mysql:/var/lib/mysql"
-    command: 
-      - "--transaction-isolation=READ-COMMITTED --binlog-format=ROW"
+    # command: 
+    #   - "--transaction-isolation=READ-COMMITTED --binlog-format=ROW"
     restart: unless-stopped
 ###
   - service_name: grafana
@@ -478,22 +465,74 @@ containers:
     environment:
       - VISION-DETECTION=True
     restart: unless-stopped
+###
+  - service_name: ninja_nginx
+    active: true
+    image: nginx
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nginx.rule=Host(`ninja.ktz.me`)
+      - traefik.http.routers.nginx.entrypoints=websecure
+      - traefik.http.routers.nginx.tls.certresolver=cloudflare
+      - traefik.http.services.nginx.loadbalancer.server.port=80
+    volumes:
+      #- "{{ appdata_path }}/nginx/www:/usr/share/nginx/html:ro"
+      #- "{{ appdata_path }}/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "{{ appdata_path }}/invoiceninja/ninja.conf:/etc/nginx/conf.d/default.conf:ro"
+      - "{{ appdata_path }}/invoiceninja/storage:/var/www/app/storage"
+      - "{{ appdata_path }}/invoiceninja/public/logo:/var/www/app/logo"
+      - "{{ appdata_path }}/invoiceninja/public:/var/www/app/public"
+    include_global_env_vars: false
+    restart: unless-stopped
+###
+  - service_name: invoiceninja
+    active: true
+    image: invoiceninja/invoiceninja:4.5.18
+    depends_on:
+      - mysql
+    volumes:
+      - "{{ appdata_path }}/invoiceninja/storage:/var/www/app/storage"
+      - "{{ appdata_path }}/invoiceninja/public/logo:/var/www/app/logo"
+      - "{{ appdata_path }}/invoiceninja/public:/var/www/app/public"
+    environment:
+      - MYSQL_DATABASE=ninja
+      - "MYSQL_ROOT_PASSWORD={{ container_mysql_password}}"
+      - APP_DEBUG=0
+      - "APP_URL={{ invoice_ninja_app_url }}"
+      - "APP_KEY={{ invoice_ninja_app_key }}"
+      - APP_CIPHER=AES-256-CBC
+      - DB_USERNAME=root
+      - "DB_PASSWORD={{ container_mysql_password}}"
+      - DB_HOST=mysql
+      - DB_DATABASE=ninja
+      - MAIL_HOST=smtp.gmail.com
+      - "MAIL_USERNAME={{ gmail_address }}"
+      - "MAIL_PASSWORD={{ gmail_password }}"
+      - MAIL_DRIVER=smtp
+      - MAIL_FROM_NAME="Alex K"
+      - "MAIL_FROM_ADDRESS={{ gmail_address }}"
+      - REQUIRE_HTTPS=true
+      - "TRUSTED_PROXIES='*'"
+    include_global_env_vars: false
+    restart: unless-stopped
 
   # template for docker-compose services
   #
   # - service_name:
   #   active:
   #   image:
-  #   container_name:
-  #   ports:
-  #     -
+  #   container_name: #optional - only required if diff to service_name
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.nginx.rule=Host(`ninja.ktz.me`)
+  #     - traefik.http.routers.nginx.entrypoints=websecure
+  #     - traefik.http.routers.nginx.tls.certresolver=cloudflare
+  #     - traefik.http.services.nginx.loadbalancer.server.port=80
   #   volumes:
   #     - "{{ appdata_path }}/app:/config" 
   #   environment:
   #     -
-  #   nginx_configs_rp_enabled: false
-  #   nginx_configs_rp_type: ""
-  #   include_global_env_vars: false
+  #   include_global_env_vars: #optional - defaults to false
   #   restart: unless-stopped
 
 
