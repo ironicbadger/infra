@@ -515,11 +515,45 @@ containers:
       - "TRUSTED_PROXIES='*'"
     include_global_env_vars: false
     restart: unless-stopped
+###
+  - service_name: miniflux
+    active: true
+    image: miniflux/miniflux
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.miniflux.rule=Host(`rss.ktz.me`)
+      - traefik.http.routers.miniflux.entrypoints=websecure
+      - traefik.http.routers.miniflux.tls.certresolver=cloudflare
+      - traefik.http.services.miniflux.loadbalancer.server.port=8080
+    volumes:
+      - "{{ appdata_path }}/miniflux:/config"
+    depends_on:
+      - minifluxdb
+    environment:
+      - "DATABASE_URL=postgres://{{ miniflux_db_user }}:{{ miniflux_db_password }}@minifluxdb/miniflux?sslmode=disable"
+      - ADMIN_USERNAME=admin
+      - "ADMIN_PASSWORD={{ miniflux_db_password }}"
+      - BASE_URL=https://rss.ktz.me
+    restart: unless-stopped
+  - service_name: minifluxdb
+    active: true
+    image: postgres
+    volumes:
+      - "{{ appdata_path }}/postgres_miniflux:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_USER={{ miniflux_db_user }}"
+      - "POSTGRES_PASSWORD={{ miniflux_db_password }}"
+      - POSTGRES_DB=miniflux
+    restart: unless-stopped
+###
+
+
+
 
   # template for docker-compose services
   #
   # - service_name:
-  #   active:
+  #   active: true
   #   image:
   #   container_name: #optional - only required if diff to service_name
   #   labels:
