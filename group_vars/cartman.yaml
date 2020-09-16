@@ -335,7 +335,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: bsair
-    active: true
+    active: false
     image: bs
     volumes:
       - "{{ appdata_path }}/booksonicair:/config"
