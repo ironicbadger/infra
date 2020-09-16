@@ -46,7 +46,11 @@ bash_aliases:
 
 # ironicbadger.docker_compose_generator
 appdata_path: "/home/{{ main_username }}/appdata"
+docker_compose_generator_output_path: "/home/{{ main_username }}"
+docker_compose_generator_uid: "1000"
+docker_compose_generator_gid: "1000"
 containers:
+###
   - service_name: traefik
     active: true
     image: traefik
@@ -55,9 +59,23 @@ containers:
         - 80:80
         - 443:443
     volumes:
-        - "{{ appdata_path }}/traefik/:/letsencrypt"
+        - "{{ appdata_path }}/traefik:/etc/traefik"
         - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:
         - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
         - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
+    restart: unless-stopped
+###
+  - service_name: mysql
+    active: true
+    image: mariadb
+    ports:
+      - 3306:3306
+    environment:
+      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
+      - "MYSQL_PASSWORD={{ container_mysql_password }}"
+      - MYSQL_DATABASE=polr
+      - MYSQL_USER=polr
+    volumes:
+      - "{{ appdata_path }}/mysql:/var/lib/mysql"
     restart: unless-stopped

@@ -10,7 +10,6 @@ ccomp:
 q:
 	ansible-playbook -b run.yaml --limit quassel --ask-become-pass --vault-password-file .vault-password
 
-
 cloud:
 	ansible-playbook -b run.yaml --limit cloud --ask-become-pass --vault-password-file .vault-password
 
