@@ -10,6 +10,14 @@ ccomp:
 q:
 	ansible-playbook -b run.yaml --limit quassel --ask-become-pass --vault-password-file .vault-password
 
+
+cloud:
+	ansible-playbook -b run.yaml --limit cloud --ask-become-pass --vault-password-file .vault-password
+
+cloudcomp:
+	ansible-playbook run.yaml --limit cloud --tags compose --vault-password-file .vault-password
+
+
 update:
 	ansible-playbook update.yaml --limit servers --vault-password-file .vault-password
 
@@ -25,11 +33,11 @@ decrypt:
 encrypt:
 	ansible-vault encrypt --vault-password-file .vault-password vars/vault.yaml
 
-cloud:
-	cd terraform/cloud; terraform apply
+# cloud:
+# 	cd terraform/cloud; terraform apply
 
-cloud-destroy:
-	cd terraform/cloud; terraform destroy
+# cloud-destroy:
+# 	cd terraform/cloud; terraform destroy
 
 gitinit:
 	@./git-init.sh

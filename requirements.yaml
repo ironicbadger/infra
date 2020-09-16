@@ -1,18 +1,32 @@
 - src: geerlingguy.docker
 - src: geerlingguy.security
-- src: ironicbadger.ansible_role_create_users
-- src: ironicbadger.ansible_role_docker_compose_generator
-- src: ironicbadger.ansible_role_snapraid
-- src: ironicbadger.ansible_role_nginx_configs
-- src: ironicbadger.ansible_role_hddtemp
-- src: ironicbadger.ansible_role_packages
-- src: ironicbadger.ansible_role_proxmox_nag_removal
-- src: rossmcdonald.telegraf
-- src: ironicbadger.ansible_role_bash_aliases
+- src: geerlingguy.ntp
+- src: geerlingguy.github-users
 - src: grog.package
+- src: rossmcdonald.telegraf
+- src: ironicbadger.ansible_role_docker_compose_generator
+- src: ironicbadger.ansible_role_bash_aliases
+- src: ironicbadger.ansible_role_hddtemp
+- src: ironicbadger.ansible_role_snapraid
+
 - src: ironicbadger.ansible_users
 - src: weareinteractive.environment
-- src: geerlingguy.ntp
+
+# - src: geerlingguy.docker
+# - src: geerlingguy.security
+# - src: ironicbadger.ansible_role_create_users
+# - src: ironicbadger.ansible_role_docker_compose_generator
+# - src: ironicbadger.ansible_role_snapraid
+# - src: ironicbadger.ansible_role_nginx_configs
+# - src: ironicbadger.ansible_role_hddtemp
+# - src: ironicbadger.ansible_role_packages
+# - src: ironicbadger.ansible_role_proxmox_nag_removal
+# - src: rossmcdonald.telegraf
+# - src: ironicbadger.ansible_role_bash_aliases
+# - src: grog.package
+# - src: ironicbadger.ansible_users
+# - src: weareinteractive.environment
+# - src: geerlingguy.ntp
 # - src: ssh://git@git.ktz.me:2222/alexktz/ansible-role-ktz-rh-vpn.git
 #   scm: git
 #   name: ktz-rh-vpn
