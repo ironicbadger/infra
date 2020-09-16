@@ -321,7 +321,6 @@ containers:
   - service_name: booksonic
     active: true
     image: linuxserver/booksonic:1.2-ls75
-    container_name: booksonic
     volumes:
       - "{{ appdata_path }}/booksonic:/config"
       - "{{ cartman_main_storage_path }}/audiobooks:/books"
@@ -333,6 +332,24 @@ containers:
       - traefik.http.services.booksonic.loadbalancer.server.port=4040
     environment:
       - CONTEXT_PATH=booksonic
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: bsair
+    active: true
+    image: bs
+    volumes:
+      - "{{ appdata_path }}/booksonicair:/config"
+      - "{{ cartman_main_storage_path }}/audiobooks:/books"
+    ports:
+      - 4040:4040
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.booksonicair.rule=(Host(`al.ktz.me`) && PathPrefix(`/booksonicair`))
+      - traefik.http.routers.booksonicair.entrypoints=websecure
+      - traefik.http.routers.booksonicair.tls.certresolver=cloudflare
+      - traefik.http.services.booksonicair.loadbalancer.server.port=4040
+    environment:
+      - CONTEXT_PATH=booksonicair
     include_global_env_vars: true
     restart: unless-stopped
 ###
