@@ -45,10 +45,10 @@ bash_aliases:
     - { alias: "zsnap", command: "zfs list -t snapshot" }
 
 # ironicbadger.docker_compose_generator
-appdata_path: "/home/{{ main_username }}/appdata"
-docker_compose_generator_output_path: "/home/{{ main_username }}"
-docker_compose_generator_uid: "1000"
-docker_compose_generator_gid: "1000"
+#appdata_path: "/home/{{ main_username }}/appdata"
+#docker_compose_generator_output_path: "/home/{{ main_username }}"
+docker_compose_generator_uid: "1313"
+docker_compose_generator_gid: "1313"
 containers:
 ###
   - service_name: traefik
@@ -59,23 +59,96 @@ containers:
         - 80:80
         - 443:443
     volumes:
-        - "{{ appdata_path }}/traefik:/etc/traefik"
+        - "{{ cloud_appdata_path }}/traefik:/etc/traefik"
         - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:
         - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
         - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
     restart: unless-stopped
 ###
-  - service_name: mysql
+  - service_name: ktz-blog
     active: true
-    image: mariadb
-    ports:
-      - 3306:3306
+    image: ghost:3-alpine
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ktzblog.rule=Host(`{{ cloud_url_ktz_blog }}`)"
+      - traefik.http.routers.ktzblog.entrypoints=websecure
+      - traefik.http.routers.ktzblog.tls.certresolver=cloudflare
+      - "traefik.http.services.ktzblog.loadbalancer.server.port={{ cloud_ghost_port }}"
     environment:
-      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
-      - "MYSQL_PASSWORD={{ container_mysql_password }}"
-      - MYSQL_DATABASE=polr
-      - MYSQL_USER=polr
+      - NODE_ENV=production
+      - "url=https://{{ cloud_url_ktz_blog }}"
     volumes:
-      - "{{ appdata_path }}/mysql:/var/lib/mysql"
+      - "{{ cloud_appdata_path }}/ktz-blog:/var/lib/ghost/content"
+    restart: unless-stopped
+###
+  - service_name: mum-blog
+    active: true
+    image: ghost:3-alpine
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.mumblog.rule=Host(`{{ cloud_url_mum_blog }}`)"
+      - traefik.http.routers.mumblog.entrypoints=websecure
+      - traefik.http.routers.mumblog.tls.certresolver=cloudflare
+      - "traefik.http.services.mumblog.loadbalancer.server.port={{ cloud_ghost_port }}"
+    environment:
+      - NODE_ENV=production
+      - "url=https://{{ cloud_url_mum_blog }}"
+    volumes:
+      - "{{ cloud_appdata_path }}/mum-blog:/var/lib/ghost/content"
+    restart: unless-stopped
+###
+  - service_name: pmsbook
+    active: true
+    image: nginx:stable
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.pmsbook.rule=Host(`{{ cloud_url_pms }}`)"
+      - traefik.http.routers.pmsbook.entrypoints=websecure
+      - traefik.http.routers.pmsbook.tls.certresolver=cloudflare
+      - "traefik.http.services.pmsbook.loadbalancer.server.port=80"
+    volumes:
+      - "{{ cloud_appdata_path }}/book-perfectmediaserver/book:/usr/share/nginx/html:ro"
+    restart: unless-stopped
+###
+  - service_name: statping
+    active: true
+    image: statping/statping:v0.90.64
+    depends_on:
+      - postgres
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.statping.rule=Host(`{{ cloud_url_status }}`)"
+      - traefik.http.routers.statping.entrypoints=websecure
+      - traefik.http.routers.statping.tls.certresolver=cloudflare
+      - "traefik.http.services.statping.loadbalancer.server.port=8080"
+    volumes:
+      - "{{ cloud_appdata_path }}/statping:/app"
+    restart: unless-stopped
+  - service_name: postgres
+    active: true
+    image: postgres:11
+    environment:
+      - "POSTGRES_DB={{ cloud_statping_db_database }}"
+      - "POSTGRES_USER={{ cloud_statping_db_user }}"
+      - "POSTGRES_PASSWORD={{ cloud_statping_db_password }}"
+    volumes:
+      - "{{ cloud_appdata_path }}/postgres:/var/lib/postgresql/data"
+    restart: unless-stopped
+###
+  - service_name: unifi
+    active: true
+    image: linuxserver/unifi-controller
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ubiq.rule=Host(`{{ cloud_url_ubiq }}`)"
+      - traefik.http.routers.ubiq.entrypoints=websecure
+      - traefik.http.routers.ubiq.tls.certresolver=cloudflare
+      - "traefik.http.services.ubiq.loadbalancer.server.port={{ cloud_unifi_port_advertise_int }}"
+    ports:
+      - "{{ cloud_unifi_port_advertise }}:{{ cloud_unifi_port_advertise_int }}"
+      - 3478:3478/udp
+    volumes:
+      - "{{ cloud_appdata_path }}/unifi:/config"
+    include_global_env_vars: true
     restart: unless-stopped
