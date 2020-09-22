@@ -143,8 +143,10 @@ containers:
       - traefik.enable=true
       - "traefik.http.routers.ubiq.rule=Host(`{{ cloud_url_ubiq }}`)"
       - traefik.http.routers.ubiq.entrypoints=websecure
+      - traefik.http.routers.ubiq.tls=true
       - traefik.http.routers.ubiq.tls.certresolver=cloudflare
-      - "traefik.http.services.ubiq.loadbalancer.server.port={{ cloud_unifi_port_advertise_int }}"
+      - traefik.http.services.ubiq.loadbalancer.server.scheme=https
+      - traefik.http.services.ubiq.loadbalancer.server.port=8443
     ports:
       - "{{ cloud_unifi_port_advertise }}:{{ cloud_unifi_port_advertise_int }}"
       - 3478:3478/udp
