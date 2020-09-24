@@ -1,5 +1,4 @@
 ---
-
 target_os: ubuntu
 hostname_cartman: cartman
 
@@ -8,7 +7,7 @@ users:
   - username: "{{ main_username }}"
     github_username: ironicbadger
     name: "{{ main_username }}"
-    groups: ['wheel','docker']
+    groups: ["wheel", "docker"]
     uid: "{{ main_uid }}"
   - username: cat
     github_username: dropcat13
@@ -56,10 +55,10 @@ bash_aliases:
   - { alias: "dtail", command: "docker logs -tf --tail='50' " }
   - { alias: "dstop", command: "docker stop `docker ps -aq`" }
   - { alias: "drm", command: "docker rm `docker ps -aq`" }
-  - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml " }
+  - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml --remove-orphans " }
   - { alias: "dprune", command: "docker image prune" }
   - { alias: "dprunesys", command: "docker system prune --all" }
-  - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop " }
+  - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop"}
   - { alias: "appdata", command: "cd /mnt/tank/appdata" }
   - { alias: "zspace", command: "zfs list -o space" }
   - { alias: "zsnap", command: "zfs list -t snapshot" }
@@ -69,31 +68,106 @@ cartman_main_storage_path: /mnt/storage
 
 extra_mountpoints:
   - { path: "{{ cartman_main_storage_path }}" }
-  - { path: /opt, diskbyid: "UUID=b8e63455-b4eb-430b-a714-c4f36cd513a5", fs: ext4, opts: "defaults,discard" }
+  - {
+      path: /opt,
+      diskbyid: "UUID=b8e63455-b4eb-430b-a714-c4f36cd513a5",
+      fs: ext4,
+      opts: "defaults,discard",
+    }
   #- { path: /mnt/nvme350, diskbyid: "UUID=82d03ae9-5efe-4da2-bc14-9de173d4151f", fs: ext4, opts: "defaults,discard" }
-  
 
 parity_disks:
-  - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G0Z7RZ-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/parity2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
+  - {
+      path: /mnt/parity1,
+      diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G0Z7RZ-part1,
+      fs: xfs,
+      opts: defaults,
+      content: false,
+    }
+  - {
+      path: /mnt/parity2,
+      diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1,
+      fs: xfs,
+      opts: defaults,
+      content: false,
+    }
 
 data_disks:
-  - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G10VZZ-part1, fs: xfs, opts: defaults, content: true }
-  - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YHV69AD-part1, fs: xfs, opts: defaults, content: true }
-  - { path: /mnt/disk3, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ15VJD-part1, fs: xfs, opts: defaults, content: true }
-  - { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ2S3AD-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-HGST_HDN728080ALE604_R6GPPDTY-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ1EJAW-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk7, diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ3JB4W-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk8, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0N54S-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk9, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0NN0R-part1, fs: xfs, opts: defaults, content: false }
+  - {
+      path: /mnt/disk1,
+      diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G10VZZ-part1,
+      fs: xfs,
+      opts: defaults,
+      content: true,
+    }
+  - {
+      path: /mnt/disk2,
+      diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YHV69AD-part1,
+      fs: xfs,
+      opts: defaults,
+      content: true,
+    }
+  - {
+      path: /mnt/disk3,
+      diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ15VJD-part1,
+      fs: xfs,
+      opts: defaults,
+      content: true,
+    }
+  - {
+      path: /mnt/disk4,
+      diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ2S3AD-part1,
+      fs: xfs,
+      opts: defaults,
+      content: false,
+    }
+  - {
+      path: /mnt/disk5,
+      diskbyid: /dev/disk/by-id/ata-HGST_HDN728080ALE604_R6GPPDTY-part1,
+      fs: xfs,
+      opts: defaults,
+      content: false,
+    }
+  - {
+      path: /mnt/disk6,
+      diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ1EJAW-part1,
+      fs: xfs,
+      opts: defaults,
+      content: false,
+    }
+  - {
+      path: /mnt/disk7,
+      diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ3JB4W-part1,
+      fs: xfs,
+      opts: defaults,
+      content: false,
+    }
+  - {
+      path: /mnt/disk8,
+      diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0N54S-part1,
+      fs: xfs,
+      opts: defaults,
+      content: false,
+    }
+  - {
+      path: /mnt/disk9,
+      diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0NN0R-part1,
+      fs: xfs,
+      opts: defaults,
+      content: false,
+    }
 
 zfs_disks:
   #- { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ373DD-part1, fs: xfs, opts: defaults, content: false }
   #- { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ7E2VD-part1, fs: xfs, opts: defaults, content: false }
 
 fstab_mergerfs:
-  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,cache.files=off,moveonenospc=true,dropcacheonclose=true,minfreespace=200G,fsname=mergerfs" }
+  - {
+      source: "/mnt/disk*:/mnt/tank/fuse",
+      mountpoint: "{{ cartman_main_storage_path }}",
+      fs: fuse.mergerfs,
+      opts: "defaults,nonempty,allow_other,use_ino,cache.files=off,moveonenospc=true,dropcacheonclose=true,minfreespace=200G,fsname=mergerfs",
+    }
 
 snapraid_email_address: alexktz@gmail.com
 snapraid_gmail_pass: "{{ snapraid_email_password }}"
@@ -117,7 +191,7 @@ containers:
       - 80:80
       - 443:443
       - 8080:8080
-    extra_hosts: 
+    extra_hosts:
       - host.docker.internal:172.17.0.1
     environment:
       - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
@@ -126,7 +200,7 @@ containers:
       - "{{ appdata_path }}/traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     restart: unless-stopped
-###
+  ###
   - service_name: authelia
     active: false
     image: authelia/authelia
@@ -146,7 +220,7 @@ containers:
     active: false
     image: redis
     restart: unless-stopped
-###  
+  ###
   - service_name: plex
     active: true
     image: plexinc/pms-docker
@@ -162,7 +236,7 @@ containers:
       - "{{ cartman_main_storage_path }}:/data"
     include_global_env_vars: true
     restart: unless-stopped
-###
+  ###
   - service_name: nzbget
     active: true
     image: linuxserver/nzbget
@@ -177,7 +251,7 @@ containers:
       - "{{ download_path }}:/downloads"
     restart: unless-stopped
     include_global_env_vars: true
-###
+  ###
   - service_name: sonarr
     active: true
     image: linuxserver/sonarr:preview
@@ -195,7 +269,7 @@ containers:
       - /mnt/storage/tv:/tv
     restart: unless-stopped
     include_global_env_vars: true
-###
+  ###
   - service_name: radarr
     active: true
     image: linuxserver/radarr
@@ -211,7 +285,7 @@ containers:
       - traefik.http.services.radarr.loadbalancer.server.port=7878
     restart: unless-stopped
     include_global_env_vars: true
-###
+  ###
   - service_name: tiddlywiki
     active: true
     image: mazzolino/tiddlywiki
@@ -222,9 +296,9 @@ containers:
       - traefik.http.routers.tiddlywiki.tls.certresolver=cloudflare
       - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
     volumes:
-      - "{{ appdata_path }}/tiddlywiki:/var/lib/tiddlywiki" 
+      - "{{ appdata_path }}/tiddlywiki:/var/lib/tiddlywiki"
     restart: unless-stopped
-###
+  ###
   - service_name: chowdown
     active: true
     image: gregyankovoy/chowdown
@@ -240,7 +314,7 @@ containers:
       - "{{ appdata_path }}/chowdown/posts:/config/_posts"
       - "{{ appdata_path }}/chowdown/images:/config/images"
     restart: unless-stopped
-###
+  ###
   - service_name: nextcloud
     active: true
     image: nextcloud:19
@@ -255,7 +329,7 @@ containers:
     volumes:
       - "{{ appdata_path }}/nextcloud:/var/www/html"
     restart: unless-stopped
-###
+  ###
   - service_name: mysql
     active: true
     image: mariadb
@@ -268,10 +342,10 @@ containers:
       - MYSQL_USER=nextcloud
     volumes:
       - "{{ appdata_path }}/mysql:/var/lib/mysql"
-    # command: 
+    # command:
     #   - "--transaction-isolation=READ-COMMITTED --binlog-format=ROW"
     restart: unless-stopped
-###
+  ###
   - service_name: grafana
     active: true
     image: grafana/grafana
@@ -288,7 +362,7 @@ containers:
     volumes:
       - "{{ appdata_path }}/grafana/data:/var/lib/grafana"
     restart: unless-stopped
-###
+  ###
   - service_name: influxdb
     active: true
     container_name: influx
@@ -298,7 +372,7 @@ containers:
     volumes:
       - "{{ appdata_path }}/influxdb:/var/lib/influxdb"
     restart: unless-stopped
-###
+  ###
   - service_name: duplicati
     active: true
     image: linuxserver/duplicati
@@ -317,7 +391,7 @@ containers:
       - /opt:/source/opt
     include_global_env_vars: true
     restart: unless-stopped
-###
+  ###
   - service_name: booksonic
     active: true
     image: linuxserver/booksonic:1.2-ls75
@@ -352,7 +426,7 @@ containers:
       - CONTEXT_PATH=booksonicair
     include_global_env_vars: true
     restart: unless-stopped
-###
+  ###
   - service_name: smokeping
     active: true
     image: linuxserver/smokeping
@@ -367,7 +441,7 @@ containers:
       - traefik.http.services.smokeping.loadbalancer.server.port=80
     include_global_env_vars: true
     restart: unless-stopped
-###
+  ###
   - service_name: gitea
     active: true
     image: gitea/gitea
@@ -392,9 +466,9 @@ containers:
       - traefik.http.services.git.loadbalancer.server.port=3000
     ports:
       - "3333:3000"
-      - "\"2222:2222\""
+      - '"2222:2222"'
     restart: unless-stopped
-###
+  ###
   - service_name: sync
     active: true
     image: linuxserver/resilio-sync
@@ -426,7 +500,7 @@ containers:
       - traefik.http.services.speedtest.loadbalancer.server.port=80
     include_global_env_vars: true
     restart: unless-stopped
-###
+  ###
   - service_name: librespeed
     active: true
     image: linuxserver/librespeed
@@ -444,7 +518,7 @@ containers:
       - "PASSWORD={{ librespeed_password }}"
     include_global_env_vars: true
     restart: unless-stopped
-###
+  ###
   - service_name: lychee
     active: true
     image: lycheeorg/lychee
@@ -470,7 +544,7 @@ containers:
       - "DB_PASSWORD={{ container_mysql_password }}"
     include_global_env_vars: true
     restart: unless-stopped
-###
+  ###
   - service_name: deepstack
     active: true
     image: deepquestai/deepstack
@@ -478,11 +552,11 @@ containers:
     ports:
       - 5000:5000
     volumes:
-      - "{{ appdata_path }}/deepstack:/datastore" 
+      - "{{ appdata_path }}/deepstack:/datastore"
     environment:
       - VISION-DETECTION=True
     restart: unless-stopped
-###
+  ###
   - service_name: ninja_nginx
     active: true
     image: nginx
@@ -493,15 +567,12 @@ containers:
       - traefik.http.routers.nginx.tls.certresolver=cloudflare
       - traefik.http.services.nginx.loadbalancer.server.port=80
     volumes:
-      #- "{{ appdata_path }}/nginx/www:/usr/share/nginx/html:ro"
-      #- "{{ appdata_path }}/nginx/nginx.conf:/etc/nginx/nginx.conf:ro"
       - "{{ appdata_path }}/invoiceninja/ninja.conf:/etc/nginx/conf.d/default.conf:ro"
       - "{{ appdata_path }}/invoiceninja/storage:/var/www/app/storage"
       - "{{ appdata_path }}/invoiceninja/public/logo:/var/www/app/logo"
       - "{{ appdata_path }}/invoiceninja/public:/var/www/app/public"
-    include_global_env_vars: false
     restart: unless-stopped
-###
+  ###
   - service_name: invoiceninja
     active: true
     image: invoiceninja/invoiceninja:4.5.18
@@ -530,9 +601,8 @@ containers:
       - "MAIL_FROM_ADDRESS={{ gmail_address }}"
       - REQUIRE_HTTPS=true
       - "TRUSTED_PROXIES='*'"
-    include_global_env_vars: false
     restart: unless-stopped
-###
+  ###
   - service_name: miniflux
     active: true
     image: miniflux/miniflux
@@ -562,9 +632,60 @@ containers:
       - "POSTGRES_PASSWORD={{ miniflux_db_password }}"
       - POSTGRES_DB=miniflux
     restart: unless-stopped
+  ###
+  - service_name: monica
+    active: false
+    image: monica
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.monica.rule=(Host(`al.ktz.me`) && PathPrefix(`/monica`))
+      - traefik.http.routers.monica.entrypoints=websecure
+      - traefik.http.routers.monica.tls.certresolver=cloudflare
+      - traefik.http.services.monica.loadbalancer.server.port=80
+    ports:
+      - 8901:80
+    depends_on:
+      - db
+    environment:
+      - APP_KEY=F5HZSjEOwValEIfzgaZ2E6gZUUf3Fu38
+      - APP_URL=https://al.ktz.me/monica
+      - "APP_FORCE_URL=true"
+      - DB_HOST=db
+    volumes:
+      - "{{ appdata_path }}/monica/app:/var/www/html/storage"
+    restart: unless-stopped
+  - service_name: db
+    active: false
+    container_name: db
+    image: mariadb
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+      - MYSQL_PASSWORD=secret
+      - MYSQL_DATABASE=monica
+      - MYSQL_USER=homestead
+    volumes:
+      - "{{ appdata_path }}/monica/db:/var/lib/mysql"
+    restart: unless-stopped
 ###
-
-
+  - service_name: scrutiny
+    active: true
+    image: alexphillips/scrutiny
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.scrutiny.rule=Host(`scrutiny.ktz.me`)
+      - traefik.http.routers.scrutiny.entrypoints=websecure
+      - traefik.http.routers.scrutiny.tls.certresolver=cloudflare
+      - traefik.http.services.scrutiny.loadbalancer.server.port=8080
+    volumes:
+      - "{{ appdata_path }}/scrutiny:/config"
+      - /dev/disk:/dev/disk 
+      - /run/udev:/run/udev:ro
+    include_global_env_vars: true
+    environment:
+      - SCRUTINY_COLLECTOR=true
+      - SCRUTINY_WEB=true
+    privileged: true
+    restart: unless-stopped
 
 
   # template for docker-compose services
@@ -580,14 +701,11 @@ containers:
   #     - traefik.http.routers.nginx.tls.certresolver=cloudflare
   #     - traefik.http.services.nginx.loadbalancer.server.port=80
   #   volumes:
-  #     - "{{ appdata_path }}/app:/config" 
+  #     - "{{ appdata_path }}/app:/config"
   #   environment:
   #     -
   #   include_global_env_vars: #optional - defaults to false
   #   restart: unless-stopped
-
-
-
 
 ## snapraid
 snapraid_config_excludes:
