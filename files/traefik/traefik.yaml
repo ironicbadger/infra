@@ -22,11 +22,11 @@ providers:
       filename: /etc/traefik/rules.yaml
 
 api:
-    dashboard: true
-    insecure: true
+    dashboard: false
+    insecure: false
 
 log:
-    level: debug
+    level: info
 
 certificatesResolvers:
     cloudflare:
