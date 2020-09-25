@@ -18,6 +18,6 @@ provider "cloudflare" {
 
 ## Misc
 
-variable "status_subdomain" {
+variable "subdomains" {
   type = set(string)
 }
