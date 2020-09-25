@@ -1,0 +1,3 @@
+subdomains = [
+    "status"
+]
