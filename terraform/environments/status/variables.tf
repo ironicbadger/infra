@@ -21,3 +21,11 @@ provider "cloudflare" {
 variable "subdomains" {
   type = set(string)
 }
+
+variable "status_instance_id" {
+  type = string
+}
+
+variable "status_instance_name" {
+  type = string
+}

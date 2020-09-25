@@ -1,7 +1,7 @@
 data "vultr_reverse_ipv4" "status" {
   filter {
-    name = "40802208"
-    values = ["status"]
+    name = var.status_instance_id
+    values = [var.status_instance_name]
   }
 }
 
