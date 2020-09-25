@@ -669,7 +669,7 @@ containers:
 ###
   - service_name: scrutiny
     active: true
-    image: alexphillips/scrutiny
+    image: linuxserver/scrutiny
     labels:
       - traefik.enable=true
       - traefik.http.routers.scrutiny.rule=Host(`scrutiny.ktz.me`)
