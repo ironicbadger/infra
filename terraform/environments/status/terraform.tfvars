@@ -1,5 +1,6 @@
 subdomains = [
-    "status"
+    "status",
+    "smokeping"
 ]
 
 status_instance_id = "40802565"
