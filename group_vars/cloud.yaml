@@ -111,31 +111,6 @@ containers:
       - "{{ cloud_appdata_path }}/book-perfectmediaserver/book:/usr/share/nginx/html:ro"
     restart: unless-stopped
 ###
-  - service_name: statping
-    active: true
-    image: statping/statping:v0.90.64
-    depends_on:
-      - postgres
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.statping.rule=Host(`{{ cloud_url_status }}`)"
-      - traefik.http.routers.statping.entrypoints=websecure
-      - traefik.http.routers.statping.tls.certresolver=cloudflare
-      - "traefik.http.services.statping.loadbalancer.server.port=8080"
-    volumes:
-      - "{{ cloud_appdata_path }}/statping:/app"
-    restart: unless-stopped
-  - service_name: postgres
-    active: true
-    image: postgres:11
-    environment:
-      - "POSTGRES_DB={{ cloud_statping_db_database }}"
-      - "POSTGRES_USER={{ cloud_statping_db_user }}"
-      - "POSTGRES_PASSWORD={{ cloud_statping_db_password }}"
-    volumes:
-      - "{{ cloud_appdata_path }}/postgres:/var/lib/postgresql/data"
-    restart: unless-stopped
-###
   - service_name: unifi
     active: true
     image: linuxserver/unifi-controller
