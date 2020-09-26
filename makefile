@@ -16,6 +16,15 @@ cloud:
 cloudcomp:
 	ansible-playbook run.yaml --limit cloud --tags compose --vault-password-file .vault-password
 
+status:
+	ansible-playbook -b run.yaml --limit status --ask-become-pass --vault-password-file .vault-password
+
+statuscomp:
+	ansible-playbook run.yaml --limit status --tags compose --vault-password-file .vault-password
+
+statusdns:
+	cd terraform/environments/status; terraform apply
+
 
 update:
 	ansible-playbook update.yaml --limit servers --vault-password-file .vault-password

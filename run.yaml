@@ -1,23 +1,23 @@
 ---
-  - hosts: all
-    roles:
-      - role: ironicbadger.ansible_users
-      - role: ironicbadger.ansible_role_bash_aliases
-      - role: grog.package
-      - role: geerlingguy.security
-      - role: weareinteractive.environment
-      - role: geerlingguy.ntp
-    tasks:
-      - name: remove ubuntu motd spam
-        become: true
-        file:
-          path: "/etc/update-motd.d/{{ item }}"
-          state: absent
-        loop:
-          - 80-livepatch
-          - 95-hwe-eol
-          - 10-help-text
-        when: ansible_distribution == 'Ubuntu'
+  # - hosts: all
+  #   roles:
+  #     - role: ironicbadger.ansible_users
+  #     - role: ironicbadger.ansible_role_bash_aliases
+  #     - role: grog.package
+  #     - role: geerlingguy.security
+  #     - role: weareinteractive.environment
+  #     - role: geerlingguy.ntp
+  #   tasks:
+  #     - name: remove ubuntu motd spam
+  #       become: true
+  #       file:
+  #         path: "/etc/update-motd.d/{{ item }}"
+  #         state: absent
+  #       loop:
+  #         - 80-livepatch
+  #         - 95-hwe-eol
+  #         - 10-help-text
+  #       when: ansible_distribution == 'Ubuntu'
 
   - hosts: bastion
     # roles:
@@ -49,6 +49,19 @@
         tags: compose
       - role: ktz-traefik
         tags: compose
+    # tasks:
+    # - include_vars:
+    #     dir: vars/containers
+    #   tags: test
+    # - debug:
+    #     msg: "{{ example }}"
+    #   tags: test
+    # - name: Ansible array variables example
+    #   debug: 
+    #     msg: "{{ item }}"
+    #   with_list:
+    #     - "{{ example }}"
+    #   tags: test
 
 
   - hosts: quassel
@@ -56,3 +69,39 @@
       #- role: ktz-rh-vpn # not committed for privacy reasons
       - role: ironicbadger.ansible_role_docker_compose_generator
         tags: compose
+
+  - hosts: cloud
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: grog.package
+      - role: geerlingguy.docker
+      - role: geerlingguy.github-users
+      - role: geerlingguy.security
+      - role: geerlingguy.ntp
+      - role: ironicbadger.ansible_role_bash_aliases
+      - role: ironicbadger.ansible_role_docker_compose_generator
+        tags: compose
+      - role: ktz-traefik
+        tags: compose
+    tasks:
+      - hostname:
+          name: "{{ cloud_hostname }}"
+
+  - hosts: status
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: grog.package
+      - role: geerlingguy.docker
+      - role: geerlingguy.github-users
+      - role: geerlingguy.security
+      - role: geerlingguy.ntp
+      - role: ironicbadger.ansible_role_bash_aliases
+      - role: ironicbadger.ansible_role_docker_compose_generator
+        tags: compose
+      - role: ktz-traefik
+        tags: compose
+    tasks:
+      - hostname:
+          name: "{{ status_hostname }}"
