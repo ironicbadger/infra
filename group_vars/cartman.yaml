@@ -705,7 +705,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: stikked
-    active: true
+    active: false
     image: ironicbadger/stikked
     labels:
       - traefik.enable=true
@@ -714,8 +714,22 @@ containers:
       - traefik.http.routers.stikked.tls.certresolver=cloudflare
       - traefik.http.services.stikked.loadbalancer.server.port=80
     volumes:
-      - "{{ appdata_path }}/stikked:/config"
+      - "{{ appdata_path }}/stikked/data:/config"
+      - "{{ appdata_path }}/stikked/stikked.php:/defaults/stikked.php"
     include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: mysql_stikked
+    active: false
+    image: mariadb
+    environment:
+      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
+      - "MYSQL_PASSWORD={{ container_mysql_password }}"
+      - MYSQL_DATABASE=stikked
+      - MYSQL_USER=stikked
+    volumes:
+      - "{{ appdata_path }}/stikked/db:/var/lib/mysql"
+    command:
+      - "--innodb-buffer-pool-size=4000000000"
     restart: unless-stopped
 
 
