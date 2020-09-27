@@ -236,6 +236,23 @@ containers:
       - "{{ cartman_main_storage_path }}:/data"
     include_global_env_vars: true
     restart: unless-stopped
+###
+  - service_name: tautulli
+    active: true
+    image: linuxserver/tautulli
+    depends_on:
+      - plex
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.tautulli.rule=(Host(`al.ktz.me`) && PathPrefix(`/tautulli`))
+      - traefik.http.routers.tautulli.entrypoints=websecure
+      - traefik.http.routers.tautulli.tls.certresolver=cloudflare
+      - traefik.http.services.tautulli.loadbalancer.server.port=8181
+    volumes:
+      - "{{ appdata_path }}/tautulli:/config"
+      - "{{ appdata_path }}/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro"
+    include_global_env_vars: true
+    restart: unless-stopped
   ###
   - service_name: nzbget
     active: true
@@ -686,20 +703,35 @@ containers:
       - SCRUTINY_WEB=true
     privileged: true
     restart: unless-stopped
+  ###
+  - service_name: stikked
+    active: true
+    image: ironicbadger/stikked
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.stikked.rule=Host(`paste.ktz.me`)
+      - traefik.http.routers.stikked.entrypoints=websecure
+      - traefik.http.routers.stikked.tls.certresolver=cloudflare
+      - traefik.http.services.stikked.loadbalancer.server.port=80
+    volumes:
+      - "{{ appdata_path }}/stikked:/config"
+    include_global_env_vars: true
+    restart: unless-stopped
 
 
   # template for docker-compose services
   #
+  ###
   # - service_name:
   #   active: true
   #   image:
   #   container_name: #optional - only required if diff to service_name
   #   labels:
   #     - traefik.enable=true
-  #     - traefik.http.routers.nginx.rule=Host(`ninja.ktz.me`)
-  #     - traefik.http.routers.nginx.entrypoints=websecure
-  #     - traefik.http.routers.nginx.tls.certresolver=cloudflare
-  #     - traefik.http.services.nginx.loadbalancer.server.port=80
+  #     - traefik.http.routers.XXXXXXX.rule=Host(`ninja.ktz.me`)
+  #     - traefik.http.routers.XXXXXXX.entrypoints=websecure
+  #     - traefik.http.routers.XXXXXXX.tls.certresolver=cloudflare
+  #     - traefik.http.services.XXXXXXX.loadbalancer.server.port=80
   #   volumes:
   #     - "{{ appdata_path }}/app:/config"
   #   environment:
