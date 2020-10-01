@@ -693,9 +693,13 @@ containers:
       - traefik.http.routers.scrutiny.entrypoints=websecure
       - traefik.http.routers.scrutiny.tls.certresolver=cloudflare
       - traefik.http.services.scrutiny.loadbalancer.server.port=8080
+    cap_add:
+      - SYS_RAWIO
+      - SYS_ADMIN
+    devices:
+      - /dev:/dev
     volumes:
-      - "{{ appdata_path }}/scrutiny:/config"
-      - /dev/disk:/dev/disk 
+      - "{{ appdata_path }}/scrutiny:/config" 
       - /run/udev:/run/udev:ro
     include_global_env_vars: true
     environment:
