@@ -576,7 +576,7 @@ containers:
   ###
   - service_name: ninja_nginx
     active: true
-    image: nginx
+    image: nginx:mainline-alpine
     labels:
       - traefik.enable=true
       - traefik.http.routers.nginx.rule=Host(`ninja.ktz.me`)
@@ -735,7 +735,38 @@ containers:
     command:
       - "--innodb-buffer-pool-size=4000000000"
     restart: unless-stopped
-
+###
+  - service_name: recipes-db
+    active: true
+    image: postgres:11-alpine
+    volumes:
+      - "{{ appdata_path }}/recipes/db:/var/lib/postgresql/data"
+    restart: unless-stopped
+  - service_name: recipes-backend
+    active: true
+    image: vabene1111/recipes
+    depends_on:
+      - recipes-db
+    volumes:
+      - "{{ appdata_path }}/recipes/staticfiles:/opt/recipes/staticfiles"
+      - "{{ appdata_path }}/recipes/mediafiles:/opt/recipes/mediafiles"
+    restart: unless-stopped
+  - service_name: recipes-nginx
+    active: true
+    image: nginx:mainline-alpine
+    depends_on:
+      - recipes-db
+      - recipes-backend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.recipes.rule=Host(`recipes.ktz.me`)
+      - traefik.http.routers.recipes.entrypoints=websecure
+      - traefik.http.routers.recipes.tls.certresolver=cloudflare
+      - traefik.http.services.recipes.loadbalancer.server.port=8080
+    volumes:
+      - "{{ appdata_path }}/mediafiles:/media"
+      - "{{ appdata_path }}/nginx/conf.d:/etc/nginx/conf.d"
+    restart: unless-stopped
 
   # template for docker-compose services
   #
