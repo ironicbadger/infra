@@ -764,8 +764,8 @@ containers:
       - traefik.http.routers.recipes.tls.certresolver=cloudflare
       - traefik.http.services.recipes.loadbalancer.server.port=8080
     volumes:
-      - "{{ appdata_path }}/mediafiles:/media"
-      - "{{ appdata_path }}/nginx/conf.d:/etc/nginx/conf.d"
+      - "{{ appdata_path }}/recipes/mediafiles:/media"
+      - "{{ appdata_path }}/recipes/nginx/conf.d:/etc/nginx/conf.d"
     restart: unless-stopped
 
   # template for docker-compose services
