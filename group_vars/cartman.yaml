@@ -621,7 +621,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: miniflux
-    active: true
+    active: false
     image: miniflux/miniflux
     labels:
       - traefik.enable=true
@@ -640,7 +640,7 @@ containers:
       - BASE_URL=https://rss.ktz.me
     restart: unless-stopped
   - service_name: minifluxdb
-    active: true
+    active: false
     image: postgres
     volumes:
       - "{{ appdata_path }}/postgres_miniflux:/var/lib/postgresql/data"
@@ -737,13 +737,13 @@ containers:
     restart: unless-stopped
 ###
   - service_name: recipes-db
-    active: true
+    active: false
     image: postgres:11-alpine
     volumes:
       - "{{ appdata_path }}/recipes/db:/var/lib/postgresql/data"
     restart: unless-stopped
   - service_name: recipes-backend
-    active: true
+    active: false
     image: vabene1111/recipes
     depends_on:
       - recipes-db
@@ -752,7 +752,7 @@ containers:
       - "{{ appdata_path }}/recipes/mediafiles:/opt/recipes/mediafiles"
     restart: unless-stopped
   - service_name: recipes-nginx
-    active: true
+    active: false
     image: nginx:mainline-alpine
     depends_on:
       - recipes-db
