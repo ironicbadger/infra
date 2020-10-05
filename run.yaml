@@ -45,6 +45,7 @@
       - role: ironicbadger.ansible_role_snapraid
       - role: ironicbadger.ansible_role_hddtemp
       - role: rossmcdonald.telegraf
+      - role: ktz-figurine
       - role: ktz-sanoid
       - role: ktz-cartman
       - role: ironicbadger.ansible_role_docker_compose_generator
@@ -81,6 +82,8 @@
       - role: geerlingguy.security
       - role: geerlingguy.ntp
       - role: ironicbadger.ansible_role_bash_aliases
+      - role: ktz-figurine
+        tags: test
       - role: ironicbadger.ansible_role_docker_compose_generator
         tags: compose
       - role: ktz-traefik
@@ -99,6 +102,7 @@
       - role: geerlingguy.security
       - role: geerlingguy.ntp
       - role: ironicbadger.ansible_role_bash_aliases
+      - role: ktz-figurine
       - role: ironicbadger.ansible_role_docker_compose_generator
         tags: compose
       - role: ktz-traefik
