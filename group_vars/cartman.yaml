@@ -40,6 +40,7 @@ package_list:
   - name: open-vm-tools
   - name: python
   #- name: qemu-guest-agent
+  - name: sanoid
   - name: screen
   - name: ssh-import-id
   - name: smartmontools
