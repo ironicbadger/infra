@@ -1,0 +1,15 @@
+---
+
+- name: download and unpack figurine
+  unarchive:
+    src: https://github.com/arsham/figurine/releases/download/v1.0.1/figurine_linux_v1.0.1.tar.gz
+    dest: /tmp
+    remote_src: yes
+
+- name: move extracted file to bin directory
+  command: mv /tmp/deploy/figurine /usr/local/bin/
+
+- name: configure login
+  template:
+    src: figurine.sh.j2
+    dest: /etc/profile.d/figurine.sh
