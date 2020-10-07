@@ -2,6 +2,9 @@
 
 target_os: debian
 
+# ktz-figurine
+figurine_name: ktz-bastion
+
 # ironicbadger.ansible_users
 users:
   - username: "{{ main_username }}"

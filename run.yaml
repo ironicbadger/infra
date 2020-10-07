@@ -20,10 +20,9 @@
   #       when: ansible_distribution == 'Ubuntu'
 
   - hosts: bastion
-    # roles:
-    #   - role: geerlingguy.security
-    #   - role: geerlingguy.docker
     tasks:
+      - hostname:
+          name: "{{ figurine_name }}"
       - name: remove ubuntu motd spam
         become: true
         file:
@@ -35,6 +34,10 @@
           - 10-help-text
           - 50-motd-news
           - 50-landscape-sysinfo
+    roles:
+      - role: ktz-figurine
+    #   - role: geerlingguy.security
+    #   - role: geerlingguy.docker
 
   - hosts: cartman
     vars_files:

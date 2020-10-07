@@ -1,3 +1,8 @@
+---
+
+# ktz-figurine
+figurine_name: ktz-cloud
+
 # grog.package
 package_list:
     - name: bash-completion

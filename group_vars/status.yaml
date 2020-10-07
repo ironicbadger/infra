@@ -1,3 +1,8 @@
+---
+
+# ktz-figurine
+figurine_name: ktz-status
+
 # grog.package
 package_list:
     - name: bash-completion
