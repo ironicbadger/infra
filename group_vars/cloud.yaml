@@ -134,19 +134,3 @@ containers:
       - "{{ cloud_appdata_path }}/unifi:/config"
     include_global_env_vars: true
     restart: unless-stopped
-###
-  - service_name: librespeed
-    active: true
-    image: linuxserver/librespeed
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.librespeed.rule=Host(`librespeed.selfhosted.show`)
-      - traefik.http.routers.librespeed.entrypoints=websecure
-      - traefik.http.routers.librespeed.tls.certresolver=cloudflare
-      - traefik.http.services.librespeed.loadbalancer.server.port=80
-    environment:
-      - MODE=standalone
-      - TELEMETRY=true
-      - "PASSWORD={{ librespeed_password }}"
-    include_global_env_vars: true
-    restart: unless-stopped
