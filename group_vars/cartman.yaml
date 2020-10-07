@@ -67,6 +67,11 @@ bash_aliases:
 # ktz-cartman
 cartman_main_storage_path: /mnt/storage
 
+extra_mountpoints:
+  - { path: "{{ cartman_main_storage_path }}" }
+  - { path: /opt, diskbyid: "UUID=b8e63455-b4eb-430b-a714-c4f36cd513a5", fs: ext4, opts: "defaults,discard" }
+  #- { path: /mnt/nvme350, diskbyid: "UUID=82d03ae9-5efe-4da2-bc14-9de173d4151f", fs: ext4, opts: "defaults,discard" }
+
 parity_disks:
   - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G0Z7RZ-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/parity2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
@@ -87,6 +92,9 @@ data_disks:
 zfs_disks:
   #- { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ373DD-part1, fs: xfs, opts: defaults, content: false }
   #- { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ7E2VD-part1, fs: xfs, opts: defaults, content: false }
+
+fstab_mergerfs:
+  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,cache.files=off,moveonenospc=true,dropcacheonclose=true,minfreespace=200G,fsname=mergerfs" }  
 
 snapraid_email_address: alexktz@gmail.com
 snapraid_gmail_pass: "{{ snapraid_email_password }}"
