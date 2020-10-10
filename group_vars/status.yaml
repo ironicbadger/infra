@@ -49,6 +49,11 @@ bash_aliases:
     - { alias: "zspace", command: "zfs list -o space" }
     - { alias: "zsnap", command: "zfs list -t snapshot" }
 
+# ktz-traefik
+traefik_file_provider: false
+traefik_enable_dashboard: false
+traefik_insecure_transport: false
+
 # ironicbadger.docker_compose_generator
 appdata_path: "{{ status_appdata_path }}/appdata"
 docker_compose_generator_output_path: "/home/{{ main_username }}"

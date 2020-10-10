@@ -101,7 +101,9 @@ snapraid_gmail_pass: "{{ snapraid_email_password }}"
 snapraid_healthcheck_io_uuid: "{{ snapraid_healthcheck_secret }}"
 
 # ktz-traefik
-enable_traefik_external_rules: true
+traefik_file_provider: true
+traefik_enable_dashboard: false #defaults to false
+traefik_insecure_transport: false #defaults to false
 
 # ironicbadger.docker_compose_generator
 appdata_path: /mnt/tank/appdata
