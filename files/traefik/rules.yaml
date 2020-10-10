@@ -14,6 +14,13 @@ http:
       service: service-blueiris
       tls:
         certResolver: cloudflare
+    router-octoprint:
+      entryPoints:
+        - websecure
+      rule: Host(`octoprint.ktz.me`)
+      service: service-octoprint
+      tls:
+        certResolver: cloudflare
   services:
     service-homeassistant:
       loadBalancer:
@@ -23,3 +30,7 @@ http:
       loadBalancer:
         servers:
         - url: "http://192.168.1.200:81"
+    service-octoprint:
+      loadBalancer:
+        servers:
+        - url: "http://192.168.1.90:80"
