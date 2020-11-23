@@ -1,0 +1,9 @@
+---
+
+- name: add telegraf to docker group
+  user:
+    name: telegraf
+    append: yes
+    groups:
+      - docker
+  notify: restart telegraf

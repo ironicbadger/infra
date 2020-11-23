@@ -26,6 +26,7 @@ package_list:
   - name: curl
   - name: fio
   - name: git
+  - name: hddtemp
   - name: htop
   - name: iftop
   - name: iotop
@@ -49,6 +50,7 @@ package_list:
   - name: tree
   - name: wget
   - name: wireguard-tools
+  - name: xfsprogs
   - name: zfsutils-linux
 
 # ferrarimarco.bash-aliases
@@ -71,25 +73,27 @@ extra_mountpoints:
   - { path: "{{ cartman_main_storage_path }}" }
   - { path: /opt, diskbyid: "UUID=b8e63455-b4eb-430b-a714-c4f36cd513a5", fs: ext4, opts: "defaults,discard" }
   # retired data disks
-  - { path: /mnt/retired.disk2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YHV69AD-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/retired.disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G10VZZ-part1, fs: xfs, opts: defaults, content: false }
+  #- { path: /mnt/retired.disk2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YHV69AD-part1, fs: xfs, opts: defaults, content: false }
+  #- { path: /mnt/retired.disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G10VZZ-part1, fs: xfs, opts: defaults, content: false }
 
 parity_disks:
-  - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G0Z7RZ-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/parity2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJHZW1F-part1, fs: ext4, opts: defaults, content: false }
+  #- { path: /mnt/parity2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
 
 data_disks:
+  - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJJ0K4F-part1, fs: xfs, opts: defaults, content: true }
+  - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk3, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ15VJD-part1, fs: xfs, opts: defaults, content: true }
-  - { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ2S3AD-part1, fs: xfs, opts: defaults, content: true }
+  - { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ2S3AD-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-HGST_HDN728080ALE604_R6GPPDTY-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ1EJAW-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk7, diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ3JB4W-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk8, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0N54S-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk9, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0NN0R-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk7, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0N54S-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk8, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0NN0R-part1, fs: xfs, opts: defaults, content: false }
+  #- { path: /mnt/disk7, diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ3JB4W-part1, fs: xfs, opts: defaults, content: false }
 
 zfs_disks:
-  #- { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ373DD-part1, fs: xfs, opts: defaults, content: false }
-  #- { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ7E2VD-part1, fs: xfs, opts: defaults, content: false }
+  # ata-ST10000DM0004-2GR11L_ZJV5CF96
+  # ata-WDC_WD100EMAZ-00WJTA0_2YJ7E2VD
 
 fstab_mergerfs:
   - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,cache.files=off,moveonenospc=true,dropcacheonclose=true,minfreespace=200G,fsname=mergerfs" }  
@@ -694,7 +698,64 @@ containers:
       - "{{ appdata_path }}/recipes/mediafiles:/media"
       - "{{ appdata_path }}/recipes/nginx/conf.d:/etc/nginx/conf.d"
     restart: unless-stopped
-
+###
+  - service_name: photoprism
+    active: true
+    image: photoprism/photoprism:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.photoprism.rule=Host(`photoprism.ktz.me`)
+      - traefik.http.routers.photoprism.entrypoints=websecure
+      - traefik.http.routers.photoprism.tls.certresolver=cloudflare
+      - traefik.http.services.photoprism.loadbalancer.server.port=2342
+    volumes:
+      - "{{ appdata_path }}/photoprism/app:/photoprism/storage" 
+      - "{{ cartman_main_storage_path }}/photos/alex/legacy/images.old:/photoprism/originals/imagesold"
+    environment:
+      - UID=1313
+      - GID=1313
+      - PHOTOPRISM_ADMIN_PASSWORD=pleasechange     # Initial admin password: PLEASE CHANGE!
+      - PHOTOPRISM_DEBUG=false                      # Run in debug mode (shows additional log messages)
+      - PHOTOPRISM_PUBLIC=false                     # No authentication required (disables password protection)
+      - PHOTOPRISM_READONLY=false                   # Don't modify originals directory (reduced functionality)
+      - PHOTOPRISM_UPLOAD_NSFW=true                 # Allow uploads that MAY be offensive
+      - PHOTOPRISM_DETECT_NSFW=false                # Flag photos as private that MAY be offensive
+      - PHOTOPRISM_EXPERIMENTAL=false               # Enable experimental features
+      - PHOTOPRISM_SITE_URL="https://photoprism.ktz.me"  # Canonical / public site URL
+      - PHOTOPRISM_SITE_TITLE="PhotoPrism"
+      - PHOTOPRISM_SITE_CAPTION="Browse Your Life"
+      - PHOTOPRISM_SITE_DESCRIPTION="ktz."
+      - PHOTOPRISM_SITE_AUTHOR="Alex Kretzschmar"
+      - PHOTOPRISM_HTTP_HOST=0.0.0.0
+      - PHOTOPRISM_HTTP_PORT=2342
+      - PHOTOPRISM_SETTINGS_HIDDEN=false            # Users can not view or change settings
+      - PHOTOPRISM_DATABASE_DRIVER=sqlite           # SQLite is an embedded database that doesn't require a server
+      #- PHOTOPRISM_DATABASE_DRIVER=mysql          # Use MariaDB (or MySQL) instead of SQLite for improved performance
+      # PHOTOPRISM_DATABASE_DSN: "photoprism:insecure@tcp(mariadb:3306)/photoprism?charset=utf8mb4,utf8&parseTime=true"
+      - PHOTOPRISM_SIDECAR_JSON=true                # Automatically create JSON sidecar files using Exiftool
+      - PHOTOPRISM_SIDECAR_YAML=true                # Automatically backup metadata to YAML sidecar files
+      - PHOTOPRISM_THUMB_FILTER=lanczos             # Resample filter, best to worst: blackman, lanczos, cubic, linear
+      - PHOTOPRISM_THUMB_UNCACHED=false             # Enable on-demand thumbnail rendering (high memory and cpu usage)
+      - PHOTOPRISM_THUMB_SIZE=2048                    # Pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
+      # PHOTOPRISM_THUMB_SIZE: 4096                  # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
+      - PHOTOPRISM_THUMB_SIZE_UNCACHED=7680           # On-demand rendering size limit (default 7680, min 720, max 7680)
+      - PHOTOPRISM_JPEG_SIZE=7680                     # Size limit for converted image files in pixels (720-30000)
+      - PHOTOPRISM_JPEG_QUALITY=92                    # Set to 95 for high-quality thumbnails (25-100)
+      - PHOTOPRISM_DARKTABLE_PRESETS=false          # Use darktable presets (disables concurrent raw to jpeg conversion)
+    restart: unless-stopped
+  - service_name: photoprism_db
+    active: true
+    image: mariadb:10.5
+    volumes:
+      - "{{ appdata_path }}/photoprism/db:/var/lib/mysql" 
+    environment:
+      - MYSQL_ROOT_PASSWORD=pleasechange
+      - MYSQL_USER=photoprism
+      - MYSQL_PASSWORD=insecure
+      - MYSQL_DATABASE=photoprism
+    restart: unless-stopped
+ 
+    
   # template for docker-compose services
   #
   ###

@@ -7,6 +7,12 @@ c:
 ccomp:
 	ansible-playbook run.yaml --limit cartman --vault-password-file .vault-password --tags compose
 
+h:
+	ansible-playbook -b run.yaml --limit helios64 --ask-become-pass --vault-password-file .vault-password
+
+hcomp:
+	ansible-playbook run.yaml --limit helios64 --vault-password-file .vault-password --tags compose
+
 q:
 	ansible-playbook -b run.yaml --limit quassel --ask-become-pass --vault-password-file .vault-password
 
