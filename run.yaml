@@ -19,25 +19,11 @@
   #         - 10-help-text
   #       when: ansible_distribution == 'Ubuntu'
 
-  - hosts: bastion
-    tasks:
-      - hostname:
-          name: "{{ figurine_name }}"
-      - name: remove ubuntu motd spam
-        become: true
-        file:
-          path: "/etc/update-motd.d/{{ item }}"
-          state: absent
-        loop:
-          - 80-livepatch
-          - 95-hwe-eol
-          - 10-help-text
-          - 50-motd-news
-          - 50-landscape-sysinfo
+  - hosts: unas
+    vars_files:
+      - 'vars/vault.yaml'
     roles:
-      - role: ktz-figurine
-    #   - role: geerlingguy.security
-    #   - role: geerlingguy.docker
+      - role: ironicbadger.ansible_role_proxmox_nag_removal
 
   - hosts: cartman
     vars_files:

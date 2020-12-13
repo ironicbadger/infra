@@ -13,6 +13,12 @@ h:
 hcomp:
 	ansible-playbook run.yaml --limit helios64 --vault-password-file .vault-password --tags compose
 
+u:
+	ansible-playbook -b run.yaml --limit unas --ask-become-pass --vault-password-file .vault-password
+
+ucomp:
+	ansible-playbook run.yaml --limit unas --vault-password-file .vault-password --tags compose
+
 q:
 	ansible-playbook -b run.yaml --limit quassel --ask-become-pass --vault-password-file .vault-password
 

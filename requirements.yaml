@@ -8,6 +8,7 @@
 - src: ironicbadger.ansible_role_bash_aliases
 - src: ironicbadger.ansible_role_hddtemp
 - src: ironicbadger.ansible_role_snapraid
+- src: ironicbadger.ansible_role_proxmox_nag_removal
 
 - src: ironicbadger.ansible_users
 - src: weareinteractive.environment
@@ -20,7 +21,6 @@
 # - src: ironicbadger.ansible_role_nginx_configs
 # - src: ironicbadger.ansible_role_hddtemp
 # - src: ironicbadger.ansible_role_packages
-# - src: ironicbadger.ansible_role_proxmox_nag_removal
 # - src: rossmcdonald.telegraf
 # - src: ironicbadger.ansible_role_bash_aliases
 # - src: grog.package
