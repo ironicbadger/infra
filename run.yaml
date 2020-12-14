@@ -1,23 +1,23 @@
 ---
-  # - hosts: all
-  #   roles:
-  #     - role: ironicbadger.ansible_users
-  #     - role: ironicbadger.ansible_role_bash_aliases
-  #     - role: grog.package
-  #     - role: geerlingguy.security
-  #     - role: weareinteractive.environment
-  #     - role: geerlingguy.ntp
-  #   tasks:
-  #     - name: remove ubuntu motd spam
-  #       become: true
-  #       file:
-  #         path: "/etc/update-motd.d/{{ item }}"
-  #         state: absent
-  #       loop:
-  #         - 80-livepatch
-  #         - 95-hwe-eol
-  #         - 10-help-text
-  #       when: ansible_distribution == 'Ubuntu'
+  - hosts: all
+    roles:
+      # - role: ironicbadger.ansible_users
+      - role: ironicbadger.ansible_role_bash_aliases
+      # - role: grog.package
+      # - role: geerlingguy.security
+      # - role: weareinteractive.environment
+      # - role: geerlingguy.ntp
+    tasks:
+      - name: remove ubuntu motd spam
+        become: true
+        file:
+          path: "/etc/update-motd.d/{{ item }}"
+          state: absent
+        loop:
+          - 80-livepatch
+          - 95-hwe-eol
+          - 10-help-text
+        when: ansible_distribution == 'Ubuntu'
 
   - hosts: unas
     vars_files:
@@ -31,7 +31,6 @@
     roles:
       - role: geerlingguy.docker
       - role: grog.package
-      - role: ironicbadger.ansible_role_snapraid
       - role: ironicbadger.ansible_role_hddtemp
       - role: rossmcdonald.telegraf
       - role: ktz-figurine
@@ -41,6 +40,7 @@
         tags: compose
       - role: ktz-traefik
         tags: compose
+      - role: ironicbadger.ansible_role_snapraid
     # tasks:
     # - include_vars:
     #     dir: vars/containers

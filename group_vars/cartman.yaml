@@ -38,9 +38,9 @@ package_list:
   - name: net-tools
   - name: nmap
   - name: openssh-server
-  - name: open-vm-tools
+  #- name: open-vm-tools
   - name: python
-  #- name: qemu-guest-agent
+  - name: qemu-guest-agent
   - name: sanoid
   - name: screen
   - name: ssh-import-id
@@ -58,38 +58,32 @@ bash_aliases:
   - { alias: "dtail", command: "docker logs -tf --tail='50' " }
   - { alias: "dstop", command: "docker stop `docker ps -aq`" }
   - { alias: "drm", command: "docker rm `docker ps -aq`" }
-  - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml --remove-orphans " }
+  - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml "}
+  - { alias: "dcporph", command: "docker-compose -f ~/docker-compose.yml --remove-orphans "}
   - { alias: "dprune", command: "docker image prune" }
   - { alias: "dprunesys", command: "docker system prune --all" }
   - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop"}
   - { alias: "appdata", command: "cd /mnt/tank/appdata" }
   - { alias: "zspace", command: "zfs list -o space" }
   - { alias: "zsnap", command: "zfs list -t snapshot" }
+  - { alias: "dfclean", command: "df -h -x tmpfs -x zfs -t fuse.mergerfs -t xfs -t ext4"}
+  - { alias: "dfzfs", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4"}
 
 # ktz-cartman
 cartman_main_storage_path: /mnt/storage
-
 extra_mountpoints:
   - { path: "{{ cartman_main_storage_path }}" }
-  - { path: /opt, diskbyid: "UUID=b8e63455-b4eb-430b-a714-c4f36cd513a5", fs: ext4, opts: "defaults,discard" }
-  # retired data disks
-  #- { path: /mnt/retired.disk2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YHV69AD-part1, fs: xfs, opts: defaults, content: false }
-  #- { path: /mnt/retired.disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G10VZZ-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /opt, diskbyid: "UUID=8e02fedb-169a-462c-a4be-b41cd34a3019", fs: ext4, opts: "defaults,discard" }
 
 parity_disks:
   - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJHZW1F-part1, fs: ext4, opts: defaults, content: false }
-  #- { path: /mnt/parity2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
 
 data_disks:
   - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJJ0K4F-part1, fs: xfs, opts: defaults, content: true }
-  - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-ST10000DM0004-2GR11L_ZJV6A8WV-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk3, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ15VJD-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ2S3AD-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-HGST_HDN728080ALE604_R6GPPDTY-part1, fs: xfs, opts: defaults, content: true }
-  - { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ1EJAW-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk7, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0N54S-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk8, diskbyid: /dev/disk/by-id/ata-ST8000DM004-2CX188_WCT0NN0R-part1, fs: xfs, opts: defaults, content: false }
-  #- { path: /mnt/disk7, diskbyid: /dev/disk/by-id/ata-WDC_WD80EZAZ-11TDBA0_7SJ3JB4W-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
 
 zfs_disks:
   # ata-ST10000DM0004-2GR11L_ZJV5CF96
@@ -110,7 +104,7 @@ traefik_insecure_transport: false #defaults to false
 # ironicbadger.docker_compose_generator
 appdata_path: /mnt/tank/appdata
 download_path: /opt/downloads # in use?
-primary_domain: al.ktz.me
+primary_domain: "al.{{ domain_l }}"
 
 containers:
   ###
@@ -156,9 +150,11 @@ containers:
     active: true
     image: plexinc/pms-docker
     network_mode: host
+    devices:
+      - /dev/dri:/dev/dri
     labels:
       - traefik.enable=true
-      - traefik.http.routers.plex.rule=Host(`plex.ktz.me`)
+      - "traefik.http.routers.plex.rule=Host(`plex.{{ domain_l }}`)"
       - traefik.http.routers.plex.entrypoints=websecure
       - traefik.http.services.plex.loadbalancer.server.port=32400
       - traefik.http.routers.plex.tls.certresolver=cloudflare
@@ -175,7 +171,7 @@ containers:
       - plex
     labels:
       - traefik.enable=true
-      - traefik.http.routers.tautulli.rule=(Host(`al.ktz.me`) && PathPrefix(`/tautulli`))
+      - "traefik.http.routers.tautulli.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/tautulli`))"
       - traefik.http.routers.tautulli.entrypoints=websecure
       - traefik.http.routers.tautulli.tls.certresolver=cloudflare
       - traefik.http.services.tautulli.loadbalancer.server.port=8181
@@ -190,7 +186,7 @@ containers:
     image: linuxserver/nzbget
     labels:
       - traefik.enable=true
-      - traefik.http.routers.nzbget.rule=(Host(`al.ktz.me`) && PathPrefix(`/nzbget`))
+      - traefik.http.routers.nzbget.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/nzbget`))
       - traefik.http.routers.nzbget.entrypoints=websecure
       - traefik.http.routers.nzbget.tls.certresolver=cloudflare
       - traefik.http.services.nzbget.loadbalancer.server.port=6789
@@ -207,7 +203,7 @@ containers:
       - nzbget
     labels:
       - traefik.enable=true
-      - traefik.http.routers.sonarr.rule=(Host(`al.ktz.me`) && PathPrefix(`/sonarr`))
+      - "traefik.http.routers.sonarr.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/sonarr`))"
       - traefik.http.routers.sonarr.entrypoints=websecure
       - traefik.http.routers.sonarr.tls.certresolver=cloudflare
       - traefik.http.services.sonarr.loadbalancer.server.port=8989
@@ -219,7 +215,7 @@ containers:
     include_global_env_vars: true
   ###
   - service_name: radarr
-    active: true
+    active: false
     image: linuxserver/radarr
     volumes:
       - "{{ appdata_path }}/radarr:/config"
@@ -239,7 +235,7 @@ containers:
     image: mazzolino/tiddlywiki
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.tiddlywiki.rule=Host(`wiki.ktz.me`)"
+      - "traefik.http.routers.tiddlywiki.rule=Host(`wiki.{{ domain_l }}`)"
       - traefik.http.routers.tiddlywiki.entrypoints=websecure
       - traefik.http.routers.tiddlywiki.tls.certresolver=cloudflare
       - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
@@ -248,11 +244,11 @@ containers:
     restart: unless-stopped
   ###
   - service_name: chowdown
-    active: true
+    active: false
     image: gregyankovoy/chowdown
     labels:
       - traefik.enable=true
-      - traefik.http.routers.chowdown.rule=(Host(`al.ktz.me`) && PathPrefix(`/chowdown`))
+      - "traefik.http.routers.chowdown.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/chowdown`))"
       - traefik.http.routers.chowdown.entrypoints=websecure
       - traefik.http.routers.chowdown.tls.certresolver=cloudflare
       - traefik.http.services.chowdown.loadbalancer.server.port=4000
@@ -270,7 +266,7 @@ containers:
       - mysql
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.nc.rule=Host(`nc.ktz.cloud`)"
+      - "traefik.http.routers.nc.rule=Host(`nc.{{ domain_cloud }}`)"
       - traefik.http.routers.nc.entrypoints=websecure
       - traefik.http.routers.nc.tls.certresolver=cloudflare
       - traefik.http.services.nc.loadbalancer.server.port=80
@@ -299,14 +295,14 @@ containers:
     image: grafana/grafana
     labels:
       - traefik.enable=true
-      - traefik.http.routers.grafana.rule=(Host(`al.ktz.me`) && PathPrefix(`/grafana`))
+      - "traefik.http.routers.grafana.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/grafana`))"
       - traefik.http.routers.grafana.entrypoints=websecure
       - traefik.http.routers.grafana.tls.certresolver=cloudflare
       - traefik.http.services.grafana.loadbalancer.server.port=3000
     environment:
-      - "GF_SERVER_ROOT_URL=https://al.ktz.me/grafana"
+      - "GF_SERVER_ROOT_URL=https://al.{{ domain_l }}/grafana"
       - "GF_SERVER_SERVE_FROM_SUB_PATH=true"
-      - "GF_SERVER_DOMAIN=al.ktz.me"
+      - "GF_SERVER_DOMAIN=al.{{ domain_l }}"
     volumes:
       - "{{ appdata_path }}/grafana/data:/var/lib/grafana"
     restart: unless-stopped
@@ -327,7 +323,7 @@ containers:
     hostname: "{{ hostname_cartman }}"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.duplicati.rule=Host(`duplicati.ktz.me`)
+      - "traefik.http.routers.duplicati.rule=Host(`duplicati.{{ domain_l }}`)"
       - traefik.http.routers.duplicati.entrypoints=websecure
       - traefik.http.routers.duplicati.tls.certresolver=cloudflare
       - traefik.http.services.duplicati.loadbalancer.server.port=8200
@@ -348,7 +344,7 @@ containers:
       - "{{ cartman_main_storage_path }}/audiobooks:/books"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.booksonic.rule=(Host(`al.ktz.me`) && PathPrefix(`/booksonic`))
+      - "traefik.http.routers.booksonic.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/booksonic`))"
       - traefik.http.routers.booksonic.entrypoints=websecure
       - traefik.http.routers.booksonic.tls.certresolver=cloudflare
       - traefik.http.services.booksonic.loadbalancer.server.port=4040
@@ -362,11 +358,9 @@ containers:
     volumes:
       - "{{ appdata_path }}/booksonicair:/config"
       - "{{ cartman_main_storage_path }}/audiobooks:/books"
-    ports:
-      - 4040:4040
     labels:
       - traefik.enable=true
-      - traefik.http.routers.booksonicair.rule=(Host(`al.ktz.me`) && PathPrefix(`/booksonicair`))
+      - "traefik.http.routers.booksonicair.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/booksonicair`))"
       - traefik.http.routers.booksonicair.entrypoints=websecure
       - traefik.http.routers.booksonicair.tls.certresolver=cloudflare
       - traefik.http.services.booksonicair.loadbalancer.server.port=4040
@@ -383,7 +377,7 @@ containers:
       - "{{ appdata_path }}/smokeping/data:/data"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.smokeping.rule=(Host(`al.ktz.me`) && PathPrefix(`/smokeping`))
+      - "traefik.http.routers.smokeping.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/smokeping`))"
       - traefik.http.routers.smokeping.entrypoints=websecure
       - traefik.http.routers.smokeping.tls.certresolver=cloudflare
       - traefik.http.services.smokeping.loadbalancer.server.port=80
@@ -391,7 +385,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: gitea
-    active: true
+    active: false
     image: gitea/gitea
     depends_on:
       - mysql
@@ -426,7 +420,7 @@ containers:
       - "{{ cartman_main_storage_path }}:/sync"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.btsync.rule=Host(`sync.ktz.me`)
+      - "traefik.http.routers.btsync.rule=Host(`sync.{{ domain_l }}`)"
       - traefik.http.routers.btsync.entrypoints=websecure
       - traefik.http.routers.btsync.tls.certresolver=cloudflare
       - traefik.http.services.btsync.loadbalancer.server.port=8888
@@ -442,7 +436,7 @@ containers:
       - "{{ appdata_path }}/speedtest:/var/www/html/data"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.speedtest.rule=Host(`speedtest.ktz.me`)
+      - "traefik.http.routers.speedtest.rule=Host(`speedtest.{{ domain_l }}`)"
       - traefik.http.routers.speedtest.entrypoints=websecure
       - traefik.http.routers.speedtest.tls.certresolver=cloudflare
       - traefik.http.services.speedtest.loadbalancer.server.port=80
@@ -456,7 +450,7 @@ containers:
       - 8008:80
     labels:
       - traefik.enable=true
-      - traefik.http.routers.librespeed.rule=Host(`librespeed.ktz.me`)
+      - "traefik.http.routers.librespeed.rule=Host(`librespeed.{{ domain_l }}`)"
       - traefik.http.routers.librespeed.entrypoints=websecure
       - traefik.http.routers.librespeed.tls.certresolver=cloudflare
       - traefik.http.services.librespeed.loadbalancer.server.port=80
@@ -472,7 +466,7 @@ containers:
     image: lycheeorg/lychee
     labels:
       - traefik.enable=true
-      - traefik.http.routers.lychee.rule=Host(`gallery.ktz.me`)
+      - "traefik.http.routers.lychee.rule=Host(`gallery.{{ domain_me }}`)"
       - traefik.http.routers.lychee.entrypoints=websecure
       - traefik.http.routers.lychee.tls.certresolver=cloudflare
       - traefik.http.services.lychee.loadbalancer.server.port=80
@@ -510,7 +504,7 @@ containers:
     image: nginx:mainline-alpine
     labels:
       - traefik.enable=true
-      - traefik.http.routers.nginx.rule=Host(`ninja.ktz.me`)
+      - "traefik.http.routers.nginx.rule=Host(`ninja.{{ domain_l }}`)"
       - traefik.http.routers.nginx.entrypoints=websecure
       - traefik.http.routers.nginx.tls.certresolver=cloudflare
       - traefik.http.services.nginx.loadbalancer.server.port=80
@@ -620,7 +614,7 @@ containers:
     image: linuxserver/scrutiny
     labels:
       - traefik.enable=true
-      - traefik.http.routers.scrutiny.rule=Host(`scrutiny.ktz.me`)
+      - "traefik.http.routers.scrutiny.rule=Host(`scrutiny.{{ domain_l }}`)"
       - traefik.http.routers.scrutiny.entrypoints=websecure
       - traefik.http.routers.scrutiny.tls.certresolver=cloudflare
       - traefik.http.services.scrutiny.loadbalancer.server.port=8080
@@ -700,7 +694,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: photoprism
-    active: true
+    active: false
     image: photoprism/photoprism:latest
     labels:
       - traefik.enable=true
@@ -744,7 +738,7 @@ containers:
       - PHOTOPRISM_DARKTABLE_PRESETS=false          # Use darktable presets (disables concurrent raw to jpeg conversion)
     restart: unless-stopped
   - service_name: photoprism_db
-    active: true
+    active: false
     image: mariadb:10.5
     volumes:
       - "{{ appdata_path }}/photoprism/db:/var/lib/mysql" 

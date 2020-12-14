@@ -2,7 +2,7 @@
 # generic settings
 main_username: alex
 main_groupname: "{{ main_username }}"
-main_uid: "1313"
+main_uid: "1000"
 main_gid: "{{ main_uid }}"
 
 # ferrarimarco.bash-aliases
@@ -20,7 +20,6 @@ bash_aliases:
   - { alias: "sshlist", command: "echo Currently open ssh connections && echo && l ~/.ssh/multiplex/"}
   - { alias: "dfclean", command: "df -h -x tmpfs -x zfs -t fuse.mergerfs -t xfs -t ext4"}
   - { alias: "dfzfs", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4"}
-
 
 # grog.package
 package_list:
@@ -86,9 +85,6 @@ global_env_vars:
 docker_compose_generator_uid: "{{ main_uid }}"
 docker_compose_generator_gid: "{{ main_gid }}"
 docker_compose_generator_output_path: /home/alex
-
-# ironicbadger.nginx_configs
-nginx_configs_distributed: true
 
 # influxdb
 influxdb_ip: 192.168.1.10
