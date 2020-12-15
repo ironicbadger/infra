@@ -36,6 +36,7 @@ package_list:
   - name: mutt
   - name: ncdu
   - name: net-tools
+  - name: nfs-kernel-server
   - name: nmap
   - name: openssh-server
   #- name: open-vm-tools
@@ -52,6 +53,19 @@ package_list:
   - name: wireguard-tools
   - name: xfsprogs
   - name: zfsutils-linux
+
+# ktz-sanoid
+sanoid_config_source: sanoid-cartman.conf
+syncoid_cloud_dataset: "ironicbadger@unifi.ktz.cloud:tank/appdata"
+
+syncoid_healthcheck_string: "curl -fsS --retry 3 https://hc-ping.com"
+syncoid_cron_jobs:
+  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/unifi {{ cartman_appdata_dataset }}/unifi && {{ syncoid_healthcheck_string }}/{{ syncoid_unifi_healthcheck_uuid }} > /dev/null', name: 'unifi_replication', weekday: '*', hour: '*', minute: '39' }
+  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/ktz-blog {{ cartman_appdata_dataset }}/ktz-blog && {{ syncoid_healthcheck_string }}/{{ syncoid_ktz_blog_healthcheck_uuid }} > /dev/null', name: 'ktzblog_replication', weekday: '*', hour: '*', minute: '*/5' }
+  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/mum-blog {{ cartman_appdata_dataset }}/mum-blog && {{ syncoid_healthcheck_string }}/{{ syncoid_mum_blog_healthcheck_uuid }} > /dev/null', name: 'mumblog_replication', weekday: '*', hour: '*', minute: '*/5' }
+  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/pms-book {{ cartman_appdata_dataset }}/pms-book && {{ syncoid_healthcheck_string }}/{{ syncoid_pms_book_healthcheck_uuid }} > /dev/null', name: 'pmsbook_replication', weekday: '*', hour: '*', minute: '39' }
+  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/tiddlywiki {{ cartman_appdata_dataset }}/tiddlywiki && {{ syncoid_healthcheck_string }}/{{ syncoid_tiddlywiki_healthcheck_uuid }} > /dev/null', name: 'tiddlywiki_replication', weekday: '*', hour: '*', minute: '*/5' }
+  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/snipe {{ cartman_appdata_dataset }}/snipe && {{ syncoid_healthcheck_string }}/{{ syncoid_snipe_healthcheck_uuid }} > /dev/null', name: 'snipe_replication', weekday: '*', hour: '*', minute: '*/5' }
 
 # ferrarimarco.bash-aliases
 bash_aliases:
@@ -90,7 +104,7 @@ zfs_disks:
   # ata-WDC_WD100EMAZ-00WJTA0_2YJ7E2VD
 
 fstab_mergerfs:
-  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,cache.files=off,moveonenospc=true,dropcacheonclose=true,minfreespace=200G,fsname=mergerfs" }  
+  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,cache.files=off,moveonenospc=true,category.create=mfs,dropcacheonclose=true,minfreespace=250G,fsname=mergerfs" }  
 
 snapraid_email_address: alexktz@gmail.com
 snapraid_gmail_pass: "{{ snapraid_email_password }}"
@@ -105,6 +119,7 @@ traefik_insecure_transport: false #defaults to false
 appdata_path: /mnt/tank/appdata
 download_path: /opt/downloads # in use?
 primary_domain: "al.{{ domain_l }}"
+cartman_appdata_dataset: tank/appdata
 
 containers:
   ###
@@ -215,7 +230,7 @@ containers:
     include_global_env_vars: true
   ###
   - service_name: radarr
-    active: false
+    active: true
     image: linuxserver/radarr
     volumes:
       - "{{ appdata_path }}/radarr:/config"
@@ -223,7 +238,7 @@ containers:
       - "{{ download_path }}/complete/movies:/downloads/complete/movies"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.radarr.rule=(Host(`al.ktz.me`) && PathPrefix(`/radarr`))
+      - "traefik.http.routers.radarr.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/radarr`))"
       - traefik.http.routers.radarr.entrypoints=websecure
       - traefik.http.routers.radarr.tls.certresolver=cloudflare
       - traefik.http.services.radarr.loadbalancer.server.port=7878
@@ -318,7 +333,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: duplicati
-    active: true
+    active: false
     image: linuxserver/duplicati
     hostname: "{{ hostname_cartman }}"
     labels:

@@ -1,0 +1,20 @@
+---
+
+- name: ensure sanoid is installed
+  apt:
+    name: sanoid
+    state: present
+
+- name: create target dir for sanoid config
+  file:
+    path: /etc/sanoid
+    state: directory
+
+- name: configure sanoid
+  copy:
+    #src: sanoid/sanoid.conf
+    src: "sanoid/{{ sanoid_config_source }}"
+    dest: /etc/sanoid/sanoid.conf
+    owner: root
+    group: root
+    mode: '0644'

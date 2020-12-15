@@ -11,11 +11,13 @@ package_list:
     - name: ncdu
     - name: net-tools
     - name: nmap
+    - name: sanoid
     - name: sudo
     - name: tmux
     - name: tree
     - name: wget
-    - name: wireguard
+    - name: wireguard-tools
+    - name: zfsutils-linux
   
 # geerlingguy.security
 security_ssh_port: "{{ cloud_ssh_port }}"
@@ -36,18 +38,24 @@ github_users:
     - name: "{{ main_username }}"
       groups: sudo,docker
 
-# ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
+# ferrarimarco.bash-aliases
 bash_aliases:
-    - { alias: "dtail", command: "docker logs -tf --tail='50' " }
-    - { alias: "dstop", command: "docker stop `docker ps -aq`" }
-    - { alias: "drm", command: "docker rm `docker ps -aq`" }
-    - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml " }
-    - { alias: "dprune", command: "docker image prune" }
-    - { alias: "dprunesys", command: "docker system prune --all" }
-    - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop" }
-    - { alias: "appdata", command: "cd /mnt/tank/appdata" }
-    - { alias: "zspace", command: "zfs list -o space" }
-    - { alias: "zsnap", command: "zfs list -t snapshot" }
+  - { alias: "dtail", command: "docker logs -tf --tail='50' " }
+  - { alias: "dstop", command: "docker stop `docker ps -aq`" }
+  - { alias: "drm", command: "docker rm `docker ps -aq`" }
+  - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml "}
+  - { alias: "dcporph", command: "docker-compose -f ~/docker-compose.yml --remove-orphans "}
+  - { alias: "dprune", command: "docker image prune" }
+  - { alias: "dprunesys", command: "docker system prune --all" }
+  - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop"}
+  - { alias: "appdata", command: "cd /mnt/tank/appdata" }
+  - { alias: "zspace", command: "zfs list -o space" }
+  - { alias: "zsnap", command: "zfs list -t snapshot" }
+  - { alias: "dfclean", command: "df -h -x tmpfs -x zfs -t fuse.mergerfs -t xfs -t ext4"}
+  - { alias: "dfzfs", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4"}
+
+# ktz-sanoid
+sanoid_config_source: sanoid-cloud.conf
 
 # ktz-traefik
 traefik_file_provider: false
@@ -55,16 +63,15 @@ traefik_enable_dashboard: false
 traefik_insecure_transport: true
 
 # ironicbadger.docker_compose_generator
-#appdata_path: "/home/{{ main_username }}/appdata"
-#docker_compose_generator_output_path: "/home/{{ main_username }}"
-docker_compose_generator_uid: "1313"
-docker_compose_generator_gid: "1313"
+docker_compose_generator_uid: "1000"
+docker_compose_generator_gid: "1000"
+docker_compose_generator_output_path: "/home/{{ main_username }}"
+appdata_path: "{{ cloud_appdata_path }}" # used for other non cloud roles
 containers:
 ###
-  - service_name: traefik
+  - service_name: tr
     active: true
     image: traefik
-    container_name: tr
     ports:
         - 80:80
         - 443:443

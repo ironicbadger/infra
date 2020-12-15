@@ -1,23 +1,11 @@
 ---
 
-# - name: install sanoid
-#   include_tasks: install-debian.yaml
-#   when: ansible_os_family == 'Debian'
+- name: sanoid setup
+  include: sanoid.yaml
+  tags:
+    - sanoid
 
-- name: ensure sanoid is installed
-  apt:
-    name: sanoid
-    state: present
-
-- name: create target dir for sanoid config
-  file:
-    path: /etc/sanoid
-    state: directory
-
-- name: configure sanoid
-  copy:
-    src: sanoid/sanoid.conf
-    dest: /etc/sanoid/sanoid.conf
-    owner: root
-    group: root
-    mode: '0644'
+- name: replication setup
+  include: replication.yaml
+  tags:
+    - replication

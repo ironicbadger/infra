@@ -41,19 +41,6 @@
       - role: ktz-traefik
         tags: compose
       - role: ironicbadger.ansible_role_snapraid
-    # tasks:
-    # - include_vars:
-    #     dir: vars/containers
-    #   tags: test
-    # - debug:
-    #     msg: "{{ example }}"
-    #   tags: test
-    # - name: Ansible array variables example
-    #   debug: 
-    #     msg: "{{ item }}"
-    #   with_list:
-    #     - "{{ example }}"
-    #   tags: test
 
   - hosts: helios64
     vars_files:
@@ -90,6 +77,7 @@
       - role: geerlingguy.github-users
       - role: geerlingguy.security
       - role: geerlingguy.ntp
+      - role: ktz-sanoid
       - role: ironicbadger.ansible_role_bash_aliases
       - role: ktz-figurine
         tags: test
