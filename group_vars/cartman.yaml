@@ -29,6 +29,7 @@ package_list:
   - name: hddtemp
   - name: htop
   - name: iftop
+  - name: intel-gpu-tools
   - name: iotop
   - name: lm-sensors
   - name: mc
