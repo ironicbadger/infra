@@ -125,7 +125,7 @@ containers:
       - traefik.http.routers.pmsbook.tls.certresolver=cloudflare
       - "traefik.http.services.pmsbook.loadbalancer.server.port=80"
     volumes:
-      - "{{ cloud_appdata_path }}/book-perfectmediaserver/book:/usr/share/nginx/html:ro"
+      - "{{ cloud_appdata_path }}/pms-book/book:/usr/share/nginx/html:ro"
     restart: unless-stopped
 ###
   - service_name: unifi
