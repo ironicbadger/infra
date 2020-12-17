@@ -61,7 +61,7 @@ syncoid_cloud_dataset: "ironicbadger@unifi.ktz.cloud:tank/appdata"
 
 syncoid_healthcheck_string: "curl -fsS --retry 3 https://hc-ping.com"
 syncoid_cron_jobs:
-  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/unifi {{ cartman_appdata_dataset }}/unifi && {{ syncoid_healthcheck_string }}/{{ syncoid_unifi_healthcheck_uuid }} > /dev/null', name: 'unifi_replication', weekday: '*', hour: '*', minute: '39' }
+  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/unifi {{ cartman_appdata_dataset }}/unifi && {{ syncoid_healthcheck_string }}/{{ syncoid_unifi_healthcheck_uuid }} > /dev/null', name: 'unifi_replication', weekday: '*', hour: '*/4' }
   - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/ktz-blog {{ cartman_appdata_dataset }}/ktz-blog && {{ syncoid_healthcheck_string }}/{{ syncoid_ktz_blog_healthcheck_uuid }} > /dev/null', name: 'ktzblog_replication', weekday: '*', hour: '*', minute: '*/5' }
   - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/mum-blog {{ cartman_appdata_dataset }}/mum-blog && {{ syncoid_healthcheck_string }}/{{ syncoid_mum_blog_healthcheck_uuid }} > /dev/null', name: 'mumblog_replication', weekday: '*', hour: '*', minute: '*/5' }
   - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/pms-book {{ cartman_appdata_dataset }}/pms-book && {{ syncoid_healthcheck_string }}/{{ syncoid_pms_book_healthcheck_uuid }} > /dev/null', name: 'pmsbook_replication', weekday: '*', hour: '*', minute: '39' }
