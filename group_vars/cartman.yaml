@@ -85,6 +85,7 @@ bash_aliases:
   - { alias: "dfzfs", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4"}
 
 # ktz-cartman
+docker_zfs_override: true
 cartman_main_storage_path: /mnt/storage
 extra_mountpoints:
   - { path: "{{ cartman_main_storage_path }}" }

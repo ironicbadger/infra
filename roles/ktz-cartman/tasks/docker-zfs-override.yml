@@ -1,0 +1,16 @@
+---
+
+- name: Create dir for docker service ZFS override
+  file:
+    path: "/etc/systemd/system/docker.service.d"
+    state: directory
+    mode: 0755
+- name: Create override.conf
+  copy:
+    src: etc/systemd/system/docker.service.d/zfs-override.conf
+    dest: "/etc/systemd/system/docker.service.d/override.conf"
+    owner: root
+    group: root
+    mode: 0644 
+  notify:
+    - reload docker

@@ -17,6 +17,10 @@
 - name: telegraf docker fix
   include: telegraf-fix.yaml
 
+- name: override docker service for zfs dependencies
+  include: docker-zfs-override.yml
+  when: docker_zfs_override
+
 # perhaps a generic 'node' monitoring setup role?
 # - name: monitoring
 #   include: monitoring.yml
