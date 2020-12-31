@@ -57,7 +57,10 @@ package_list:
 
 # ktz-sanoid
 sanoid_config_source: sanoid-cartman.conf
+cartman_primary_zfs_dataset: tank
+cartman_appdata_dataset: "{{ cartman_primary_zfs_dataset }}/appdata"
 syncoid_cloud_dataset: "ironicbadger@unifi.ktz.cloud:tank/appdata"
+syncoid_helios: "root@h:tank"
 
 syncoid_healthcheck_string: "curl -fsS --retry 3 https://hc-ping.com"
 syncoid_cron_jobs:
@@ -67,6 +70,10 @@ syncoid_cron_jobs:
   - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/pms-book {{ cartman_appdata_dataset }}/pms-book && {{ syncoid_healthcheck_string }}/{{ syncoid_pms_book_healthcheck_uuid }} > /dev/null', name: 'pmsbook_replication', weekday: '*', hour: '*', minute: '39' }
   - { job: '{{ syncoid_binary_path}} {{ cartman_appdata_dataset }}/tiddlywiki {{ syncoid_cloud_dataset }}/tiddlywiki && {{ syncoid_healthcheck_string }}/{{ syncoid_tiddlywiki_healthcheck_uuid }} > /dev/null', name: 'tiddlywiki_replication', weekday: '*', hour: '*', minute: '*/15' }
   - { job: '{{ syncoid_binary_path}} {{ cartman_appdata_dataset }}/snipe {{ syncoid_cloud_dataset }}/snipe && {{ syncoid_healthcheck_string }}/{{ syncoid_snipe_healthcheck_uuid }} > /dev/null', name: 'snipe_replication', weekday: '*', hour: '*', minute: '*/15' }
+  - { job: '{{ syncoid_binary_path}} -r {{ cartman_appdata_dataset }} {{ syncoid_helios }}/appdata', name: 'helios_appdata_replication', weekday: '*', hour: '02' }
+  - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/fuse {{ syncoid_helios }}/fuse', name: 'helios_fuse_replication', weekday: '*', hour: '22' }
+  - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/documents {{ syncoid_helios }}/documents', name: 'helios_documents_replication', weekday: '*', hour: '20' }
+  - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/backups {{ syncoid_helios }}/backups', name: 'helios_backups_replication', weekday: '*', hour: '20' }
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases:
@@ -121,7 +128,6 @@ traefik_insecure_transport: false #defaults to false
 appdata_path: /mnt/tank/appdata
 download_path: /opt/downloads # in use?
 primary_domain: "al.{{ domain_l }}"
-cartman_appdata_dataset: tank/appdata
 
 containers:
   ###
@@ -141,6 +147,8 @@ containers:
     volumes:
       - "{{ appdata_path }}/traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "{{ appdata_path }}/vabene-recipes/app/static:/opt/recipes/staticfiles"
+      - "{{ appdata_path }}/vabene-recipes/app/media:/opt/recipes/mediafiles"
     restart: unless-stopped
   ###
   - service_name: authelia
@@ -206,7 +214,6 @@ containers:
       - traefik.http.routers.nzbget.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/nzbget`))
       - traefik.http.routers.nzbget.entrypoints=websecure
       - traefik.http.routers.nzbget.tls.certresolver=cloudflare
-      - traefik.http.services.nzbget.loadbalancer.server.port=6789
     volumes:
       - "{{ appdata_path }}/nzbget/config:/config"
       - "{{ download_path }}:/downloads"
@@ -223,7 +230,6 @@ containers:
       - "traefik.http.routers.sonarr.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/sonarr`))"
       - traefik.http.routers.sonarr.entrypoints=websecure
       - traefik.http.routers.sonarr.tls.certresolver=cloudflare
-      - traefik.http.services.sonarr.loadbalancer.server.port=8989
     volumes:
       - "{{ appdata_path }}/sonarr:/config"
       - "{{ download_path }}/complete/tv:/downloads/complete/tv"
@@ -243,7 +249,6 @@ containers:
       - "traefik.http.routers.radarr.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/radarr`))"
       - traefik.http.routers.radarr.entrypoints=websecure
       - traefik.http.routers.radarr.tls.certresolver=cloudflare
-      - traefik.http.services.radarr.loadbalancer.server.port=7878
     restart: unless-stopped
     include_global_env_vars: true
   ###
@@ -261,7 +266,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: chowdown
-    active: false
+    active: true
     image: gregyankovoy/chowdown
     labels:
       - traefik.enable=true
@@ -274,6 +279,8 @@ containers:
       - "{{ appdata_path }}/chowdown/recipes:/config/_recipes"
       - "{{ appdata_path }}/chowdown/posts:/config/_posts"
       - "{{ appdata_path }}/chowdown/images:/config/images"
+    ports:
+      - 4000:4000
     restart: unless-stopped
   ###
   - service_name: nextcloud
@@ -765,7 +772,46 @@ containers:
       - MYSQL_PASSWORD=insecure
       - MYSQL_DATABASE=photoprism
     restart: unless-stopped
- 
+###
+  - service_name: recipes
+    active: false
+    image: vabene1111/recipes
+    depends_on:
+      - recipes_db
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.recipes.rule=Host(`recipes.ktz.lol`)
+      - traefik.http.routers.recipes.entrypoints=websecure
+      - traefik.http.routers.recipes.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/vabene-recipes/app/static:/opt/recipes/staticfiles"
+      - "{{ appdata_path }}/vabene-recipes/app/media:/opt/recipes/mediafiles"
+    environment:
+      - DEBUG=0
+      - ALLOWED_HOSTS=*
+      - SECRET_KEY=secret
+      - TIMEZONE=America/New_York
+      - DB_ENGINE=django.db.backends.postgresql
+      - POSTGRES_HOST=recipes_db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=djangodb
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=djangodb
+      - FRACTION_PREF_DEFAULT=0
+      - COMMENT_PREF_DEFAULT=1
+      - SHOPPING_MIN_AUTOSYNC_INTERVAL=60
+      - GUNICORN_MEDIA=0
+    restart: unless-stopped
+  - service_name: recipes_db
+    active: false
+    image: postgres:11-alpine
+    volumes:
+      - "{{ appdata_path }}/vabene-recipes/db:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=djangodb
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=djangodb
+    restart: unless-stopped
     
   # template for docker-compose services
   #
