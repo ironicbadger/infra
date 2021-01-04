@@ -266,7 +266,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: chowdown
-    active: true
+    active: false
     image: gregyankovoy/chowdown
     labels:
       - traefik.enable=true
@@ -812,7 +812,48 @@ containers:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=djangodb
     restart: unless-stopped
-    
+###
+  - service_name: mealie
+    active: true
+    image: hkotel/mealie
+    depends_on: 
+      - mealiedb
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mealie.rule=Host(`recipes.{{ domain_l }}`)
+      - traefik.http.routers.mealie.entrypoints=websecure
+      - traefik.http.routers.mealie.tls.certresolver=cloudflare
+      - traefik.http.services.mealie.loadbalancer.server.port=9000
+    volumes:
+      - "{{ appdata_path }}/mealie/app:/app/data"
+    environment:
+      - "db_username={{ mealie_db_user }}"
+      - "db_password={{ mealie_db_password }}"
+      - db_host=mealiedb
+      - db_port=27017
+    restart: unless-stopped    
+  - service_name: mealiedb
+    active: true
+    image: mongo
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME={{ mealie_db_user }}"
+      - "MONGO_INITDB_ROOT_PASSWORD={{ mealie_db_password }}"
+    restart: unless-stopped    
+  - service_name: mealiedbui
+    active: true
+    image: mongo-express
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.mealiedbui.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/mealiedbui`))"
+      - traefik.http.routers.mealiedbui.entrypoints=websecure
+      - traefik.http.routers.mealiedbui.tls.certresolver=cloudflare
+      - traefik.http.services.mealiedbui.loadbalancer.server.port=8081
+    environment:
+      - "ME_CONFIG_MONGODB_ADMINUSERNAME={{ mealie_dbui_user }}"
+      - "ME_CONFIG_MONGODB_ADMINPASSWORD={{ mealie_dbui_password }}"
+    restart: unless-stopped     
+
+
   # template for docker-compose services
   #
   ###
