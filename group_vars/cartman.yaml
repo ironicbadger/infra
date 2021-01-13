@@ -43,7 +43,7 @@ package_list:
   #- name: open-vm-tools
   - name: python
   - name: qemu-guest-agent
-  - name: sanoid
+  #- name: sanoid
   - name: screen
   - name: ssh-import-id
   - name: smartmontools
@@ -51,11 +51,12 @@ package_list:
   - name: tmux
   - name: tree
   - name: wget
-  - name: wireguard-tools
+  #- name: wireguard-tools
   - name: xfsprogs
   - name: zfsutils-linux
 
 # ktz-sanoid
+sanoid_build_from_source: true
 sanoid_config_source: sanoid-cartman.conf
 cartman_primary_zfs_dataset: tank
 cartman_appdata_dataset: "{{ cartman_primary_zfs_dataset }}/appdata"
@@ -96,7 +97,8 @@ docker_zfs_override: true
 cartman_main_storage_path: /mnt/storage
 extra_mountpoints:
   - { path: "{{ cartman_main_storage_path }}" }
-  - { path: /opt, diskbyid: "UUID=8e02fedb-169a-462c-a4be-b41cd34a3019", fs: ext4, opts: "defaults,discard" }
+  - { path: /opt, diskbyid: "UUID=cbf30089-2d57-4e83-ad62-763992d0f57a", fs: ext4, opts: "defaults,discard" }
+  - { path: /opt/appdata, diskbyid: "UUID=06c5ccf6-6fd8-4f2a-8213-81107f034c4e", fs: ext4, opts: "defaults,discard" }
 
 parity_disks:
   - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJHZW1F-part1, fs: ext4, opts: defaults, content: false }
@@ -814,7 +816,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: mealie
-    active: true
+    active: false
     image: hkotel/mealie
     depends_on: 
       - mealiedb
@@ -833,14 +835,14 @@ containers:
       - db_port=27017
     restart: unless-stopped    
   - service_name: mealiedb
-    active: true
+    active: false
     image: mongo
     environment:
       - "MONGO_INITDB_ROOT_USERNAME={{ mealie_db_user }}"
       - "MONGO_INITDB_ROOT_PASSWORD={{ mealie_db_password }}"
     restart: unless-stopped    
   - service_name: mealiedbui
-    active: true
+    active: false
     image: mongo-express
     labels:
       - traefik.enable=true
