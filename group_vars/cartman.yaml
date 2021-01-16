@@ -187,6 +187,7 @@ containers:
       - traefik.http.routers.plex.tls.certresolver=cloudflare
     volumes:
       - "{{ appdata_path }}/plex/config:/config"
+      - /opt/appdata/plex/transcode:/transcode
       - "{{ cartman_main_storage_path }}:/data"
     include_global_env_vars: true
     restart: unless-stopped
@@ -526,7 +527,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: ninja_nginx
-    active: true
+    active: false
     image: nginx:mainline-alpine
     labels:
       - traefik.enable=true
@@ -542,7 +543,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: invoiceninja
-    active: true
+    active: false
     image: invoiceninja/invoiceninja:4.5.18
     depends_on:
       - mysql
