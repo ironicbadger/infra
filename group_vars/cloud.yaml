@@ -116,7 +116,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: pmsbook
-    active: true
+    active: false
     image: nginx:stable
     labels:
       - traefik.enable=true
