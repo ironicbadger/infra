@@ -116,7 +116,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: pmsbook
-    active: true
+    active: false
     image: nginx:stable
     labels:
       - traefik.enable=true
@@ -144,5 +144,21 @@ containers:
       - 3478:3478/udp
     volumes:
       - "{{ cloud_appdata_path }}/unifi:/config"
+    include_global_env_vars: true
+    restart: unless-stopped
+###
+  - service_name: librespeed
+    active: true
+    image: linuxserver/librespeed
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.librespeed.rule=Host(`speed.{{ domain_cloud }}`)
+      - traefik.http.routers.librespeed.entrypoints=websecure
+      - traefik.http.routers.librespeed.tls.certresolver=cloudflare
+      - traefik.http.services.librespeed.loadbalancer.server.port=80
+    environment:
+      - MODE=standalone
+      - TELEMETRY=true
+      - "PASSWORD={{ librespeed_password }}"
     include_global_env_vars: true
     restart: unless-stopped

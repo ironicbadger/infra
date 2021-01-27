@@ -43,7 +43,7 @@ package_list:
   #- name: open-vm-tools
   - name: python
   - name: qemu-guest-agent
-  - name: sanoid
+  #- name: sanoid
   - name: screen
   - name: ssh-import-id
   - name: smartmontools
@@ -51,13 +51,17 @@ package_list:
   - name: tmux
   - name: tree
   - name: wget
-  - name: wireguard-tools
+  #- name: wireguard-tools
   - name: xfsprogs
   - name: zfsutils-linux
 
 # ktz-sanoid
+sanoid_build_from_source: true
 sanoid_config_source: sanoid-cartman.conf
+cartman_primary_zfs_dataset: tank
+cartman_appdata_dataset: "{{ cartman_primary_zfs_dataset }}/appdata"
 syncoid_cloud_dataset: "ironicbadger@unifi.ktz.cloud:tank/appdata"
+syncoid_helios: "root@h:tank"
 
 syncoid_healthcheck_string: "curl -fsS --retry 3 https://hc-ping.com"
 syncoid_cron_jobs:
@@ -67,6 +71,10 @@ syncoid_cron_jobs:
   - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/pms-book {{ cartman_appdata_dataset }}/pms-book && {{ syncoid_healthcheck_string }}/{{ syncoid_pms_book_healthcheck_uuid }} > /dev/null', name: 'pmsbook_replication', weekday: '*', hour: '*', minute: '39' }
   - { job: '{{ syncoid_binary_path}} {{ cartman_appdata_dataset }}/tiddlywiki {{ syncoid_cloud_dataset }}/tiddlywiki && {{ syncoid_healthcheck_string }}/{{ syncoid_tiddlywiki_healthcheck_uuid }} > /dev/null', name: 'tiddlywiki_replication', weekday: '*', hour: '*', minute: '*/15' }
   - { job: '{{ syncoid_binary_path}} {{ cartman_appdata_dataset }}/snipe {{ syncoid_cloud_dataset }}/snipe && {{ syncoid_healthcheck_string }}/{{ syncoid_snipe_healthcheck_uuid }} > /dev/null', name: 'snipe_replication', weekday: '*', hour: '*', minute: '*/15' }
+  - { job: '{{ syncoid_binary_path}} -r {{ cartman_appdata_dataset }} {{ syncoid_helios }}/appdata', name: 'helios_appdata_replication', weekday: '*', hour: '02' }
+  - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/fuse {{ syncoid_helios }}/fuse', name: 'helios_fuse_replication', weekday: '*', hour: '22' }
+  - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/documents {{ syncoid_helios }}/documents', name: 'helios_documents_replication', weekday: '*', hour: '20' }
+  - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/backups {{ syncoid_helios }}/backups', name: 'helios_backups_replication', weekday: '*', hour: '20' }
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases:
@@ -89,7 +97,8 @@ docker_zfs_override: true
 cartman_main_storage_path: /mnt/storage
 extra_mountpoints:
   - { path: "{{ cartman_main_storage_path }}" }
-  - { path: /opt, diskbyid: "UUID=8e02fedb-169a-462c-a4be-b41cd34a3019", fs: ext4, opts: "defaults,discard" }
+  - { path: /opt, diskbyid: "UUID=cbf30089-2d57-4e83-ad62-763992d0f57a", fs: ext4, opts: "defaults,discard" }
+  - { path: /opt/appdata, diskbyid: "UUID=06c5ccf6-6fd8-4f2a-8213-81107f034c4e", fs: ext4, opts: "defaults,discard" }
 
 parity_disks:
   - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJHZW1F-part1, fs: ext4, opts: defaults, content: false }
@@ -121,7 +130,6 @@ traefik_insecure_transport: false #defaults to false
 appdata_path: /mnt/tank/appdata
 download_path: /opt/downloads # in use?
 primary_domain: "al.{{ domain_l }}"
-cartman_appdata_dataset: tank/appdata
 
 containers:
   ###
@@ -141,6 +149,8 @@ containers:
     volumes:
       - "{{ appdata_path }}/traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "{{ appdata_path }}/vabene-recipes/app/static:/opt/recipes/staticfiles"
+      - "{{ appdata_path }}/vabene-recipes/app/media:/opt/recipes/mediafiles"
     restart: unless-stopped
   ###
   - service_name: authelia
@@ -177,6 +187,7 @@ containers:
       - traefik.http.routers.plex.tls.certresolver=cloudflare
     volumes:
       - "{{ appdata_path }}/plex/config:/config"
+      - /opt/appdata/plex/transcode:/transcode
       - "{{ cartman_main_storage_path }}:/data"
     include_global_env_vars: true
     restart: unless-stopped
@@ -206,7 +217,6 @@ containers:
       - traefik.http.routers.nzbget.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/nzbget`))
       - traefik.http.routers.nzbget.entrypoints=websecure
       - traefik.http.routers.nzbget.tls.certresolver=cloudflare
-      - traefik.http.services.nzbget.loadbalancer.server.port=6789
     volumes:
       - "{{ appdata_path }}/nzbget/config:/config"
       - "{{ download_path }}:/downloads"
@@ -223,7 +233,6 @@ containers:
       - "traefik.http.routers.sonarr.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/sonarr`))"
       - traefik.http.routers.sonarr.entrypoints=websecure
       - traefik.http.routers.sonarr.tls.certresolver=cloudflare
-      - traefik.http.services.sonarr.loadbalancer.server.port=8989
     volumes:
       - "{{ appdata_path }}/sonarr:/config"
       - "{{ download_path }}/complete/tv:/downloads/complete/tv"
@@ -243,7 +252,6 @@ containers:
       - "traefik.http.routers.radarr.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/radarr`))"
       - traefik.http.routers.radarr.entrypoints=websecure
       - traefik.http.routers.radarr.tls.certresolver=cloudflare
-      - traefik.http.services.radarr.loadbalancer.server.port=7878
     restart: unless-stopped
     include_global_env_vars: true
   ###
@@ -274,6 +282,8 @@ containers:
       - "{{ appdata_path }}/chowdown/recipes:/config/_recipes"
       - "{{ appdata_path }}/chowdown/posts:/config/_posts"
       - "{{ appdata_path }}/chowdown/images:/config/images"
+    ports:
+      - 4000:4000
     restart: unless-stopped
   ###
   - service_name: nextcloud
@@ -517,7 +527,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: ninja_nginx
-    active: true
+    active: false
     image: nginx:mainline-alpine
     labels:
       - traefik.enable=true
@@ -533,7 +543,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: invoiceninja
-    active: true
+    active: false
     image: invoiceninja/invoiceninja:4.5.18
     depends_on:
       - mysql
@@ -765,8 +775,88 @@ containers:
       - MYSQL_PASSWORD=insecure
       - MYSQL_DATABASE=photoprism
     restart: unless-stopped
- 
-    
+###
+  - service_name: recipes
+    active: false
+    image: vabene1111/recipes
+    depends_on:
+      - recipes_db
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.recipes.rule=Host(`recipes.ktz.lol`)
+      - traefik.http.routers.recipes.entrypoints=websecure
+      - traefik.http.routers.recipes.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/vabene-recipes/app/static:/opt/recipes/staticfiles"
+      - "{{ appdata_path }}/vabene-recipes/app/media:/opt/recipes/mediafiles"
+    environment:
+      - DEBUG=0
+      - ALLOWED_HOSTS=*
+      - SECRET_KEY=secret
+      - TIMEZONE=America/New_York
+      - DB_ENGINE=django.db.backends.postgresql
+      - POSTGRES_HOST=recipes_db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=djangodb
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=djangodb
+      - FRACTION_PREF_DEFAULT=0
+      - COMMENT_PREF_DEFAULT=1
+      - SHOPPING_MIN_AUTOSYNC_INTERVAL=60
+      - GUNICORN_MEDIA=0
+    restart: unless-stopped
+  - service_name: recipes_db
+    active: false
+    image: postgres:11-alpine
+    volumes:
+      - "{{ appdata_path }}/vabene-recipes/db:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=djangodb
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=djangodb
+    restart: unless-stopped
+###
+  - service_name: mealie
+    active: false
+    image: hkotel/mealie
+    depends_on: 
+      - mealiedb
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mealie.rule=Host(`recipes.{{ domain_l }}`)
+      - traefik.http.routers.mealie.entrypoints=websecure
+      - traefik.http.routers.mealie.tls.certresolver=cloudflare
+      - traefik.http.services.mealie.loadbalancer.server.port=9000
+    volumes:
+      - "{{ appdata_path }}/mealie/app:/app/data"
+    environment:
+      - "db_username={{ mealie_db_user }}"
+      - "db_password={{ mealie_db_password }}"
+      - db_host=mealiedb
+      - db_port=27017
+    restart: unless-stopped    
+  - service_name: mealiedb
+    active: false
+    image: mongo
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME={{ mealie_db_user }}"
+      - "MONGO_INITDB_ROOT_PASSWORD={{ mealie_db_password }}"
+    restart: unless-stopped    
+  - service_name: mealiedbui
+    active: false
+    image: mongo-express
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.mealiedbui.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/mealiedbui`))"
+      - traefik.http.routers.mealiedbui.entrypoints=websecure
+      - traefik.http.routers.mealiedbui.tls.certresolver=cloudflare
+      - traefik.http.services.mealiedbui.loadbalancer.server.port=8081
+    environment:
+      - "ME_CONFIG_MONGODB_ADMINUSERNAME={{ mealie_dbui_user }}"
+      - "ME_CONFIG_MONGODB_ADMINPASSWORD={{ mealie_dbui_password }}"
+    restart: unless-stopped     
+
+
   # template for docker-compose services
   #
   ###
