@@ -1,0 +1,11 @@
+
+zpool create z2 raidz2 -m /mnt/z2 -o ashift=12 /dev/disk/by-id/ata-HGST_HDN728080ALE604_VJH35HDX /dev/disk/by-id/ata-HGST_HUH728080ALE600_VKGKGEVX /dev/disk/by-id/ata-WDC_WD80EMAZ-00WJTA0_7SGRVHYC /dev/disk/by-id/ata-WDC_WD80EZZX-11CSGA0_VK0U9B3Y
+
+# zfs raidz2
+## in use
+/dev/disk/by-id/ata-HGST_HDN728080ALE604_VJH35HDX
+/dev/disk/by-id/ata-HGST_HUH728080ALE600_VKGKGEVX
+/dev/disk/by-id/ata-WDC_WD80EMAZ-00WJTA0_7SGRVHYC
+/dev/disk/by-id/ata-WDC_WD80EZZX-11CSGA0_VK0U9B3Y
+## spare
+/dev/disk/by-id/ata-ST8000AS0002-1NA17Z_Z8411V1G
