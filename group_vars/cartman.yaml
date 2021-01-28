@@ -68,13 +68,12 @@ syncoid_cron_jobs:
   - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/unifi {{ cartman_appdata_dataset }}/unifi && {{ syncoid_healthcheck_string }}/{{ syncoid_unifi_healthcheck_uuid }} > /dev/null', name: 'unifi_replication', weekday: '*', hour: '*/4' }
   - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/ktz-blog {{ cartman_appdata_dataset }}/ktz-blog && {{ syncoid_healthcheck_string }}/{{ syncoid_ktz_blog_healthcheck_uuid }} > /dev/null', name: 'ktzblog_replication', weekday: '*', hour: '*', minute: '*/15' }
   - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/mum-blog {{ cartman_appdata_dataset }}/mum-blog && {{ syncoid_healthcheck_string }}/{{ syncoid_mum_blog_healthcheck_uuid }} > /dev/null', name: 'mumblog_replication', weekday: '*', hour: '*', minute: '*/15' }
-  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/pms-book {{ cartman_appdata_dataset }}/pms-book && {{ syncoid_healthcheck_string }}/{{ syncoid_pms_book_healthcheck_uuid }} > /dev/null', name: 'pmsbook_replication', weekday: '*', hour: '*', minute: '39' }
-  - { job: '{{ syncoid_binary_path}} {{ cartman_appdata_dataset }}/tiddlywiki {{ syncoid_cloud_dataset }}/tiddlywiki && {{ syncoid_healthcheck_string }}/{{ syncoid_tiddlywiki_healthcheck_uuid }} > /dev/null', name: 'tiddlywiki_replication', weekday: '*', hour: '*', minute: '*/15' }
-  - { job: '{{ syncoid_binary_path}} {{ cartman_appdata_dataset }}/snipe {{ syncoid_cloud_dataset }}/snipe && {{ syncoid_healthcheck_string }}/{{ syncoid_snipe_healthcheck_uuid }} > /dev/null', name: 'snipe_replication', weekday: '*', hour: '*', minute: '*/15' }
-  - { job: '{{ syncoid_binary_path}} -r {{ cartman_appdata_dataset }} {{ syncoid_helios }}/appdata', name: 'helios_appdata_replication', weekday: '*', hour: '02' }
-  - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/fuse {{ syncoid_helios }}/fuse', name: 'helios_fuse_replication', weekday: '*', hour: '22' }
-  - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/documents {{ syncoid_helios }}/documents', name: 'helios_documents_replication', weekday: '*', hour: '20' }
-  - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/backups {{ syncoid_helios }}/backups', name: 'helios_backups_replication', weekday: '*', hour: '20' }
+  # - { job: '{{ syncoid_binary_path}} {{ cartman_appdata_dataset }}/tiddlywiki {{ syncoid_cloud_dataset }}/tiddlywiki && {{ syncoid_healthcheck_string }}/{{ syncoid_tiddlywiki_healthcheck_uuid }} > /dev/null', name: 'tiddlywiki_replication', weekday: '*', hour: '*', minute: '*/15' }
+  # - { job: '{{ syncoid_binary_path}} {{ cartman_appdata_dataset }}/snipe {{ syncoid_cloud_dataset }}/snipe && {{ syncoid_healthcheck_string }}/{{ syncoid_snipe_healthcheck_uuid }} > /dev/null', name: 'snipe_replication', weekday: '*', hour: '*', minute: '*/15' }
+  # - { job: '{{ syncoid_binary_path}} -r {{ cartman_appdata_dataset }} {{ syncoid_helios }}/appdata', name: 'helios_appdata_replication', weekday: '*', hour: '02' }
+  # - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/fuse {{ syncoid_helios }}/fuse', name: 'helios_fuse_replication', weekday: '*', hour: '22' }
+  # - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/documents {{ syncoid_helios }}/documents', name: 'helios_documents_replication', weekday: '*', hour: '20' }
+  # - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/backups {{ syncoid_helios }}/backups', name: 'helios_backups_replication', weekday: '*', hour: '20' }
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases:
@@ -97,8 +96,8 @@ docker_zfs_override: true
 cartman_main_storage_path: /mnt/storage
 extra_mountpoints:
   - { path: "{{ cartman_main_storage_path }}" }
-  - { path: /opt, diskbyid: "UUID=cbf30089-2d57-4e83-ad62-763992d0f57a", fs: ext4, opts: "defaults,discard" }
-  - { path: /opt/appdata, diskbyid: "UUID=06c5ccf6-6fd8-4f2a-8213-81107f034c4e", fs: ext4, opts: "defaults,discard" }
+  #- { path: /opt, diskbyid: "UUID=cbf30089-2d57-4e83-ad62-763992d0f57a", fs: ext4, opts: "defaults,discard" }
+  #- { path: /opt/appdata, diskbyid: "UUID=06c5ccf6-6fd8-4f2a-8213-81107f034c4e", fs: ext4, opts: "defaults,discard" }
 
 parity_disks:
   - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJHZW1F-part1, fs: ext4, opts: defaults, content: false }
@@ -113,6 +112,11 @@ data_disks:
 zfs_disks:
   # ata-ST10000DM0004-2GR11L_ZJV5CF96
   # ata-WDC_WD100EMAZ-00WJTA0_2YJ7E2VD
+  ## nvme zfs mirror
+  # nvme-eui.00000000000000108ce38e02000e543f-part1 -> ../../nvme1n1p1
+  # nvme-eui.00000000000000108ce38e02000e5450-part1 -> ../../nvme0n1p1
+
+
 
 fstab_mergerfs:
   - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,cache.files=off,moveonenospc=true,category.create=mfs,dropcacheonclose=true,minfreespace=250G,fsname=mergerfs" }  
@@ -177,8 +181,8 @@ containers:
     active: true
     image: plexinc/pms-docker
     network_mode: host
-    devices:
-      - /dev/dri:/dev/dri
+    #devices:
+    #  - /dev/dri:/dev/dri
     labels:
       - traefik.enable=true
       - "traefik.http.routers.plex.rule=Host(`plex.{{ domain_l }}`)"
