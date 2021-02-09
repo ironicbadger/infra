@@ -162,3 +162,21 @@ containers:
       - "PASSWORD={{ librespeed_password }}"
     include_global_env_vars: true
     restart: unless-stopped
+###
+  - service_name: termpad
+    active: true
+    image: spyrosr/termpad
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.paste.rule=Host(`paste.{{ domain_cloud }}`)
+      - traefik.http.routers.paste.entrypoints=websecure
+      - traefik.http.routers.paste.tls.certresolver=cloudflare
+      - traefik.http.services.paste.loadbalancer.server.port=8000
+    environment:
+      - "DOMAIN_NAME=paste.{{ domain_cloud }}" # You probably want to change this
+      - HTTPS=true
+      #- DELETE_AFTER=0 # If you are hosting for yourself keeping them forever is probably fine
+    volumes:
+      - "{{ cloud_appdata_path }}/termpad:$HOME/.local/share/termpad/"
+    include_global_env_vars: true
+    restart: unless-stopped
