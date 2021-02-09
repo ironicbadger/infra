@@ -39,11 +39,12 @@ package_list:
   - name: net-tools
   - name: nfs-kernel-server
   - name: nmap
+  - name: nvme-cli
   - name: openssh-server
-  #- name: open-vm-tools
+  #- name: open-vm-tools #vmware
   - name: python
   - name: qemu-guest-agent
-  #- name: sanoid
+  - name: sanoid
   - name: screen
   - name: ssh-import-id
   - name: smartmontools
@@ -51,7 +52,7 @@ package_list:
   - name: tmux
   - name: tree
   - name: wget
-  #- name: wireguard-tools
+  - name: wireguard-tools
   - name: xfsprogs
   - name: zfsutils-linux
 
@@ -179,8 +180,8 @@ containers:
     active: false
     image: plexinc/pms-docker
     network_mode: host
-    #devices:
-    #  - /dev/dri:/dev/dri
+    devices:
+      - /dev/dri:/dev/dri
     labels:
       - traefik.enable=true
       - "traefik.http.routers.plex.rule=Host(`plex.{{ domain_l }}`)"
@@ -195,7 +196,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: tautulli
-    active: true
+    active: false
     image: linuxserver/tautulli
     depends_on:
       - plex

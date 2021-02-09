@@ -1,0 +1,59 @@
+---
+
+target_os: debian #proxmox
+
+# ktz-traefik
+traefik_file_provider: true
+traefik_enable_dashboard: false #defaults to false
+traefik_insecure_transport: false #defaults to false
+
+# ironicbadger.docker_compose_generator
+appdata_path: /intel2tbnvme/appdata
+storage_path: /mnt/pve/cartman
+
+containers:
+  ###
+  - service_name: traefik
+    container_name: tr
+    active: true
+    image: traefik
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    extra_hosts:
+      - host.docker.internal:172.17.0.1
+    environment:
+      - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
+      - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesresolvers.cloudflare.acme.email=alexktz@gmail.com"
+      - "--certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json"
+    volumes:
+      - "{{ appdata_path }}/traefik:/etc/traefik"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: unless-stopped
+  ###
+  - service_name: plex
+    active: true
+    image: plexinc/pms-docker
+    network_mode: host
+    devices:
+      - /dev/dri:/dev/dri
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.plex.rule=Host(`plex.{{ domain_l }}`)"
+      - traefik.http.routers.plex.entrypoints=websecure
+      - traefik.http.services.plex.loadbalancer.server.port=32400
+      - traefik.http.routers.plex.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/plex/config:/config"
+      - "{{ appdata_path }}/transcode:/transcode"
+      - "{{ storage_path }}:/data"
+    include_global_env_vars: true
+    restart: unless-stopped
