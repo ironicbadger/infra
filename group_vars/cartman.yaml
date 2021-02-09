@@ -174,7 +174,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plex
-    active: true
+    active: false
     image: plexinc/pms-docker
     network_mode: host
     devices:
