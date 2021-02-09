@@ -153,8 +153,6 @@ containers:
     volumes:
       - "{{ appdata_path }}/traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
-      - "{{ appdata_path }}/vabene-recipes/app/static:/opt/recipes/staticfiles"
-      - "{{ appdata_path }}/vabene-recipes/app/media:/opt/recipes/mediafiles"
     restart: unless-stopped
   ###
   - service_name: authelia
@@ -162,7 +160,7 @@ containers:
     image: authelia/authelia
     labels:
       - traefik.enable=true
-      - traefik.http.routers.authelia.rule=Host(`login.ktz.me`)
+      - traefik.http.routers.authelia.rule=Host(`login`)
       - traefik.http.routers.authelia.entrypoints=websecure
       - traefik.http.routers.authelia.tls.certresolver=cloudflare
       - traefik.http.services.authelia.loadbalancer.server.port=9091
