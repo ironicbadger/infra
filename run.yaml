@@ -19,11 +19,13 @@
           - 10-help-text
         when: ansible_distribution == 'Ubuntu'
 
-  - hosts: unas
+  - hosts: awesomo
     vars_files:
       - 'vars/vault.yaml'
     roles:
       - role: ironicbadger.ansible_role_proxmox_nag_removal
+      - role: geerlingguy.docker
+      - role: ktz-figurine
 
   - hosts: cartman
     vars_files:
