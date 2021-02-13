@@ -21,6 +21,13 @@ http:
       service: service-octoprint
       tls:
         certResolver: cloudflare
+    router-proxmox:
+      entryPoints:
+        - websecure
+      rule: Host(`proxmox.ktz.lol`)
+      service: service-proxmox
+      tls:
+        certResolver: cloudflare
   services:
     service-homeassistant:
       loadBalancer:
@@ -34,3 +41,7 @@ http:
       loadBalancer:
         servers:
         - url: "http://192.168.1.90:80"
+    service-proxmox:
+      loadBalancer:
+        servers:
+        - url: "http://192.168.1.13:8006"

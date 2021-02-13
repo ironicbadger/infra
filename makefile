@@ -1,6 +1,9 @@
 bastion:
 	ansible-playbook -b run.yaml --limit bastion --ask-become-pass --vault-password-file .vault-password
 
+bcomp:
+	ansible-playbook run.yaml --limit bastion --vault-password-file .vault-password --tags compose
+
 c:
 	ansible-playbook -b run.yaml --limit cartman --ask-become-pass --vault-password-file .vault-password
 

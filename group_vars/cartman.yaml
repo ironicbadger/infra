@@ -858,7 +858,60 @@ containers:
       - "ME_CONFIG_MONGODB_ADMINUSERNAME={{ mealie_dbui_user }}"
       - "ME_CONFIG_MONGODB_ADMINPASSWORD={{ mealie_dbui_password }}"
     restart: unless-stopped     
-
+###
+  - service_name: filerundb
+    active: true
+    image: mariadb:10.1
+    volumes:
+      - "{{ appdata_path }}/filerun/db:/config"
+    environment:
+      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
+      - "MYSQL_PASSWORD={{ container_mysql_password }}"
+      - MYSQL_DATABASE=filerun
+      - MYSQL_USER=filerun
+    include_global_env_vars: #optional - defaults to false
+    restart: unless-stopped
+  - service_name: filerun
+    active: true
+    image: afian/filerun
+    depends_on:
+      - filerundb
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.filerun.rule=Host(`filerun.{{ domain_l }}`)"
+      - traefik.http.routers.filerun.entrypoints=websecure
+      - traefik.http.routers.filerun.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/filerun/app:/filerun/html"
+      - "{{ cartman_main_storage_path }}:/user-files:ro"
+    environment:
+      - FR_DB_HOST=filerundb
+      - FR_DB_PORT=3306
+      - FR_DB_NAME=filerun
+      - FR_DB_USER=filerun
+      - "FR_DB_PASS={{ container_mysql_password }}"
+      - APACHE_RUN_USER=www-data
+      - APACHE_RUN_USER_ID=33
+      - APACHE_RUN_GROUP=www-data
+      - APACHE_RUN_GROUP_ID=33
+    restart: unless-stopped
+    ###
+  - service_name: fileruntika
+    active: true
+    image: logicalspark/docker-tikaserver
+    restart: unless-stopped
+    ###
+  - service_name: filerunelastic
+    active: true
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+    volumes:
+      - "{{ appdata_path }}/filerun/elastic:/usr/share/elasticsearch/data"
+    mem_limit: 1g
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    restart: unless-stopped
 
   # template for docker-compose services
   #
@@ -869,7 +922,7 @@ containers:
   #   container_name: #optional - only required if diff to service_name
   #   labels:
   #     - traefik.enable=true
-  #     - traefik.http.routers.XXXXXXX.rule=Host(`ninja.ktz.me`)
+  #     - "traefik.http.routers.XXXXXXXX.rule=Host(`plex.{{ domain_l }}`)"
   #     - traefik.http.routers.XXXXXXX.entrypoints=websecure
   #     - traefik.http.routers.XXXXXXX.tls.certresolver=cloudflare
   #     - traefik.http.services.XXXXXXX.loadbalancer.server.port=80

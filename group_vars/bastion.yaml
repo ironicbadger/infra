@@ -41,9 +41,32 @@ package_list:
   - name: wireguard
 
 # geerlingguy.security
-security_ssh_port: 27222
 security_ssh_password_authentication: "no"
 security_ssh_permit_root_login: "no"
 security_ssh_usedns: "no"
 security_autoupdate_enabled: true
 security_fail2ban_enabled: true
+
+# ironicbadger.docker_compose_generator
+compose_schema_version: 3
+appdata_path: /home/alex/appdata
+containers:
+  - service_name: wireguard
+    active: true
+    image: linuxserver/wireguard
+    volumes:
+      - "{{ appdata_path }}/wireguard:/config"
+      - /lib/modules:/lib/modules
+    environment:
+      - "PEERS=mooncake 7t s21u"
+      - "SERVERURL={{ wireguard_server_url_w }}"
+      - "SERVERPORT={{ wireguard_server_port }}"
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE 
+    ports:
+      - "{{ wireguard_server_port }}:51820/udp"
+    sysctl:
+      - net.ipv4.conf.all.src_valid_mark=1
+    include_global_env_vars: true
+    restart: unless-stopped

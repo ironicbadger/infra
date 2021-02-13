@@ -48,25 +48,23 @@
       - role: ktz-traefik
         tags: compose
       - role: ironicbadger.ansible_role_snapraid
+  
+  - hosts: snapraidtest
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:  
+      - role: geerlingguy.docker
+      - role: grog.package
+      - role: ironicbadger.ansible_role_snapraid
 
-  - hosts: helios64
+  - hosts: bastion
     vars_files:
       - 'vars/vault.yaml'
     roles:
+      - role: geerlingguy.security
       - role: geerlingguy.docker
-        ignore_errors: true
-      - role: grog.package
-      #- role: ironicbadger.ansible_role_snapraid
-      - role: ironicbadger.ansible_role_hddtemp
-      - role: rossmcdonald.telegraf
-        ignore_errors: true
       - role: ktz-figurine
-      - role: ktz-sanoid
-      - role: ironicbadger.ansible_role_bash_aliases
-      - role: ktz-helios64
       - role: ironicbadger.ansible_role_docker_compose_generator
-        tags: compose
-      - role: ktz-traefik
         tags: compose
 
   - hosts: quassel
