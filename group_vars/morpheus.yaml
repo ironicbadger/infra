@@ -1,6 +1,8 @@
 ---
 
 target_os: debian #proxmox
+hostname_morpheus: morpheus
+hostname_cartman: "{{ hostname_morpheus }}" #todo fix
 
 # ktz-traefik
 traefik_file_provider: true
@@ -9,7 +11,122 @@ traefik_insecure_transport: false #defaults to false
 
 # ironicbadger.docker_compose_generator
 appdata_path: /intel2tbnvme/appdata
-storage_path: /mnt/pve/cartman
+storage_path: /mnt/storage
+# grog.package
+package_list:
+  - name: bash-completion
+  - name: curl
+  - name: fio
+  - name: git
+  - name: hddtemp
+  - name: htop
+  - name: iftop
+  - name: intel-gpu-tools
+  - name: iotop
+  - name: lm-sensors
+  - name: mc
+  - name: mergerfs
+  - name: mutt
+  - name: ncdu
+  - name: net-tools
+  - name: nfs-kernel-server
+  - name: nmap
+  - name: nvme-cli
+  - name: openssh-server
+  #- name: open-vm-tools #vmware
+  - name: python
+  #- name: qemu-guest-agent
+  #- name: sanoid
+  - name: screen
+  #- name: ssh-import-id
+  - name: smartmontools
+  - name: sudo
+  - name: tmux
+  - name: tree
+  - name: wget
+  #- name: wireguard-tools
+  - name: xfsprogs
+  - name: zfsutils-linux
+
+# ktz-sanoid
+sanoid_build_from_source: true
+sanoid_config_source: sanoid-morpheus.conf
+morpheus_primary_zfs_dataset: tank
+morpheus_appdata_dataset: "{{ morpheus_primary_zfs_dataset }}/appdata"
+syncoid_cloud_dataset: "ironicbadger@unifi.ktz.cloud:tank/appdata"
+syncoid_helios: "root@h:tank"
+
+syncoid_healthcheck_string: "curl -fsS --retry 3 https://hc-ping.com"
+syncoid_cron_jobs:
+  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/unifi {{ morpheus_appdata_dataset }}/unifi && {{ syncoid_healthcheck_string }}/{{ syncoid_unifi_healthcheck_uuid }} > /dev/null', name: 'unifi_replication', weekday: '*', hour: '*/4' }
+  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/ktz-blog {{ morpheus_appdata_dataset }}/ktz-blog && {{ syncoid_healthcheck_string }}/{{ syncoid_ktz_blog_healthcheck_uuid }} > /dev/null', name: 'ktzblog_replication', weekday: '*', hour: '*', minute: '*/15' }
+  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/mum-blog {{ morpheus_appdata_dataset }}/mum-blog && {{ syncoid_healthcheck_string }}/{{ syncoid_mum_blog_healthcheck_uuid }} > /dev/null', name: 'mumblog_replication', weekday: '*', hour: '*', minute: '*/15' }
+  # - { job: '{{ syncoid_binary_path}} {{ cartman_appdata_dataset }}/tiddlywiki {{ syncoid_cloud_dataset }}/tiddlywiki && {{ syncoid_healthcheck_string }}/{{ syncoid_tiddlywiki_healthcheck_uuid }} > /dev/null', name: 'tiddlywiki_replication', weekday: '*', hour: '*', minute: '*/15' }
+  # - { job: '{{ syncoid_binary_path}} {{ cartman_appdata_dataset }}/snipe {{ syncoid_cloud_dataset }}/snipe && {{ syncoid_healthcheck_string }}/{{ syncoid_snipe_healthcheck_uuid }} > /dev/null', name: 'snipe_replication', weekday: '*', hour: '*', minute: '*/15' }
+  # - { job: '{{ syncoid_binary_path}} -r {{ cartman_appdata_dataset }} {{ syncoid_helios }}/appdata', name: 'helios_appdata_replication', weekday: '*', hour: '02' }
+  # - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/fuse {{ syncoid_helios }}/fuse', name: 'helios_fuse_replication', weekday: '*', hour: '22' }
+  # - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/documents {{ syncoid_helios }}/documents', name: 'helios_documents_replication', weekday: '*', hour: '20' }
+  # - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/backups {{ syncoid_helios }}/backups', name: 'helios_backups_replication', weekday: '*', hour: '20' }
+
+# ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
+bash_aliases:
+  - { alias: "dtail", command: "docker logs -tf --tail='50' " }
+  - { alias: "dstop", command: "docker stop `docker ps -aq`" }
+  - { alias: "drm", command: "docker rm `docker ps -aq`" }
+  - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml "}
+  - { alias: "dcporph", command: "docker-compose -f ~/docker-compose.yml --remove-orphans "}
+  - { alias: "dprune", command: "docker image prune" }
+  - { alias: "dprunesys", command: "docker system prune --all" }
+  - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop"}
+  - { alias: "appdata", command: "cd /mnt/tank/appdata" }
+  - { alias: "zspace", command: "zfs list -o space" }
+  - { alias: "zsnap", command: "zfs list -t snapshot" }
+  - { alias: "dfclean", command: "df -h -x tmpfs -x zfs -t fuse.mergerfs -t xfs -t ext4"}
+  - { alias: "dfzfs", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4"}
+  - { alias: "hdtemp", command: "sudo hddtemp /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]"}
+
+# ktz-cartman
+docker_zfs_override: true
+morpheus_main_storage_path: /mnt/storage
+cartman_main_storage_path: "{{ morpheus_main_storage_path }}" #todo fixme
+extra_mountpoints:
+  - { path: "{{ morpheus_main_storage_path }}" }
+  #- { path: /opt, diskbyid: "UUID=cbf30089-2d57-4e83-ad62-763992d0f57a", fs: ext4, opts: "defaults,discard" }
+  #- { path: /opt/appdata, diskbyid: "UUID=06c5ccf6-6fd8-4f2a-8213-81107f034c4e", fs: ext4, opts: "defaults,discard" }
+
+parity_disks:
+  - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJHZW1F-part1, fs: ext4, opts: defaults, content: false }
+
+data_disks:
+  - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJJ0K4F-part1, fs: xfs, opts: defaults, content: true }
+  - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-ST10000DM0004-2GR11L_ZJV6A8WV-part1, fs: xfs, opts: defaults, content: true }
+  - { path: /mnt/disk3, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ15VJD-part1, fs: xfs, opts: defaults, content: true }
+  - { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ2S3AD-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
+
+zfs_disks:
+  # ata-ST10000DM0004-2GR11L_ZJV5CF96
+  # ata-WDC_WD100EMAZ-00WJTA0_2YJ7E2VD
+  ## nvme zfs mirror
+  # nvme-eui.00000000000000108ce38e02000e543f-part1 -> ../../nvme1n1p1
+  # nvme-eui.00000000000000108ce38e02000e5450-part1 -> ../../nvme0n1p1
+
+fstab_mergerfs:
+  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=mfs,dropcacheonclose=true,minfreespace=250G,fsname=mergerfs" }  
+
+snapraid_email_address: alexktz@gmail.com
+snapraid_gmail_pass: "{{ snapraid_email_password }}"
+snapraid_healthcheck_io_uuid: "{{ snapraid_healthcheck_secret }}"
+
+# ktz-traefik
+traefik_file_provider: true
+traefik_enable_dashboard: false #defaults to false
+traefik_insecure_transport: false #defaults to false
+
+# ironicbadger.docker_compose_generator
+appdata_path: /mnt/tank/appdata
+download_path: /opt/downloads # in use?
+primary_domain: "al.{{ domain_l }}"
 
 containers:
   ###
@@ -26,17 +143,29 @@ containers:
     environment:
       - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
       - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
-      - "--entrypoints.web.address=:80"
-      - "--entrypoints.websecure.address=:443"
-      - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
-      - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
-      - "--certificatesresolvers.cloudflare.acme.email=alexktz@gmail.com"
-      - "--certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json"
     volumes:
       - "{{ appdata_path }}/traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: unless-stopped
+  ###
+  - service_name: authelia
+    active: false
+    image: authelia/authelia
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.authelia.rule=Host(`login`)
+      - traefik.http.routers.authelia.entrypoints=websecure
+      - traefik.http.routers.authelia.tls.certresolver=cloudflare
+      - traefik.http.services.authelia.loadbalancer.server.port=9091
+      - traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://login.ktz.me/
+      - traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true
+      - traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User, Remote-Groups
+    volumes:
+      - "{{ appdata_path }}/authelia:/config"
+    restart: unless-stopped
+  - service_name: redis
+    active: false
+    image: redis
     restart: unless-stopped
   ###
   - service_name: plex
@@ -53,7 +182,810 @@ containers:
       - traefik.http.routers.plex.tls.certresolver=cloudflare
     volumes:
       - "{{ appdata_path }}/plex/config:/config"
-      - "{{ appdata_path }}/transcode:/transcode"
-      - "{{ storage_path }}:/data"
+      - /opt/appdata/plex/transcode:/transcode
+      - "{{ morpheus_main_storage_path }}:/data"
     include_global_env_vars: true
     restart: unless-stopped
+###
+  - service_name: tautulli
+    active: false
+    image: linuxserver/tautulli
+    depends_on:
+      - plex
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.tautulli.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/tautulli`))"
+      - traefik.http.routers.tautulli.entrypoints=websecure
+      - traefik.http.routers.tautulli.tls.certresolver=cloudflare
+      - traefik.http.services.tautulli.loadbalancer.server.port=8181
+    volumes:
+      - "{{ appdata_path }}/tautulli:/config"
+      - "{{ appdata_path }}/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro"
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: nzbget
+    active: true
+    image: linuxserver/nzbget
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nzbget.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/nzbget`))
+      - traefik.http.routers.nzbget.entrypoints=websecure
+      - traefik.http.routers.nzbget.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/nzbget/config:/config"
+      - "{{ download_path }}:/downloads"
+    restart: unless-stopped
+    include_global_env_vars: true
+  ###
+  - service_name: sonarr
+    active: true
+    image: linuxserver/sonarr:preview
+    depends_on:
+      - nzbget
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.sonarr.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/sonarr`))"
+      - traefik.http.routers.sonarr.entrypoints=websecure
+      - traefik.http.routers.sonarr.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/sonarr:/config"
+      - "{{ download_path }}/complete/tv:/downloads/complete/tv"
+      - /mnt/storage/tv:/tv
+    restart: unless-stopped
+    include_global_env_vars: true
+  ###
+  - service_name: radarr
+    active: true
+    image: linuxserver/radarr
+    volumes:
+      - "{{ appdata_path }}/radarr:/config"
+      - "{{ morpheus_main_storage_path }}/movies:/movies"
+      - "{{ download_path }}/complete/movies:/downloads/complete/movies"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.radarr.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/radarr`))"
+      - traefik.http.routers.radarr.entrypoints=websecure
+      - traefik.http.routers.radarr.tls.certresolver=cloudflare
+    restart: unless-stopped
+    include_global_env_vars: true
+  ###
+  - service_name: tiddlywiki
+    active: true
+    image: mazzolino/tiddlywiki
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.tiddlywiki.rule=Host(`wiki.{{ domain_l }}`)"
+      - traefik.http.routers.tiddlywiki.entrypoints=websecure
+      - traefik.http.routers.tiddlywiki.tls.certresolver=cloudflare
+      - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
+    volumes:
+      - "{{ appdata_path }}/tiddlywiki:/var/lib/tiddlywiki"
+    restart: unless-stopped
+  ###
+  - service_name: chowdown
+    active: false
+    image: gregyankovoy/chowdown
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.chowdown.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/chowdown`))"
+      - traefik.http.routers.chowdown.entrypoints=websecure
+      - traefik.http.routers.chowdown.tls.certresolver=cloudflare
+      - traefik.http.services.chowdown.loadbalancer.server.port=4000
+    volumes:
+      - "{{ appdata_path }}/chowdown/config:/config"
+      - "{{ appdata_path }}/chowdown/recipes:/config/_recipes"
+      - "{{ appdata_path }}/chowdown/posts:/config/_posts"
+      - "{{ appdata_path }}/chowdown/images:/config/images"
+    ports:
+      - 4000:4000
+    restart: unless-stopped
+  ###
+  - service_name: nextcloud
+    active: true
+    image: nextcloud:19
+    depends_on:
+      - mysql
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.nc.rule=Host(`nc.{{ domain_cloud }}`)"
+      - traefik.http.routers.nc.entrypoints=websecure
+      - traefik.http.routers.nc.tls.certresolver=cloudflare
+      - traefik.http.services.nc.loadbalancer.server.port=80
+    volumes:
+      - "{{ appdata_path }}/nextcloud:/var/www/html"
+    restart: unless-stopped
+  ###
+  - service_name: mysql
+    active: true
+    image: mariadb
+    ports:
+      - 3306:3306
+    environment:
+      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
+      - "MYSQL_PASSWORD={{ container_mysql_password }}"
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+    volumes:
+      - "{{ appdata_path }}/mysql:/var/lib/mysql"
+    # command:
+    #   - "--transaction-isolation=READ-COMMITTED --binlog-format=ROW"
+    restart: unless-stopped
+  ###
+  - service_name: grafana
+    active: true
+    image: grafana/grafana
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.grafana.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/grafana`))"
+      - traefik.http.routers.grafana.entrypoints=websecure
+      - traefik.http.routers.grafana.tls.certresolver=cloudflare
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+    environment:
+      - "GF_SERVER_ROOT_URL=https://al.{{ domain_l }}/grafana"
+      - "GF_SERVER_SERVE_FROM_SUB_PATH=true"
+      - "GF_SERVER_DOMAIN=al.{{ domain_l }}"
+    volumes:
+      - "{{ appdata_path }}/grafana/data:/var/lib/grafana"
+    restart: unless-stopped
+  ###
+  - service_name: influxdb
+    active: true
+    container_name: influx
+    image: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - "{{ appdata_path }}/influxdb:/var/lib/influxdb"
+    restart: unless-stopped
+  ###
+  - service_name: duplicati
+    active: false
+    image: linuxserver/duplicati
+    hostname: "{{ hostname_morpheus }}"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.duplicati.rule=Host(`duplicati.{{ domain_l }}`)"
+      - traefik.http.routers.duplicati.entrypoints=websecure
+      - traefik.http.routers.duplicati.tls.certresolver=cloudflare
+      - traefik.http.services.duplicati.loadbalancer.server.port=8200
+    volumes:
+      - "{{ appdata_path }}/duplicati:/config"
+      - "{{ morpheus_main_storage_path }}/backups:/backups"
+      - "{{ morpheus_main_storage_path }}:/source/storage"
+      - /mnt/tank:/source/tank
+      - /opt:/source/opt
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: booksonic
+    active: true
+    image: linuxserver/booksonic:1.2-ls75
+    volumes:
+      - "{{ appdata_path }}/booksonic:/config"
+      - "{{ morpheus_main_storage_path }}/audiobooks:/books"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.booksonic.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/booksonic`))"
+      - traefik.http.routers.booksonic.entrypoints=websecure
+      - traefik.http.routers.booksonic.tls.certresolver=cloudflare
+      - traefik.http.services.booksonic.loadbalancer.server.port=4040
+    environment:
+      - CONTEXT_PATH=booksonic
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: bsair
+    active: false
+    image: bs
+    volumes:
+      - "{{ appdata_path }}/booksonicair:/config"
+      - "{{ morpheus_main_storage_path }}/audiobooks:/books"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.booksonicair.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/booksonicair`))"
+      - traefik.http.routers.booksonicair.entrypoints=websecure
+      - traefik.http.routers.booksonicair.tls.certresolver=cloudflare
+      - traefik.http.services.booksonicair.loadbalancer.server.port=4040
+    environment:
+      - CONTEXT_PATH=booksonicair
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: smokeping
+    active: true
+    image: linuxserver/smokeping
+    volumes:
+      - "{{ appdata_path }}/smokeping/config:/config"
+      - "{{ appdata_path }}/smokeping/data:/data"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.smokeping.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/smokeping`))"
+      - traefik.http.routers.smokeping.entrypoints=websecure
+      - traefik.http.routers.smokeping.tls.certresolver=cloudflare
+      - traefik.http.services.smokeping.loadbalancer.server.port=80
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: gitea
+    active: false
+    image: gitea/gitea
+    depends_on:
+      - mysql
+    environment:
+      - "USER_UID={{ main_uid }}"
+      - "USER_GID={{ main_gid }}"
+      - "ROOT_URL=https://git.ktz.me"
+      - "SSH_DOMAIN=git.ktz.me"
+      - "APP_NAME=git.ktz.me"
+      - "SSH_PORT=2222"
+      - "DISABLE_REGISTRATION=true"
+      - "REQUIRE_SIGNIN_VIEW=true"
+    volumes:
+      - "{{ appdata_path }}/gitea:/data"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.git.rule=Host(`git.ktz.me`)
+      - traefik.http.routers.git.entrypoints=websecure
+      - traefik.http.routers.git.tls.certresolver=cloudflare
+      - traefik.http.services.git.loadbalancer.server.port=3000
+    ports:
+      - "3333:3000"
+      - '"2222:2222"'
+    restart: unless-stopped
+  ###
+  - service_name: sync
+    active: true
+    image: linuxserver/resilio-sync
+    hostname: "{{ hostname_morpheus }}"
+    volumes:
+      - "{{ appdata_path }}/sync:/config"
+      - "{{ morpheus_main_storage_path }}:/sync"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.btsync.rule=Host(`sync.{{ domain_l }}`)"
+      - traefik.http.routers.btsync.entrypoints=websecure
+      - traefik.http.routers.btsync.tls.certresolver=cloudflare
+      - traefik.http.services.btsync.loadbalancer.server.port=8888
+    ports:
+      - "55555:55555"
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: speedtest
+    active: true
+    container_name: speedtest
+    image: roest/docker-speedtest-analyser
+    volumes:
+      - "{{ appdata_path }}/speedtest:/var/www/html/data"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.speedtest.rule=Host(`speedtest.{{ domain_l }}`)"
+      - traefik.http.routers.speedtest.entrypoints=websecure
+      - traefik.http.routers.speedtest.tls.certresolver=cloudflare
+      - traefik.http.services.speedtest.loadbalancer.server.port=80
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: librespeed
+    active: true
+    image: linuxserver/librespeed
+    ports:
+      - 8008:80
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.librespeed.rule=Host(`librespeed.{{ domain_l }}`)"
+      - traefik.http.routers.librespeed.entrypoints=websecure
+      - traefik.http.routers.librespeed.tls.certresolver=cloudflare
+      - traefik.http.services.librespeed.loadbalancer.server.port=80
+    environment:
+      - MODE=standalone
+      - TELEMETRY=true
+      - "PASSWORD={{ librespeed_password }}"
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: lychee
+    active: true
+    image: lycheeorg/lychee
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.lychee.rule=Host(`gallery.{{ domain_me }}`)"
+      - traefik.http.routers.lychee.entrypoints=websecure
+      - traefik.http.routers.lychee.tls.certresolver=cloudflare
+      - traefik.http.services.lychee.loadbalancer.server.port=80
+    depends_on:
+      - mysql
+    volumes:
+      - "{{ appdata_path }}/lychee/config:/config"
+      - "{{ appdata_path }}/lychee/uploads:/uploads"
+      - "{{ appdata_path }}/lychee/sym:/sym"
+    environment:
+      - PHP_TZ=America/New_York
+      - DB_CONNECTION=mysql
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_USERNAME=lychee
+      - DB_DATABASE=lychee
+      - "DB_PASSWORD={{ container_mysql_password }}"
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: deepstack
+    active: true
+    image: deepquestai/deepstack
+    container_name: deepstack
+    ports:
+      - 5000:5000
+    volumes:
+      - "{{ appdata_path }}/deepstack:/datastore"
+    environment:
+      - VISION-DETECTION=True
+    restart: unless-stopped
+  ###
+  - service_name: ninja_nginx
+    active: false
+    image: nginx:mainline-alpine
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.nginx.rule=Host(`ninja.{{ domain_l }}`)"
+      - traefik.http.routers.nginx.entrypoints=websecure
+      - traefik.http.routers.nginx.tls.certresolver=cloudflare
+      - traefik.http.services.nginx.loadbalancer.server.port=80
+    volumes:
+      - "{{ appdata_path }}/invoiceninja/ninja.conf:/etc/nginx/conf.d/default.conf:ro"
+      - "{{ appdata_path }}/invoiceninja/storage:/var/www/app/storage"
+      - "{{ appdata_path }}/invoiceninja/public/logo:/var/www/app/logo"
+      - "{{ appdata_path }}/invoiceninja/public:/var/www/app/public"
+    restart: unless-stopped
+  ###
+  - service_name: invoiceninja
+    active: false
+    image: invoiceninja/invoiceninja:4.5.18
+    depends_on:
+      - mysql
+    volumes:
+      - "{{ appdata_path }}/invoiceninja/storage:/var/www/app/storage"
+      - "{{ appdata_path }}/invoiceninja/public/logo:/var/www/app/logo"
+      - "{{ appdata_path }}/invoiceninja/public:/var/www/app/public"
+    environment:
+      - MYSQL_DATABASE=ninja
+      - "MYSQL_ROOT_PASSWORD={{ container_mysql_password}}"
+      - APP_DEBUG=0
+      - "APP_URL={{ invoice_ninja_app_url }}"
+      - "APP_KEY={{ invoice_ninja_app_key }}"
+      - APP_CIPHER=AES-256-CBC
+      - DB_USERNAME=root
+      - "DB_PASSWORD={{ container_mysql_password}}"
+      - DB_HOST=mysql
+      - DB_DATABASE=ninja
+      - MAIL_HOST=smtp.gmail.com
+      - "MAIL_USERNAME={{ gmail_address }}"
+      - "MAIL_PASSWORD={{ gmail_password }}"
+      - MAIL_DRIVER=smtp
+      - MAIL_FROM_NAME="Alex K"
+      - "MAIL_FROM_ADDRESS={{ gmail_address }}"
+      - REQUIRE_HTTPS=true
+      - "TRUSTED_PROXIES='*'"
+    restart: unless-stopped
+  ###
+  - service_name: miniflux
+    active: false
+    image: miniflux/miniflux
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.miniflux.rule=Host(`rss.ktz.me`)
+      - traefik.http.routers.miniflux.entrypoints=websecure
+      - traefik.http.routers.miniflux.tls.certresolver=cloudflare
+      - traefik.http.services.miniflux.loadbalancer.server.port=8080
+    volumes:
+      - "{{ appdata_path }}/miniflux:/config"
+    depends_on:
+      - minifluxdb
+    environment:
+      - "DATABASE_URL=postgres://{{ miniflux_db_user }}:{{ miniflux_db_password }}@minifluxdb/miniflux?sslmode=disable"
+      - ADMIN_USERNAME=admin
+      - "ADMIN_PASSWORD={{ miniflux_db_password }}"
+      - BASE_URL=https://rss.ktz.me
+    restart: unless-stopped
+  - service_name: minifluxdb
+    active: false
+    image: postgres
+    volumes:
+      - "{{ appdata_path }}/postgres_miniflux:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_USER={{ miniflux_db_user }}"
+      - "POSTGRES_PASSWORD={{ miniflux_db_password }}"
+      - POSTGRES_DB=miniflux
+    restart: unless-stopped
+  ###
+  - service_name: monica
+    active: false
+    image: monica
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.monica.rule=(Host(`al.ktz.me`) && PathPrefix(`/monica`))
+      - traefik.http.routers.monica.entrypoints=websecure
+      - traefik.http.routers.monica.tls.certresolver=cloudflare
+      - traefik.http.services.monica.loadbalancer.server.port=80
+    ports:
+      - 8901:80
+    depends_on:
+      - db
+    environment:
+      - APP_KEY=F5HZSjEOwValEIfzgaZ2E6gZUUf3Fu38
+      - APP_URL=https://al.ktz.me/monica
+      - "APP_FORCE_URL=true"
+      - DB_HOST=db
+    volumes:
+      - "{{ appdata_path }}/monica/app:/var/www/html/storage"
+    restart: unless-stopped
+  - service_name: db
+    active: false
+    container_name: db
+    image: mariadb
+    environment:
+      - MYSQL_RANDOM_ROOT_PASSWORD=true
+      - MYSQL_PASSWORD=secret
+      - MYSQL_DATABASE=monica
+      - MYSQL_USER=homestead
+    volumes:
+      - "{{ appdata_path }}/monica/db:/var/lib/mysql"
+    restart: unless-stopped
+###
+  - service_name: scrutiny
+    active: true
+    image: linuxserver/scrutiny
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.scrutiny.rule=Host(`scrutiny.{{ domain_l }}`)"
+      - traefik.http.routers.scrutiny.entrypoints=websecure
+      - traefik.http.routers.scrutiny.tls.certresolver=cloudflare
+      - traefik.http.services.scrutiny.loadbalancer.server.port=8080
+    cap_add:
+      - SYS_RAWIO
+      - SYS_ADMIN
+    devices:
+      - /dev:/dev
+    volumes:
+      - "{{ appdata_path }}/scrutiny:/config" 
+      - /run/udev:/run/udev:ro
+    include_global_env_vars: true
+    environment:
+      - SCRUTINY_COLLECTOR=true
+      - SCRUTINY_WEB=true
+    privileged: true
+    restart: unless-stopped
+  ###
+  - service_name: stikked
+    active: false
+    image: ironicbadger/stikked
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.stikked.rule=Host(`paste.ktz.me`)
+      - traefik.http.routers.stikked.entrypoints=websecure
+      - traefik.http.routers.stikked.tls.certresolver=cloudflare
+      - traefik.http.services.stikked.loadbalancer.server.port=80
+    volumes:
+      - "{{ appdata_path }}/stikked/data:/config"
+      - "{{ appdata_path }}/stikked/stikked.php:/defaults/stikked.php"
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: mysql_stikked
+    active: false
+    image: mariadb
+    environment:
+      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
+      - "MYSQL_PASSWORD={{ container_mysql_password }}"
+      - MYSQL_DATABASE=stikked
+      - MYSQL_USER=stikked
+    volumes:
+      - "{{ appdata_path }}/stikked/db:/var/lib/mysql"
+    command:
+      - "--innodb-buffer-pool-size=4000000000"
+    restart: unless-stopped
+###
+  - service_name: recipes-db
+    active: false
+    image: postgres:11-alpine
+    volumes:
+      - "{{ appdata_path }}/recipes/db:/var/lib/postgresql/data"
+    restart: unless-stopped
+  - service_name: recipes-backend
+    active: false
+    image: vabene1111/recipes
+    depends_on:
+      - recipes-db
+    volumes:
+      - "{{ appdata_path }}/recipes/staticfiles:/opt/recipes/staticfiles"
+      - "{{ appdata_path }}/recipes/mediafiles:/opt/recipes/mediafiles"
+    restart: unless-stopped
+  - service_name: recipes-nginx
+    active: false
+    image: nginx:mainline-alpine
+    depends_on:
+      - recipes-db
+      - recipes-backend
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.recipes.rule=Host(`recipes.ktz.me`)
+      - traefik.http.routers.recipes.entrypoints=websecure
+      - traefik.http.routers.recipes.tls.certresolver=cloudflare
+      - traefik.http.services.recipes.loadbalancer.server.port=8080
+    volumes:
+      - "{{ appdata_path }}/recipes/mediafiles:/media"
+      - "{{ appdata_path }}/recipes/nginx/conf.d:/etc/nginx/conf.d"
+    restart: unless-stopped
+###
+  - service_name: photoprism
+    active: false
+    image: photoprism/photoprism:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.photoprism.rule=Host(`photoprism.ktz.me`)
+      - traefik.http.routers.photoprism.entrypoints=websecure
+      - traefik.http.routers.photoprism.tls.certresolver=cloudflare
+      - traefik.http.services.photoprism.loadbalancer.server.port=2342
+    volumes:
+      - "{{ appdata_path }}/photoprism/app:/photoprism/storage" 
+      - "{{ morpheus_main_storage_path }}/photos/alex/legacy/images.old:/photoprism/originals/imagesold"
+    environment:
+      - UID=1313
+      - GID=1313
+      - PHOTOPRISM_ADMIN_PASSWORD=pleasechange     # Initial admin password: PLEASE CHANGE!
+      - PHOTOPRISM_DEBUG=false                      # Run in debug mode (shows additional log messages)
+      - PHOTOPRISM_PUBLIC=false                     # No authentication required (disables password protection)
+      - PHOTOPRISM_READONLY=false                   # Don't modify originals directory (reduced functionality)
+      - PHOTOPRISM_UPLOAD_NSFW=true                 # Allow uploads that MAY be offensive
+      - PHOTOPRISM_DETECT_NSFW=false                # Flag photos as private that MAY be offensive
+      - PHOTOPRISM_EXPERIMENTAL=false               # Enable experimental features
+      - PHOTOPRISM_SITE_URL="https://photoprism.ktz.me"  # Canonical / public site URL
+      - PHOTOPRISM_SITE_TITLE="PhotoPrism"
+      - PHOTOPRISM_SITE_CAPTION="Browse Your Life"
+      - PHOTOPRISM_SITE_DESCRIPTION="ktz."
+      - PHOTOPRISM_SITE_AUTHOR="Alex Kretzschmar"
+      - PHOTOPRISM_HTTP_HOST=0.0.0.0
+      - PHOTOPRISM_HTTP_PORT=2342
+      - PHOTOPRISM_SETTINGS_HIDDEN=false            # Users can not view or change settings
+      - PHOTOPRISM_DATABASE_DRIVER=sqlite           # SQLite is an embedded database that doesn't require a server
+      #- PHOTOPRISM_DATABASE_DRIVER=mysql          # Use MariaDB (or MySQL) instead of SQLite for improved performance
+      # PHOTOPRISM_DATABASE_DSN: "photoprism:insecure@tcp(mariadb:3306)/photoprism?charset=utf8mb4,utf8&parseTime=true"
+      - PHOTOPRISM_SIDECAR_JSON=true                # Automatically create JSON sidecar files using Exiftool
+      - PHOTOPRISM_SIDECAR_YAML=true                # Automatically backup metadata to YAML sidecar files
+      - PHOTOPRISM_THUMB_FILTER=lanczos             # Resample filter, best to worst: blackman, lanczos, cubic, linear
+      - PHOTOPRISM_THUMB_UNCACHED=false             # Enable on-demand thumbnail rendering (high memory and cpu usage)
+      - PHOTOPRISM_THUMB_SIZE=2048                    # Pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
+      # PHOTOPRISM_THUMB_SIZE: 4096                  # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
+      - PHOTOPRISM_THUMB_SIZE_UNCACHED=7680           # On-demand rendering size limit (default 7680, min 720, max 7680)
+      - PHOTOPRISM_JPEG_SIZE=7680                     # Size limit for converted image files in pixels (720-30000)
+      - PHOTOPRISM_JPEG_QUALITY=92                    # Set to 95 for high-quality thumbnails (25-100)
+      - PHOTOPRISM_DARKTABLE_PRESETS=false          # Use darktable presets (disables concurrent raw to jpeg conversion)
+    restart: unless-stopped
+  - service_name: photoprism_db
+    active: false
+    image: mariadb:10.5
+    volumes:
+      - "{{ appdata_path }}/photoprism/db:/var/lib/mysql" 
+    environment:
+      - MYSQL_ROOT_PASSWORD=pleasechange
+      - MYSQL_USER=photoprism
+      - MYSQL_PASSWORD=insecure
+      - MYSQL_DATABASE=photoprism
+    restart: unless-stopped
+###
+  - service_name: recipes
+    active: false
+    image: vabene1111/recipes
+    depends_on:
+      - recipes_db
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.recipes.rule=Host(`recipes.ktz.lol`)
+      - traefik.http.routers.recipes.entrypoints=websecure
+      - traefik.http.routers.recipes.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/vabene-recipes/app/static:/opt/recipes/staticfiles"
+      - "{{ appdata_path }}/vabene-recipes/app/media:/opt/recipes/mediafiles"
+    environment:
+      - DEBUG=0
+      - ALLOWED_HOSTS=*
+      - SECRET_KEY=secret
+      - TIMEZONE=America/New_York
+      - DB_ENGINE=django.db.backends.postgresql
+      - POSTGRES_HOST=recipes_db
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=djangodb
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=djangodb
+      - FRACTION_PREF_DEFAULT=0
+      - COMMENT_PREF_DEFAULT=1
+      - SHOPPING_MIN_AUTOSYNC_INTERVAL=60
+      - GUNICORN_MEDIA=0
+    restart: unless-stopped
+  - service_name: recipes_db
+    active: false
+    image: postgres:11-alpine
+    volumes:
+      - "{{ appdata_path }}/vabene-recipes/db:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=djangodb
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=djangodb
+    restart: unless-stopped
+###
+  - service_name: mealie
+    active: false
+    image: hkotel/mealie
+    depends_on: 
+      - mealiedb
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mealie.rule=Host(`recipes.{{ domain_l }}`)
+      - traefik.http.routers.mealie.entrypoints=websecure
+      - traefik.http.routers.mealie.tls.certresolver=cloudflare
+      - traefik.http.services.mealie.loadbalancer.server.port=9000
+    volumes:
+      - "{{ appdata_path }}/mealie/app:/app/data"
+    environment:
+      - "db_username={{ mealie_db_user }}"
+      - "db_password={{ mealie_db_password }}"
+      - db_host=mealiedb
+      - db_port=27017
+    restart: unless-stopped    
+  - service_name: mealiedb
+    active: false
+    image: mongo
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME={{ mealie_db_user }}"
+      - "MONGO_INITDB_ROOT_PASSWORD={{ mealie_db_password }}"
+    restart: unless-stopped    
+  - service_name: mealiedbui
+    active: false
+    image: mongo-express
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.mealiedbui.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/mealiedbui`))"
+      - traefik.http.routers.mealiedbui.entrypoints=websecure
+      - traefik.http.routers.mealiedbui.tls.certresolver=cloudflare
+      - traefik.http.services.mealiedbui.loadbalancer.server.port=8081
+    environment:
+      - "ME_CONFIG_MONGODB_ADMINUSERNAME={{ mealie_dbui_user }}"
+      - "ME_CONFIG_MONGODB_ADMINPASSWORD={{ mealie_dbui_password }}"
+    restart: unless-stopped     
+###
+  - service_name: filerundb
+    active: true
+    image: mariadb:10.1
+    volumes:
+      - "{{ appdata_path }}/filerun/db:/config"
+    environment:
+      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
+      - "MYSQL_PASSWORD={{ container_mysql_password }}"
+      - MYSQL_DATABASE=filerun
+      - MYSQL_USER=filerun
+    include_global_env_vars: #optional - defaults to false
+    restart: unless-stopped
+  - service_name: filerun
+    active: true
+    image: afian/filerun
+    depends_on:
+      - filerundb
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.filerun.rule=Host(`filerun.{{ domain_l }}`)"
+      - traefik.http.routers.filerun.entrypoints=websecure
+      - traefik.http.routers.filerun.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/filerun/app:/filerun/html"
+      - "{{ morpheus_main_storage_path }}:/user-files:ro"
+    environment:
+      - FR_DB_HOST=filerundb
+      - FR_DB_PORT=3306
+      - FR_DB_NAME=filerun
+      - FR_DB_USER=filerun
+      - "FR_DB_PASS={{ container_mysql_password }}"
+      - APACHE_RUN_USER=www-data
+      - APACHE_RUN_USER_ID=33
+      - APACHE_RUN_GROUP=www-data
+      - APACHE_RUN_GROUP_ID=33
+    restart: unless-stopped
+    ###
+  - service_name: fileruntika
+    active: true
+    image: logicalspark/docker-tikaserver
+    restart: unless-stopped
+    ###
+  - service_name: filerunelastic
+    active: true
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
+    volumes:
+      - "{{ appdata_path }}/filerun/elastic:/usr/share/elasticsearch/data"
+    mem_limit: 1g
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    restart: unless-stopped
+
+  # template for docker-compose services
+  #
+  ###
+  # - service_name:
+  #   active: true
+  #   image:
+  #   container_name: #optional - only required if diff to service_name
+  #   labels:
+  #     - traefik.enable=true
+  #     - "traefik.http.routers.XXXXXXXX.rule=Host(`plex.{{ domain_l }}`)"
+  #     - traefik.http.routers.XXXXXXX.entrypoints=websecure
+  #     - traefik.http.routers.XXXXXXX.tls.certresolver=cloudflare
+  #     - traefik.http.services.XXXXXXX.loadbalancer.server.port=80
+  #   volumes:
+  #     - "{{ appdata_path }}/app:/config"
+  #   environment:
+  #     -
+  #   include_global_env_vars: #optional - defaults to false
+  #   restart: unless-stopped
+
+## snapraid
+snapraid_config_excludes:
+  - "*.unrecoverable"
+  - "/tmp/"
+  - "/lost+found/"
+  - "downloads/"
+  - "appdata/"
+  - "*.!sync"
+  - ".AppleDouble"
+  - "._AppleDouble"
+  - ".DS_Store"
+  - "._.DS_Store"
+  - ".Thumbs.db"
+  - ".fseventsd"
+  - ".Spotlight-V100"
+  - ".TemporaryItems"
+  - ".Trashes"
+  - ".AppleDB"
+
+## telegraf
+telegraf_plugins_base:
+  - name: mem
+  - name: system
+  - name: cpu
+    options:
+      percpu: "true"
+      totalcpu: "true"
+      collect_cpu_time: "false"
+      report_active: "false"
+  - name: disk
+    options:
+      ignore_fs:
+        - "tmpfs"
+        - "devtmpfs"
+        - "devfs"
+      mountpoints:
+        - "/"
+        - "/mnt/disk1"
+        - "/mnt/disk2"
+        - "/mnt/disk3"
+        - "/mnt/disk4"
+        - "/mnt/disk5"
+        - "/mnt/disk6"
+        - "/mnt/disk7"
+        - "/mnt/disk8"
+        - "/mnt/disk9"
+        - "/mnt/parity1"
+        - "/mnt/parity2"
+        - "/mnt/storage"
+        - "/mnt/tank"
+  - name: diskio
+    options:
+      skip_serial_number: "true"
+  - name: kernel
+  - name: processes
+  - name: docker
+    options:
+      endpoint: "unix:///var/run/docker.sock"
+      perdevice: "true"
+  - name: hddtemp
+  - name: net
+    options:
+      interfaces:
+        - "ens192"

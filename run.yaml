@@ -23,14 +23,18 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      - role: ironicbadger.ansible_role_proxmox_nag_removal
       - role: geerlingguy.docker
       - role: grog.package
+      - role: ironicbadger.ansible_role_hddtemp
+      - role: rossmcdonald.telegraf
       - role: ktz-figurine
+      - role: ktz-sanoid
+      - role: ktz-cartman
       - role: ironicbadger.ansible_role_docker_compose_generator
         tags: compose
-      #- role: ktz-traefik
-        #tags: compose
+      - role: ktz-traefik
+        tags: compose
+      - role: ironicbadger.ansible_role_snapraid
 
   - hosts: cartman
     vars_files:
@@ -47,14 +51,6 @@
         tags: compose
       - role: ktz-traefik
         tags: compose
-      - role: ironicbadger.ansible_role_snapraid
-  
-  - hosts: snapraidtest
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:  
-      - role: geerlingguy.docker
-      - role: grog.package
       - role: ironicbadger.ansible_role_snapraid
 
   - hosts: bastion

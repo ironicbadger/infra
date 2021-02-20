@@ -2,7 +2,7 @@
 
 - name: ensure hostname is set correctly
   hostname:
-    name: "{{ hostname_cartman }}"
+    name: "{{ hostname_morpheus }}"
 
 - name: disks
   include: disks.yml
