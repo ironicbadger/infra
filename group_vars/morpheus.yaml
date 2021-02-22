@@ -112,7 +112,7 @@ zfs_disks:
   # nvme-eui.00000000000000108ce38e02000e5450-part1 -> ../../nvme0n1p1
 
 fstab_mergerfs:
-  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=mfs,dropcacheonclose=true,minfreespace=250G,fsname=mergerfs" }  
+  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=epmfs,dropcacheonclose=true,minfreespace=250G,fsname=mergerfs" }  
 
 snapraid_email_address: alexktz@gmail.com
 snapraid_gmail_pass: "{{ snapraid_email_password }}"
