@@ -176,7 +176,7 @@ containers:
       - /dev/dri:/dev/dri
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.plex.rule=Host(`plex.{{ domain_l }}`)"
+      - "traefik.http.routers.plex.rule=Host(`plex.{{ domain_me }}`)"
       - traefik.http.routers.plex.entrypoints=websecure
       - traefik.http.services.plex.loadbalancer.server.port=32400
       - traefik.http.routers.plex.tls.certresolver=cloudflare
