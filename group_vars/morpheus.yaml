@@ -181,8 +181,8 @@ containers:
       - traefik.http.services.plex.loadbalancer.server.port=32400
       - traefik.http.routers.plex.tls.certresolver=cloudflare
     volumes:
-      - "{{ appdata_path }}/plex/config:/config"
-      - /opt/appdata/plex/transcode:/transcode
+      - /intel2tbnvme/appdata/plex/config:/config
+      - /intel2tbnvme/appdata/plex/transcode:/transcode
       - "{{ morpheus_main_storage_path }}:/data"
     include_global_env_vars: true
     restart: unless-stopped
@@ -336,7 +336,7 @@ containers:
     ports:
       - "8086:8086"
     volumes:
-      - "{{ appdata_path }}/influxdb:/var/lib/influxdb"
+      - "/intel2tbnvme/appdata/influxdb:/var/lib/influxdb"
     restart: unless-stopped
   ###
   - service_name: duplicati
