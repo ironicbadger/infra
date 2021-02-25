@@ -915,7 +915,7 @@ containers:
       - "traefik.http.routers.transmission.rule=Host(`transmission.{{ domain_l }}`)"
       - traefik.http.routers.transmission.entrypoints=websecure
       - traefik.http.routers.transmission.tls.certresolver=cloudflare
-      - traefik.http.services.transmission.loadbalancer.server.port=80
+      - traefik.http.services.transmission.loadbalancer.server.port=9091
     volumes:
       - "{{ appdata_path }}/transmission:/config"
       - /opt/downloads/torrents:/data
