@@ -904,6 +904,30 @@ containers:
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     restart: unless-stopped
+  ###
+  - service_name: transmission
+    active: true
+    image: haugene/transmission-openvpn
+    cap_add:
+      - NET_ADMIN
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.transmission.rule=Host(`transmission.{{ domain_l }}`)"
+      - traefik.http.routers.transmission.entrypoints=websecure
+      - traefik.http.routers.transmission.tls.certresolver=cloudflare
+      - traefik.http.services.transmission.loadbalancer.server.port=80
+    volumes:
+      - "{{ appdata_path }}/transmission:/config"
+      - /opt/downloads/torrents:/data
+    ports:
+      - 9091:9091
+    environment:
+      - "OPENVPN_PROVIDER={{ transmission_openvpn_provider }}"
+      - "OPENVPN_CONFIG={{ transmission_openvpn_config }}"
+      - "OPENVPN_USERNAME={{ transmission_openvpn_username }}"
+      - "OPENVPN_PASSWORD={{ transmission_openvpn_password }}"
+      - "LOCAL_NETWORK={{ transmission_openvpn_local_network }}"
+    restart: unless-stopped
 
   # template for docker-compose services
   #
