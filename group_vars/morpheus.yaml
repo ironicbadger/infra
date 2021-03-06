@@ -268,7 +268,7 @@ containers:
     image: gregyankovoy/chowdown
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.chowdown.rule=Host(`recipes.{{ domain_l }}`)"
+      - "traefik.http.routers.chowdown.rule=Host(`recipes.{{ domain_me }}`)"
       - traefik.http.routers.chowdown.entrypoints=websecure
       - traefik.http.routers.chowdown.tls.certresolver=cloudflare
       - traefik.http.services.chowdown.loadbalancer.server.port=4000
