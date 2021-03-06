@@ -264,11 +264,11 @@ containers:
     restart: unless-stopped
   ###
   - service_name: chowdown
-    active: false
+    active: true
     image: gregyankovoy/chowdown
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.chowdown.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/chowdown`))"
+      - "traefik.http.routers.chowdown.rule=Host(`recipes.{{ domain_l }}`)"
       - traefik.http.routers.chowdown.entrypoints=websecure
       - traefik.http.routers.chowdown.tls.certresolver=cloudflare
       - traefik.http.services.chowdown.loadbalancer.server.port=4000
