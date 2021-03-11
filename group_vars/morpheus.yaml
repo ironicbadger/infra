@@ -188,7 +188,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: tautulli
-    active: false
+    active: true
     image: linuxserver/tautulli
     depends_on:
       - plex
@@ -716,7 +716,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: photoprism
-    active: false
+    active: true
     image: photoprism/photoprism:latest
     labels:
       - traefik.enable=true
@@ -728,8 +728,8 @@ containers:
       - "{{ appdata_path }}/photoprism/app:/photoprism/storage" 
       - "{{ morpheus_main_storage_path }}/photos/alex/legacy/images.old:/photoprism/originals/imagesold"
     environment:
-      - UID=1313
-      - GID=1313
+      - UID=1000
+      - GID=1000
       - PHOTOPRISM_ADMIN_PASSWORD=pleasechange     # Initial admin password: PLEASE CHANGE!
       - PHOTOPRISM_DEBUG=false                      # Run in debug mode (shows additional log messages)
       - PHOTOPRISM_PUBLIC=false                     # No authentication required (disables password protection)
@@ -760,7 +760,7 @@ containers:
       - PHOTOPRISM_DARKTABLE_PRESETS=false          # Use darktable presets (disables concurrent raw to jpeg conversion)
     restart: unless-stopped
   - service_name: photoprism_db
-    active: false
+    active: true
     image: mariadb:10.5
     volumes:
       - "{{ appdata_path }}/photoprism/db:/var/lib/mysql" 
