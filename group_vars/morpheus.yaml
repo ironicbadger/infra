@@ -928,6 +928,29 @@ containers:
       - "OPENVPN_PASSWORD={{ transmission_openvpn_password }}"
       - "LOCAL_NETWORK={{ transmission_openvpn_local_network }}"
     restart: unless-stopped
+###
+  - service_name: frigate
+    active: true
+    image: blakeblackshear/frigate:stable-amd64
+    privileged: true
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.frigate.rule=Host(`frigate.{{ domain_l }}`)"
+      - traefik.http.routers.frigate.entrypoints=websecure
+      - traefik.http.routers.frigate.tls.certresolver=cloudflare
+      - traefik.http.services.frigate.loadbalancer.server.port=5001
+    volumes:
+      - "{{ appdata_path }}/frigate/config:/config:ro"
+      - /etc/localtime:/etc/localtime:ro
+      - /opt/frigate:/media/frigate
+    environment:
+      - "FRIGATE_RTSP_PASSWORD='password'"
+    ports:
+      - '5001:5000'
+      - '1935:1935' # RTMP feeds
+    devices:
+      - /dev/dri
+    restart: unless-stopped
 
   # template for docker-compose services
   #
