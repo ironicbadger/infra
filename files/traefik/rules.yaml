@@ -36,7 +36,7 @@ http:
     service-blueiris:
       loadBalancer:
         servers:
-        - url: "http://192.168.1.200:81"
+        - url: "http://192.168.1.200:83"
     service-octoprint:
       loadBalancer:
         servers:
