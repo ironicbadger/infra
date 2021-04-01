@@ -1,12 +1,5 @@
 http:
   routers:
-    router-homeassistant:
-      entryPoints:
-        - websecure
-      rule: Host(`ha.ktz.me`)
-      service: service-homeassistant
-      tls:
-        certResolver: cloudflare
     router-blueiris:
       entryPoints:
         - websecure
@@ -29,10 +22,6 @@ http:
       tls:
         certResolver: cloudflare
   services:
-    service-homeassistant:
-      loadBalancer:
-        servers:
-        - url: "http://192.168.1.99:8123"
     service-blueiris:
       loadBalancer:
         servers:
