@@ -930,7 +930,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: frigate
-    active: true
+    active: false
     image: blakeblackshear/frigate:stable-amd64
     privileged: true
     labels:
@@ -950,6 +950,23 @@ containers:
       - '1935:1935' # RTMP feeds
     devices:
       - /dev/dri
+    restart: unless-stopped
+  ###
+  - service_name: paperless
+    active: true
+    image: alexphillips/paperless-ng
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.paperless.rule=Host(`paperless.{{ domain_l }}`)"
+      - traefik.http.routers.paperless.entrypoints=websecure
+      - traefik.http.routers.paperless.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/paperless/config:/config"
+      - "{{ appdata_path }}/paperless/data:/data"
+    environment:
+      - PAPERLESS_CONSUMER_RECURSIVE=true
+      - PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS=true
+    include_global_env_vars: true
     restart: unless-stopped
 
   # template for docker-compose services
