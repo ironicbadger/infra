@@ -3,21 +3,21 @@ http:
     router-blueiris:
       entryPoints:
         - websecure
-      rule: Host(`bi.ktz.me`)
+      rule: "Host(`bi.{{ domain_me }}`)"
       service: service-blueiris
       tls:
         certResolver: cloudflare
     router-octoprint:
       entryPoints:
         - websecure
-      rule: Host(`octoprint.ktz.me`)
+      rule: "Host(`octoprint.{{ domain_l }}`)"
       service: service-octoprint
       tls:
         certResolver: cloudflare
     router-proxmox:
       entryPoints:
         - websecure
-      rule: Host(`proxmox.ktz.lol`)
+      rule: "Host(`px.{{ domain_l }}`)"
       service: service-proxmox
       tls:
         certResolver: cloudflare
@@ -29,8 +29,8 @@ http:
     service-octoprint:
       loadBalancer:
         servers:
-        - url: "http://192.168.1.90:80"
+        - url: "http://192.168.2.4:80"
     service-proxmox:
       loadBalancer:
         servers:
-        - url: "http://192.168.1.13:8006"
+        - url: "https://192.168.1.10:8006"
