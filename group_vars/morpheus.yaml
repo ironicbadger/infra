@@ -331,10 +331,10 @@ containers:
     ports:
       - 9272:9272
     environment:
-      - 'VSPHERE_HOST=192.168.1.240'
-      - 'VSPHERE_IGNORE_SSL=True'
-      - 'VSPHERE_USER=administrator@vsphere.local'
-      - 'VSPHERE_PASSWORD=Password1!'
+      - "VSPHERE_HOST={{ vsphere_host }}"
+      - "VSPHERE_IGNORE_SSL=True"
+      - "VSPHERE_USER={{ vsphere_user }}"
+      - "VSPHERE_PASSWORD={{ vsphere_password }}"
     restart: unless-stopped
   ###
   - service_name: grafana
