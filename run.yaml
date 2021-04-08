@@ -42,16 +42,6 @@
     roles:
       - role: ktz-fancontrol
 
-  - hosts: bastion
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: geerlingguy.security
-      - role: geerlingguy.docker
-      - role: ktz-figurine
-      - role: ironicbadger.ansible_role_docker_compose_generator
-        tags: compose
-
   - hosts: quassel
     roles:
       #- role: ktz-rh-vpn # not committed for privacy reasons
