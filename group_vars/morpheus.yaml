@@ -308,8 +308,33 @@ containers:
       - MYSQL_USER=nextcloud
     volumes:
       - "{{ appdata_path }}/mysql:/var/lib/mysql"
-    # command:
-    #   - "--transaction-isolation=READ-COMMITTED --binlog-format=ROW"
+    restart: unless-stopped
+  ###
+  - service_name: prometheus
+    active: true
+    image: prom/prometheus
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.prom.rule=Host(`prometheus.{{ domain_l }}`)"
+      - traefik.http.routers.prom.entrypoints=websecure
+      - traefik.http.routers.prom.tls.certresolver=cloudflare
+    ports:
+      - 9090:9090
+    privileged: true
+    volumes:
+      - "{{ appdata_path }}/prometheus:/etc/prometheus"
+    restart: unless-stopped
+  - service_name: vmware_exporter
+    active: true
+    container_name: vmware_exporter
+    image: pryorda/vmware_exporter:v0.16.0
+    ports:
+      - 9272:9272
+    environment:
+      - 'VSPHERE_HOST=192.168.1.240'
+      - 'VSPHERE_IGNORE_SSL=True'
+      - 'VSPHERE_USER=administrator@vsphere.local'
+      - 'VSPHERE_PASSWORD=Password1!'
     restart: unless-stopped
   ###
   - service_name: grafana
@@ -450,20 +475,6 @@ containers:
       - "55555:55555"
     include_global_env_vars: true
     restart: unless-stopped
-  - service_name: speedtest
-    active: true
-    container_name: speedtest
-    image: roest/docker-speedtest-analyser
-    volumes:
-      - "{{ appdata_path }}/speedtest:/var/www/html/data"
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.speedtest.rule=Host(`speedtest.{{ domain_l }}`)"
-      - traefik.http.routers.speedtest.entrypoints=websecure
-      - traefik.http.routers.speedtest.tls.certresolver=cloudflare
-      - traefik.http.services.speedtest.loadbalancer.server.port=80
-    include_global_env_vars: true
-    restart: unless-stopped
   ###
   - service_name: librespeed
     active: true
@@ -566,70 +577,6 @@ containers:
       - REQUIRE_HTTPS=true
       - "TRUSTED_PROXIES='*'"
     restart: unless-stopped
-  ###
-  - service_name: miniflux
-    active: false
-    image: miniflux/miniflux
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.miniflux.rule=Host(`rss.ktz.me`)
-      - traefik.http.routers.miniflux.entrypoints=websecure
-      - traefik.http.routers.miniflux.tls.certresolver=cloudflare
-      - traefik.http.services.miniflux.loadbalancer.server.port=8080
-    volumes:
-      - "{{ appdata_path }}/miniflux:/config"
-    depends_on:
-      - minifluxdb
-    environment:
-      - "DATABASE_URL=postgres://{{ miniflux_db_user }}:{{ miniflux_db_password }}@minifluxdb/miniflux?sslmode=disable"
-      - ADMIN_USERNAME=admin
-      - "ADMIN_PASSWORD={{ miniflux_db_password }}"
-      - BASE_URL=https://rss.ktz.me
-    restart: unless-stopped
-  - service_name: minifluxdb
-    active: false
-    image: postgres
-    volumes:
-      - "{{ appdata_path }}/postgres_miniflux:/var/lib/postgresql/data"
-    environment:
-      - "POSTGRES_USER={{ miniflux_db_user }}"
-      - "POSTGRES_PASSWORD={{ miniflux_db_password }}"
-      - POSTGRES_DB=miniflux
-    restart: unless-stopped
-  ###
-  - service_name: monica
-    active: false
-    image: monica
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.monica.rule=(Host(`al.ktz.me`) && PathPrefix(`/monica`))
-      - traefik.http.routers.monica.entrypoints=websecure
-      - traefik.http.routers.monica.tls.certresolver=cloudflare
-      - traefik.http.services.monica.loadbalancer.server.port=80
-    ports:
-      - 8901:80
-    depends_on:
-      - db
-    environment:
-      - APP_KEY=F5HZSjEOwValEIfzgaZ2E6gZUUf3Fu38
-      - APP_URL=https://al.ktz.me/monica
-      - "APP_FORCE_URL=true"
-      - DB_HOST=db
-    volumes:
-      - "{{ appdata_path }}/monica/app:/var/www/html/storage"
-    restart: unless-stopped
-  - service_name: db
-    active: false
-    container_name: db
-    image: mariadb
-    environment:
-      - MYSQL_RANDOM_ROOT_PASSWORD=true
-      - MYSQL_PASSWORD=secret
-      - MYSQL_DATABASE=monica
-      - MYSQL_USER=homestead
-    volumes:
-      - "{{ appdata_path }}/monica/db:/var/lib/mysql"
-    restart: unless-stopped
 ###
   - service_name: scrutiny
     active: true
@@ -653,66 +600,6 @@ containers:
       - SCRUTINY_COLLECTOR=true
       - SCRUTINY_WEB=true
     privileged: true
-    restart: unless-stopped
-  ###
-  - service_name: stikked
-    active: false
-    image: ironicbadger/stikked
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.stikked.rule=Host(`paste.ktz.me`)
-      - traefik.http.routers.stikked.entrypoints=websecure
-      - traefik.http.routers.stikked.tls.certresolver=cloudflare
-      - traefik.http.services.stikked.loadbalancer.server.port=80
-    volumes:
-      - "{{ appdata_path }}/stikked/data:/config"
-      - "{{ appdata_path }}/stikked/stikked.php:/defaults/stikked.php"
-    include_global_env_vars: true
-    restart: unless-stopped
-  - service_name: mysql_stikked
-    active: false
-    image: mariadb
-    environment:
-      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
-      - "MYSQL_PASSWORD={{ container_mysql_password }}"
-      - MYSQL_DATABASE=stikked
-      - MYSQL_USER=stikked
-    volumes:
-      - "{{ appdata_path }}/stikked/db:/var/lib/mysql"
-    command:
-      - "--innodb-buffer-pool-size=4000000000"
-    restart: unless-stopped
-###
-  - service_name: recipes-db
-    active: false
-    image: postgres:11-alpine
-    volumes:
-      - "{{ appdata_path }}/recipes/db:/var/lib/postgresql/data"
-    restart: unless-stopped
-  - service_name: recipes-backend
-    active: false
-    image: vabene1111/recipes
-    depends_on:
-      - recipes-db
-    volumes:
-      - "{{ appdata_path }}/recipes/staticfiles:/opt/recipes/staticfiles"
-      - "{{ appdata_path }}/recipes/mediafiles:/opt/recipes/mediafiles"
-    restart: unless-stopped
-  - service_name: recipes-nginx
-    active: false
-    image: nginx:mainline-alpine
-    depends_on:
-      - recipes-db
-      - recipes-backend
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.recipes.rule=Host(`recipes.ktz.me`)
-      - traefik.http.routers.recipes.entrypoints=websecure
-      - traefik.http.routers.recipes.tls.certresolver=cloudflare
-      - traefik.http.services.recipes.loadbalancer.server.port=8080
-    volumes:
-      - "{{ appdata_path }}/recipes/mediafiles:/media"
-      - "{{ appdata_path }}/recipes/nginx/conf.d:/etc/nginx/conf.d"
     restart: unless-stopped
 ###
   - service_name: photoprism
@@ -769,140 +656,6 @@ containers:
       - MYSQL_USER=photoprism
       - MYSQL_PASSWORD=insecure
       - MYSQL_DATABASE=photoprism
-    restart: unless-stopped
-###
-  - service_name: recipes
-    active: false
-    image: vabene1111/recipes
-    depends_on:
-      - recipes_db
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.recipes.rule=Host(`recipes.ktz.lol`)
-      - traefik.http.routers.recipes.entrypoints=websecure
-      - traefik.http.routers.recipes.tls.certresolver=cloudflare
-    volumes:
-      - "{{ appdata_path }}/vabene-recipes/app/static:/opt/recipes/staticfiles"
-      - "{{ appdata_path }}/vabene-recipes/app/media:/opt/recipes/mediafiles"
-    environment:
-      - DEBUG=0
-      - ALLOWED_HOSTS=*
-      - SECRET_KEY=secret
-      - TIMEZONE=America/New_York
-      - DB_ENGINE=django.db.backends.postgresql
-      - POSTGRES_HOST=recipes_db
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=djangodb
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=djangodb
-      - FRACTION_PREF_DEFAULT=0
-      - COMMENT_PREF_DEFAULT=1
-      - SHOPPING_MIN_AUTOSYNC_INTERVAL=60
-      - GUNICORN_MEDIA=0
-    restart: unless-stopped
-  - service_name: recipes_db
-    active: false
-    image: postgres:11-alpine
-    volumes:
-      - "{{ appdata_path }}/vabene-recipes/db:/var/lib/postgresql/data"
-    environment:
-      - POSTGRES_USER=djangodb
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=djangodb
-    restart: unless-stopped
-###
-  - service_name: mealie
-    active: false
-    image: hkotel/mealie
-    depends_on: 
-      - mealiedb
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.mealie.rule=Host(`recipes.{{ domain_l }}`)
-      - traefik.http.routers.mealie.entrypoints=websecure
-      - traefik.http.routers.mealie.tls.certresolver=cloudflare
-      - traefik.http.services.mealie.loadbalancer.server.port=9000
-    volumes:
-      - "{{ appdata_path }}/mealie/app:/app/data"
-    environment:
-      - "db_username={{ mealie_db_user }}"
-      - "db_password={{ mealie_db_password }}"
-      - db_host=mealiedb
-      - db_port=27017
-    restart: unless-stopped    
-  - service_name: mealiedb
-    active: false
-    image: mongo
-    environment:
-      - "MONGO_INITDB_ROOT_USERNAME={{ mealie_db_user }}"
-      - "MONGO_INITDB_ROOT_PASSWORD={{ mealie_db_password }}"
-    restart: unless-stopped    
-  - service_name: mealiedbui
-    active: false
-    image: mongo-express
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.mealiedbui.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/mealiedbui`))"
-      - traefik.http.routers.mealiedbui.entrypoints=websecure
-      - traefik.http.routers.mealiedbui.tls.certresolver=cloudflare
-      - traefik.http.services.mealiedbui.loadbalancer.server.port=8081
-    environment:
-      - "ME_CONFIG_MONGODB_ADMINUSERNAME={{ mealie_dbui_user }}"
-      - "ME_CONFIG_MONGODB_ADMINPASSWORD={{ mealie_dbui_password }}"
-    restart: unless-stopped     
-###
-  - service_name: filerundb
-    active: true
-    image: mariadb:10.1
-    volumes:
-      - "{{ appdata_path }}/filerun/db:/config"
-    environment:
-      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
-      - "MYSQL_PASSWORD={{ container_mysql_password }}"
-      - MYSQL_DATABASE=filerun
-      - MYSQL_USER=filerun
-    include_global_env_vars: #optional - defaults to false
-    restart: unless-stopped
-  - service_name: filerun
-    active: true
-    image: afian/filerun
-    depends_on:
-      - filerundb
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.filerun.rule=Host(`filerun.{{ domain_l }}`)"
-      - traefik.http.routers.filerun.entrypoints=websecure
-      - traefik.http.routers.filerun.tls.certresolver=cloudflare
-    volumes:
-      - "{{ appdata_path }}/filerun/app:/filerun/html"
-      - "{{ morpheus_main_storage_path }}:/user-files:ro"
-    environment:
-      - FR_DB_HOST=filerundb
-      - FR_DB_PORT=3306
-      - FR_DB_NAME=filerun
-      - FR_DB_USER=filerun
-      - "FR_DB_PASS={{ container_mysql_password }}"
-      - APACHE_RUN_USER=www-data
-      - APACHE_RUN_USER_ID=33
-      - APACHE_RUN_GROUP=www-data
-      - APACHE_RUN_GROUP_ID=33
-    restart: unless-stopped
-    ###
-  - service_name: fileruntika
-    active: true
-    image: logicalspark/docker-tikaserver
-    restart: unless-stopped
-    ###
-  - service_name: filerunelastic
-    active: true
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
-    volumes:
-      - "{{ appdata_path }}/filerun/elastic:/usr/share/elasticsearch/data"
-    mem_limit: 1g
-    environment:
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     restart: unless-stopped
   ###
   - service_name: transmission
