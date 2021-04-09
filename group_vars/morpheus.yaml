@@ -58,15 +58,15 @@ syncoid_helios: "root@h:tank"
 
 syncoid_healthcheck_string: "curl -fsS --retry 3 https://hc-ping.com"
 syncoid_cron_jobs:
-  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/unifi {{ morpheus_appdata_dataset }}/unifi && {{ syncoid_healthcheck_string }}/{{ syncoid_unifi_healthcheck_uuid }} > /dev/null', name: 'unifi_replication', weekday: '*', hour: '*/4' }
-  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/ktz-blog {{ morpheus_appdata_dataset }}/ktz-blog && {{ syncoid_healthcheck_string }}/{{ syncoid_ktz_blog_healthcheck_uuid }} > /dev/null', name: 'ktzblog_replication', weekday: '*', hour: '*', minute: '*/15' }
-  - { job: '{{ syncoid_binary_path}} {{ syncoid_cloud_dataset }}/mum-blog {{ morpheus_appdata_dataset }}/mum-blog && {{ syncoid_healthcheck_string }}/{{ syncoid_mum_blog_healthcheck_uuid }} > /dev/null', name: 'mumblog_replication', weekday: '*', hour: '*', minute: '*/15' }
-  # - { job: '{{ syncoid_binary_path}} {{ cartman_appdata_dataset }}/tiddlywiki {{ syncoid_cloud_dataset }}/tiddlywiki && {{ syncoid_healthcheck_string }}/{{ syncoid_tiddlywiki_healthcheck_uuid }} > /dev/null', name: 'tiddlywiki_replication', weekday: '*', hour: '*', minute: '*/15' }
-  # - { job: '{{ syncoid_binary_path}} {{ cartman_appdata_dataset }}/snipe {{ syncoid_cloud_dataset }}/snipe && {{ syncoid_healthcheck_string }}/{{ syncoid_snipe_healthcheck_uuid }} > /dev/null', name: 'snipe_replication', weekday: '*', hour: '*', minute: '*/15' }
-  # - { job: '{{ syncoid_binary_path}} -r {{ cartman_appdata_dataset }} {{ syncoid_helios }}/appdata', name: 'helios_appdata_replication', weekday: '*', hour: '02' }
-  # - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/fuse {{ syncoid_helios }}/fuse', name: 'helios_fuse_replication', weekday: '*', hour: '22' }
-  # - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/documents {{ syncoid_helios }}/documents', name: 'helios_documents_replication', weekday: '*', hour: '20' }
-  # - { job: '{{ syncoid_binary_path}} -r {{ cartman_primary_zfs_dataset }}/backups {{ syncoid_helios }}/backups', name: 'helios_backups_replication', weekday: '*', hour: '20' }
+  - { job: '{{ syncoid_binary_path }} {{ syncoid_cloud_dataset }}/unifi {{ morpheus_appdata_dataset }}/unifi && {{ syncoid_healthcheck_string }}/{{ syncoid_unifi_healthcheck_uuid }} > /dev/null', name: 'unifi_replication', weekday: '*', hour: '*/4' }
+  - { job: '{{ syncoid_binary_path }} {{ syncoid_cloud_dataset }}/ktz-blog {{ morpheus_appdata_dataset }}/ktz-blog && {{ syncoid_healthcheck_string }}/{{ syncoid_ktz_blog_healthcheck_uuid }} > /dev/null', name: 'ktzblog_replication', weekday: '*', hour: '*', minute: '*/15' }
+  - { job: '{{ syncoid_binary_path }} {{ syncoid_cloud_dataset }}/mum-blog {{ morpheus_appdata_dataset }}/mum-blog && {{ syncoid_healthcheck_string }}/{{ syncoid_mum_blog_healthcheck_uuid }} > /dev/null', name: 'mumblog_replication', weekday: '*', hour: '*', minute: '*/15' }
+  # - { job: '{{ syncoid_binary_path }} {{ cartman_appdata_dataset }}/tiddlywiki {{ syncoid_cloud_dataset }}/tiddlywiki && {{ syncoid_healthcheck_string }}/{{ syncoid_tiddlywiki_healthcheck_uuid }} > /dev/null', name: 'tiddlywiki_replication', weekday: '*', hour: '*', minute: '*/15' }
+  # - { job: '{{ syncoid_binary_path }} {{ cartman_appdata_dataset }}/snipe {{ syncoid_cloud_dataset }}/snipe && {{ syncoid_healthcheck_string }}/{{ syncoid_snipe_healthcheck_uuid }} > /dev/null', name: 'snipe_replication', weekday: '*', hour: '*', minute: '*/15' }
+  # - { job: '{{ syncoid_binary_path }} -r {{ cartman_appdata_dataset }} {{ syncoid_helios }}/appdata', name: 'helios_appdata_replication', weekday: '*', hour: '02' }
+  # - { job: '{{ syncoid_binary_path }} -r {{ cartman_primary_zfs_dataset }}/fuse {{ syncoid_helios }}/fuse', name: 'helios_fuse_replication', weekday: '*', hour: '22' }
+  # - { job: '{{ syncoid_binary_path }} -r {{ cartman_primary_zfs_dataset }}/documents {{ syncoid_helios }}/documents', name: 'helios_documents_replication', weekday: '*', hour: '20' }
+  # - { job: '{{ syncoid_binary_path }} -r {{ cartman_primary_zfs_dataset }}/backups {{ syncoid_helios }}/backups', name: 'helios_backups_replication', weekday: '*', hour: '20' }
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases:
