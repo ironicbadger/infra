@@ -42,11 +42,6 @@
     state: present
   when: install_sanoid
 
-- name: ensure sanoid is installed
-  apt:
-    name: sanoid
-    state: present
-
 #######
 
 - name: create target dir for sanoid config

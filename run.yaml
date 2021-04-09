@@ -1,12 +1,7 @@
 ---
   - hosts: all
     roles:
-      # - role: ironicbadger.ansible_users
       - role: ironicbadger.ansible_role_bash_aliases
-      # - role: grog.package
-      # - role: geerlingguy.security
-      # - role: weareinteractive.environment
-      # - role: geerlingguy.ntp
     tasks:
       - name: remove ubuntu motd spam
         become: true
@@ -40,7 +35,14 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
+      - role: grog.package
       - role: ktz-fancontrol
+
+  - hosts: backup
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ktz-sanoid
 
   - hosts: quassel
     roles:

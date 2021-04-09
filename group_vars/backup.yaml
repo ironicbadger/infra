@@ -1,0 +1,45 @@
+---
+
+target_os: ubuntu.2004 #esxi
+
+# grog.package
+package_list:
+  - name: bash-completion
+  - name: curl
+  - name: fio
+  - name: git
+  - name: hddtemp
+  - name: htop
+  - name: iftop
+  - name: iotop
+  - name: lm-sensors
+  - name: mc
+  - name: ncdu
+  - name: net-tools
+  - name: nfs-kernel-server
+  - name: nmap
+  - name: openssh-server
+  - name: open-vm-tools #vmware
+  - name: python
+  - name: sanoid
+  - name: ssh-import-id
+  - name: smartmontools
+  - name: sudo
+  - name: tmux
+  - name: tree
+  - name: wget
+  - name: wireguard-tools
+  - name: zfsutils-linux
+
+# ktz-sanoid
+morpheus_primary_zfs_dataset: "alex@m:tank"
+backup_dataset: tank
+morpheus_appdata_dataset: "{{ morpheus_primary_zfs_dataset }}/appdata"
+sanoid_build_from_source: false
+syncoid_healthcheck_string: "curl -fsS --retry 3 https://hc-ping.com"
+
+syncoid_cron_jobs:
+  - { job: '{{ syncoid_binary_path }} -r {{ morpheus_primary_zfs_dataset }}/fuse {{ backup_dataset }}/fuse', 
+      name: 'morpheus_fuse_replication', 
+      weekday: '*', 
+      hour: '05' }

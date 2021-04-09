@@ -4,6 +4,12 @@
   include: sanoid.yaml
   tags:
     - sanoid
+  when: sanoid_build_from_source
+
+- name: ensure sanoid is installed
+  apt:
+    name: sanoid
+    state: present
 
 - name: replication setup
   include: replication.yaml

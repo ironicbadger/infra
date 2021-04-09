@@ -34,6 +34,8 @@ cloudcomp:
 fancontrol:
 	ansible-playbook -b run.yaml --limit fancontrol --vault-password-file .vault-password
 
+backup:
+	ansible-playbook -b run.yaml --limit backup --vault-password-file .vault-password
 
 update:
 	ansible-playbook update.yaml --limit servers --vault-password-file .vault-password
