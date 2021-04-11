@@ -18,8 +18,8 @@
     group: root
     mode: '700'
 
-- name: install boot notification
+- name: install boot notification script
   cron:
     name: "boot notification to pushover"
     special_time: reboot
-    job: /root/booted.sh
+    job: /bin/bash /root/booted.sh

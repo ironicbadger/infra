@@ -46,6 +46,12 @@
     roles:
       - role: ktz-sanoid
 
+  - hosts: dev
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ktz-boot-notification
+
   - hosts: quassel
     roles:
       #- role: ktz-rh-vpn # not committed for privacy reasons
