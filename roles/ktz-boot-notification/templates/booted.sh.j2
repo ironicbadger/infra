@@ -1,0 +1,3 @@
+#!/bin/bash
+
+apprise -t "{{ ansible_hostname }} booted!" -b "{{ ansible_hostname }} just booted." pover://{{ pushover_user_key }}@{{ pushover_api_bootlace }}

@@ -1,0 +1,8 @@
+---
+
+- name: arch specific setup
+  include: arch-setup.yaml
+  when: ansible_distribution == 'Archlinux'
+
+- name: apprise.yaml
+  include: apprise.yaml

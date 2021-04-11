@@ -23,6 +23,7 @@
       - role: ironicbadger.ansible_role_hddtemp
       - role: rossmcdonald.telegraf
       - role: ktz-figurine
+      - role: ktz-boot-notification
       - role: ktz-sanoid
       - role: ktz-cartman
       - role: ironicbadger.ansible_role_docker_compose_generator
@@ -35,8 +36,9 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      - role: grog.package
+      #- role: grog.package
       - role: ktz-fancontrol
+      - role: ktz-boot-notification
 
   - hosts: backup
     vars_files:

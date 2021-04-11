@@ -1,0 +1,12 @@
+---
+
+- name: install cronie
+  package:
+    name: cronie
+    state: present
+
+- name: enable cronie service
+  systemd:
+    name: cronie
+    state: restarted
+    enabled: yes

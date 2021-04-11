@@ -1,0 +1,25 @@
+---
+
+- name: ensure python pip is available
+  package:
+    name: python-pip
+    state: present
+
+- name: install apprise
+  pip:
+    name: apprise
+  become: true
+
+- name: install script that cron will execute
+  template:
+    src: booted.sh.j2
+    dest: /root/booted.sh
+    owner: root
+    group: root
+    mode: '700'
+
+- name: install boot notification
+  cron:
+    name: "boot notification to pushover"
+    special_time: reboot
+    job: /root/booted.sh
