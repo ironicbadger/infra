@@ -23,6 +23,7 @@ package_list:
   - name: iftop
   - name: intel-gpu-tools
   - name: iotop
+  - name: ipmitool
   - name: lm-sensors
   - name: mc
   - name: mergerfs
