@@ -28,14 +28,14 @@ package_list:
   - name: tmux
   - name: tree
   - name: wget
-  - name: wireguard-tools
   - name: zfsutils-linux
 
 # ktz-sanoid
+sanoid_build_from_source: True
+sanoid_config_source: sanoid-morpheus.conf
 morpheus_primary_zfs_dataset: "alex@m:tank"
 backup_dataset: tank
 morpheus_appdata_dataset: "{{ morpheus_primary_zfs_dataset }}/appdata"
-sanoid_build_from_source: false
 syncoid_healthcheck_string: "curl -fsS --retry 3 https://hc-ping.com"
 
 syncoid_cron_jobs:

@@ -10,6 +10,12 @@
   set_fact:
     install_sanoid: "{{ sanoid_build_from_source is true or is_installed is failed }}"
 
+- name: install git
+  package:
+    name: git
+    state: present
+  when: sanoid_build_from_source
+
 - name: build sanoid | clone git repo
   git:
     repo: https://github.com/IronicBadger/docker-sanoid-builder.git
@@ -37,7 +43,7 @@
 
 - name: build sanoid | install built .deb
   apt:
-    deb: /tmp/sanoid/sanoid_2.0.3_all.deb
+    deb: /tmp/sanoid/sanoid_2.1.0_all.deb
     install_recommends: yes
     state: present
   when: install_sanoid

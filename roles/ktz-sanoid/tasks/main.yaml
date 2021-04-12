@@ -6,10 +6,12 @@
     - sanoid
   when: sanoid_build_from_source
 
+# todo remove this hack
 - name: ensure sanoid is installed
   apt:
     name: sanoid
     state: present
+  ignore_errors: True
 
 - name: replication setup
   include: replication.yaml
