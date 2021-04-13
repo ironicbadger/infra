@@ -30,15 +30,27 @@ package_list:
   - name: zfs-linux-lts
 
 # ktz-sanoid
-sanoid_build_from_source: True
 sanoid_config_source: sanoid-morpheus.conf
-morpheus_primary_zfs_dataset: "alex@m:tank"
-backup_dataset: tank
-morpheus_appdata_dataset: "{{ morpheus_primary_zfs_dataset }}/appdata"
+backup_dataset: backups
+backup_dataset_morpheus: "{{ backup_dataset }}/morpheus"
 syncoid_healthcheck_string: "curl -fsS --retry 3 https://hc-ping.com"
 
 syncoid_cron_jobs:
-  - { job: '{{ syncoid_binary_path }} -r {{ morpheus_primary_zfs_dataset }}/fuse {{ backup_dataset }}/fuse', 
-      name: 'morpheus_fuse_replication', 
+  # - { job: '{{ syncoid_binary_path }} -r m:tank {{ backup_dataset_morpheus }}/tank', 
+  #     name: 'morpheus_tank_replication', 
+  #     weekday: '*', 
+  #     hour: '*' }
+  # - { job: '{{ syncoid_binary_path }} -r m:intel2tbnvme {{ backup_dataset_morpheus }}/intel2tbnvme', 
+  #     name: 'morpheus_intel2tbnvme_replication', 
+  #     weekday: '*', 
+  #     hour: '*' }
+  - { job: '{{ syncoid_binary_path }} -r m:ssd500-mirror {{ backup_dataset_morpheus }}/ssd500-mirror && {{ syncoid_healthcheck_string }}/{{ syncoid_backup_healthcheck_uuid_ssd500_mirror }}', 
+      name: 'morpheus_ssd500-mirror_replication', 
       weekday: '*', 
-      hour: '05' }
+      hour: '*',
+      minute: '45' }
+  - { job: '{{ syncoid_binary_path }} -r m:nvme2tb {{ backup_dataset_morpheus }}/nvme2tb && {{ syncoid_healthcheck_string }}/{{ syncoid_backup_healthcheck_uuid_nvme2tb }}', 
+      name: 'morpheus_nvme2tb_replication', 
+      weekday: '*', 
+      hour: '*',
+      minute: '55' }
