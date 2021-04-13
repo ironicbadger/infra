@@ -33,7 +33,7 @@ package_list:
 sanoid_config_source: sanoid-morpheus.conf
 backup_dataset: backups
 backup_dataset_morpheus: "{{ backup_dataset }}/morpheus"
-syncoid_healthcheck_string: "curl -fsS --retry 3 https://hc-ping.com"
+syncoid_healthcheck_url: "curl -fsS --retry 3 https://hc.{{ domain_cloud }}/ping"
 
 syncoid_cron_jobs:
   # - { job: '{{ syncoid_binary_path }} -r m:tank {{ backup_dataset_morpheus }}/tank', 
@@ -44,12 +44,12 @@ syncoid_cron_jobs:
   #     name: 'morpheus_intel2tbnvme_replication', 
   #     weekday: '*', 
   #     hour: '*' }
-  - { job: '{{ syncoid_binary_path }} -r m:ssd500-mirror {{ backup_dataset_morpheus }}/ssd500-mirror && {{ syncoid_healthcheck_string }}/{{ syncoid_backup_healthcheck_uuid_ssd500_mirror }}', 
+  - { job: '{{ syncoid_binary_path }} -r m:ssd500-mirror {{ backup_dataset_morpheus }}/ssd500-mirror && {{ syncoid_healthcheck_url }}/{{ syncoid_backup_healthcheck_uuid_ssd500_mirror }}', 
       name: 'morpheus_ssd500-mirror_replication', 
       weekday: '*', 
       hour: '*',
       minute: '45' }
-  - { job: '{{ syncoid_binary_path }} -r m:nvme2tb {{ backup_dataset_morpheus }}/nvme2tb && {{ syncoid_healthcheck_string }}/{{ syncoid_backup_healthcheck_uuid_nvme2tb }}', 
+  - { job: '{{ syncoid_binary_path }} -r m:nvme2tb {{ backup_dataset_morpheus }}/nvme2tb && {{ syncoid_healthcheck_url }}/{{ syncoid_backup_healthcheck_uuid_nvme2tb }}', 
       name: 'morpheus_nvme2tb_replication', 
       weekday: '*', 
       hour: '*',
