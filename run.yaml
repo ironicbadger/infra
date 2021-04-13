@@ -36,7 +36,6 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      #- role: grog.package
       - role: ktz-fancontrol
       - role: ktz-boot-notification
 
@@ -44,12 +43,10 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      - role: geerlingguy.docker
       - role: grog.package
       - role: ironicbadger.ansible_role_hddtemp
       - role: ktz-boot-notification
       - role: ktz-figurine
-      - role: ktz-sanoid
 
   - hosts: dev
     vars_files:

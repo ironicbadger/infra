@@ -1,6 +1,6 @@
 ---
 
-target_os: ubuntu.2004 #esxi
+target_os: arch #esxi
 
 # grog.package
 package_list:
@@ -12,23 +12,22 @@ package_list:
   - name: htop
   - name: iftop
   - name: iotop
-  - name: lm-sensors
+  - name: lm_sensors
   - name: mc
   - name: ncdu
   - name: net-tools
-  - name: nfs-kernel-server
+  - name: nfs-utils
   - name: nmap
-  - name: openssh-server
+  - name: openssh
   - name: open-vm-tools #vmware
   - name: python
   - name: sanoid
-  - name: ssh-import-id
   - name: smartmontools
   - name: sudo
   - name: tmux
   - name: tree
   - name: wget
-  - name: zfsutils-linux
+  - name: zfs-linux-lts
 
 # ktz-sanoid
 sanoid_build_from_source: True
