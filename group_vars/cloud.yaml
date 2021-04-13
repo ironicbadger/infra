@@ -85,7 +85,7 @@ containers:
 ###
   - service_name: ktz-blog
     active: true
-    image: ghost:3-alpine
+    image: ghost:4.2
     labels:
       - traefik.enable=true
       - "traefik.http.routers.ktzblog.rule=Host(`{{ cloud_url_ktz_blog }}`)"
@@ -101,7 +101,7 @@ containers:
 ###
   - service_name: mum-blog
     active: true
-    image: ghost:3-alpine
+    image: ghost:4.2
     labels:
       - traefik.enable=true
       - "traefik.http.routers.mumblog.rule=Host(`{{ cloud_url_mum_blog }}`)"
@@ -142,13 +142,14 @@ containers:
     ports:
       - "{{ cloud_unifi_port_advertise }}:{{ cloud_unifi_port_advertise_int }}"
       - 3478:3478/udp
+    mem_limit: 1g
     volumes:
       - "{{ cloud_appdata_path }}/unifi:/config"
     include_global_env_vars: true
     restart: unless-stopped
 ###
   - service_name: librespeed
-    active: true
+    active: false
     image: linuxserver/librespeed
     labels:
       - traefik.enable=true
@@ -178,5 +179,32 @@ containers:
       #- DELETE_AFTER=0 # If you are hosting for yourself keeping them forever is probably fine
     volumes:
       - "{{ cloud_appdata_path }}/termpad:$HOME/.local/share/termpad/"
+    include_global_env_vars: true
+    restart: unless-stopped
+###
+  - service_name: healthchecks
+    active: true
+    image: linuxserver/healthchecks
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.hc.rule=Host(`hc.{{ domain_cloud }}`)
+      - traefik.http.routers.hc.entrypoints=websecure
+      - traefik.http.routers.hc.tls.certresolver=cloudflare
+    environment:
+      - "SITE_ROOT=hc.{{ domain_cloud }}"
+      - "SITE_NAME=hc.{{ domain_cloud }}"
+      - "DEFAULT_FROM_EMAIL={{ gmail_address }}"
+      - EMAIL_HOST=smtp-relay.gmail.com
+      - EMAIL_PORT=25
+      - "EMAIL_HOST_USER={{ gmail_address }}"
+      - "EMAIL_HOST_PASSWORD={{ gmail_password }}"
+      - EMAIL_USE_TLS=True
+      - ALLOWED_HOSTS=*
+      - "SUPERUSER_EMAIL={{ gmail_address }}"
+      - "SUPERUSER_PASSWORD={{ gmail_password }}"
+      - REGENERATE_SETTINGS=True
+      - "SECRET_KEY={{ cloud_healthchecks_secret_key }}"
+    volumes:
+      - "{{ cloud_appdata_path }}/healthchecks:/config"
     include_global_env_vars: true
     restart: unless-stopped
