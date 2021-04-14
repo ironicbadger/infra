@@ -56,6 +56,12 @@ bash_aliases:
 
 # ktz-sanoid
 sanoid_config_source: sanoid-cloud.conf
+syncoid_cron_jobs:
+  - { job: '{{ syncoid_binary_path }}', 
+      name: 'morpheus_tank_replication', 
+      weekday: '*', 
+      hour: '*',
+      minute: '01' }
 
 # ktz-traefik
 traefik_file_provider: false
@@ -191,19 +197,16 @@ containers:
       - traefik.http.routers.hc.entrypoints=websecure
       - traefik.http.routers.hc.tls.certresolver=cloudflare
     environment:
-      - "SITE_ROOT=hc.{{ domain_cloud }}"
-      - "SITE_NAME=hc.{{ domain_cloud }}"
-      - "DEFAULT_FROM_EMAIL={{ gmail_address }}"
-      - EMAIL_HOST=smtp-relay.gmail.com
-      - EMAIL_PORT=25
-      - "EMAIL_HOST_USER={{ gmail_address }}"
-      - "EMAIL_HOST_PASSWORD={{ gmail_password }}"
-      - EMAIL_USE_TLS=True
+      - "SITE_ROOT=https://hc.{{ domain_cloud }}"
+      - "SITE_NAME=KTZ Healthchecks"
       - ALLOWED_HOSTS=*
       - "SUPERUSER_EMAIL={{ gmail_address }}"
       - "SUPERUSER_PASSWORD={{ gmail_password }}"
       - REGENERATE_SETTINGS=True
       - "SECRET_KEY={{ cloud_healthchecks_secret_key }}"
+      - REGISTRATION_OPEN=False
+      - "PUSHOVER_API_TOKEN={{ pushover_api_healthchecks}}"
+      - "PUSHOVER_SUBSCRIPTION_URL={{ pushover_healthchecks_subscription_url }}"
     volumes:
       - "{{ cloud_appdata_path }}/healthchecks:/config"
     include_global_env_vars: true

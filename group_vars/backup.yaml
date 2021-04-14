@@ -45,7 +45,7 @@ syncoid_cron_jobs:
       name: 'morpheus_intel2tbnvme_replication', 
       weekday: '*', 
       hour: '*',
-      minute: '30' }
+      minute: '32' }
   - { job: '{{ syncoid_binary_path }} -r m:ssd500-mirror {{ backup_dataset_morpheus }}/ssd500-mirror && {{ syncoid_healthcheck_url }}/{{ syncoid_backup_healthcheck_uuid_ssd500_mirror }}', 
       name: 'morpheus_ssd500-mirror_replication', 
       weekday: '*', 
