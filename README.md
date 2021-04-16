@@ -6,6 +6,7 @@ I use Ansible and Terraform to run my infrastructure and this repo is my contrib
 
 Here are a list of some of my blog posts relating to this repo:
 
+- https://arstechnica.com/information-technology/2021/03/how-to-achieve-smart-home-nirvana-or-home-automation-without-subscription/
 - https://blog.ktz.me/secret-management-with-docker-compose-and-ansible/
 - https://blog.ktz.me/combining-zfs-with-other-filesystems-using-mergerfs/
 - https://blog.ktz.me/using-pihole-with-pfsense-or-opnsense/
