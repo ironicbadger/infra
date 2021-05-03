@@ -7,6 +7,13 @@ http:
       service: service-blueiris
       tls:
         certResolver: cloudflare
+    router-octoprintog:
+      entryPoints:
+        - websecure
+      rule: "Host(`boris.{{ domain_l }}`)"
+      service: service-octoprintog
+      tls:
+        certResolver: cloudflare
     router-octoprint:
       entryPoints:
         - websecure
@@ -26,6 +33,10 @@ http:
       loadBalancer:
         servers:
         - url: "http://192.168.1.200:83"
+    service-octoprintog:
+      loadBalancer:
+        servers:
+        - url: "http://192.168.2.3:80"
     service-octoprint:
       loadBalancer:
         servers:
