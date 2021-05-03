@@ -10,7 +10,7 @@ http:
     router-octoprint:
       entryPoints:
         - websecure
-      rule: "Host(`octoprint.{{ domain_l }}`)"
+      rule: "Host(`bricktop.{{ domain_l }}`)"
       service: service-octoprint
       tls:
         certResolver: cloudflare
