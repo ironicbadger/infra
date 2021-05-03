@@ -52,7 +52,7 @@ bash_aliases:
   - { alias: "zspace", command: "zfs list -o space" }
   - { alias: "zsnap", command: "zfs list -t snapshot" }
   - { alias: "dfclean", command: "df -h -x tmpfs -x zfs -t fuse.mergerfs -t xfs -t ext4"}
-  - { alias: "dfzfs", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4"}
+  - { alias: "dfzfs", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs"}
 
 # ktz-sanoid
 sanoid_config_source: sanoid-cloud.conf
