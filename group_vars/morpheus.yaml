@@ -221,7 +221,7 @@ containers:
   ###
   - service_name: sonarr
     active: true
-    image: linuxserver/sonarr:preview
+    image: linuxserver/sonarr
     depends_on:
       - nzbget
     labels:
