@@ -20,8 +20,9 @@
     roles:
       - role: geerlingguy.docker
       - role: grog.package
-      - role: ironicbadger.ansible_role_hddtemp
       - role: rossmcdonald.telegraf
+      - role: ironicbadger.ansible_role_hddtemp
+      - role: ironicbadger.ansible_role_proxmox_nag_removal
       - role: ktz-figurine
       - role: ktz-boot-notification
       - role: ktz-sanoid
@@ -81,22 +82,3 @@
     tasks:
       - hostname:
           name: "{{ cloud_hostname }}"
-
-  - hosts: status
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: grog.package
-      - role: geerlingguy.docker
-      - role: geerlingguy.github-users
-      - role: geerlingguy.security
-      - role: geerlingguy.ntp
-      - role: ironicbadger.ansible_role_bash_aliases
-      - role: ktz-figurine
-      - role: ironicbadger.ansible_role_docker_compose_generator
-        tags: compose
-      - role: ktz-traefik
-        tags: compose
-    tasks:
-      - hostname:
-          name: "{{ status_hostname }}"
