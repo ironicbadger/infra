@@ -18,11 +18,13 @@ subnet {{ s.cidr }} netmask {{ s.netmask }} {
 }
 {% endfor %}
 
-{% for h in hosts %}
+{% for hosts, subnets in reservations.items() %}
+{% for h in subnets %}
 host {{ h.name }} {
-  hardware ethernet {{ h.mac }};
-  fixed-address {{ h.ip }};
-  option host-name "{{ h.name }}";
+    hardware ethernet {{ h.mac }};
+    fixed-address {{ h.ip }};
+    option host-name "{{ h.name }}";
 }
 
+{% endfor %}
 {% endfor %}

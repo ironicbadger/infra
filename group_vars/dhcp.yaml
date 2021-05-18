@@ -12,17 +12,49 @@ subnets:
     range_end: 192.168.82.50
     routers: 192.168.80.254
     subnet_domain: "{{ default_domain }}"
-    subnet_default_lease: 300
-    subnet_max_lease: 1500
+    subnet_default_lease: "{{ default_lease }}"
+    subnet_max_lease: "{{ max_lease }}"
 
-hosts:
-  - name: test1
-    mac: 00:50:56:9f:94:92
-    ip: 192.168.86.1
-  - name: test2
-    mac: 00:50:56:9f:22:3c
-    ip: 192.168.86.2
-  - name: test3
-    mac: 00:50:56:9f:22:3e
-    ip: 192.168.86.3
-  
+reservations:
+  ## primary (desktop, servers, laptops, phones, tablets)
+  subnet1:
+    - {mac: 00:50:56:9f:94:92, ip: 192.168.1.1, name: m1}
+    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.2, name: mooncake}
+    - {mac: 78:c8:81:cf:3a:7a, ip: 192.168.1.5, name: ps5}
+    - {mac: 38:ba:f8:59:fd:a3, ip: 192.168.1.6, name: alex-thinkpad}
+    - {mac: 70:85:c2:63:cd:81, ip: 192.168.1.10, name: morpheus}
+    - {mac: 00:11:32:e4:58:26, ip: 192.168.1.11, name: clarkson}
+    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.2, name: cat-ipad}
+    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.2, name: alex-ipad}
+    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.2, name: shield-bonus}
+    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.2, name: shield-lounge}
+
+  ## wifi (printers, misc)
+
+
+  ## cameras (wifi + poe)
+
+
+  ## homelab (vmware + openshift)
+  subnet4:
+    - {mac: f2:8f:35:40:8a:9c, ip: 192.168.4.1, name: redhat-irc}
+    - {mac: 90:2b:34:31:39:aa, ip: 192.168.4.250, name: awesomo}
+    #- {mac: 90:2b:34:31:39:ab, ip: 192.168.4.251, name: awesomo_nic2}
+    - {mac: 00:c0:a8:12:34:56, ip: 192.168.4.252, name: awesomo_ipmi}
+
+
+  # 192.168.5-9.0 not used
+
+  ## cloud IoT (proprietary IoT devices, TVs, Voice Assistants)
+  subnet10:
+    - {mac: 20:17:42:88:67:bb, ip: 192.168.10.9, name: lgC9}
+
+
+  ## open IoT (Tasmota, etc)
+
+
+  ## Lighting
+
+
+  ## WireGuard
+  # N/A - 192.168.13.x
