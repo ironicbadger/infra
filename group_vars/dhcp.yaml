@@ -47,16 +47,28 @@ reservations:
 
     - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.90, name: pi4-bricktop}
     - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.91, name: pi4-boris}
+    - {mac: f4:39:09:44:1d:d5, ip: 192.168.1.98, name: blueiris}
     - {mac: 8a:a6:9f:97:d0:8b, ip: 192.168.1.99, name: homeassistant}
 
-  ## wifi (printers, misc)
+  ## wifi and cameras (PoE)
+  subnet2:
+    - {mac: 9c:8e:cd:22:2b:ff, ip: 192.168.2.10, name: amcrest-driveway-left}
+    - {mac: ec:71:db:ba:75:13, ip: 192.168.2.11, name: reolink-driveway-right}
+    - {mac: ec:71:db:00:60:b3, ip: 192.168.2.12, name: reolink-deck}
+
+    - {mac: 80:91:33:d1:90:f7, ip: 192.168.2.20, name: ezviz-doorbell}
+    - {mac: 80:2a:a8:90:4c:9d, ip: 192.168.2.21, name: wyze-garage}
+    - {mac: 2c:aa:8e:25:54:2a, ip: 192.168.2.22, name: wyze-lounge}
+    - {mac: 80:2a:a8:90:4c:9d, ip: 192.168.2.23, name: wyze-bonus}
+    - {mac: 80:2a:a8:90:4c:9d, ip: 192.168.2.24, name: wyze-nursery}
+
     - {mac: 80:2a:a8:90:4c:9d, ip: 192.168.2.240, name: unifi-hallway}
     - {mac: 04:18:d6:c0:95:62, ip: 192.168.2.241, name: unifi-bonus}
     - {mac: e0:63:da:33:2a:fd, ip: 192.168.2.242, name: unifi-kitchen}
     - {mac: e0:63:da:67:f3:8c, ip: 192.168.2.243, name: unifi-deck}
 
 
-  ## cameras (wifi + poe)
+
 
 
   ## homelab (vmware + openshift)
