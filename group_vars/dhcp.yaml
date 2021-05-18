@@ -1,0 +1,28 @@
+---
+
+default_domain: "eighty.ktz.lan"
+default_dns: 192.168.1.99
+default_lease: 600
+max_lease: 7200
+
+subnets:
+  - cidr: 192.168.80.0
+    netmask: 255.255.240.0 #/20
+    range_start: 192.168.82.10
+    range_end: 192.168.82.50
+    routers: 192.168.80.254
+    domain: "{{ default_domain }}"
+    subnet_default_lease: 300
+    subnet_max_lease: 1500
+
+hosts:
+  - name: test1
+    mac: 00:50:56:9f:94:92
+    ip: 192.168.86.1
+  - name: test2
+    mac: 00:50:56:9f:22:3c
+    ip: 192.168.86.2
+  - name: test3
+    mac: 00:50:56:9f:22:3e
+    ip: 192.168.86.3
+  

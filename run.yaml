@@ -56,6 +56,12 @@
     roles:
       - role: ktz-boot-notification
 
+  - hosts: dhcp
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ktz-dhcp
+
   - hosts: quassel
     roles:
       #- role: ktz-rh-vpn # not committed for privacy reasons

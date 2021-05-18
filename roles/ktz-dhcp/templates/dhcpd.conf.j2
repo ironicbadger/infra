@@ -1,0 +1,29 @@
+# {{ ansible_managed }}
+
+option domain-name "{{ default_domain }}";
+option domain-name-servers {{ default_dns }};
+
+default-lease-time {{ default_lease }};
+max-lease-time {{ max_lease }};
+
+ddns-update-style none;
+
+
+{% for s in subnets %}
+subnet {{ s.cidr }} netmask {{ s.netmask }} {
+  range {{ s.range_start }} {{ s.range_end }};
+  option routers {{ s.routers }};
+  option domain-name "{{ s.domain }}";
+  default-lease-time {{ s.subnet_default_lease }};
+  max-lease-time {{ s.subnet_max_lease }};
+}
+{% endfor %}
+
+{% for h in hosts %}
+host {{ h.name }} {
+  hardware ethernet {{ h.mac }};
+  fixed-address {{ h.ip }};
+  option host-name "{{ h.name }}";
+}
+
+{% endfor %}
