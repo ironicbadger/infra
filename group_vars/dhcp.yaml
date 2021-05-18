@@ -18,18 +18,42 @@ subnets:
 reservations:
   ## primary (desktop, servers, laptops, phones, tablets)
   subnet1:
-    - {mac: 00:50:56:9f:94:92, ip: 192.168.1.1, name: m1}
-    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.2, name: mooncake}
-    - {mac: 78:c8:81:cf:3a:7a, ip: 192.168.1.5, name: ps5}
-    - {mac: 38:ba:f8:59:fd:a3, ip: 192.168.1.6, name: alex-thinkpad}
+    - {mac: 00:50:56:9f:94:92, ip: 192.168.1.1, name: m1} #gigabyte mini-itx
+    - {mac: e0:b5:5f:f3:91:2b, ip: 192.168.1.2, name: mooncake}
+    - {mac: 64:4b:f0:19:05:a3, ip: 192.168.1.3, name: caldigit-ts3}
+    - {mac: 38:ba:f8:59:fd:a3, ip: 192.168.1.4, name: alex-thinkpad}
+    - {mac: 38:ba:f8:59:fd:a3, ip: 192.168.1.5, name: alex-thinkpad-wifi}
+    - {mac: 5c:c5:d4:db:65:1e, ip: 192.168.1.6, name: cat-tp}
+    - {mac: 5c:c5:d4:db:65:1e, ip: 192.168.1.7, name: cat-tp-wifi}
+    - {mac: 90:9c:4a:b7:38:20, ip: 192.168.1.8, name: ktz-mbp}
+
     - {mac: 70:85:c2:63:cd:81, ip: 192.168.1.10, name: morpheus}
     - {mac: 00:11:32:e4:58:26, ip: 192.168.1.11, name: clarkson}
-    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.2, name: cat-ipad}
-    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.2, name: alex-ipad}
-    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.2, name: shield-bonus}
-    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.2, name: shield-lounge}
+    - {mac: f2:8f:35:40:8a:9c, ip: 192.168.1.12, name: redhat-irc}
+    - {mac: e2:4b:e2:f7:f3:a1, ip: 192.168.1.13, name: dev}
+
+    - {mac: 38:ba:f8:59:fd:a3, ip: 192.168.1.30, name: alex-oneplus9}
+    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.31, name: alex-ipad}
+    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.38, name: alex-oneplus6}
+    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.39, name: alex-oneplus7t} 
+
+    - {mac: be:d2:1f:d0:48:6a, ip: 192.168.1.40, name: cat-pixel5}
+    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.41, name: cat-ipad}
+    - {mac: 00:00:00:00:00:00, ip: 192.168.1.42, name: cat-switch}
+
+    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.50, name: shield-bonus}
+    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.51, name: shield-lounge}
+    - {mac: 78:c8:81:cf:3a:7a, ip: 192.168.1.52, name: ps5}
+
+    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.90, name: pi4-bricktop}
+    - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.91, name: pi4-boris}
+    - {mac: 8a:a6:9f:97:d0:8b, ip: 192.168.1.99, name: homeassistant}
 
   ## wifi (printers, misc)
+    - {mac: 80:2a:a8:90:4c:9d, ip: 192.168.2.240, name: unifi-hallway}
+    - {mac: 04:18:d6:c0:95:62, ip: 192.168.2.241, name: unifi-bonus}
+    - {mac: e0:63:da:33:2a:fd, ip: 192.168.2.242, name: unifi-kitchen}
+    - {mac: e0:63:da:67:f3:8c, ip: 192.168.2.243, name: unifi-deck}
 
 
   ## cameras (wifi + poe)
@@ -37,10 +61,15 @@ reservations:
 
   ## homelab (vmware + openshift)
   subnet4:
-    - {mac: f2:8f:35:40:8a:9c, ip: 192.168.4.1, name: redhat-irc}
+
+    - {mac: 00:0c:29:0e:26:c9, ip: 192.168.4.240, name: vcenter}
+    - {mac: 00:50:56:9f:52:14, ip: 192.168.4.241, name: backup}
+    - {mac: 00:0c:29:5a:26:e7, ip: 192.168.4.242, name: fancontrol}
+    
     - {mac: 90:2b:34:31:39:aa, ip: 192.168.4.250, name: awesomo}
     #- {mac: 90:2b:34:31:39:ab, ip: 192.168.4.251, name: awesomo_nic2}
     - {mac: 00:c0:a8:12:34:56, ip: 192.168.4.252, name: awesomo_ipmi}
+
 
 
   # 192.168.5-9.0 not used
