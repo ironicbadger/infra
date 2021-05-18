@@ -8,12 +8,11 @@ max-lease-time {{ max_lease }};
 
 ddns-update-style none;
 
-
 {% for s in subnets %}
 subnet {{ s.cidr }} netmask {{ s.netmask }} {
   range {{ s.range_start }} {{ s.range_end }};
   option routers {{ s.routers }};
-  option domain-name "{{ s.domain }}";
+  option domain-name "{{ s.subnet_domain }}";
   default-lease-time {{ s.subnet_default_lease }};
   max-lease-time {{ s.subnet_max_lease }};
 }

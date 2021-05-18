@@ -11,7 +11,7 @@ subnets:
     range_start: 192.168.82.10
     range_end: 192.168.82.50
     routers: 192.168.80.254
-    domain: "{{ default_domain }}"
+    subnet_domain: "{{ default_domain }}"
     subnet_default_lease: 300
     subnet_max_lease: 1500
 
