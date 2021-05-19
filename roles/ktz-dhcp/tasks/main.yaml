@@ -1,4 +1,24 @@
 ---
+
+- name: Create a list of all MAC addresses
+  set_fact:
+    list_macs: "{{ list_macs|default([]) }} + [ '{{ item.mac }}' ]"
+  loop:
+    "{{ reservations }}"
+
+- name: Find duplicate MAC addresses
+  set_fact:
+    list_duplicates: "{{ list_duplicates|default([]) + [item] }}"
+  loop: "{{ list_macs|sort }}"
+  loop_control:
+    extended: yes
+  when: item == ansible_loop.nextitem|default('')
+
+- name: Fail if a duplicate MAC address is found
+  fail:
+    msg: Not all MACs are unique. {{ list_duplicates|unique }}
+  when: "list_macs|unique != list_macs"
+
 - name: ensure dhcpd package is installed
   package:
     name: isc-dhcp-server
