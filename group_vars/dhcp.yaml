@@ -16,13 +16,16 @@ subnets:
     subnet_max_lease: "{{ max_lease }}"
 
 reservations:
+  - {mac: 00:50:56:9f:19:96, ip: 192.168.0.71, name: opnsense80} #gigabyte mini-itx
+
+  ##########
   ## primary (desktop, servers, laptops, phones, tablets)
   - {mac: e0:d5:5e:2d:fe:5f, ip: 192.168.1.1, name: m1} #gigabyte mini-itx
   - {mac: e0:b5:5f:f3:91:2b, ip: 192.168.1.2, name: mooncake}
   - {mac: 64:4b:f0:19:05:a3, ip: 192.168.1.3, name: caldigit-ts3}
-  - {mac: 38:ba:f8:59:fd:a3, ip: 192.168.1.4, name: alex-thinkpad}
-  - {mac: 38:ba:f8:59:fd:a3, ip: 192.168.1.5, name: alex-thinkpad-wifi}
-  - {mac: 5c:c5:d4:db:65:1e, ip: 192.168.1.6, name: cat-tp}
+  #- {mac: 38:ba:f8:59:fd:a3, ip: 192.168.1.4, name: alex-thinkpad}
+  #- {mac: 38:ba:f8:59:fd:a3, ip: 192.168.1.5, name: alex-thinkpad-wifi}
+  #- {mac: 5c:c5:d4:db:65:1e, ip: 192.168.1.6, name: cat-tp}
   - {mac: 5c:c5:d4:db:65:1e, ip: 192.168.1.7, name: cat-tp-wifi}
   - {mac: 90:9c:4a:b7:38:20, ip: 192.168.1.8, name: ktz-mbp}
 
@@ -42,25 +45,30 @@ reservations:
   - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.41, name: cat-ipad}
   - {mac: 00:00:00:00:00:00, ip: 192.168.1.42, name: cat-switch}
 
-  - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.50, name: shield-bonus}
-  - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.51, name: shield-lounge}
+  - {mac: 48:b0:2d:05:2b:61, ip: 192.168.1.50, name: shield-bonus}
+  - {mac: 00:04:4b:48:e5:f1, ip: 192.168.1.51, name: shield-lounge}
   - {mac: 78:c8:81:cf:3a:7a, ip: 192.168.1.52, name: ps5}
 
-  - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.90, name: pi4-bricktop}
+  - {mac: e4:5f:01:08:89:ca, ip: 192.168.1.90, name: pi4-bricktop}
   - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.91, name: pi4-boris}
-  - {mac: f4:39:09:44:1d:d5, ip: 192.168.1.98, name: blueiris}
+  - {mac: b8:27:eb:2f:ee:4f, ip: 192.168.1.92, name: pi3}
   - {mac: 8a:a6:9f:97:d0:8b, ip: 192.168.1.99, name: homeassistant}
 
+  ###################
   ## wifi and cameras (PoE)
+  - {mac: f4:39:09:44:1d:d5, ip: 192.168.2.1, name: blueiris}
+
   - {mac: 9c:8e:cd:22:2b:ff, ip: 192.168.2.10, name: amcrest-driveway-left}
   - {mac: ec:71:db:ba:75:13, ip: 192.168.2.11, name: reolink-driveway-right}
   - {mac: ec:71:db:00:60:b3, ip: 192.168.2.12, name: reolink-deck}
+  #- {mac: ec:71:db:00:60:b3, ip: 192.168.2.12, name: reolink-new1}
+  #- {mac: ec:71:db:00:60:b3, ip: 192.168.2.12, name: reolink-new2}
 
   - {mac: 80:91:33:d1:90:f7, ip: 192.168.2.20, name: ezviz-doorbell}
-  - {mac: 80:2a:a8:90:4c:9d, ip: 192.168.2.21, name: wyze-garage}
+  - {mac: 2c:aa:8e:0b:d4:1e, ip: 192.168.2.21, name: wyze-garage}
   - {mac: 2c:aa:8e:25:54:2a, ip: 192.168.2.22, name: wyze-lounge}
-  - {mac: 80:2a:a8:90:4c:9d, ip: 192.168.2.23, name: wyze-bonus}
-  - {mac: 80:2a:a8:90:4c:9d, ip: 192.168.2.24, name: wyze-nursery}
+  - {mac: 2c:aa:8e:fa:36:53, ip: 192.168.2.23, name: wyze-bonus}
+  - {mac: 7c:78:b2:23:0b:46, ip: 192.168.2.24, name: wyze-nursery}
 
   - {mac: 80:2a:a8:90:4c:9d, ip: 192.168.2.240, name: unifi-hallway}
   - {mac: 04:18:d6:c0:95:62, ip: 192.168.2.241, name: unifi-bonus}
@@ -68,11 +76,8 @@ reservations:
   - {mac: e0:63:da:67:f3:8c, ip: 192.168.2.243, name: unifi-deck}
 
 
-
-
-
+  ##########
   ## homelab (vmware + openshift)
-
   - {mac: 00:0c:29:0e:26:c9, ip: 192.168.4.240, name: vcenter}
   - {mac: 00:50:56:9f:52:14, ip: 192.168.4.241, name: backup}
   - {mac: 00:0c:29:5a:26:e7, ip: 192.168.4.242, name: fancontrol}
@@ -81,7 +86,7 @@ reservations:
   #- {mac: 90:2b:34:31:39:ab, ip: 192.168.4.251, name: awesomo_nic2}
   - {mac: 00:c0:a8:12:34:56, ip: 192.168.4.252, name: awesomo_ipmi}
 
-
+  ############
   ## cloud IoT (proprietary IoT devices, TVs, Voice Assistants)
   - {mac: 5c:ad:76:d5:d8:07, ip: 192.168.5.1, name: tv_tcl_lounge}
   - {mac: cc:a1:2b:6e:18:d7, ip: 192.168.5.2, name: tv_tcl_kitchen} #currently in masterbed
@@ -94,10 +99,11 @@ reservations:
 
   - {mac: b4:e6:2d:4e:47:01, ip: 192.168.5.20, name: eufy-vac}
   - {mac: 24:6f:28:14:81:7a, ip: 192.168.5.21, name: thermoworks-signals}
+  - {mac: fc:01:7c:ab:80:6b, ip: 192.168.5.22, name: brother-printer}
 
   - {mac: d4:91:0f:4a:fd:3e, ip: 192.168.5.50, name: amazon_smartplug1}
 
-
+  ###########
   ## open IoT (Tasmota, etc)
   - {mac: b4:e6:2d:4e:47:01, ip: 192.168.6.10, name: robovac_downstairs}
   - {mac: b4:e6:2d:4e:47:01, ip: 192.168.6.11, name: robovac_upstairs}
@@ -119,7 +125,7 @@ reservations:
 
   - {mac: 84:0d:8e:b1:09:e2, ip: 192.168.6.100, name: esp8266_office_plant}
 
-
+  ###########
   ## Lighting
   - {mac: 00:17:88:4c:7c:73, ip: 192.168.7.1, name: huehub}
 
@@ -133,6 +139,7 @@ reservations:
     ### WLED
   - {mac: cc:50:e3:55:10:54, ip: 192.168.7.50, name: wled_bonus_window}
   - {mac: 84:f3:eb:e3:71:3b, ip: 192.168.7.51, name: wled_kitchen_wetbar}
+  - {mac: cc:50:e3:55:ed:49, ip: 192.168.7.52, name: wled_tinkerspace_wall_panel_top}
 
   ### Shelly Bulbs
   #7c:49:eb:19:93:53
