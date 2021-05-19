@@ -1,58 +1,12 @@
 ---
 
-- name: Create a list of all MAC addresses
-  set_fact:
-    list_macs: "{{ list_macs|default([]) }} + [ '{{ item.mac }}' ]"
-  loop:
-    "{{ reservations }}"
-
-- name: Find duplicate MAC addresses
-  set_fact:
-    list_duplicates: "{{ list_duplicates|default([]) + [item] }}"
-  loop: "{{ list_macs|sort }}"
-  loop_control:
-    extended: yes
-  when: item == ansible_loop.nextitem|default('')
-
-- name: Fail if a duplicate MAC address is found
-  fail:
-    msg: Not all MACs are unique. {{ list_duplicates|unique }}
-  when: "list_macs|unique != list_macs"
+- name: Check for duplicate MAC addresses
+  include: duplicate_macs.yaml
 
 - name: ensure dhcpd package is installed
   package:
     name: isc-dhcp-server
     state: present
 
-- name: ensure destination for dhcp file exists
-  file:
-    path: "{{ dhcpd_conf_location }}"
-    state: directory
-
-- name: write dhcpd file
-  template:
-    src: ../templates/dhcpd.conf.j2
-    dest: "{{ dhcpd_conf_location }}/dhcpd.conf"
-    owner: "0"
-    group: "0"
-  become: true
-  register: dhcpd_file
-
-- name: restart service
-  systemd:
-    name: isc-dhcp-server
-    enabled: yes
-    state: restarted
-  when: dhcpd_file.changed
-
-- name: revoke existing leases if dhcpd file changed
-  file:
-    path: /var/lib/dhcp/dhcpd.leases
-    state: absent
-  when: dhcpd_file.changed
-
-- name: revoke existing leases if dhcpd file changed
-  file:
-    path: /var/lib/dhcp/dhcpd.leases
-    state: touch
-  when: dhcpd_file.changed
+- name: Create DHCPD config file
+  include: template_config.yaml
