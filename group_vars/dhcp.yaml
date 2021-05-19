@@ -52,6 +52,7 @@ reservations:
   - {mac: e4:5f:01:08:89:ca, ip: 192.168.1.90, name: pi4-bricktop}
   - {mac: 00:50:56:9f:22:3c, ip: 192.168.1.91, name: pi4-boris}
   - {mac: b8:27:eb:2f:ee:4f, ip: 192.168.1.92, name: pi3}
+  - {mac: 00:18:dd:06:8d:4c, ip: 192.168.1.99, name: hdhomerun}
   - {mac: 8a:a6:9f:97:d0:8b, ip: 192.168.1.99, name: homeassistant}
 
   ###################
@@ -123,7 +124,11 @@ reservations:
   - {mac: 50:02:91:ec:e0:9c, ip: 192.168.6.61, name: cfsp_driveway_wall_lights}
   - {mac: 2c:f4:32:a9:cf:56, ip: 192.168.6.62, name: cfsp_guest_room_heater}
 
-  - {mac: 84:0d:8e:b1:09:e2, ip: 192.168.6.100, name: esp8266_office_plant}
+  - {mac: 24:62:ab:f9:26:9c, ip: 192.168.6.100, name: esp32_energy_monitor}
+  - {mac: 8c:aa:b5:8c:6c:14, ip: 192.168.6.101, name: esp32_xiths_upstairs_bonus}
+  - {mac: fc:f5:c4:26:fc:0c, ip: 192.168.6.102, name: esp32_xiths_upstairs_bedrooms}
+
+  - {mac: 84:0d:8e:b1:09:e2, ip: 192.168.6.110, name: esp8266_office_plant}
 
   ###########
   ## Lighting
