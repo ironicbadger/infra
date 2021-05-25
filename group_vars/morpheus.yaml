@@ -331,6 +331,7 @@ containers:
     image: pryorda/vmware_exporter:v0.16.0
     ports:
       - 9272:9272
+    mem_limit: 512m
     environment:
       - "VSPHERE_HOST={{ vsphere_host }}"
       - "VSPHERE_IGNORE_SSL=True"
@@ -398,6 +399,7 @@ containers:
       - traefik.http.services.booksonic.loadbalancer.server.port=4040
     environment:
       - CONTEXT_PATH=booksonic
+    mem_limit: 1024m
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: bsair
@@ -466,6 +468,7 @@ containers:
     volumes:
       - "{{ appdata_path }}/sync:/config"
       - "{{ morpheus_main_storage_path }}:/sync"
+    mem_limit: 2048m
     labels:
       - traefik.enable=true
       - "traefik.http.routers.btsync.rule=Host(`sync.{{ domain_l }}`)"
