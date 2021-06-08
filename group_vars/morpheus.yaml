@@ -150,17 +150,17 @@ containers:
     restart: unless-stopped
   ###
   - service_name: authelia
-    active: false
+    active: true
     image: authelia/authelia
     labels:
       - traefik.enable=true
-      - traefik.http.routers.authelia.rule=Host(`login`)
+      - traefik.http.routers.authelia.rule=Host(`login.m.ktz.lol`)
       - traefik.http.routers.authelia.entrypoints=websecure
       - traefik.http.routers.authelia.tls.certresolver=cloudflare
       - traefik.http.services.authelia.loadbalancer.server.port=9091
-      - traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://login.ktz.me/
+      - traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://login.m.ktz.lol/
       - traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true
-      - traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User, Remote-Groups
+      - traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email
     volumes:
       - "{{ appdata_path }}/authelia:/config"
     restart: unless-stopped
