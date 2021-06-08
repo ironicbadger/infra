@@ -45,3 +45,36 @@ http:
       loadBalancer:
         servers:
         - url: "http://192.168.1.10:8006"
+  middlewares:
+    https-redirect:
+      redirectScheme:
+        scheme: https
+    authelia:
+      forwardAuth:
+        address: "http://authelia:9091/api/verify?rd=https://login.m.ktz.lol"
+    default-headers:
+      headers:
+        frameDeny: true
+        sslRedirect: true
+        browserXssFilter: true
+        contentTypeNosniff: true
+        forceSTSHeader: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 15552000
+        customFrameOptionsValue: SAMEORIGIN
+        customRequestHeaders:
+          X-Forwarded-Proto: https
+
+    default-whitelist:
+      ipWhiteList:
+        sourceRange:
+        - "10.0.0.0/24"
+        - "192.168.0.0/16"
+        - "172.0.0.0/8"
+
+    secured:
+      chain:
+        middlewares:
+        - default-whitelist
+        - default-headers

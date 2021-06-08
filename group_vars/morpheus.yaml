@@ -157,13 +157,15 @@ containers:
       - traefik.enable=true
       - traefik.http.routers.authelia.rule=Host(`login.m.ktz.lol`)
       - traefik.http.routers.authelia.entrypoints=websecure
-      - traefik.http.routers.authelia.tls.certresolver=cloudflare
+      - traefik.http.routers.authelia.tls=true
+      #- traefik.http.routers.authelia.tls.certresolver=cloudflare
       - traefik.http.services.authelia.loadbalancer.server.port=9091
       - traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://login.m.ktz.lol/
       - traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true
       - traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email
     volumes:
       - "{{ appdata_path }}/authelia:/config"
+    expose:
     restart: unless-stopped
   - service_name: redis
     active: false
@@ -182,6 +184,7 @@ containers:
       - traefik.http.routers.plex.entrypoints=websecure
       - traefik.http.services.plex.loadbalancer.server.port=32400
       - traefik.http.routers.plex.tls.certresolver=cloudflare
+      - traefik.http.routers.plex.middlewares=authelia@docker
     volumes:
       - /intel2tbnvme/appdata/plex/config:/config
       - /intel2tbnvme/appdata/plex/transcode:/transcode
@@ -211,9 +214,10 @@ containers:
     image: linuxserver/nzbget
     labels:
       - traefik.enable=true
-      - traefik.http.routers.nzbget.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/nzbget`))
+      - traefik.http.routers.nzbget.rule=Host(`nzbget.m.{{ domain_l }}`)
       - traefik.http.routers.nzbget.entrypoints=websecure
       - traefik.http.routers.nzbget.tls.certresolver=cloudflare
+      #- traefik.http.routers.nzbget.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/nzbget/config:/config"
       - "{{ download_path }}:/downloads"
@@ -227,7 +231,7 @@ containers:
       - nzbget
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.sonarr.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/sonarr`))"
+      - "traefik.http.routers.sonarr.rule=Host(`al.{{ domain_l }}`) && PathPrefix(`/sonarr`))"
       - traefik.http.routers.sonarr.entrypoints=websecure
       - traefik.http.routers.sonarr.tls.certresolver=cloudflare
     volumes:
@@ -526,7 +530,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: deepstack
-    active: true
+    active: false
     image: deepquestai/deepstack
     container_name: deepstack
     ports:
@@ -730,36 +734,17 @@ containers:
   - service_name: mealie
     active: true
     image: hkotel/mealie
-    depends_on: 
-      - mealiedb
     labels:
       - traefik.enable=true
       - traefik.http.routers.mealie.rule=Host(`mealie.{{ domain_l }}`)
       - traefik.http.routers.mealie.entrypoints=websecure
       - traefik.http.routers.mealie.tls.certresolver=cloudflare
-      - traefik.http.services.mealie.loadbalancer.server.port=9000
+      - traefik.http.services.mealie.loadbalancer.server.port=80
+    environment:
+      - DB_TYPE=sqlite
     volumes:
-      - "{{ appdata_path }}/mealie/app:/app/data"
-    environment:
-      - "db_username={{ mealie_db_user }}"
-      - "db_password={{ mealie_db_password }}"
-      - db_host=mealiedb
-      - db_port=27017
-    restart: unless-stopped    
-  - service_name: mealiedb
-    active: true
-    image: mongo
-    environment:
-      - "MONGO_INITDB_ROOT_USERNAME={{ mealie_db_user }}"
-      - "MONGO_INITDB_ROOT_PASSWORD={{ mealie_db_password }}"
-    restart: unless-stopped    
-  - service_name: mealiedbui
-    active: true
-    image: mongo-express
-    environment:
-      - "ME_CONFIG_MONGODB_ADMINUSERNAME={{ mealie_dbui_user }}"
-      - "ME_CONFIG_MONGODB_ADMINPASSWORD={{ mealie_dbui_password }}"
-    restart: unless-stopped     
+      - "{{ appdata_path }}/mealie:/app/data"
+    restart: unless-stopped  
 ###
   - service_name: filerun
     active: true
