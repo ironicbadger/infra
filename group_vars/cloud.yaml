@@ -77,7 +77,7 @@ containers:
 ###
   - service_name: tr
     active: true
-    image: traefik
+    image: traefik:v2.4
     ports:
         - 80:80
         - 443:443
@@ -91,7 +91,7 @@ containers:
 ###
   - service_name: ktz-blog
     active: true
-    image: ghost:4.4
+    image: ghost:4.6
     labels:
       - traefik.enable=true
       - "traefik.http.routers.ktzblog.rule=Host(`{{ cloud_url_ktz_blog }}`)"
@@ -107,7 +107,7 @@ containers:
 ###
   - service_name: mum-blog
     active: true
-    image: ghost:4.4
+    image: ghost:4.6
     labels:
       - traefik.enable=true
       - "traefik.http.routers.mumblog.rule=Host(`{{ cloud_url_mum_blog }}`)"

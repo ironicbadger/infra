@@ -37,6 +37,9 @@ fancontrol:
 devbox:
 	ansible-playbook -b run.yaml --limit dev --vault-password-file .vault-password
 
+dhcp:
+	ansible-playbook -b run.yaml --limit dhcp --vault-password-file .vault-password
+
 backup:
 	ansible-playbook -b run.yaml --limit backup --vault-password-file .vault-password
 
