@@ -231,7 +231,7 @@ containers:
       - nzbget
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.sonarr.rule=Host(`al.{{ domain_l }}`) && PathPrefix(`/sonarr`))"
+      - "traefik.http.routers.sonarr.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/sonarr`))"
       - traefik.http.routers.sonarr.entrypoints=websecure
       - traefik.http.routers.sonarr.tls.certresolver=cloudflare
     volumes:
