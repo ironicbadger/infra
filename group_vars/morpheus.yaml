@@ -86,6 +86,7 @@ bash_aliases:
   - { alias: "dfclean", command: "df -h -x tmpfs -x zfs -t fuse.mergerfs -t xfs -t ext4"}
   - { alias: "dfzfs", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs"}
   - { alias: "hdtemp", command: "sudo hddtemp /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]"}
+  - { alias: "nvmetemp", command: 'for i in {0..3}; do nvme smart-log /dev/nvme"$i"n1 | grep temperature; done;'}
 
 # ktz-cartman
 docker_zfs_override: true
@@ -130,7 +131,7 @@ traefik_enable_dashboard: false #defaults to false
 traefik_insecure_transport: false #defaults to false
 
 # ironicbadger.docker_compose_generator
-appdata_path: /mnt/tank/appdata
+appdata_path: /mnt/nvme2tb/appdata
 download_path: /opt/downloads # in use?
 primary_domain: "al.{{ domain_l }}"
 
@@ -177,7 +178,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plex
-    active: false
+    active: true
     image: plexinc/pms-docker
     network_mode: host
     devices:
@@ -197,7 +198,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: tautulli
-    active: false
+    active: true
     image: linuxserver/tautulli
     depends_on:
       - plex
@@ -214,7 +215,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: nzbget
-    active: false
+    active: true
     image: linuxserver/nzbget
     labels:
       - traefik.enable=true
@@ -229,7 +230,7 @@ containers:
     include_global_env_vars: true
   ###
   - service_name: sonarr
-    active: false
+    active: true
     image: linuxserver/sonarr
     depends_on:
       - nzbget
@@ -246,7 +247,7 @@ containers:
     include_global_env_vars: true
   ###
   - service_name: radarr
-    active: false
+    active: true
     image: linuxserver/radarr
     volumes:
       - "{{ appdata_path }}/radarr:/config"
@@ -261,7 +262,7 @@ containers:
     include_global_env_vars: true
   ###
   - service_name: tiddlywiki
-    active: false
+    active: true
     image: mazzolino/tiddlywiki
     labels:
       - traefik.enable=true
@@ -395,7 +396,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: booksonic
-    active: false
+    active: true
     image: linuxserver/booksonic:1.2-ls75
     volumes:
       - "{{ appdata_path }}/booksonic:/config"
