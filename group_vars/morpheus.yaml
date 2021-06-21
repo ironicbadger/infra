@@ -107,11 +107,15 @@ data_disks:
   - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
 
 zfs_disks:
-  # ata-ST10000DM0004-2GR11L_ZJV5CF96
+  # ata-ST10000DM0004-2GR11L_ZJV5CF96 ## failed june 2021
+  # ata-ST10000NE0008-2JM101_ZPW0N45T ## installed june 2021
   # ata-WDC_WD100EMAZ-00WJTA0_2YJ7E2VD
+  # zpool replace tank /dev/disk/by-id/ata-ST10000DM0004-2GR11L_ZJV5CF96 /dev/disk/by-id/ata-ST10000NE0008-2JM101_ZPW0N45T
+
   ## nvme zfs mirror
   # nvme-eui.00000000000000108ce38e02000e543f-part1 -> ../../nvme1n1p1
   # nvme-eui.00000000000000108ce38e02000e5450-part1 -> ../../nvme0n1p1
+
 
 fstab_mergerfs:
   - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=epmfs,dropcacheonclose=true,minfreespace=250G,fsname=mergerfs" }  
@@ -736,7 +740,7 @@ containers:
     image: hkotel/mealie
     labels:
       - traefik.enable=true
-      - traefik.http.routers.mealie.rule=Host(`mealie.{{ domain_l }}`)
+      - traefik.http.routers.mealie.rule=Host(`mealie.{{ domain_me }}`)
       - traefik.http.routers.mealie.entrypoints=websecure
       - traefik.http.routers.mealie.tls.certresolver=cloudflare
       - traefik.http.services.mealie.loadbalancer.server.port=80
