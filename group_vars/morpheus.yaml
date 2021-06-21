@@ -155,7 +155,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: authelia
-    active: true
+    active: false
     image: authelia/authelia
     labels:
       - traefik.enable=true
@@ -177,7 +177,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plex
-    active: true
+    active: false
     image: plexinc/pms-docker
     network_mode: host
     devices:
@@ -197,7 +197,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: tautulli
-    active: true
+    active: false
     image: linuxserver/tautulli
     depends_on:
       - plex
@@ -214,7 +214,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: nzbget
-    active: true
+    active: false
     image: linuxserver/nzbget
     labels:
       - traefik.enable=true
@@ -229,7 +229,7 @@ containers:
     include_global_env_vars: true
   ###
   - service_name: sonarr
-    active: true
+    active: false
     image: linuxserver/sonarr
     depends_on:
       - nzbget
@@ -246,7 +246,7 @@ containers:
     include_global_env_vars: true
   ###
   - service_name: radarr
-    active: true
+    active: false
     image: linuxserver/radarr
     volumes:
       - "{{ appdata_path }}/radarr:/config"
@@ -261,7 +261,7 @@ containers:
     include_global_env_vars: true
   ###
   - service_name: tiddlywiki
-    active: true
+    active: false
     image: mazzolino/tiddlywiki
     labels:
       - traefik.enable=true
@@ -274,7 +274,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: chowdown
-    active: true
+    active: false
     image: gregyankovoy/chowdown
     labels:
       - traefik.enable=true
@@ -292,7 +292,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: nextcloud
-    active: true
+    active: false
     image: nextcloud:19
     depends_on:
       - mysql
@@ -307,7 +307,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: mysql
-    active: true
+    active: false
     image: mariadb
     ports:
       - 3306:3306
@@ -321,7 +321,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: prometheus
-    active: true
+    active: false
     image: prom/prometheus
     labels:
       - traefik.enable=true
@@ -335,7 +335,7 @@ containers:
       - "{{ appdata_path }}/prometheus:/etc/prometheus"
     restart: unless-stopped
   - service_name: vmware_exporter
-    active: true
+    active: false
     container_name: vmware_exporter
     image: pryorda/vmware_exporter:v0.16.0
     ports:
@@ -349,7 +349,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: grafana
-    active: true
+    active: false
     image: grafana/grafana
     labels:
       - traefik.enable=true
@@ -366,7 +366,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: influxdb
-    active: true
+    active: false
     container_name: influx
     image: influxdb
     ports:
@@ -395,7 +395,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: booksonic
-    active: true
+    active: false
     image: linuxserver/booksonic:1.2-ls75
     volumes:
       - "{{ appdata_path }}/booksonic:/config"
@@ -429,7 +429,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: smokeping
-    active: true
+    active: false
     image: linuxserver/smokeping
     volumes:
       - "{{ appdata_path }}/smokeping/config:/config"
@@ -471,7 +471,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: sync
-    active: true
+    active: false
     image: linuxserver/resilio-sync
     hostname: "{{ hostname_morpheus }}"
     volumes:
@@ -490,7 +490,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: librespeed
-    active: true
+    active: false
     image: linuxserver/librespeed
     ports:
       - 8008:80
@@ -508,7 +508,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: lychee
-    active: true
+    active: false
     image: lycheeorg/lychee
     labels:
       - traefik.enable=true
@@ -592,7 +592,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: scrutiny
-    active: true
+    active: false
     image: linuxserver/scrutiny
     labels:
       - traefik.enable=true
@@ -616,7 +616,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: photoprism
-    active: true
+    active: false
     image: photoprism/photoprism:latest
     labels:
       - traefik.enable=true
@@ -660,7 +660,7 @@ containers:
       - PHOTOPRISM_DARKTABLE_PRESETS=false          # Use darktable presets (disables concurrent raw to jpeg conversion)
     restart: unless-stopped
   - service_name: photoprism_db
-    active: true
+    active: false
     image: mariadb:10.5
     volumes:
       - "{{ appdata_path }}/photoprism/db:/var/lib/mysql" 
@@ -672,7 +672,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: transmission
-    active: true
+    active: false
     image: haugene/transmission-openvpn
     cap_add:
       - NET_ADMIN
@@ -719,7 +719,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: paperless
-    active: true
+    active: false
     image: alexphillips/paperless-ng
     labels:
       - traefik.enable=true
@@ -736,7 +736,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: mealie
-    active: true
+    active: false
     image: hkotel/mealie
     labels:
       - traefik.enable=true
@@ -751,7 +751,7 @@ containers:
     restart: unless-stopped  
 ###
   - service_name: filerun
-    active: true
+    active: false
     image: afian/filerun
     depends_on:
       - filerundb
@@ -775,7 +775,7 @@ containers:
       - APACHE_RUN_GROUP_ID=33
     restart: unless-stopped
   - service_name: filerundb
-    active: true
+    active: false
     image: mariadb:10.1
     volumes:
       - "{{ appdata_path }}/filerun/db:/config"
@@ -787,12 +787,12 @@ containers:
     include_global_env_vars: #optional - defaults to false
     restart: unless-stopped
   - service_name: fileruntika
-    active: true
+    active: false
     image: logicalspark/docker-tikaserver
     restart: unless-stopped
     ###
   - service_name: filerunelastic
-    active: true
+    active: false
     image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
     volumes:
       - "{{ appdata_path }}/filerun/elastic:/usr/share/elasticsearch/data"
@@ -807,7 +807,7 @@ containers:
   #
   ###
   # - service_name:
-  #   active: true
+  #   active: false
   #   image:
   #   container_name: #optional - only required if diff to service_name
   #   labels:
