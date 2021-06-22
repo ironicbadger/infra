@@ -63,7 +63,7 @@ syncoid_cron_jobs:
   - { job: '{{ syncoid_binary_path }} {{ syncoid_cloud_dataset }}/unifi tank/backups/cloud/unifi && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_unifi }} > /dev/null', name: 'unifi_replication', weekday: '*', hour: '*/4' }
   - { job: '{{ syncoid_binary_path }} {{ syncoid_cloud_dataset }}/pms-book tank/backups/cloud/pmsbook && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_pmsbook }} > /dev/null', name: 'pmsbook_replication', weekday: '*', hour: '*/1' }
  
-  ## morpheus to pennywise - disabled until initial replication is completed manually (6/21/21)
+  ## morpheus to pennywise data - disabled until initial replication is completed manually (6/21/21)
   # - { job: '{{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/audiobooks p:z2/morpheus/tank/fuse/audiobooks && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }} > /dev/null', name: 'morpheus to pennywise audiobooks', weekday: '*', hour: '*1' }
   # - { job: '{{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/documents p:z2/morpheus/tank/fuse/documents && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }} > /dev/null', name: 'morpheus to pennywise documents', weekday: '*', hour: '*2' }
   # - { job: '{{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/drone p:z2/morpheus/tank/fuse/drone && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }} > /dev/null', name: 'morpheus to pennywise drone', weekday: '*', hour: '*3' }
@@ -73,6 +73,12 @@ syncoid_cron_jobs:
   # - { job: '{{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/software p:z2/morpheus/tank/fuse/software && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }} > /dev/null', name: 'morpheus to pennywise software', weekday: '*', hour: '*7' }
   # - { job: '{{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/sports p:z2/morpheus/tank/fuse/sports && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }} > /dev/null', name: 'morpheus to pennywise sports', weekday: '*', hour: '*8' }
   # - { job: '{{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/videos p:z2/morpheus/tank/fuse/videos && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }} > /dev/null', name: 'morpheus to pennywise videos', weekday: '*', hour: '*9' }
+
+  ## morpheus to pennywise docker appdata - disabled until initial replication is completed manually (6/21/21)
+  # not sure if i want to replicate all docker appdata or just a few specific containers... #todo
+  #- { job: '{{ syncoid_binary_path }} {{ syncoid_cloud_dataset }}/pms-book tank/backups/cloud/pmsbook && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_pmsbook }} > /dev/null', name: 'pmsbook_replication', weekday: '*', hour: '*/1' }
+
+
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases:
