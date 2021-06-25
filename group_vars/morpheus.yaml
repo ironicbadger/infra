@@ -482,7 +482,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: sync
-    active: false
+    active: true
     image: linuxserver/resilio-sync
     hostname: "{{ hostname_morpheus }}"
     volumes:
@@ -491,7 +491,7 @@ containers:
     mem_limit: 2048m
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.btsync.rule=Host(`sync.{{ domain_l }}`)"
+      - "traefik.http.routers.btsync.rule=Host(`sync.m.{{ domain_l }}`)"
       - traefik.http.routers.btsync.entrypoints=websecure
       - traefik.http.routers.btsync.tls.certresolver=cloudflare
       - traefik.http.services.btsync.loadbalancer.server.port=8888
