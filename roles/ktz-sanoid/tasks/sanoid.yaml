@@ -1,59 +1,61 @@
----
-
-- name: check whether sanoid is installed
-  shell: "dpkg-query -W '{{ sanoid_apt_package_name }}'"
-  ignore_errors: True
-  register: is_installed
-  changed_when: "is_installed.rc != 0"
-
-- name: install sanoid?
-  set_fact:
-    install_sanoid: "{{ sanoid_build_from_source is true or is_installed is failed }}"
-
-- name: install git
+- name: Install dependencies for Arch
   package:
-    name: git
-    state: present
-  when: sanoid_build_from_source
+    name: "{{ item }}"
+  loop:
+    - perl
+    - perl-capture-tiny
+    - perl-config-inifiles
+    - pv
+    - lzop
+  when: ansible_os_family == 'Archlinux'
+  become: true
 
-- name: build sanoid | clone git repo
+- name: Install dependencies for Debian-based distros
+  package:
+    name: "{{ item }}"
+  loop:
+    - libcapture-tiny-perl
+    - libconfig-inifiles-perl
+    - pv
+    - lzop
+    - mbuffer
+  when: ansible_os_family == 'Debian'
+  become: true
+
+- name: Download
   git:
-    repo: https://github.com/IronicBadger/docker-sanoid-builder.git
-    dest: /tmp/sanoid
-    force: yes
-  when: sanoid_build_from_source
+    repo: https://github.com/jimsalterjrs/sanoid.git
+    dest: /opt/sanoid
+    version: v2.0.3
+  become: true
 
-## build
-
-- name: build sanoid | make build script executable
-  file:
-    path: /tmp/sanoid/build.sh
-    mode: 0775
-  when: install_sanoid
-
-- name: build sanoid | build .deb package
-  shell: cd /tmp/sanoid && ./build.sh
-  when: install_sanoid
-
-- name: install dependencies for sanoid
-  apt:
-    name: libcapture-tiny-perl
-    state: present
-  when: install_sanoid
-
-- name: build sanoid | install built .deb
-  apt:
-    deb: /tmp/sanoid/sanoid_2.1.0_all.deb
-    install_recommends: yes
-    state: present
-  when: install_sanoid
-
-#######
-
-- name: create target dir for sanoid config
+- name: Create config directory
   file:
     path: /etc/sanoid
     state: directory
+    mode: "0755"
+  become: true
+
+- name: Install default config
+  file:
+    src: /opt/sanoid/sanoid.defaults.conf
+    dest: /etc/sanoid/sanoid.defaults.conf
+    state: link
+  become: true
+  ignore_errors: true
+
+- name: Install executables
+  file:
+    src: /opt/sanoid/{{ item }}
+    dest: /usr/sbin/{{ item }}
+    state: link
+  loop:
+    - sanoid
+    - syncoid
+    - findoid
+    - sleepymutex
+  become: true
+  ignore_errors: true
 
 - name: configure sanoid
   copy:
@@ -63,3 +65,26 @@
     owner: root
     group: root
     mode: '0644'
+
+# todo: fix me - the stuff below is borrowed from orangeone
+# - name: Install systemd services
+#   file:
+#     src: /opt/sanoid/packages/debian/{{ item }}
+#     dest: /lib/systemd/system/{{ item }}
+#     state: link
+#   loop: "{{ sanoid_services }}"
+#   become: true
+
+# - name: Enable systemd services
+#   systemd:
+#     name: "{{ item }}"
+#     enabled: true
+#     masked: false
+#   loop: "{{ sanoid_services }}"
+#   become: true
+
+# - name: Start sanoid timer
+#   systemd:
+#     name: sanoid.timer
+#     state: started
+#   become: true

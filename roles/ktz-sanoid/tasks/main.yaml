@@ -17,3 +17,9 @@
   include: replication.yaml
   tags:
     - replication
+
+- name: Give user passwordless access to ZFS commands
+  lineinfile:
+    path: /etc/sudoers
+    line: "{{ main_username }} ALL=(ALL) NOPASSWD: /usr/sbin/zfs,/usr/sbin/zpool"
+  become: true

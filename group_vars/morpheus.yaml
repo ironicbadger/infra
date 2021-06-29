@@ -3,6 +3,7 @@
 target_os: debian #proxmox
 hostname_morpheus: morpheus
 hostname_cartman: "{{ hostname_morpheus }}" #todo fix
+main_username: alex
 
 # ktz-traefik
 traefik_file_provider: true
@@ -112,7 +113,8 @@ parity_disks:
 
 data_disks:
   - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJJ0K4F-part1, fs: xfs, opts: defaults, content: true }
-  - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-ST10000DM0004-2GR11L_ZJV6A8WV-part1, fs: xfs, opts: defaults, content: true }
+  - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-HGST_HDN728080ALE604_R6GPPDTY-part1, fs: ext4, opts: defaults, content: true }
+  #- { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-ST10000DM0004-2GR11L_ZJV6A8WV-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk3, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ15VJD-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ2S3AD-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
@@ -303,7 +305,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: nextcloud
-    active: false
+    active: true
     image: nextcloud:19
     depends_on:
       - mysql
@@ -318,7 +320,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: mysql
-    active: false
+    active: true
     image: mariadb
     ports:
       - 3306:3306
