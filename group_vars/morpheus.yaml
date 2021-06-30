@@ -287,7 +287,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: chowdown
-    active: false
+    active: true
     image: gregyankovoy/chowdown
     labels:
       - traefik.enable=true
@@ -749,7 +749,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: mealie
-    active: false
+    active: true
     image: hkotel/mealie
     labels:
       - traefik.enable=true
