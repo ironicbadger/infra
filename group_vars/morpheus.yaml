@@ -97,7 +97,7 @@ bash_aliases:
   - { alias: "dfclean", command: "df -h -x tmpfs -x zfs -t fuse.mergerfs -t xfs -t ext4"}
   - { alias: "dfzfs", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs"}
   - { alias: "hdtemp", command: "sudo hddtemp /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]"}
-  - { alias: "nvmetemp", command: 'for i in {0..3}; do nvme smart-log /dev/nvme"$i"n1 | grep temperature; done;'}
+  - { alias: "nvmetemp", command: "for i in {0..3}; do nvme smart-log /dev/nvme'$i'n1 | grep temperature; done;"}
 
 # ktz-cartman
 docker_zfs_override: true
