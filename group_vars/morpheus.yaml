@@ -442,7 +442,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: smokeping
-    active: false
+    active: true
     image: linuxserver/smokeping
     volumes:
       - "{{ appdata_path }}/smokeping/config:/config"
@@ -503,7 +503,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: librespeed
-    active: false
+    active: true
     image: linuxserver/librespeed
     ports:
       - 8008:80
@@ -521,7 +521,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: lychee
-    active: false
+    active: true
     image: lycheeorg/lychee
     labels:
       - traefik.enable=true
