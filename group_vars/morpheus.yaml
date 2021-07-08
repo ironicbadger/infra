@@ -559,7 +559,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: ninja_nginx
-    active: false
+    active: true
     image: nginx:mainline-alpine
     labels:
       - traefik.enable=true
@@ -575,7 +575,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: invoiceninja
-    active: false
+    active: true
     image: invoiceninja/invoiceninja:4.5.18
     depends_on:
       - mysql
@@ -596,7 +596,7 @@ containers:
       - DB_DATABASE=ninja
       - MAIL_HOST=smtp.gmail.com
       - "MAIL_USERNAME={{ gmail_address }}"
-      - "MAIL_PASSWORD={{ gmail_password }}"
+      - "MAIL_PASSWORD={{ invoice_ninja_gmail_app_password }}"
       - MAIL_DRIVER=smtp
       - MAIL_FROM_NAME="Alex K"
       - "MAIL_FROM_ADDRESS={{ gmail_address }}"
