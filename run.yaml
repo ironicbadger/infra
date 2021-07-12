@@ -29,6 +29,8 @@
       - role: ktz-sanoid
       - role: ktz-cartman
       - role: ktz-apcupsd
+      - role: ktz-authelia
+        tags: compose
       - role: ironicbadger.ansible_role_docker_compose_generator
         tags: compose
       - role: ktz-traefik

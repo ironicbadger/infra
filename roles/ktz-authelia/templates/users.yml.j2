@@ -1,0 +1,21 @@
+---
+###############################################################
+#                         Users Database                      #
+###############################################################
+
+# This file can be used if you do not have an LDAP set up.
+
+# List of users
+users:
+{% for u in authelia_users %}
+  {{ u.username }}:
+    displayname: {{ u.displayname }}
+    password: {{ u.password }}
+    email: {{ u.email }}
+    groups:
+  {% for g in u.groups %}
+      - {{ g }}
+  {% endfor %}
+{% endfor %}
+
+...

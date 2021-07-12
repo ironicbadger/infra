@@ -37,7 +37,8 @@ package_list:
   - name: nvme-cli
   - name: openssh-server
   #- name: open-vm-tools #vmware
-  - name: python
+  - name: python3
+  - name: python-setuptools
   #- name: qemu-guest-agent
   #- name: sanoid
   - name: screen
@@ -91,7 +92,7 @@ bash_aliases:
   - { alias: "dprune", command: "docker image prune" }
   - { alias: "dprunesys", command: "docker system prune --all" }
   - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop"}
-  - { alias: "appdata", command: "cd /mnt/tank/appdata" }
+  - { alias: "appdata", command: "cd /mnt/nvme2tb/appdata" }
   - { alias: "zspace", command: "zfs list -o space" }
   - { alias: "zsnap", command: "zfs list -t snapshot" }
   - { alias: "dfclean", command: "df -h -x tmpfs -x zfs -t fuse.mergerfs -t xfs -t ext4"}
@@ -859,6 +860,32 @@ containers:
   #     -
   #   include_global_env_vars: #optional - defaults to false
   #   restart: unless-stopped
+
+## ktz-authelia
+authelia_users:
+  - username: "{{ authelia_username }}"
+    displayname: "{{ authelia_displayname }}"
+    # docker run authelia/authelia:latest authelia hash-password 'yourpassword'
+    password: "{{ authelia_password }}"
+    email: "{{ gmail_address }}"
+    groups:
+      - admin
+      - dev
+authelia_rules:
+  - domain: "*.m.{{ domain_l }}"
+    policy: bypass
+    resources:
+      - '^/api.*$'
+  - domain: "*.m.{{ domain_l }}"
+    policy: one_factor
+  - domain: "nc.{{ domain_cloud }}"
+    policy: one_factor
+  - domain: "plex.{{ domain_me }}"
+    policy: one_factor
+  - domain: "wiki.{{ domain_l }}"
+    policy: one_factor
+
+
 
 ## snapraid
 snapraid_config_excludes:
