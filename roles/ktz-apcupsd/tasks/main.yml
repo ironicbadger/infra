@@ -20,5 +20,5 @@
 - name: enable apcupsd service
   systemd:
     name: apcupsd
-    state: reloaded
+    state: restarted
     enabled: true
