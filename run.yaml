@@ -28,6 +28,7 @@
       - role: ktz-boot-notification
       - role: ktz-sanoid
       - role: ktz-cartman
+      - role: ktz-apcupsd
       - role: ironicbadger.ansible_role_docker_compose_generator
         tags: compose
       - role: ktz-traefik
