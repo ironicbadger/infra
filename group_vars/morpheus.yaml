@@ -143,6 +143,31 @@ traefik_file_provider: true
 traefik_enable_dashboard: false #defaults to false
 traefik_insecure_transport: false #defaults to false
 
+## ktz-authelia
+authelia_users:
+  - username: "{{ authelia_username }}"
+    displayname: "{{ authelia_displayname }}"
+    # docker run authelia/authelia:latest authelia hash-password 'yourpassword'
+    password: "{{ authelia_password }}"
+    email: "{{ gmail_address }}"
+    groups:
+      - admin
+      - dev
+authelia_rules:
+  - domain: "*.m.{{ domain_l }}"
+    policy: bypass
+    resources:
+      - '^/api.*$'
+  - domain: "*.m.{{ domain_l }}"
+    policy: one_factor
+  - domain: "nc.{{ domain_cloud }}"
+    policy: one_factor
+  - domain: "plex.{{ domain_me }}"
+    policy: one_factor
+  - domain: "wiki.{{ domain_l }}"
+    policy: one_factor
+
+
 # ironicbadger.docker_compose_generator
 appdata_path: /mnt/nvme2tb/appdata
 download_path: /opt/downloads # in use?
@@ -860,31 +885,6 @@ containers:
   #     -
   #   include_global_env_vars: #optional - defaults to false
   #   restart: unless-stopped
-
-## ktz-authelia
-authelia_users:
-  - username: "{{ authelia_username }}"
-    displayname: "{{ authelia_displayname }}"
-    # docker run authelia/authelia:latest authelia hash-password 'yourpassword'
-    password: "{{ authelia_password }}"
-    email: "{{ gmail_address }}"
-    groups:
-      - admin
-      - dev
-authelia_rules:
-  - domain: "*.m.{{ domain_l }}"
-    policy: bypass
-    resources:
-      - '^/api.*$'
-  - domain: "*.m.{{ domain_l }}"
-    policy: one_factor
-  - domain: "nc.{{ domain_cloud }}"
-    policy: one_factor
-  - domain: "plex.{{ domain_me }}"
-    policy: one_factor
-  - domain: "wiki.{{ domain_l }}"
-    policy: one_factor
-
 
 
 ## snapraid
