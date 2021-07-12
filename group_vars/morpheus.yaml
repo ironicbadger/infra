@@ -168,7 +168,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: authelia
-    active: false
+    active: true
     image: authelia/authelia
     labels:
       - traefik.enable=true
@@ -185,7 +185,7 @@ containers:
     expose:
     restart: unless-stopped
   - service_name: redis
-    active: false
+    active: true
     image: redis
     restart: unless-stopped
   ###
@@ -234,7 +234,7 @@ containers:
       - traefik.http.routers.nzbget.rule=Host(`nzbget.m.{{ domain_l }}`)
       - traefik.http.routers.nzbget.entrypoints=websecure
       - traefik.http.routers.nzbget.tls.certresolver=cloudflare
-      #- traefik.http.routers.nzbget.middlewares=authelia@docker
+      - traefik.http.routers.nzbget.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/nzbget/config:/config"
       - "{{ download_path }}:/downloads"
@@ -248,9 +248,10 @@ containers:
       - nzbget
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.sonarr.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/sonarr`))"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.m.{{ domain_l }}`)"
       - traefik.http.routers.sonarr.entrypoints=websecure
       - traefik.http.routers.sonarr.tls.certresolver=cloudflare
+      - traefik.http.routers.plex.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/sonarr:/config"
       - "{{ download_path }}/complete/tv:/downloads/complete/tv"
@@ -267,9 +268,10 @@ containers:
       - "{{ download_path }}/complete/movies:/downloads/complete/movies"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.radarr.rule=(Host(`al.{{ domain_l }}`) && PathPrefix(`/radarr`))"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.m.{{ domain_l }}`)"
       - traefik.http.routers.radarr.entrypoints=websecure
       - traefik.http.routers.radarr.tls.certresolver=cloudflare
+      - traefik.http.routers.plex.middlewares=authelia@docker
     restart: unless-stopped
     include_global_env_vars: true
   ###
@@ -282,6 +284,7 @@ containers:
       - traefik.http.routers.tiddlywiki.entrypoints=websecure
       - traefik.http.routers.tiddlywiki.tls.certresolver=cloudflare
       - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
+      - traefik.http.routers.plex.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/tiddlywiki:/var/lib/tiddlywiki"
     restart: unless-stopped
@@ -315,6 +318,7 @@ containers:
       - traefik.http.routers.nc.entrypoints=websecure
       - traefik.http.routers.nc.tls.certresolver=cloudflare
       - traefik.http.services.nc.loadbalancer.server.port=80
+      - traefik.http.routers.plex.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/nextcloud:/var/www/html"
     restart: unless-stopped
@@ -814,6 +818,23 @@ containers:
       - cluster.name=docker-cluster
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    restart: unless-stopped
+  ###
+  - service_name: sui
+    active: true
+    image: griefed/sui
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.sui.rule=Host(`sui.{{ domain_l }}`)"
+      - traefik.http.routers.sui.entrypoints=websecure
+      - traefik.http.routers.sui.tls.certresolver=cloudflare
+      - traefik.http.routers.sui.middlewares=authelia@docker
+    volumes:
+      - "{{ appdata_path }}/sui:/config"
+    environment:
+      - PROTOCOL=http # The protocol used to access this container. Either HTTP or HTTPS.
+      - DOMAIN=sui.ktz.lol # The address of the device this container is running on. Can be an IP or sub.domain.tld.
+    include_global_env_vars: true
     restart: unless-stopped
 
   # template for docker-compose services
