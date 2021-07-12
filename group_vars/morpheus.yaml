@@ -831,7 +831,7 @@ containers:
       - "traefik.http.routers.sui.rule=Host(`sui.{{ domain_l }}`)"
       - traefik.http.routers.sui.entrypoints=websecure
       - traefik.http.routers.sui.tls.certresolver=cloudflare
-      - traefik.http.routers.sui.middlewares=authelia@docker
+      #- traefik.http.routers.sui.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/sui:/config"
     environment:
