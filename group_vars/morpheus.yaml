@@ -235,6 +235,9 @@ containers:
       - traefik.http.routers.nzbget.entrypoints=websecure
       - traefik.http.routers.nzbget.tls.certresolver=cloudflare
       - traefik.http.routers.nzbget.middlewares=authelia@docker
+      - traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.{{ domain_l }}`)
+      - traefik.http.routers.nzbgetapi.entrypoints=websecure
+      - traefik.http.routers.nzbgetapi.tls.certresolver=cloudflare
     volumes:
       - "{{ appdata_path }}/nzbget/config:/config"
       - "{{ download_path }}:/downloads"
@@ -251,7 +254,7 @@ containers:
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.m.{{ domain_l }}`)"
       - traefik.http.routers.sonarr.entrypoints=websecure
       - traefik.http.routers.sonarr.tls.certresolver=cloudflare
-      - traefik.http.routers.plex.middlewares=authelia@docker
+      - traefik.http.routers.sonarr.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/sonarr:/config"
       - "{{ download_path }}/complete/tv:/downloads/complete/tv"
@@ -271,7 +274,7 @@ containers:
       - "traefik.http.routers.radarr.rule=Host(`radarr.m.{{ domain_l }}`)"
       - traefik.http.routers.radarr.entrypoints=websecure
       - traefik.http.routers.radarr.tls.certresolver=cloudflare
-      - traefik.http.routers.plex.middlewares=authelia@docker
+      - traefik.http.routers.radarr.middlewares=authelia@docker
     restart: unless-stopped
     include_global_env_vars: true
   ###
@@ -284,7 +287,7 @@ containers:
       - traefik.http.routers.tiddlywiki.entrypoints=websecure
       - traefik.http.routers.tiddlywiki.tls.certresolver=cloudflare
       - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
-      - traefik.http.routers.plex.middlewares=authelia@docker
+      - traefik.http.routers.tiddlywiki.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/tiddlywiki:/var/lib/tiddlywiki"
     restart: unless-stopped
@@ -318,7 +321,7 @@ containers:
       - traefik.http.routers.nc.entrypoints=websecure
       - traefik.http.routers.nc.tls.certresolver=cloudflare
       - traefik.http.services.nc.loadbalancer.server.port=80
-      - traefik.http.routers.plex.middlewares=authelia@docker
+      - traefik.http.routers.nc.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/nextcloud:/var/www/html"
     restart: unless-stopped
