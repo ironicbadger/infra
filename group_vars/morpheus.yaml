@@ -514,7 +514,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: sync
-    active: true
+    active: false
     image: linuxserver/resilio-sync
     hostname: "{{ hostname_morpheus }}"
     volumes:
