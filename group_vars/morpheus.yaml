@@ -871,6 +871,7 @@ containers:
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.m.{{ domain_l }}`)"
       - traefik.http.routers.prowlarr.entrypoints=websecure
       - traefik.http.routers.prowlarr.tls.certresolver=cloudflare
+      - traefik.http.routers.prowlarr.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/prowlarr:/config"
     include_global_env_vars: true
