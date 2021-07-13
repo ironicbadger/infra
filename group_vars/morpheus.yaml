@@ -858,8 +858,21 @@ containers:
     volumes:
       - "{{ appdata_path }}/sui:/config"
     environment:
-      - PROTOCOL=http # The protocol used to access this container. Either HTTP or HTTPS.
-      - DOMAIN=sui.ktz.lol # The address of the device this container is running on. Can be an IP or sub.domain.tld.
+      - PROTOCOL=http
+      - "DOMAIN=sui.{{ domain_l }}"
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: prowlarr
+    active: true
+    image: linuxserver/prowlarr:develop
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.m.{{ domain_l }}`)"
+      - traefik.http.routers.prowlarr.entrypoints=websecure
+      - traefik.http.routers.prowlarr.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/prowlarr:/config"
     include_global_env_vars: true
     restart: unless-stopped
 
@@ -876,6 +889,7 @@ containers:
   #     - traefik.http.routers.XXXXXXX.entrypoints=websecure
   #     - traefik.http.routers.XXXXXXX.tls.certresolver=cloudflare
   #     - traefik.http.services.XXXXXXX.loadbalancer.server.port=80
+  #     #- traefik.http.routers.XXXXXXX.middlewares=authelia@docker
   #   volumes:
   #     - "{{ appdata_path }}/app:/config"
   #   environment:
