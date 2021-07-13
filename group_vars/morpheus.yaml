@@ -160,8 +160,6 @@ authelia_rules:
       - '^/api.*$'
   - domain: "*.m.{{ domain_l }}"
     policy: one_factor
-  - domain: "nc.{{ domain_cloud }}"
-    policy: one_factor
   - domain: "plex.{{ domain_me }}"
     policy: one_factor
   - domain: "wiki.{{ domain_l }}"
@@ -347,7 +345,6 @@ containers:
       - traefik.http.routers.nc.entrypoints=websecure
       - traefik.http.routers.nc.tls.certresolver=cloudflare
       - traefik.http.services.nc.loadbalancer.server.port=80
-      - traefik.http.routers.nc.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/nextcloud:/var/www/html"
     restart: unless-stopped
