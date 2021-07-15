@@ -164,6 +164,8 @@ authelia_rules:
     policy: one_factor
   - domain: "wiki.{{ domain_l }}"
     policy: one_factor
+  - domain: "nc.{{ domain_cloud }}"
+    policy: bypass
 
 
 # ironicbadger.docker_compose_generator
@@ -336,7 +338,7 @@ containers:
   ###
   - service_name: nextcloud
     active: true
-    image: nextcloud:19
+    image: nextcloud:stable
     depends_on:
       - mysql
     labels:
@@ -344,7 +346,6 @@ containers:
       - "traefik.http.routers.nc.rule=Host(`nc.{{ domain_cloud }}`)"
       - traefik.http.routers.nc.entrypoints=websecure
       - traefik.http.routers.nc.tls.certresolver=cloudflare
-      - traefik.http.services.nc.loadbalancer.server.port=80
     volumes:
       - "{{ appdata_path }}/nextcloud:/var/www/html"
     restart: unless-stopped
