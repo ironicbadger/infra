@@ -7,7 +7,7 @@ services:
     networks:
       default:
     command:
-      #- "--log.level=debug"
+      - "--log.level=debug"
       - "--api.insecure=true"
       - "--providers.docker=true"
       - "--providers.docker.exposedbydefault=false"
@@ -15,67 +15,55 @@ services:
       - "--entrypoints.websecure.address=:443"
       - "--certificatesresolvers.cloudflare.acme.dnschallenge=true"
       - "--certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare"
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge.delayBeforeCheck=0"
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.1.1.1:53"
+      - "--certificatesresolvers.cloudflare.acme.dnschallenge.resolvers=1.0.0.1:53"
       #- "--certificatesresolvers.cloudflare.acme.caserver=https://acme-staging-v02.api.letsencrypt.org/directory"
-      - "--certificatesresolvers.cloudflare.acme.email=alexktz@gmail.com"
+      - "--certificatesresolvers.cloudflare.acme.email=123@123.com"
       - "--certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json"
     environment:
-      - "CF_API_EMAIL=alexktz@gmail.com"
-      - "CF_DNS_API_TOKEN=secret"
-    extra_hosts: 
+      - CLOUDFLARE_EMAIL=123@123.com
+      - CLOUDFLARE_API_KEY=secret
+    extra_hosts:
       - host.docker.internal:172.17.0.1
     ports:
       - "80:80"
       - "443:443"
       - "8080:8080"
     volumes:
-      - "/root/letsencrypt:/letsencrypt"
+      - "/mnt/storage/appdata/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
   nginx:
     image: linuxserver/nginx
     container_name: my-web-nginx
-    depends_on: 
-        - traefik    
+    depends_on:
+        - traefik
     environment:
         - PUID=1000
         - PGID=1000
     restart: unless-stopped
     labels:
         - traefik.enable=true
-        - traefik.http.routers.nginx.rule=(Host(`test.ktz.cloud`) && Path(`/nginx`))
+        - traefik.http.routers.nginx.rule=(Host(`test.domain.com`) && Path(`/nginx`))
         - traefik.http.routers.nginx.entrypoints=websecure
         - traefik.http.routers.nginx.tls.certresolver=cloudflare
-        - traefik.http.services.nginx.loadbalancer.server.port=80
-  nzbget:
-    container_name: nzbget
-    image: linuxserver/nzbget:latest
-    restart: unless-stopped
+  nginx:
+    image: linuxserver/nginx
+    container_name: my-web-nginx
+    depends_on:
+        - traefik
     environment:
         - PUID=1000
         - PGID=1000
-    labels:
-        - traefik.enable=true
-        - traefik.http.routers.nzbget.rule=(Host(`test.ktz.cloud`) && PathPrefix(`/nzbget`))
-        - traefik.http.routers.nzbget.entrypoints=websecure
-        - traefik.http.routers.nzbget.tls.certresolver=cloudflare
-        - traefik.http.services.nzbget.loadbalancer.server.port=6789
-  radarr:
-    container_name: radarr
-    image: linuxserver/radarr:preview
     restart: unless-stopped
-    environment:
-        - PUID=1000
-        - PGID=1000
     labels:
         - traefik.enable=true
-        - traefik.http.routers.radarr.rule=(Host(`test.ktz.cloud`) && PathPrefix(`/radarr`))
-        - traefik.http.routers.radarr.entrypoints=websecure
-        - traefik.http.routers.radarr.tls.certresolver=cloudflare
-        - traefik.http.services.radarr.loadbalancer.server.port=7878
+        - traefik.http.routers.nginx.rule=Host(`test.domain.com`)
+        - traefik.http.routers.nginx.entrypoints=websecure
+        - traefik.http.routers.nginx.tls.certresolver=cloudflare
   plex:
     image: linuxserver/plex
-    container_name: plex-pms
-    tmpfs:
-      - /tmp
+    container_name: plex
     network_mode: host
     environment:
       - PUID=1000
@@ -85,7 +73,6 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
-      - traefik.http.routers.plex.rule=Host(`plex.ktz.cloud`)
+      - traefik.http.routers.plex.rule=Host(`plex.domain.com`)
       - traefik.http.routers.plex.entrypoints=websecure
       - traefik.http.routers.plex.tls.certresolver=cloudflare
-      - traefik.http.services.plex.loadbalancer.server.port=32400
