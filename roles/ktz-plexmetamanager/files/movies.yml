@@ -1,0 +1,29 @@
+collections:
+  Documentaries:
+    plex_search:
+      all:
+        genre: Documentary
+  Romantic Comedies:
+    genre: Romance
+    filters:
+      genre: Comedy
+  2020s Movies:
+    plex_search:
+      any:
+        decade: 2020
+  2010s Movies:
+    plex_search:
+      any:
+        decade: 2010
+  2000s Movies:
+    plex_search:
+      any:
+        decade: 2000
+  1990s Movies:
+    plex_search:
+      any:
+        decade: 1990
+  1980s Movies:
+    plex_search:
+      any:
+        decade: 1980

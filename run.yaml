@@ -36,6 +36,8 @@
       - role: ktz-traefik
         tags: compose
       - role: ironicbadger.ansible_role_snapraid
+      - role: ktz-plexmetamanager
+        tags: compose
 
   - hosts: fancontrol
     vars_files:

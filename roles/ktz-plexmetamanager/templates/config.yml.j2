@@ -1,0 +1,38 @@
+libraries:
+    Movies:
+        metadata_path:
+          - file: config/movies.yml
+          - git: meisnate12/IMDBGenres
+          - git: meisnate12/MovieCharts
+          - git: meisnate12/Movies
+          - git: meisnate12/Metadata
+          - git: meisnate12/Studios
+        mass_critic_rating_update: tmdb
+        mass_audience_rating_update: tmdb
+        split_duplicates: true
+    TV:
+        metadata_path:
+          - git: meisnate12/ShowCharts
+          - git: meisnate12/Networks
+settings:
+    cache: true
+    cache_expiration: 30
+    asset_directory: config/assets
+    asset_folders: true
+    assets_for_all: false
+    sync_mode: append
+    show_unmanaged: true
+    show_filtered: false
+    show_missing: true
+    save_missing: true
+    run_again_delay: 2
+plex:
+    url: {{ plexmm_plex_url }}
+    token: {{ plexmm_plex_token }}
+    timeout: 60
+    clean_bundles: true
+    empty_trash: true
+    optimize: false
+tmdb:
+    apikey: {{ plexmm_tmdb_apikey }}
+    language: en

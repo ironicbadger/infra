@@ -1,0 +1,24 @@
+---
+
+- name: ensure target dir exists
+  file:
+    dest: "{{ appdata_path }}/plexmeta/config"
+    state: directory
+    owner: "{{ main_uid }}"
+    group: "{{ main_gid }}"
+  become: true
+
+- name: template plexmeta rules
+  template:
+    src: templates/config.yml.j2
+    dest: "{{ appdata_path }}/plexmeta/config/config.yml"
+    owner: "root"
+    group: "root"
+  become: true
+
+- name: template plexmeta movies config
+  copy:
+    src: movies.yml
+    dest: "{{ appdata_path }}/plexmeta/config/movies.yml"
+    owner: "{{ main_uid }}"
+    group: "{{ main_gid }}"

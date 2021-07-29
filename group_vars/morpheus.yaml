@@ -79,7 +79,7 @@ syncoid_cron_jobs:
   ## morpheus to pennywise docker appdata - disabled until initial replication is completed manually (6/21/21)
   # not sure if i want to replicate all docker appdata or just a few specific containers... #todo
   #- { job: '{{ syncoid_binary_path }} {{ syncoid_cloud_dataset }}/pms-book tank/backups/cloud/pmsbook && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_pmsbook }} > /dev/null', name: 'pmsbook_replication', weekday: '*', hour: '*/1' }
-
+  - { job: '/usr/bin/docker run --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run > /dev/null', name: 'plexmeta', weekday: '*', hour: '*/4' }
 
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
@@ -877,6 +877,15 @@ containers:
       - "{{ appdata_path }}/prowlarr:/config"
     include_global_env_vars: true
     restart: unless-stopped
+  # ###
+  # - service_name: plexmeta
+  #   active: true
+  #   image: meisnate12/plex-meta-manager
+  #   volumes:
+  #     - "{{ appdata_path }}/plexmeta/config:/config"
+  #   command: 
+  #     - "--time 04:00"
+  #   restart: unless-stopped
 
   # template for docker-compose services
   #
