@@ -63,7 +63,7 @@ syncoid_cron_jobs:
   - { job: '{{ syncoid_binary_path }} {{ syncoid_cloud_dataset }}/ktz-blog tank/backups/cloud/ktz-blog && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_ktzblog}} > /dev/null', name: 'ktzblog_replication', weekday: '*', hour: '*', minute: '*/15' }
   - { job: '{{ syncoid_binary_path }} {{ syncoid_cloud_dataset }}/mum-blog tank/backups/cloud/mum-blog && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mumblog }} > /dev/null', name: 'mumblog_replication', weekday: '*', hour: '*', minute: '*/15' }
   - { job: '{{ syncoid_binary_path }} {{ syncoid_cloud_dataset }}/unifi tank/backups/cloud/unifi && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_unifi }} > /dev/null', name: 'unifi_replication', weekday: '*', hour: '*/4' }
-  - { job: '{{ syncoid_binary_path }} {{ syncoid_cloud_dataset }}/pms-book tank/backups/cloud/pmsbook && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_pmsbook }} > /dev/null', name: 'pmsbook_replication', weekday: '*', hour: '*/1' }
+  - { job: '{{ syncoid_binary_path }} {{ syncoid_cloud_dataset }}/healthchecks tank/backups/cloud/healthchecks && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_healthchecks }} > /dev/null', name: 'healthchecks_replication', weekday: '*', hour: '*/1' }
  
   ## morpheus to pennywise data - disabled until initial replication is completed manually (6/21/21)
   # - { job: '{{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/audiobooks p:z2/morpheus/tank/fuse/audiobooks && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }} > /dev/null', name: 'morpheus to pennywise audiobooks', weekday: '*', hour: '1' }
