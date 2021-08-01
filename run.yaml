@@ -27,6 +27,7 @@
       - role: ktz-figurine
       - role: ktz-boot-notification
       - role: ktz-sanoid
+        tags: replication
       - role: ktz-cartman
       - role: ktz-apcupsd
       - role: ktz-authelia

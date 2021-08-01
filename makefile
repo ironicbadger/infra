@@ -17,7 +17,10 @@ hcomp:
 	ansible-playbook run.yaml --limit helios64  --tags compose
 
 m:
-	ansible-playbook -b run.yaml --limit morpheus --ask-become-pass 
+	ansible-playbook -b run.yaml --limit morpheus
+
+mrepl:
+	ansible-playbook -b run.yaml --limit morpheus --tags replication
 
 mcomp:
 	ansible-playbook run.yaml --limit morpheus --tags compose
