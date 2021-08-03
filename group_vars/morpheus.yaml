@@ -873,13 +873,26 @@ containers:
     restart: unless-stopped
   # ###
   # - service_name: plexmeta
-  #   active: true
+  #   active: false
   #   image: meisnate12/plex-meta-manager
   #   volumes:
   #     - "{{ appdata_path }}/plexmeta/config:/config"
   #   command: 
   #     - "--time 04:00"
   #   restart: unless-stopped
+  ###
+  - service_name: kuma
+    active: true
+    image: louislam/uptime-kuma:1
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.kuma.rule=Host(`uptime.m.{{ domain_l }}`)"
+      - traefik.http.routers.kuma.entrypoints=websecure
+      - traefik.http.routers.kuma.tls.certresolver=cloudflare
+      - traefik.http.routers.kuma.middlewares=authelia@docker
+    volumes:
+      - "{{ appdata_path }}/kuma:/app/data"
+    restart: unless-stopped
 
   # template for docker-compose services
   #
