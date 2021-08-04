@@ -872,27 +872,18 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   # ###
-  # - service_name: plexmeta
-  #   active: false
-  #   image: meisnate12/plex-meta-manager
-  #   volumes:
-  #     - "{{ appdata_path }}/plexmeta/config:/config"
-  #   command: 
-  #     - "--time 04:00"
-  #   restart: unless-stopped
-  ###
-  - service_name: kuma
+  - service_name: plexmeta
     active: true
-    image: louislam/uptime-kuma:1
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.kuma.rule=Host(`uptime.m.{{ domain_l }}`)"
-      - traefik.http.routers.kuma.entrypoints=websecure
-      - traefik.http.routers.kuma.tls.certresolver=cloudflare
-      - traefik.http.routers.kuma.middlewares=authelia@docker
+    image: meisnate12/plex-meta-manager
     volumes:
-      - "{{ appdata_path }}/kuma:/app/data"
+      - "{{ appdata_path }}/plexmeta/config:/config"
+    environment:
+      - TZ=America/New_York
+      - PMM_TIME=01:22
+    #command: "--time 19:11"
+    include_global_env_vars: true
     restart: unless-stopped
+ 
 
   # template for docker-compose services
   #
