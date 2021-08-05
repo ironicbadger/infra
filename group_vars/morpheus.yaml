@@ -880,7 +880,6 @@ containers:
     environment:
       - TZ=America/New_York
       - PMM_TIME=01:22
-    #command: "--time 19:11"
     restart: unless-stopped
  
 
