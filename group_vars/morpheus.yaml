@@ -881,7 +881,6 @@ containers:
       - TZ=America/New_York
       - PMM_TIME=01:22
     #command: "--time 19:11"
-    include_global_env_vars: true
     restart: unless-stopped
  
 
