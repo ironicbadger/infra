@@ -22,6 +22,7 @@ package_list:
   - name: git
   - name: hddtemp
   - name: htop
+  - name: ffmpeg
   - name: iftop
   - name: intel-gpu-tools
   - name: iotop
@@ -513,11 +514,13 @@ containers:
     image: drone/drone:latest
     environment:
       - DRONE_GITEA_SERVER=https://git.ktz.me/
-      - DRONE_GIT_ALWAYS_AUTH=false
+      - DRONE_GIT_ALWAYS_AUTH=true
       - "DRONE_GITEA_CLIENT_ID={{ drone_gitea_client_id }}"
       - "DRONE_GITEA_CLIENT_SECRET={{ drone_gitea_client_secret }}"
       - "DRONE_SERVER_HOST=drone.m.{{ domain_l }}"
       - DRONE_SERVER_PROTO=https
+      - DRONE_RPC_SECRET=super-duper-secret
+      - "DRONE_USER_CREATE=username:alexktz,admin:true"
     labels:
       - traefik.enable=true
       - "traefik.http.routers.drone.rule=Host(`drone.m.{{ domain_l }}`)"
@@ -526,6 +529,20 @@ containers:
       - traefik.http.services.drone.loadbalancer.server.port=80
     ports:
       - "3001:80"
+    restart: unless-stopped
+  - service_name: drone-runner-docker
+    active: true
+    image: drone/drone-runner-docker:1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - DRONE_RPC_PROTO=https
+      - "DRONE_RPC_HOST=drone.m.{{ domain_l }}"
+      - DRONE_RPC_SECRET=super-duper-secret
+      - DRONE_RUNNER_CAPACITY=2
+      - "DRONE_RUNNER_NAME={{ hostname_morpheus }}"
+    ports: 
+      - 3002:3000
     restart: unless-stopped
   ###
   - service_name: sync
@@ -891,7 +908,7 @@ containers:
       - "{{ appdata_path }}/prowlarr:/config"
     include_global_env_vars: true
     restart: unless-stopped
-  # ###
+  ###
   - service_name: plexmeta
     active: true
     image: meisnate12/plex-meta-manager
@@ -900,6 +917,18 @@ containers:
     environment:
       - TZ=America/New_York
       - PMM_TIME=01:22
+    restart: unless-stopped
+  ###
+  - service_name: wellandwiki
+    active: true
+    image: nginx
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.wellandwiki.rule=Host(`wellandwiki.m.{{ domain_l }}`)"
+      - traefik.http.routers.wellandwiki.entrypoints=websecure
+      - traefik.http.routers.wellandwiki.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/wellandwiki/site:/usr/share/nginx/html:ro" 
     restart: unless-stopped
  
 
