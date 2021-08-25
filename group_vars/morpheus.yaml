@@ -13,6 +13,7 @@ traefik_insecure_transport: false #defaults to false
 # ironicbadger.docker_compose_generator
 appdata_path: /intel2tbnvme/appdata
 storage_path: /mnt/storage
+
 # grog.package
 package_list:
   - name: bash-completion
@@ -439,12 +440,12 @@ containers:
       - "{{ morpheus_main_storage_path }}/audiobooks:/books"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.booksonic.rule=Host(`booksonic.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.booksonic.rule=Host(`booksonic.{{ domain_cloud }}`)"
       - traefik.http.routers.booksonic.entrypoints=websecure
       - traefik.http.routers.booksonic.tls.certresolver=cloudflare
       - traefik.http.services.booksonic.loadbalancer.server.port=4040
-    environment:
-      - CONTEXT_PATH=booksonic
+    # environment:
+    #   - CONTEXT_PATH=booksonic
     mem_limit: 1024m
     include_global_env_vars: true
     restart: unless-stopped
