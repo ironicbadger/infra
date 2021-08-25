@@ -10,21 +10,21 @@ http:
     router-octoprintog:
       entryPoints:
         - websecure
-      rule: "Host(`boris.{{ domain_l }}`)"
+      rule: "Host(`boris.{{ domain_me }}`)"
       service: service-octoprintog
       tls:
         certResolver: cloudflare
     router-octoprint:
       entryPoints:
         - websecure
-      rule: "Host(`bricktop.{{ domain_l }}`)"
+      rule: "Host(`bricktop.{{ domain_me }}`)"
       service: service-octoprint
       tls:
         certResolver: cloudflare
     router-proxmox:
       entryPoints:
         - websecure
-      rule: "Host(`px.{{ domain_l }}`)"
+      rule: "Host(`px.{{ domain_me }}`)"
       service: service-proxmox
       tls:
         certResolver: cloudflare
