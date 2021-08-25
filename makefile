@@ -10,11 +10,11 @@ c:
 ccomp:
 	ansible-playbook run.yaml --limit cartman  --tags compose
 
-h:
-	ansible-playbook -b run.yaml --limit helios64 --ask-become-pass 
+g:
+	ansible-playbook -b run.yaml --limit galgatebst --ask-become-pass 
 
-hcomp:
-	ansible-playbook run.yaml --limit helios64  --tags compose
+gcomp:
+	ansible-playbook run.yaml --limit galgatebst  --tags compose
 
 m:
 	ansible-playbook -b run.yaml --limit morpheus

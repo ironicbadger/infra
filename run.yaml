@@ -87,7 +87,6 @@
       - role: ktz-sanoid
       - role: ironicbadger.ansible_role_bash_aliases
       - role: ktz-figurine
-        tags: test
       - role: ironicbadger.ansible_role_docker_compose_generator
         tags: compose
       - role: ktz-traefik
@@ -95,3 +94,16 @@
     tasks:
       - hostname:
           name: "{{ cloud_hostname }}"
+
+  - hosts: galgatebst
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: grog.package
+      - role: geerlingguy.docker
+      - role: geerlingguy.ntp
+      - role: ironicbadger.ansible_role_bash_aliases
+      - role: ktz-figurine
+    tasks:
+      - hostname:
+          name: "galgatebst"
