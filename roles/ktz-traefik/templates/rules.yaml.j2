@@ -24,7 +24,7 @@ http:
     router-proxmox:
       entryPoints:
         - websecure
-      rule: "Host(`px.{{ domain_me }}`)"
+      rule: "Host(`px.wd.{{ domain_me }}`)"
       service: service-proxmox
       tls:
         certResolver: cloudflare
@@ -44,7 +44,8 @@ http:
     service-proxmox:
       loadBalancer:
         servers:
-        - url: "http://192.168.1.10:8006"
+        - url: "https://px.wd.ktz.me:8006"
+          scheme: https
   middlewares:
     https-redirect:
       redirectScheme:
