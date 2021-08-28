@@ -44,7 +44,7 @@ http:
     service-proxmox:
       loadBalancer:
         servers:
-        - url: "https://px.wd.ktz.me:8006"
+        - url: "https://px.wd.{{ domain_me }}:8006"
           scheme: https
   middlewares:
     https-redirect:
