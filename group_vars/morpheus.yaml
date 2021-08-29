@@ -80,6 +80,11 @@ syncoid_cron_jobs:
   ## morpheus local jobs
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/$? > /dev/null', name: 'plexmeta', weekday: '*', hour: '*/12' }
 
+# ironicbadger.snapraid
+snapraid_bin_path: /usr/bin/snapraid
+snapraid_cron_jobs:
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_snapraid }}/start && {{ snapraid_run_command }} && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_snapraid }}/$?', name: 'snapraid_runner', weekday: '*', hour: '01' }
+
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases:
   - { alias: "dtail", command: "docker logs -tf --tail='50' " }
