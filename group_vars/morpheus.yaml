@@ -525,7 +525,7 @@ containers:
       - DRONE_GIT_ALWAYS_AUTH=true
       - "DRONE_GITEA_CLIENT_ID={{ drone_gitea_client_id }}"
       - "DRONE_GITEA_CLIENT_SECRET={{ drone_gitea_client_secret }}"
-      - "DRONE_SERVER_HOST=drone.m.{{ domain_me }}"
+      - "DRONE_SERVER_HOST=drone.m.wd.{{ domain_me }}"
       - DRONE_SERVER_PROTO=https
       - DRONE_RPC_SECRET=super-duper-secret
       - "DRONE_USER_CREATE=username:alexktz,admin:true"
