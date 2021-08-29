@@ -78,7 +78,7 @@ syncoid_cron_jobs:
   # not sure if i want to replicate all docker appdata or just a few specific containers... #todo
   
   ## morpheus local jobs
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/$? > /dev/null', name: 'plexmeta', weekday: '*', hour: '*/12' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --name plexmetamanager --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/$? > /dev/null', name: 'plexmeta', weekday: '*', hour: '*/12' }
 
 # ironicbadger.snapraid
 snapraid_bin_path: /usr/bin/snapraid
@@ -799,13 +799,14 @@ containers:
     restart: unless-stopped
   ###
   - service_name: paperless
-    active: false
-    image: alexphillips/paperless-ng
+    active: true
+    image: linuxserver/paperless-ng
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.paperless.rule=Host(`paperless.{{ domain_me }}`)"
+      - "traefik.http.routers.paperless.rule=Host(`paperless.m.wd.{{ domain_me }}`)"
       - traefik.http.routers.paperless.entrypoints=websecure
       - traefik.http.routers.paperless.tls.certresolver=cloudflare
+      - traefik.http.routers.paperless.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/paperless/config:/config"
       - "{{ appdata_path }}/paperless/data:/data"
