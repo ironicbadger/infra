@@ -1,18 +1,18 @@
 ---
-  - hosts: all
-    roles:
-      - role: ironicbadger.ansible_role_bash_aliases
-    tasks:
-      - name: remove ubuntu motd spam
-        become: true
-        file:
-          path: "/etc/update-motd.d/{{ item }}"
-          state: absent
-        loop:
-          - 80-livepatch
-          - 95-hwe-eol
-          - 10-help-text
-        when: ansible_distribution == 'Ubuntu'
+  # - hosts: all
+  #   roles:
+  #     - role: ironicbadger.ansible_role_bash_aliases
+  #   tasks:
+  #     - name: remove ubuntu motd spam
+  #       become: true
+  #       file:
+  #         path: "/etc/update-motd.d/{{ item }}"
+  #         state: absent
+  #       loop:
+  #         - 80-livepatch
+  #         - 95-hwe-eol
+  #         - 10-help-text
+  #       when: ansible_distribution == 'Ubuntu'
 
   - hosts: morpheus
     vars_files:
@@ -69,31 +69,40 @@
     roles:
       - role: ktz-dhcp
 
-  - hosts: quassel
-    roles:
-      #- role: ktz-rh-vpn # not committed for privacy reasons
-      - role: ironicbadger.ansible_role_docker_compose_generator
-        tags: compose
-
-  - hosts: cloud
+  - hosts: elrond
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      - role: grog.package
-      - role: geerlingguy.docker
-      - role: geerlingguy.github-users
-      - role: geerlingguy.security
-      - role: geerlingguy.ntp
-      - role: ktz-sanoid
       - role: ironicbadger.ansible_role_bash_aliases
-      - role: ktz-figurine
       - role: ironicbadger.ansible_role_docker_compose_generator
         tags: compose
-      - role: ktz-traefik
-        tags: compose
-    tasks:
-      - hostname:
-          name: "{{ cloud_hostname }}"
+    # tasks:
+    # - name: Print some debug information 
+    #   vars: 
+    #     msg: |
+    #       Module Variables ("vars"):
+    #       --------------------------------
+    #       {{ vars | to_nice_json }} 
+          
+    #       Environment Variables ("environment"):
+    #       --------------------------------
+    #       {{ environment | to_nice_json }} 
+          
+    #       GROUP NAMES Variables ("group_names"):
+    #       --------------------------------
+    #       {{ group_names | to_nice_json }}
+          
+    #       GROUPS Variables ("groups"):
+    #       --------------------------------
+    #       {{ groups | to_nice_json }}
+          
+    #       HOST Variables ("hostvars"):
+    #       --------------------------------
+    #       {{ hostvars | to_nice_json }} 
+    
+    #   debug: 
+    #     msg: "{{ msg.split('\n') }}"       
+    #   tags: debug_info
 
   - hosts: galgatebst
     vars_files:

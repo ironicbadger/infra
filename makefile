@@ -14,7 +14,13 @@ g:
 	ansible-playbook -b run.yaml --limit galgatebst --ask-become-pass 
 
 gcomp:
-	ansible-playbook run.yaml --limit galgatebst  --tags compose
+	ansible-playbook run.yaml --limit galgatebst --tags compose
+
+elrond:
+	ansible-playbook -b run.yaml --limit elrond --ask-become-pass
+
+elcomp:
+	ansible-playbook -b run.yaml --limit elrond --tags compose --ask-become-pass
 
 m:
 	ansible-playbook -b run.yaml --limit morpheus
