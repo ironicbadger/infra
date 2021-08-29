@@ -521,7 +521,7 @@ containers:
     active: true
     image: drone/drone:latest
     environment:
-      - DRONE_GITEA_SERVER=https://git.ktz.me/
+      - "DRONE_GITEA_SERVER=https://git.{{ domain_me }}/"
       - DRONE_GIT_ALWAYS_AUTH=true
       - "DRONE_GITEA_CLIENT_ID={{ drone_gitea_client_id }}"
       - "DRONE_GITEA_CLIENT_SECRET={{ drone_gitea_client_secret }}"
