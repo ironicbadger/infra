@@ -910,7 +910,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plexmeta
-    active: true
+    active: false
     image: meisnate12/plex-meta-manager
     volumes:
       - "{{ appdata_path }}/plexmeta/config:/config"
