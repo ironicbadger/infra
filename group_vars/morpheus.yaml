@@ -314,6 +314,9 @@ containers:
       - traefik.http.routers.tiddlywiki.tls.certresolver=cloudflare
       - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
       - traefik.http.routers.tiddlywiki.middlewares=authelia@docker
+    environment:
+      - USERNAME=
+      - PASSWORD=
     volumes:
       - "{{ appdata_path }}/tiddlywiki:/var/lib/tiddlywiki"
     restart: unless-stopped
