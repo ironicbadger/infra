@@ -61,7 +61,7 @@ syncoid_cloud_dataset: "demo:tank/appdata"
 syncoid_hc_url: "curl -fsS --retry 3 https://hc.ktz.cloud/ping"
 syncoid_cron_jobs:
   ## cloud to morpheus
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }}/start && {{ syncoid_binary_path }} -r --skip-parent {{ syncoid_cloud_dataset }} tank/backups/cloud && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }}/$? > /dev/null', name: 'cloud_replication', weekday: '*', hour: '*', minute: '*/15' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }}/start && {{ syncoid_binary_path }} -r --skip-parent {{ syncoid_cloud_dataset }} tank/backups/cloud && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }}/$? > /dev/null', name: 'cloud_replication', weekday: '*', hour: '*/6' }
 
   ## morpheus to pennywise data - disabled until initial replication is completed manually (6/21/21)
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/audiobooks p:z2/morpheus/tank/fuse/audiobooks && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }}/$? > /dev/null', name: 'morpheus to pennywise audiobooks', weekday: '*', hour: '1' }
