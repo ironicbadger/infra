@@ -8,8 +8,8 @@
     group: nogroup
     mode: 0777
   with_items: 
-    - "{{ parity_disks }}"
-    - "{{ data_disks }}"
+    - "{{ snapraid_parity_disks }}"
+    - "{{ snapraid_data_disks }}"
     - "{{ extra_mountpoints }}"
 
 - name: mount disks
@@ -21,8 +21,8 @@
     # change to 'mounted' to auto mount
     state: present
   with_items:
-    - "{{ parity_disks }}"
-    - "{{ data_disks }}"
+    - "{{ snapraid_parity_disks }}"
+    - "{{ snapraid_data_disks }}"
     - "{{ extra_mountpoints }}"
   when: item.path != '/mnt/storage'
 

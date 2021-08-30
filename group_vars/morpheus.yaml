@@ -82,7 +82,7 @@ syncoid_cron_jobs:
 
 # ironicbadger.snapraid
 snapraid_bin_path: /usr/bin/snapraid
-snapraid_cron_jobs:
+snapraid_rununer_cron_jobs:
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_snapraid }}/start && {{ snapraid_run_command }} && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_snapraid }}/$?', name: 'snapraid_runner', weekday: '*', hour: '01' }
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
@@ -111,10 +111,12 @@ extra_mountpoints:
   #- { path: /opt, diskbyid: "UUID=cbf30089-2d57-4e83-ad62-763992d0f57a", fs: ext4, opts: "defaults,discard" }
   #- { path: /opt/appdata, diskbyid: "UUID=06c5ccf6-6fd8-4f2a-8213-81107f034c4e", fs: ext4, opts: "defaults,discard" }
 
-parity_disks:
+# ironicbadger.snapraid
+snapraid_runner: true
+snapraid_parity_disks:
   - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJHZW1F-part1, fs: ext4, opts: defaults, content: false }
 
-data_disks:
+snapraid_data_disks:
   - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJJ0K4F-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-HGST_HDN728080ALE604_R6GPPDTY-part1, fs: ext4, opts: defaults, content: true }
   #- { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-ST10000DM0004-2GR11L_ZJV6A8WV-part1, fs: xfs, opts: defaults, content: true }
