@@ -314,6 +314,9 @@ containers:
       - traefik.http.routers.tiddlywiki.tls.certresolver=cloudflare
       - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
       - traefik.http.routers.tiddlywiki.middlewares=authelia@docker
+    environment:
+      - USERNAME=
+      - PASSWORD=
     volumes:
       - "{{ appdata_path }}/tiddlywiki:/var/lib/tiddlywiki"
     restart: unless-stopped
@@ -518,11 +521,11 @@ containers:
     active: true
     image: drone/drone:latest
     environment:
-      - DRONE_GITEA_SERVER=https://git.ktz.me/
+      - "DRONE_GITEA_SERVER=https://git.{{ domain_me }}/"
       - DRONE_GIT_ALWAYS_AUTH=true
       - "DRONE_GITEA_CLIENT_ID={{ drone_gitea_client_id }}"
       - "DRONE_GITEA_CLIENT_SECRET={{ drone_gitea_client_secret }}"
-      - "DRONE_SERVER_HOST=drone.m.{{ domain_me }}"
+      - "DRONE_SERVER_HOST=drone.m.wd.{{ domain_me }}"
       - DRONE_SERVER_PROTO=https
       - DRONE_RPC_SECRET=super-duper-secret
       - "DRONE_USER_CREATE=username:alexktz,admin:true"
