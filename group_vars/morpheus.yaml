@@ -242,7 +242,7 @@ containers:
       - plex
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.tautulli.rule=(Host(`al.{{ domain_me }}`) && PathPrefix(`/tautulli`))"
+      - "traefik.http.routers.tautulli.rule=Host(`tautulli.m.wd.{{ domain_me }}`)"
       - traefik.http.routers.tautulli.entrypoints=websecure
       - traefik.http.routers.tautulli.tls.certresolver=cloudflare
       - traefik.http.services.tautulli.loadbalancer.server.port=8181
@@ -257,11 +257,11 @@ containers:
     image: linuxserver/nzbget
     labels:
       - traefik.enable=true
-      - traefik.http.routers.nzbget.rule=Host(`nzbget.m.wd.{{ domain_me }}`)
+      - "traefik.http.routers.nzbget.rule=Host(`nzbget.m.wd.{{ domain_me }}`)"
       - traefik.http.routers.nzbget.entrypoints=websecure
       - traefik.http.routers.nzbget.tls.certresolver=cloudflare
       - traefik.http.routers.nzbget.middlewares=authelia@docker
-      - traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.{{ domain_me }}`)
+      - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.{{ domain_me }}`)"
       - traefik.http.routers.nzbgetapi.entrypoints=websecure
       - traefik.http.routers.nzbgetapi.tls.certresolver=cloudflare
     volumes:
@@ -956,7 +956,19 @@ containers:
       - "WYZE_EMAIL={{ wyze_email }}"
       - "WYZE_PASSWORD={{ wyze_password }}"
     restart: unless-stopped
-
+  ###
+  - service_name: dozzle
+    active: true
+    image: amir20/dozzle
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.dozzle.rule=Host(`dozzle.m.wd.{{ domain_me }}`)"
+      - traefik.http.routers.dozzle.entrypoints=websecure
+      - traefik.http.routers.dozzle.tls.certresolver=cloudflare
+      - traefik.http.services.dozzle.loadbalancer.server.port=8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
 
   # template for docker-compose services
   #
