@@ -58,27 +58,27 @@ package_list:
 sanoid_build_from_source: true
 sanoid_config_source: sanoid-morpheus.conf
 syncoid_cloud_dataset: "demo:tank/appdata"
-syncoid_hc_url: "curl -fsS --retry 3 https://hc.ktz.cloud/ping"
+syncoid_hc_url: "curl -fsS -m 10 --retry 5 -o /dev/null https://hc.{{ domain_cloud }}/ping"
 syncoid_cron_jobs:
   ## cloud to morpheus
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }}/start && {{ syncoid_binary_path }} -r --skip-parent {{ syncoid_cloud_dataset }} tank/backups/cloud && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }}/$? > /dev/null', name: 'cloud_replication', weekday: '*', hour: '*/6' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }}/start && {{ syncoid_binary_path }} -r --skip-parent {{ syncoid_cloud_dataset }} tank/backups/cloud | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }} --data-binary "@-"', name: 'cloud_replication', weekday: '*', hour: '*/6' }
 
   ## morpheus to pennywise data - disabled until initial replication is completed manually (6/21/21)
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/audiobooks p:z2/morpheus/tank/fuse/audiobooks && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }}/$? > /dev/null', name: 'morpheus to pennywise audiobooks', weekday: '*', hour: '1' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/documents p:z2/morpheus/tank/fuse/documents && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }}/$? > /dev/null', name: 'morpheus to pennywise documents', weekday: '*', hour: '3' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/drone p:z2/morpheus/tank/fuse/drone && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }}/$? > /dev/null', name: 'morpheus to pennywise drone', weekday: '*', hour: '5',  }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/music p:z2/morpheus/tank/fuse/music && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }}/$? > /dev/null', name: 'morpheus to pennywise music', weekday: '*', hour: '7' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/photos p:z2/morpheus/tank/fuse/photos && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }}/$? > /dev/null', name: 'morpheus to pennywise photos', weekday: '*', hour: '9' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/podcast p:z2/morpheus/tank/fuse/podcast && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }}/$? > /dev/null', name: 'morpheus to pennywise podcast', weekday: '*', hour: '11' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/software p:z2/morpheus/tank/fuse/software && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }}/$? > /dev/null', name: 'morpheus to pennywise software', weekday: '*', hour: '13' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/sports p:z2/morpheus/tank/fuse/sports && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }}/$? > /dev/null', name: 'morpheus to pennywise sports', weekday: '*', hour: '15' }
-  # - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/videos p:z2/morpheus/tank/fuse/videos && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }}/$? > /dev/null', name: 'morpheus to pennywise videos', weekday: '*', hour: '17' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/audiobooks p:z2/morpheus/tank/fuse/audiobooks | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }} --data-binary "@-"', name: 'morpheus to pennywise audiobooks', weekday: '*', hour: '1' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/documents p:z2/morpheus/tank/fuse/documents | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }} --data-binary "@-"', name: 'morpheus to pennywise documents', weekday: '*', hour: '3' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/drone p:z2/morpheus/tank/fuse/drone | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }} --data-binary "@-"', name: 'morpheus to pennywise drone', weekday: '*', hour: '5',  }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/music p:z2/morpheus/tank/fuse/music | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }} --data-binary "@-"', name: 'morpheus to pennywise music', weekday: '*', hour: '7' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/photos p:z2/morpheus/tank/fuse/photos | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }} --data-binary "@-"', name: 'morpheus to pennywise photos', weekday: '*', hour: '9' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/podcast p:z2/morpheus/tank/fuse/podcast | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }} --data-binary "@-"', name: 'morpheus to pennywise podcast', weekday: '*', hour: '11' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/software p:z2/morpheus/tank/fuse/software | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }} --data-binary "@-"', name: 'morpheus to pennywise software', weekday: '*', hour: '13' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/sports p:z2/morpheus/tank/fuse/sports | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }} --data-binary "@-"', name: 'morpheus to pennywise sports', weekday: '*', hour: '15' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/videos p:z2/morpheus/tank/fuse/videos | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }} --data-binary "@-"', name: 'morpheus to pennywise videos', weekday: '*', hour: '22', minute: '42' }
 
   ## morpheus to pennywise docker appdata - disabled until initial replication is completed manually (6/21/21)
   # not sure if i want to replicate all docker appdata or just a few specific containers... #todo
   
   ## morpheus local jobs
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --name plexmetamanager --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/$? > /dev/null', name: 'plexmeta', weekday: '*/1' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --name plexmetamanager --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }} --data-binary "@-"', name: 'plexmeta', weekday: '*/1' }
 
 # ironicbadger.snapraid
 snapraid_bin_path: /usr/bin/snapraid
@@ -263,7 +263,7 @@ containers:
       - traefik.http.routers.nzbget.entrypoints=websecure
       - traefik.http.routers.nzbget.tls.certresolver=cloudflare
       - traefik.http.routers.nzbget.middlewares=authelia@docker
-      - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.{{ domain_me }}`)"
+      - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.wd.{{ domain_me }}`)"
       - traefik.http.routers.nzbgetapi.entrypoints=websecure
       - traefik.http.routers.nzbgetapi.tls.certresolver=cloudflare
     volumes:
