@@ -72,10 +72,12 @@ syncoid_cron_jobs:
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/podcast p:z2/morpheus/tank/fuse/podcast | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }} --data-binary "@-"', name: 'morpheus to pennywise podcast', weekday: '*', hour: '11' }
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/software p:z2/morpheus/tank/fuse/software | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }} --data-binary "@-"', name: 'morpheus to pennywise software', weekday: '*', hour: '13' }
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/sports p:z2/morpheus/tank/fuse/sports | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }} --data-binary "@-"', name: 'morpheus to pennywise sports', weekday: '*', hour: '15' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/videos p:z2/morpheus/tank/fuse/videos | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }} --data-binary "@-"', name: 'morpheus to pennywise videos', weekday: '*', hour: '22', minute: '42' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/videos p:z2/morpheus/tank/fuse/videos | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }} --data-binary "@-"', name: 'morpheus to pennywise videos', weekday: '*', hour: '22' }
 
   ## morpheus to pennywise docker appdata - disabled until initial replication is completed manually (6/21/21)
-  # not sure if i want to replicate all docker appdata or just a few specific containers... #todo
+  # to exclude a dataset use "zfs set syncoid:no-sync=true tank/dataset"
+  #  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_ }}/start && {{ syncoid_binary_path }} -r --skip-parent --exclude influxdb --source-bwlimit=2M nvme2tb/appdata p:z2/morpheus/backups/appdata | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_ }} --data-binary "@-"', name: 'morpheus to pennywise appdata', weekday: '*', hour: '17' }
+
   
   ## morpheus local jobs
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --name plexmetamanager --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }} --data-binary "@-"', name: 'plexmeta', weekday: '*/1' }
