@@ -807,7 +807,8 @@ containers:
   ###
   - service_name: paperless
     active: true
-    image: linuxserver/paperless-ng
+    #image: linuxserver/paperless-ng
+    image: ibpaperless
     labels:
       - traefik.enable=true
       - "traefik.http.routers.paperless.rule=Host(`paperless.m.wd.{{ domain_me }}`)"
