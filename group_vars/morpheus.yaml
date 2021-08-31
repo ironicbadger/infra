@@ -76,7 +76,7 @@ syncoid_cron_jobs:
 
   ## morpheus to pennywise docker appdata - disabled until initial replication is completed manually (6/21/21)
   # to exclude a dataset use "zfs set syncoid:no-sync=true tank/dataset"
-  #  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_ }}/start && {{ syncoid_binary_path }} -r --skip-parent --exclude influxdb --source-bwlimit=2M nvme2tb/appdata p:z2/morpheus/backups/appdata | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_ }} --data-binary "@-"', name: 'morpheus to pennywise appdata', weekday: '*', hour: '17' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_ }}/start && {{ syncoid_binary_path }} -r --skip-parent --exclude influxdb --source-bwlimit=2M nvme2tb/appdata p:z2/morpheus/backups/appdata | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_ }} --data-binary "@-"', name: 'morpheus to pennywise appdata', weekday: '*', hour: '17' }
 
   
   ## morpheus local jobs
