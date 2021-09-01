@@ -31,11 +31,6 @@ containers:
       - 443:443
       - 8080:8080
     command:
-      - --log.level=info
-      - --accesslog=false
-      - --api.insecure=false
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
@@ -43,10 +38,8 @@ containers:
       - --certificatesresolvers.cloudflare.acme.dnschallenge=true
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
       - "--certificatesresolvers.cloudflare.acme.email={{ cloudflare_account_email }}"
-      - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
-      - --serversTransport.insecureSkipVerify=true
     volumes:
-      - "{{ appdata_path }}/traefik/letsencrypt:/letsencrypt"
+      - "{{ appdata_path }}/traefik/config:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:
       - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
@@ -66,24 +59,42 @@ containers:
   - service_name: minio
     active: true
     image: minio/minio
-    # command: 
-    #   - server /data
     labels:
       - traefik.enable=true
       - "traefik.http.routers.minio.rule=Host(`minio.el.gg.{{ domain_me }}`)"
       - traefik.http.routers.minio.entrypoints=websecure
       - traefik.http.routers.minio.tls.certresolver=cloudflare
-      - traefik.http.services.minio.loadbalancer.server.port=9000
     command:
       - server 
       - /data 
-      - --console-address ':9001'
+      - --address 
+      - "0.0.0.0:9000" 
+      - --console-address 
+      - "0.0.0.0:9001"
     volumes:
       - "/volume1/minio:/data"
     ports:
       - 9000:9000
       - 9001:9001
     environment:
-      - MINIO_ACCESS_KEY=accesskey
-      - MINIO_SECRET_KEY=secretkey
+      - "MINIO_ROOT_USER={{ elrond_minio_root_user }}"
+      - "MINIO_ROOT_PASSWORD={{ elrond_minio_root_password }}"
     restart: unless-stopped
+  ###
+  - service_name: netdata
+    active: true
+    image: netdata/netdata
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.netdata.rule=Host(`netdata.el.gg.{{ domain_me }}`)"
+      - traefik.http.routers.netdata.entrypoints=websecure
+      - traefik.http.routers.netdata.tls.certresolver=cloudflare
+      - traefik.http.services.netdata.loadbalancer.server.port=19999
+    cap_add:
+      - SYS_PTRACE
+    volumes:
+      - "{{ appdata_path }}/netdata:/etc/netdata"
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
