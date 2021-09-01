@@ -84,6 +84,7 @@ containers:
   - service_name: netdata
     active: true
     image: netdata/netdata
+    hostname: "{{ ansible_hostname }}"
     labels:
       - traefik.enable=true
       - "traefik.http.routers.netdata.rule=Host(`netdata.el.gg.{{ domain_me }}`)"
