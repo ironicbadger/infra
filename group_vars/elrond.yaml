@@ -1,6 +1,7 @@
 ---
 
 ntp_timezone: Europe/London
+local_domain: "el.gg.{{ domain_me }}"
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases_file: /var/services/homes/alexktz/.bashrc
@@ -51,7 +52,7 @@ containers:
     image: nginx
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.nginxtest.rule=Host(`test.el.gg.{{ domain_me }}`)"
+      - "traefik.http.routers.nginxtest.rule=Host(`test.{{ local_domain }}`)"
       - traefik.http.routers.nginxtest.entrypoints=websecure
       - traefik.http.routers.nginxtest.tls.certresolver=cloudflare
     restart: unless-stopped
@@ -61,7 +62,7 @@ containers:
     image: minio/minio
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.minio.rule=Host(`minio.el.gg.{{ domain_me }}`)"
+      - "traefik.http.routers.minio.rule=Host(`minio.{{ local_domain }}`)"
       - traefik.http.routers.minio.entrypoints=websecure
       - traefik.http.routers.minio.tls.certresolver=cloudflare
     command:
@@ -87,7 +88,7 @@ containers:
     hostname: "{{ ansible_hostname }}"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.netdata.rule=Host(`netdata.el.gg.{{ domain_me }}`)"
+      - "traefik.http.routers.netdata.rule=Host(`netdata.{{ local_domain }}`)"
       - traefik.http.routers.netdata.entrypoints=websecure
       - traefik.http.routers.netdata.tls.certresolver=cloudflare
       - traefik.http.services.netdata.loadbalancer.server.port=19999
