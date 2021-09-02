@@ -100,3 +100,42 @@ containers:
       - /etc/group:/host/etc/group:ro
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
+  ###
+  - service_name: photostructure
+    active: true
+    image: photostructure/server:stable
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.photostructure.rule=Host(`photostructure.{{ local_domain }}`)"
+      - traefik.http.routers.photostructure.entrypoints=websecure
+      - traefik.http.routers.photostructure.tls.certresolver=cloudflare
+      - traefik.http.services.photostructure.loadbalancer.server.port=1787
+    volumes:
+      - "{{ appdata_path }}/photostructure:/ps/config"
+      - /volume2/appdata/photostructure/tmp:/ps/tmp
+      - /volume2/appdata/photostructure/logs:/ps/logs
+      - /volume1/storage/photos/mum/images:/ps/library
+      - /volume1/storage/photos/mum/unsorted:/var/mum/unsorted
+    include_global_env_vars: true
+    restart: unless-stopped
+
+
+
+  ###
+  # - service_name:
+  #   active: false
+  #   image:
+  #   container_name: #optional - only required if diff to service_name
+  #   labels:
+  #     - traefik.enable=true
+  #     - "traefik.http.routers.XXXXXXXX.rule=Host(`plex.{{ domain_me }}`)"
+  #     - traefik.http.routers.XXXXXXX.entrypoints=websecure
+  #     - traefik.http.routers.XXXXXXX.tls.certresolver=cloudflare
+  #     - traefik.http.services.XXXXXXX.loadbalancer.server.port=80
+  #     #- traefik.http.routers.XXXXXXX.middlewares=authelia@docker
+  #   volumes:
+  #     - "{{ appdata_path }}/app:/config"
+  #   environment:
+  #     -
+  #   include_global_env_vars: #optional - defaults to false
+  #   restart: unless-stopped
