@@ -54,6 +54,71 @@ package_list:
   - name: xfsprogs
   - name: zfsutils-linux
 
+## snapraid
+snapraid_config_excludes:
+  - "*.unrecoverable"
+  - "/tmp/"
+  - "/lost+found/"
+  - "downloads/"
+  - "appdata/"
+  - "*.!sync"
+  - ".AppleDouble"
+  - "._AppleDouble"
+  - ".DS_Store"
+  - "._.DS_Store"
+  - ".Thumbs.db"
+  - ".fseventsd"
+  - ".Spotlight-V100"
+  - ".TemporaryItems"
+  - ".Trashes"
+  - ".AppleDB"
+
+## telegraf
+telegraf_plugins_base:
+  - name: mem
+  - name: system
+  - name: cpu
+    options:
+      percpu: "true"
+      totalcpu: "true"
+      collect_cpu_time: "false"
+      report_active: "false"
+  - name: disk
+    options:
+      ignore_fs:
+        - "tmpfs"
+        - "devtmpfs"
+        - "devfs"
+      mountpoints:
+        - "/"
+        - "/mnt/disk1"
+        - "/mnt/disk2"
+        - "/mnt/disk3"
+        - "/mnt/disk4"
+        - "/mnt/disk5"
+        - "/mnt/disk6"
+        - "/mnt/disk7"
+        - "/mnt/disk8"
+        - "/mnt/disk9"
+        - "/mnt/parity1"
+        - "/mnt/parity2"
+        - "/mnt/storage"
+        - "/mnt/tank"
+  - name: diskio
+    options:
+      skip_serial_number: "true"
+  - name: kernel
+  - name: processes
+  - name: docker
+    options:
+      endpoint: "unix:///var/run/docker.sock"
+      perdevice: "true"
+  - name: hddtemp
+  - name: net
+    options:
+      interfaces:
+        - "ens192"
+
 # ktz-sanoid
 sanoid_build_from_source: true
 sanoid_config_source: sanoid-morpheus.conf
@@ -85,6 +150,27 @@ syncoid_cron_jobs:
 snapraid_bin_path: /usr/bin/snapraid
 snapraid_rununer_cron_jobs:
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_snapraid }}/start && {{ snapraid_run_command }} && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_snapraid }}/$?', name: 'snapraid_runner', weekday: '*', hour: '01' }
+
+# ktz-autorestic
+simple_autorestic_decrypt: true
+
+autorestic_locations:
+  - name: audiobooks
+    from: /mnt/tank/fuse/audiobooks
+    to: 
+      - morpheus-audiobooks
+autorestic_backends:
+  - name: "{{ elrond_minio_bucket_audiobooks | selectattr('name', 'defined') | map(attribute='name') }}"
+    type: s3
+    path: "https://minio.el.gg.{{ domain_me }}/morpheus-audiobooks"
+    key: some-random-password-198rc79r8y1029c8yfewj8f1u0ef87yh198uoieufy
+    env:
+      - "AWS_ACCESS_KEY_ID: elrondkey"
+      - "AWS_SECRET_ACCESS_KEY: elrondkey"
+
+
+      #docker_users: "{{ users|selectattr('docker', 'defined')|map(attribute='username') }}"
+
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases:
@@ -994,69 +1080,3 @@ containers:
   #     -
   #   include_global_env_vars: #optional - defaults to false
   #   restart: unless-stopped
-
-
-## snapraid
-snapraid_config_excludes:
-  - "*.unrecoverable"
-  - "/tmp/"
-  - "/lost+found/"
-  - "downloads/"
-  - "appdata/"
-  - "*.!sync"
-  - ".AppleDouble"
-  - "._AppleDouble"
-  - ".DS_Store"
-  - "._.DS_Store"
-  - ".Thumbs.db"
-  - ".fseventsd"
-  - ".Spotlight-V100"
-  - ".TemporaryItems"
-  - ".Trashes"
-  - ".AppleDB"
-
-## telegraf
-telegraf_plugins_base:
-  - name: mem
-  - name: system
-  - name: cpu
-    options:
-      percpu: "true"
-      totalcpu: "true"
-      collect_cpu_time: "false"
-      report_active: "false"
-  - name: disk
-    options:
-      ignore_fs:
-        - "tmpfs"
-        - "devtmpfs"
-        - "devfs"
-      mountpoints:
-        - "/"
-        - "/mnt/disk1"
-        - "/mnt/disk2"
-        - "/mnt/disk3"
-        - "/mnt/disk4"
-        - "/mnt/disk5"
-        - "/mnt/disk6"
-        - "/mnt/disk7"
-        - "/mnt/disk8"
-        - "/mnt/disk9"
-        - "/mnt/parity1"
-        - "/mnt/parity2"
-        - "/mnt/storage"
-        - "/mnt/tank"
-  - name: diskio
-    options:
-      skip_serial_number: "true"
-  - name: kernel
-  - name: processes
-  - name: docker
-    options:
-      endpoint: "unix:///var/run/docker.sock"
-      perdevice: "true"
-  - name: hddtemp
-  - name: net
-    options:
-      interfaces:
-        - "ens192"
