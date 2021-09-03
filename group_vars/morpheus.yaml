@@ -141,7 +141,7 @@ syncoid_cron_jobs:
 
   ## morpheus to pennywise docker appdata
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_appdata }}/start && {{ syncoid_binary_path }} -r --skip-parent --exclude influxdb --source-bwlimit=2M nvme2tb/appdata p:z2/morpheus/backups/appdata | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_appdata }} --data-binary "@-"', name: 'morpheus to pennywise appdata', weekday: '*', hour: '11' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_backups }}/start && {{ syncoid_binary_path }} -r --source-bwlimit=2M tank/backups p:z2/morpheus/tank/backups | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_backups }} --data-binary "@-"', name: 'morpheus to pennywise appdata', weekday: '*', hour: '12' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_backups }}/start && {{ syncoid_binary_path }} -r --source-bwlimit=2M --no-sync-snap tank/backups p:z2/morpheus/tank/backups | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_backups }} --data-binary "@-"', name: 'morpheus to pennywise backups', weekday: '*', hour: '12' }
 
   ## morpheus local jobs
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --name plexmetamanager --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }} --data-binary "@-"', name: 'plexmeta', weekday: '*/1' }
