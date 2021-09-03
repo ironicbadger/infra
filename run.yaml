@@ -91,3 +91,14 @@
     tasks:
       - hostname:
           name: "galgatebst"
+
+  - hosts: vpnwd
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: grog.package
+      - role: ktz-boot-notification
+      - role: ktz-figurine
+    tasks:
+      - hostname:
+          name: "vpnwd"

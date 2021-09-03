@@ -1,0 +1,21 @@
+---
+
+# grog.package
+package_list:
+  - name: bash-completion
+  - name: curl
+  - name: git
+  - name: htop
+  - name: iftop
+  - name: mc
+  - name: ncdu
+  - name: net-tools
+  - name: nmap
+  - name: python3
+  - name: python-setuptools
+  - name: qemu-guest-agent
+  - name: sudo
+  - name: tmux
+  - name: tree
+  - name: wget
+
