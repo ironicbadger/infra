@@ -113,7 +113,6 @@ containers:
     ports:
       - 53:53/tcp
       - 53:53/udp
-      - 3000:3000
     volumes:
       - "{{ appdata_path }}/adguardhome/work:/opt/adguardhome/work"
       - "{{ appdata_path }}/adguardhome/config:/opt/adguardhome/conf"
