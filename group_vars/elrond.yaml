@@ -101,6 +101,24 @@ containers:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
   ###
+  - service_name: adguard
+    active: true
+    image: adguard/adguardhome
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.adguard.rule=Host(`adguard.{{ local_domain }}`)"
+      - traefik.http.routers.adguard.entrypoints=websecure
+      - traefik.http.routers.adguard.tls.certresolver=cloudflare
+      - traefik.http.services.adguard.loadbalancer.server.port=8080
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+      - 3000:3000
+    volumes:
+      - "{{ appdata_path }}/adguardhome/work:/opt/adguardhome/work"
+      - "{{ appdata_path }}/adguardhome/config:/opt/adguardhome/conf"
+    restart: unless-stopped
+  ###
   - service_name: photostructure
     active: true
     image: photostructure/server:stable
