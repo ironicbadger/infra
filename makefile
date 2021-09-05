@@ -31,6 +31,12 @@ mrepl:
 mcomp:
 	ansible-playbook run.yaml --limit morpheus --tags compose
 
+p:
+	ansible-playbook -b run.yaml --limit pennywise
+
+pcomp:
+	ansible-playbook run.yaml --limit pennywise --tags compose
+
 q:
 	ansible-playbook -b run.yaml --limit quassel --ask-become-pass 
 

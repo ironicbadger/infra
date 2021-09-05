@@ -1,11 +1,104 @@
 
-zpool create z2 raidz2 -m /mnt/z2 -o ashift=12 /dev/disk/by-id/ata-HGST_HDN728080ALE604_VJH35HDX /dev/disk/by-id/ata-HGST_HUH728080ALE600_VKGKGEVX /dev/disk/by-id/ata-WDC_WD80EMAZ-00WJTA0_7SGRVHYC /dev/disk/by-id/ata-WDC_WD80EZZX-11CSGA0_VK0U9B3Y
+# zpool create z2 raidz2 -m /mnt/z2 -o ashift=12 /dev/disk/by-id/ata-HGST_HDN728080ALE604_VJH35HDX /dev/disk/by-id/ata-HGST_HUH728080ALE600_VKGKGEVX /dev/disk/by-id/ata-WDC_WD80EMAZ-00WJTA0_7SGRVHYC /dev/disk/by-id/ata-WDC_WD80EZZX-11CSGA0_VK0U9B3Y
 
-# zfs raidz2
-## in use
-/dev/disk/by-id/ata-HGST_HDN728080ALE604_VJH35HDX
-/dev/disk/by-id/ata-HGST_HUH728080ALE600_VKGKGEVX
-/dev/disk/by-id/ata-WDC_WD80EMAZ-00WJTA0_7SGRVHYC
-/dev/disk/by-id/ata-WDC_WD80EZZX-11CSGA0_VK0U9B3Y
-## spare
-/dev/disk/by-id/ata-ST8000AS0002-1NA17Z_Z8411V1G
+# # zfs raidz2
+# ## in use
+# /dev/disk/by-id/ata-HGST_HDN728080ALE604_VJH35HDX
+# /dev/disk/by-id/ata-HGST_HUH728080ALE600_VKGKGEVX
+# /dev/disk/by-id/ata-WDC_WD80EMAZ-00WJTA0_7SGRVHYC
+# /dev/disk/by-id/ata-WDC_WD80EZZX-11CSGA0_VK0U9B3Y
+# ## spare
+# /dev/disk/by-id/ata-ST8000AS0002-1NA17Z_Z8411V1G
+
+# geerlingguy.ntp
+ntp_timezone: "Europe/London"
+
+# ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
+bash_aliases:
+  - { alias: "dtail", command: "docker logs -tf --tail='50' " }
+  - { alias: "dstop", command: "docker stop `docker ps -aq`" }
+  - { alias: "drm", command: "docker rm `docker ps -aq`" }
+  - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml "}
+  - { alias: "dcporph", command: "docker-compose -f ~/docker-compose.yml --remove-orphans "}
+  - { alias: "dprune", command: "docker image prune" }
+  - { alias: "dprunesys", command: "docker system prune --all" }
+  - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop"}
+  - { alias: "appdata", command: "cd /home/alex/appdata" }
+  - { alias: "zspace", command: "zfs list -o space" }
+  - { alias: "zsnap", command: "zfs list -t snapshot" }
+  - { alias: "dfclean", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs"}
+  - { alias: "hdtemp", command: "sudo hddtemp /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]"}
+  - { alias: "nvmetemp", command: "for i in {0..3}; do nvme smart-log /dev/nvme'$i'n1 | grep temperature; done;"}
+
+
+# ironicbadger.docker_compose_generator
+appdata_path: /home/alex/appdata
+local_domain: "bn.{{ domain_me }}"
+containers:
+  ###
+  - service_name: tr
+    active: true
+    image: traefik
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    extra_hosts:
+      - host.docker.internal:172.17.0.1
+    environment:
+      - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
+      - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
+    volumes:
+      - "{{ appdata_path }}/traefik:/etc/traefik"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: unless-stopped
+  ###
+  - service_name: plex
+    active: true
+    image: plexinc/pms-docker
+    network_mode: host
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.plex.rule=Host(`plex.{{ local_domain }}`)"
+      - traefik.http.routers.plex.entrypoints=websecure
+      - traefik.http.routers.plex.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/plex/config:/config"
+      - /mnt/z2/tv/recordings:/data
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: photostructure
+    active: true
+    image: photostructure/server:stable
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.photostructure.rule=Host(`photostructure.{{ local_domain }}`)"
+      - traefik.http.routers.photostructure.entrypoints=websecure
+      - traefik.http.routers.photostructure.tls.certresolver=cloudflare
+      - traefik.http.services.photostructure.loadbalancer.server.port=1787
+    volumes:
+      - "{{ appdata_path }}/photostructure:/ps/config"
+      - "{{ appdata_path }}/photostructure/tmp:/ps/tmp"
+      - "{{ appdata_path }}/photostructure/logs:/ps/logs"
+      - /mnt/z2/pennywise/photos/geoff/sorted:/ps/library
+      - /mnt/z2/pennywise/photos/geoff/unsorted:/var/geoff/unsorted
+    include_global_env_vars: true
+    restart: unless-stopped
+    ###
+  - service_name: adguard
+    active: false
+    image: adguard/adguardhome
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.adguard.rule=Host(`adguard.{{ local_domain }}`)"
+      - traefik.http.routers.adguard.entrypoints=websecure
+      - traefik.http.routers.adguard.tls.certresolver=cloudflare
+      - traefik.http.services.adguard.loadbalancer.server.port=8080
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+    volumes:
+      - "{{ appdata_path }}/adguardhome/work:/opt/adguardhome/work"
+      - "{{ appdata_path }}/adguardhome/config:/opt/adguardhome/conf"
+    restart: unless-stopped
