@@ -873,25 +873,25 @@ containers:
 ###
   - service_name: frigate
     active: false
-    image: blakeblackshear/frigate:stable-amd64
+    image: blakeblackshear/frigate:0.9.0-rc2-amd64
     privileged: true
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.frigate.rule=Host(`frigate.{{ domain_me }}`)"
+      - "traefik.http.routers.frigate.rule=Host(`frigate.m.wd.{{ domain_me }}`)"
       - traefik.http.routers.frigate.entrypoints=websecure
       - traefik.http.routers.frigate.tls.certresolver=cloudflare
-      - traefik.http.services.frigate.loadbalancer.server.port=5001
+      - traefik.http.services.frigate.loadbalancer.server.port=5000
     volumes:
       - "{{ appdata_path }}/frigate/config:/config:ro"
-      - /etc/localtime:/etc/localtime:ro
       - /opt/frigate:/media/frigate
+      - /etc/localtime:/etc/localtime:ro
     environment:
       - "FRIGATE_RTSP_PASSWORD='password'"
     ports:
-      - '5001:5000'
-      - '1935:1935' # RTMP feeds
+      - '5000:5000'
     devices:
-      - /dev/dri
+      - /dev/bus/usb:/dev/bus/usb
+      - /dev/dri/renderD128
     restart: unless-stopped
   ###
   - service_name: paperless
@@ -921,7 +921,9 @@ containers:
       - traefik.http.routers.mealie.rule=Host(`mealie.m.wd.{{ domain_me }}`)
       - traefik.http.routers.mealie.entrypoints=websecure
       - traefik.http.routers.mealie.tls.certresolver=cloudflare
-      - traefik.http.services.mealie.loadbalancer.server.port=80
+      #- traefik.http.services.mealie.loadbalancer.server.port=80
+    ports:
+      - 8881:80
     environment:
       - DB_TYPE=sqlite
     volumes:
