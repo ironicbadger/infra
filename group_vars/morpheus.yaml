@@ -969,6 +969,20 @@ containers:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+  ###
+  - service_name: babybuddy
+    active: false
+    image: linuxserver/babybuddy
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.babybuddy.rule=Host(`babybuddy.m.wd.{{ domain_me }}`)"
+      - traefik.http.routers.babybuddy.entrypoints=websecure
+      - traefik.http.routers.babybuddy.tls.certresolver=cloudflare
+      #- traefik.http.services.dozzle.loadbalancer.server.port=8080
+    volumes:
+      - "{{ appdata_path }}/babybuddy:/config" 
+    include_global_env_vars: true
+    restart: unless-stopped
 
   # template for docker-compose services
   #
