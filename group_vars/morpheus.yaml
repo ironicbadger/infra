@@ -994,7 +994,7 @@ containers:
       - "{{ appdata_path }}/sui:/config"
     environment:
       - PROTOCOL=http
-      - "DOMAIN=sui.{{ domain_me }}"
+      - "DOMAIN=sui.m.wd.{{ domain_me }}"
     include_global_env_vars: true
     restart: unless-stopped
   ###
