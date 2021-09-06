@@ -915,7 +915,7 @@ containers:
 ###
   - service_name: mealie
     active: true
-    image: hkotel/mealie
+    image: hkotel/mealie:v0.5.1
     labels:
       - traefik.enable=true
       - traefik.http.routers.mealie.rule=Host(`mealie.m.wd.{{ domain_me }}`)
