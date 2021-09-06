@@ -1,0 +1,12 @@
+---
+
+- name: get latest autorestic release
+  uri:                                                               
+    url: https://api.github.com/repos/cupcakearmy/autorestic/releases/latest
+    return_content: true                                             
+  register: json_reponse                                             
+
+- name: download latest release
+  get_url:                                                           
+    url: "{{ json_reponse.json.browser_download_url }}"                       
+    dest: /tmp/autorestic-latest.tar.gz

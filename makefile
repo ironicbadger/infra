@@ -43,8 +43,8 @@ cloudcomp:
 fancontrol:
 	ansible-playbook -b run.yaml --limit fancontrol 
 
-devbox:
-	ansible-playbook -b run.yaml --limit dev 
+vpnwd:
+	ansible-playbook -b run.yaml --limit vpnwd --ask-become-pass 
 
 dhcp:
 	ansible-playbook -b run.yaml --limit dhcp 

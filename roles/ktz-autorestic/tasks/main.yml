@@ -1,0 +1,7 @@
+---
+
+# - name: install autorestic
+#   include: install.yml
+
+- name: configure autorestic
+  include: configure.yml

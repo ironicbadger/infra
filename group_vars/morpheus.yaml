@@ -54,36 +54,127 @@ package_list:
   - name: xfsprogs
   - name: zfsutils-linux
 
+## snapraid
+snapraid_config_excludes:
+  - "*.unrecoverable"
+  - "/tmp/"
+  - "/lost+found/"
+  - "downloads/"
+  - "appdata/"
+  - "*.!sync"
+  - ".AppleDouble"
+  - "._AppleDouble"
+  - ".DS_Store"
+  - "._.DS_Store"
+  - ".Thumbs.db"
+  - ".fseventsd"
+  - ".Spotlight-V100"
+  - ".TemporaryItems"
+  - ".Trashes"
+  - ".AppleDB"
+
+## telegraf
+telegraf_plugins_base:
+  - name: mem
+  - name: system
+  - name: cpu
+    options:
+      percpu: "true"
+      totalcpu: "true"
+      collect_cpu_time: "false"
+      report_active: "false"
+  - name: disk
+    options:
+      ignore_fs:
+        - "tmpfs"
+        - "devtmpfs"
+        - "devfs"
+      mountpoints:
+        - "/"
+        - "/mnt/disk1"
+        - "/mnt/disk2"
+        - "/mnt/disk3"
+        - "/mnt/disk4"
+        - "/mnt/disk5"
+        - "/mnt/disk6"
+        - "/mnt/disk7"
+        - "/mnt/disk8"
+        - "/mnt/disk9"
+        - "/mnt/parity1"
+        - "/mnt/parity2"
+        - "/mnt/storage"
+        - "/mnt/tank"
+  - name: diskio
+    options:
+      skip_serial_number: "true"
+  - name: kernel
+  - name: processes
+  - name: docker
+    options:
+      endpoint: "unix:///var/run/docker.sock"
+      perdevice: "true"
+  - name: hddtemp
+  - name: net
+    options:
+      interfaces:
+        - "ens192"
+
 # ktz-sanoid
 sanoid_build_from_source: true
 sanoid_config_source: sanoid-morpheus.conf
 syncoid_cloud_dataset: "demo:tank/appdata"
-syncoid_hc_url: "curl -fsS --retry 3 https://hc.ktz.cloud/ping"
+syncoid_hc_url: "curl -fsS -m 10 --retry 5 -o /dev/null https://hc.{{ domain_cloud }}/ping"
 syncoid_cron_jobs:
   ## cloud to morpheus
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }}/start && {{ syncoid_binary_path }} -r --skip-parent {{ syncoid_cloud_dataset }} tank/backups/cloud && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }}/$? > /dev/null', name: 'cloud_replication', weekday: '*', hour: '*', minute: '*/15' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }}/start && {{ syncoid_binary_path }} -r --skip-parent {{ syncoid_cloud_dataset }} tank/backups/cloud | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }} --data-binary "@-"', name: 'cloud_replication', weekday: '*', hour: '*/6' }
 
-  ## morpheus to pennywise data - disabled until initial replication is completed manually (6/21/21)
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/audiobooks p:z2/morpheus/tank/fuse/audiobooks && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }}/$? > /dev/null', name: 'morpheus to pennywise audiobooks', weekday: '*', hour: '1' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/documents p:z2/morpheus/tank/fuse/documents && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }}/$? > /dev/null', name: 'morpheus to pennywise documents', weekday: '*', hour: '3' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/drone p:z2/morpheus/tank/fuse/drone && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }}/$? > /dev/null', name: 'morpheus to pennywise drone', weekday: '*', hour: '5',  }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/music p:z2/morpheus/tank/fuse/music && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }}/$? > /dev/null', name: 'morpheus to pennywise music', weekday: '*', hour: '7' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/photos p:z2/morpheus/tank/fuse/photos && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }}/$? > /dev/null', name: 'morpheus to pennywise photos', weekday: '*', hour: '9' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/podcast p:z2/morpheus/tank/fuse/podcast && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }}/$? > /dev/null', name: 'morpheus to pennywise podcast', weekday: '*', hour: '11' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/software p:z2/morpheus/tank/fuse/software && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }}/$? > /dev/null', name: 'morpheus to pennywise software', weekday: '*', hour: '13' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/sports p:z2/morpheus/tank/fuse/sports && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }}/$? > /dev/null', name: 'morpheus to pennywise sports', weekday: '*', hour: '15' }
-  # - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/videos p:z2/morpheus/tank/fuse/videos && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }}/$? > /dev/null', name: 'morpheus to pennywise videos', weekday: '*', hour: '17' }
+  ## morpheus to pennywise data
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/audiobooks p:z2/morpheus/tank/fuse/audiobooks | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }} --data-binary "@-"', name: 'morpheus to pennywise audiobooks', weekday: '*', hour: '1' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/documents p:z2/morpheus/tank/fuse/documents | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }} --data-binary "@-"', name: 'morpheus to pennywise documents', weekday: '*', hour: '3' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/drone p:z2/morpheus/tank/fuse/drone | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }} --data-binary "@-"', name: 'morpheus to pennywise drone', weekday: '*', hour: '4',  }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/music p:z2/morpheus/tank/fuse/music | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }} --data-binary "@-"', name: 'morpheus to pennywise music', weekday: '*', hour: '5' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/photos p:z2/morpheus/tank/fuse/photos | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }} --data-binary "@-"', name: 'morpheus to pennywise photos', weekday: '*', hour: '6' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/podcast p:z2/morpheus/tank/fuse/podcast | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }} --data-binary "@-"', name: 'morpheus to pennywise podcast', weekday: '*', hour: '7' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/software p:z2/morpheus/tank/fuse/software | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }} --data-binary "@-"', name: 'morpheus to pennywise software', weekday: '*', hour: '8' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/sports p:z2/morpheus/tank/fuse/sports | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }} --data-binary "@-"', name: 'morpheus to pennywise sports', weekday: '*', hour: '9' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/videos p:z2/morpheus/tank/fuse/videos | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }} --data-binary "@-"', name: 'morpheus to pennywise videos', weekday: '*', hour: '10' }
 
-  ## morpheus to pennywise docker appdata - disabled until initial replication is completed manually (6/21/21)
-  # not sure if i want to replicate all docker appdata or just a few specific containers... #todo
-  
+  ## morpheus to pennywise docker appdata
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_appdata }}/start && {{ syncoid_binary_path }} -r --skip-parent --exclude influxdb --source-bwlimit=2M nvme2tb/appdata p:z2/morpheus/backups/appdata | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_appdata }} --data-binary "@-"', name: 'morpheus to pennywise appdata', weekday: '*', hour: '11' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_backups }}/start && {{ syncoid_binary_path }} -r --source-bwlimit=2M --no-sync-snap tank/backups p:z2/morpheus/tank/backups | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_backups }} --data-binary "@-"', name: 'morpheus to pennywise backups', weekday: '*', hour: '12' }
+
   ## morpheus local jobs
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --name plexmetamanager --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/$? > /dev/null', name: 'plexmeta', weekday: '*/1' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --name plexmetamanager --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }} --data-binary "@-"', name: 'plexmeta', weekday: '*/1' }
+
+  ## morpheus to elrond jobs
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic }}/start && /usr/local/bin/autorestic backup -av -c /home/alex/.autorestic.yml | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic  }} --data-binary "@-"', name: 'morpheus to elrond - autorestic', weekday: '*', hour: '13' }
+
 
 # ironicbadger.snapraid
 snapraid_bin_path: /usr/bin/snapraid
-snapraid_cron_jobs:
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_snapraid }}/start && {{ snapraid_run_command }} && {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_snapraid }}/$?', name: 'snapraid_runner', weekday: '*', hour: '01' }
+snapraid_runner_cron_jobs:
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_snapraid }}/start && {{ snapraid_runner_command }} | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_snapraid }} --data-binary "@-"', name: 'snapraid_runner', weekday: '*', hour: '01' }
+
+# ktz-autorestic
+simple_autorestic_decrypt: true
+
+autorestic_locations:
+  - name: audiobooks
+    from: /mnt/tank/fuse/audiobooks
+    to: 
+      - morpheus-audiobooks
+autorestic_backends:
+  - name: "{{ elrond_minio_bucket_audiobooks | selectattr('name', 'defined') | map(attribute='name') }}"
+    type: s3
+    path: "https://minio.el.gg.{{ domain_me }}/morpheus-audiobooks"
+    key: some-random-password-198rc79r8y1029c8yfewj8f1u0ef87yh198uoieufy
+    env:
+      - "AWS_ACCESS_KEY_ID: elrondkey"
+      - "AWS_SECRET_ACCESS_KEY: elrondkey"
+
+
+      #docker_users: "{{ users|selectattr('docker', 'defined')|map(attribute='username') }}"
+
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases:
@@ -111,10 +202,12 @@ extra_mountpoints:
   #- { path: /opt, diskbyid: "UUID=cbf30089-2d57-4e83-ad62-763992d0f57a", fs: ext4, opts: "defaults,discard" }
   #- { path: /opt/appdata, diskbyid: "UUID=06c5ccf6-6fd8-4f2a-8213-81107f034c4e", fs: ext4, opts: "defaults,discard" }
 
-parity_disks:
+# ironicbadger.snapraid
+snapraid_runner: true
+snapraid_parity_disks:
   - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJHZW1F-part1, fs: ext4, opts: defaults, content: false }
 
-data_disks:
+snapraid_data_disks:
   - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJJ0K4F-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-HGST_HDN728080ALE604_R6GPPDTY-part1, fs: ext4, opts: defaults, content: true }
   #- { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-ST10000DM0004-2GR11L_ZJV6A8WV-part1, fs: xfs, opts: defaults, content: true }
@@ -261,7 +354,7 @@ containers:
       - traefik.http.routers.nzbget.entrypoints=websecure
       - traefik.http.routers.nzbget.tls.certresolver=cloudflare
       - traefik.http.routers.nzbget.middlewares=authelia@docker
-      - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.{{ domain_me }}`)"
+      - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.wd.{{ domain_me }}`)"
       - traefik.http.routers.nzbgetapi.entrypoints=websecure
       - traefik.http.routers.nzbgetapi.tls.certresolver=cloudflare
     volumes:
@@ -803,7 +896,8 @@ containers:
   ###
   - service_name: paperless
     active: true
-    image: linuxserver/paperless-ng
+    #image: linuxserver/paperless-ng
+    image: ibpaperless
     labels:
       - traefik.enable=true
       - "traefik.http.routers.paperless.rule=Host(`paperless.m.wd.{{ domain_me }}`)"
@@ -1004,69 +1098,3 @@ containers:
   #     -
   #   include_global_env_vars: #optional - defaults to false
   #   restart: unless-stopped
-
-
-## snapraid
-snapraid_config_excludes:
-  - "*.unrecoverable"
-  - "/tmp/"
-  - "/lost+found/"
-  - "downloads/"
-  - "appdata/"
-  - "*.!sync"
-  - ".AppleDouble"
-  - "._AppleDouble"
-  - ".DS_Store"
-  - "._.DS_Store"
-  - ".Thumbs.db"
-  - ".fseventsd"
-  - ".Spotlight-V100"
-  - ".TemporaryItems"
-  - ".Trashes"
-  - ".AppleDB"
-
-## telegraf
-telegraf_plugins_base:
-  - name: mem
-  - name: system
-  - name: cpu
-    options:
-      percpu: "true"
-      totalcpu: "true"
-      collect_cpu_time: "false"
-      report_active: "false"
-  - name: disk
-    options:
-      ignore_fs:
-        - "tmpfs"
-        - "devtmpfs"
-        - "devfs"
-      mountpoints:
-        - "/"
-        - "/mnt/disk1"
-        - "/mnt/disk2"
-        - "/mnt/disk3"
-        - "/mnt/disk4"
-        - "/mnt/disk5"
-        - "/mnt/disk6"
-        - "/mnt/disk7"
-        - "/mnt/disk8"
-        - "/mnt/disk9"
-        - "/mnt/parity1"
-        - "/mnt/parity2"
-        - "/mnt/storage"
-        - "/mnt/tank"
-  - name: diskio
-    options:
-      skip_serial_number: "true"
-  - name: kernel
-  - name: processes
-  - name: docker
-    options:
-      endpoint: "unix:///var/run/docker.sock"
-      perdevice: "true"
-  - name: hddtemp
-  - name: net
-    options:
-      interfaces:
-        - "ens192"

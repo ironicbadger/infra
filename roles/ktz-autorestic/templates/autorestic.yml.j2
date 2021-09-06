@@ -1,0 +1,21 @@
+locations:
+{% for location in autorestic_locations %}
+  {{ location.name }}:
+    from: {{ location.from }}
+    to: 
+{% for to in location.to %}
+      - {{ to }}
+{% endfor %}
+{% endfor %}
+
+backends:
+{% for backend in autorestic_backends %}
+  {{ backend.name[0] }}:
+    type: {{ backend.type }}
+    path: '{{ backend.path }}'
+    key: {{ backend.key }}
+    env:
+{% for envvar in backend.env %}
+      {{ envvar }}
+{% endfor %}
+{% endfor %}

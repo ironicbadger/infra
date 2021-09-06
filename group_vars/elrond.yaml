@@ -1,6 +1,7 @@
 ---
 
 ntp_timezone: Europe/London
+local_domain: "el.gg.{{ domain_me }}"
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases_file: /var/services/homes/alexktz/.bashrc
@@ -31,11 +32,6 @@ containers:
       - 443:443
       - 8080:8080
     command:
-      - --log.level=info
-      - --accesslog=false
-      - --api.insecure=false
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
@@ -43,10 +39,8 @@ containers:
       - --certificatesresolvers.cloudflare.acme.dnschallenge=true
       - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
       - "--certificatesresolvers.cloudflare.acme.email={{ cloudflare_account_email }}"
-      - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
-      - --serversTransport.insecureSkipVerify=true
     volumes:
-      - "{{ appdata_path }}/traefik/letsencrypt:/letsencrypt"
+      - "{{ appdata_path }}/traefik/config:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:
       - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
@@ -58,7 +52,7 @@ containers:
     image: nginx
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.nginxtest.rule=Host(`test.el.gg.{{ domain_me }}`)"
+      - "traefik.http.routers.nginxtest.rule=Host(`test.{{ local_domain }}`)"
       - traefik.http.routers.nginxtest.entrypoints=websecure
       - traefik.http.routers.nginxtest.tls.certresolver=cloudflare
     restart: unless-stopped
@@ -66,24 +60,99 @@ containers:
   - service_name: minio
     active: true
     image: minio/minio
-    # command: 
-    #   - server /data
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.minio.rule=Host(`minio.el.gg.{{ domain_me }}`)"
+      - "traefik.http.routers.minio.rule=Host(`minio.{{ local_domain }}`)"
       - traefik.http.routers.minio.entrypoints=websecure
       - traefik.http.routers.minio.tls.certresolver=cloudflare
-      - traefik.http.services.minio.loadbalancer.server.port=9000
     command:
       - server 
       - /data 
-      - --console-address ':9001'
+      - --address 
+      - "0.0.0.0:9000" 
+      - --console-address 
+      - "0.0.0.0:9001"
     volumes:
       - "/volume1/minio:/data"
     ports:
       - 9000:9000
       - 9001:9001
     environment:
-      - MINIO_ACCESS_KEY=accesskey
-      - MINIO_SECRET_KEY=secretkey
+      - "MINIO_ROOT_USER={{ elrond_minio_root_user }}"
+      - "MINIO_ROOT_PASSWORD={{ elrond_minio_root_password }}"
     restart: unless-stopped
+  ###
+  - service_name: netdata
+    active: true
+    image: netdata/netdata
+    hostname: "{{ ansible_hostname }}"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.netdata.rule=Host(`netdata.{{ local_domain }}`)"
+      - traefik.http.routers.netdata.entrypoints=websecure
+      - traefik.http.routers.netdata.tls.certresolver=cloudflare
+      - traefik.http.services.netdata.loadbalancer.server.port=19999
+    cap_add:
+      - SYS_PTRACE
+    volumes:
+      - "{{ appdata_path }}/netdata:/etc/netdata"
+      - /etc/passwd:/host/etc/passwd:ro
+      - /etc/group:/host/etc/group:ro
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+  ###
+  - service_name: adguard
+    active: true
+    image: adguard/adguardhome
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.adguard.rule=Host(`adguard.{{ local_domain }}`)"
+      - traefik.http.routers.adguard.entrypoints=websecure
+      - traefik.http.routers.adguard.tls.certresolver=cloudflare
+      - traefik.http.services.adguard.loadbalancer.server.port=8080
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+    volumes:
+      - "{{ appdata_path }}/adguardhome/work:/opt/adguardhome/work"
+      - "{{ appdata_path }}/adguardhome/config:/opt/adguardhome/conf"
+    restart: unless-stopped
+  ###
+  - service_name: photostructure
+    active: true
+    image: photostructure/server:stable
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.photostructure.rule=Host(`photostructure.{{ local_domain }}`)"
+      - traefik.http.routers.photostructure.entrypoints=websecure
+      - traefik.http.routers.photostructure.tls.certresolver=cloudflare
+      - traefik.http.services.photostructure.loadbalancer.server.port=1787
+    volumes:
+      - "{{ appdata_path }}/photostructure:/ps/config"
+      - /volume2/appdata/photostructure/tmp:/ps/tmp
+      - /volume2/appdata/photostructure/logs:/ps/logs
+      - /volume1/storage/photos/mum/images:/ps/library
+      - /volume1/storage/photos/mum/unsorted:/var/mum/unsorted
+    include_global_env_vars: true
+    restart: unless-stopped
+
+
+
+  ###
+  # - service_name:
+  #   active: false
+  #   image:
+  #   container_name: #optional - only required if diff to service_name
+  #   labels:
+  #     - traefik.enable=true
+  #     - "traefik.http.routers.XXXXXXXX.rule=Host(`plex.{{ domain_me }}`)"
+  #     - traefik.http.routers.XXXXXXX.entrypoints=websecure
+  #     - traefik.http.routers.XXXXXXX.tls.certresolver=cloudflare
+  #     - traefik.http.services.XXXXXXX.loadbalancer.server.port=80
+  #     #- traefik.http.routers.XXXXXXX.middlewares=authelia@docker
+  #   volumes:
+  #     - "{{ appdata_path }}/app:/config"
+  #   environment:
+  #     -
+  #   include_global_env_vars: #optional - defaults to false
+  #   restart: unless-stopped
