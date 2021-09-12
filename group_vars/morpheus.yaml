@@ -896,14 +896,12 @@ containers:
   ###
   - service_name: paperless
     active: true
-    #image: linuxserver/paperless-ng
-    image: ibpaperless
+    image: linuxserver/paperless-ng
     labels:
       - traefik.enable=true
       - "traefik.http.routers.paperless.rule=Host(`paperless.m.wd.{{ domain_me }}`)"
       - traefik.http.routers.paperless.entrypoints=websecure
       - traefik.http.routers.paperless.tls.certresolver=cloudflare
-      #- traefik.http.routers.paperless.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/paperless/config:/config"
       - "{{ appdata_path }}/paperless/data:/data"
