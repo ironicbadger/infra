@@ -415,7 +415,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: chowdown
-    active: false
+    active: true
     image: gregyankovoy/chowdown
     labels:
       - traefik.enable=true
