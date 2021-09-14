@@ -130,18 +130,3 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
     ###
-  - service_name: adguard
-    active: false
-    image: adguard/adguardhome
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.adguard.rule=Host(`adguard.{{ local_domain }}`)"
-      - traefik.http.routers.adguard.tls.certresolver=cloudflare
-      - traefik.http.services.adguard.loadbalancer.server.port=8080
-    ports:
-      - 53:53/tcp
-      - 53:53/udp
-    volumes:
-      - "{{ appdata_path }}/adguardhome/work:/opt/adguardhome/work"
-      - "{{ appdata_path }}/adguardhome/config:/opt/adguardhome/conf"
-    restart: unless-stopped
