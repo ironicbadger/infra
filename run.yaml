@@ -53,6 +53,8 @@
       - role: ironicbadger.ansible_role_bash_aliases
       - role: ktz-figurine
       - role: ktz-boot-notification
+      - role: ktz-sanoid
+      - role: ktz-traefik
       - role: ironicbadger.ansible_role_docker_compose_generator
         tags: compose
 

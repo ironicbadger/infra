@@ -10,6 +10,8 @@
 # ## spare
 # /dev/disk/by-id/ata-ST8000AS0002-1NA17Z_Z8411V1G
 
+main_username: alex
+
 # geerlingguy.ntp
 ntp_timezone: "Europe/London"
 
@@ -30,6 +32,49 @@ bash_aliases:
   - { alias: "hdtemp", command: "sudo hddtemp /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]"}
   - { alias: "nvmetemp", command: "for i in {0..3}; do nvme smart-log /dev/nvme'$i'n1 | grep temperature; done;"}
 
+# grog.package
+package_list:
+  - name: bash-completion
+  - name: curl
+  - name: dnsutils
+  - name: fio
+  - name: git
+  - name: hddtemp
+  - name: htop
+  - name: ffmpeg
+  - name: iftop
+  - name: intel-gpu-tools
+  - name: iotop
+  - name: ipmitool
+  - name: lm-sensors
+  - name: mc
+  - name: mutt
+  - name: ncdu
+  - name: net-tools
+  - name: nfs-kernel-server
+  - name: nmap
+  - name: nvme-cli
+  - name: openssh-server
+  - name: python3
+  - name: python-setuptools
+  #- name: qemu-guest-agent
+  #- name: sanoid
+  - name: screen
+  #- name: ssh-import-id
+  - name: smartmontools
+  - name: sudo
+  - name: tmux
+  - name: tree
+  - name: wget
+  #- name: wireguard-tools
+  - name: xfsprogs
+  - name: zfsutils-linux
+
+# ktz-sanoid
+syncoid_cron_jobs: []
+
+# ktz-traefik
+traefik_file_provider: false
 
 # ironicbadger.docker_compose_generator
 appdata_path: /home/alex/appdata
@@ -60,8 +105,8 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.plex.rule=Host(`plex.{{ local_domain }}`)"
-      - traefik.http.routers.plex.entrypoints=websecure
       - traefik.http.routers.plex.tls.certresolver=cloudflare
+      - traefik.http.services.plex.loadbalancer.server.port=32400
     volumes:
       - "{{ appdata_path }}/plex/config:/config"
       - /mnt/z2/tv/recordings:/data
@@ -74,7 +119,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.photostructure.rule=Host(`photostructure.{{ local_domain }}`)"
-      - traefik.http.routers.photostructure.entrypoints=websecure
       - traefik.http.routers.photostructure.tls.certresolver=cloudflare
       - traefik.http.services.photostructure.loadbalancer.server.port=1787
     volumes:
@@ -92,7 +136,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.adguard.rule=Host(`adguard.{{ local_domain }}`)"
-      - traefik.http.routers.adguard.entrypoints=websecure
       - traefik.http.routers.adguard.tls.certresolver=cloudflare
       - traefik.http.services.adguard.loadbalancer.server.port=8080
     ports:
