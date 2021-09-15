@@ -77,7 +77,7 @@ syncoid_cron_jobs: []
 traefik_file_provider: false
 
 # ironicbadger.docker_compose_generator
-appdata_path: /home/alex/appdata
+appdata_path: /mnt/z2/pennywise/appdata
 local_domain: "bn.{{ domain_me }}"
 containers:
   ###
@@ -96,6 +96,18 @@ containers:
     volumes:
       - "{{ appdata_path }}/traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    restart: unless-stopped
+  ###
+  - service_name: homer
+    active: true
+    image: b4bz/homer
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.homer.rule=Host(`home.{{ local_domain }}`)"
+      - traefik.http.routers.homer.tls.certresolver=cloudflare
+      #- traefik.http.services.homer.loadbalancer.server.port=80
+    volumes:
+      - "{{ appdata_path }}/homer:/www/assets"
     restart: unless-stopped
   ###
   - service_name: plex
@@ -129,4 +141,102 @@ containers:
       - /mnt/z2/pennywise/photos/geoff/unsorted:/var/geoff/unsorted
     include_global_env_vars: true
     restart: unless-stopped
-    ###
+  ###
+  - service_name: librespeed
+    active: true
+    image: linuxserver/librespeed
+    ports:
+      - 8008:80
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.librespeed.rule=Host(`speedtest.{{ local_domain }}`)"
+      - traefik.http.routers.librespeed.tls.certresolver=cloudflare
+    environment:
+      - MODE=standalone
+      - TELEMETRY=true
+      - "PASSWORD={{ librespeed_password }}"
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: smokeping
+    active: true
+    image: linuxserver/smokeping
+    volumes:
+      - "{{ appdata_path }}/smokeping/config:/config"
+      - "{{ appdata_path }}/smokeping/data:/data"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ local_domain }}`)"
+      - traefik.http.routers.smokeping.tls.certresolver=cloudflare
+      - traefik.http.services.smokeping.loadbalancer.server.port=80
+    include_global_env_vars: true
+    restart: unless-stopped
+###
+  - service_name: photoprism
+    active: true
+    image: photoprism/photoprism:latest
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.photoprism.rule=Host(`photoprism.{{ local_domain }}`)"
+      - traefik.http.routers.photoprism.tls.certresolver=cloudflare
+      - traefik.http.services.photoprism.loadbalancer.server.port=2342
+    volumes:
+      - "{{ appdata_path }}/photoprism/app:/photoprism/storage" 
+      - "/mnt/z2/pennywise/photos/geoff/sorted:/photoprism/originals/geoff/sorted"
+    environment:
+      - UID=1000
+      - GID=1000
+      - "PHOTOPRISM_ADMIN_PASSWORD={{ container_mysql_root_password }}"     # Initial admin password: PLEASE CHANGE!
+      - PHOTOPRISM_DEBUG=false                      # Run in debug mode (shows additional log messages)
+      - PHOTOPRISM_READONLY=false                   # Don't modify originals directory (reduced functionality)
+      - PHOTOPRISM_SITE_URL="https://photoprism.{{ local_domain }}"  # Canonical / public site URL
+      - PHOTOPRISM_SITE_TITLE="PhotoPrism"
+      - PHOTOPRISM_SITE_CAPTION="Browse Your Life"
+      - PHOTOPRISM_SITE_DESCRIPTION="ktz."
+      - PHOTOPRISM_SITE_AUTHOR="ktz"
+      - PHOTOPRISM_HTTP_HOST=0.0.0.0
+      - PHOTOPRISM_HTTP_PORT=2342
+      - PHOTOPRISM_DATABASE_DRIVER=sqlite           # SQLite is an embedded database that doesn't require a server
+      #- PHOTOPRISM_DATABASE_DRIVER=mysql          # Use MariaDB (or MySQL) instead of SQLite for improved performance
+      # PHOTOPRISM_DATABASE_DSN: "photoprism:insecure@tcp(mariadb:3306)/photoprism?charset=utf8mb4,utf8&parseTime=true"
+      - PHOTOPRISM_SIDECAR_JSON=true                # Automatically create JSON sidecar files using Exiftool
+      - PHOTOPRISM_SIDECAR_YAML=true                # Automatically backup metadata to YAML sidecar files
+      - PHOTOPRISM_THUMB_FILTER=lanczos             # Resample filter, best to worst: blackman, lanczos, cubic, linear
+      - PHOTOPRISM_THUMB_UNCACHED=false             # Enable on-demand thumbnail rendering (high memory and cpu usage)
+      - PHOTOPRISM_THUMB_SIZE=2048                    # Pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
+      - PHOTOPRISM_THUMB_SIZE_UNCACHED=7680           # On-demand rendering size limit (default 7680, min 720, max 7680)
+      - PHOTOPRISM_JPEG_SIZE=7680                     # Size limit for converted image files in pixels (720-30000)
+      - PHOTOPRISM_JPEG_QUALITY=92                    # Set to 95 for high-quality thumbnails (25-100)
+      - PHOTOPRISM_DARKTABLE_PRESETS=false          # Use darktable presets (disables concurrent raw to jpeg conversion)
+    restart: unless-stopped
+###
+  - service_name: mealie
+    active: true
+    image: hkotel/mealie:v0.5.1
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.mealie.rule=Host(`recipes.{{ local_domain }}`)
+      - traefik.http.routers.mealie.tls.certresolver=cloudflare
+    ports:
+      - 8881:80
+    environment:
+      - DB_TYPE=sqlite
+    volumes:
+      - "{{ appdata_path }}/mealie:/app/data"
+    restart: unless-stopped
+  ###
+  - service_name: paperless
+    active: true
+    image: linuxserver/paperless-ng
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.paperless.rule=Host(`paperless.{{ local_domain }}`)"
+      - traefik.http.routers.paperless.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/paperless/config:/config"
+      - "{{ appdata_path }}/paperless/data:/data"
+    environment:
+      - PAPERLESS_CONSUMER_RECURSIVE=true
+      - PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS=true
+    include_global_env_vars: true
+    restart: unless-stopped
