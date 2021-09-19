@@ -542,8 +542,7 @@ containers:
       - "{{ morpheus_main_storage_path }}/audiobooks:/books"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.booksonic.rule=Host(`booksonic.{{ domain_cloud }}`)"
-      - traefik.http.routers.booksonic.entrypoints=websecure
+      - "traefik.http.routers.booksonic.rule=Host(`booksonic.{{ domain_me }}`)"
       - traefik.http.routers.booksonic.tls.certresolver=cloudflare
       - traefik.http.services.booksonic.loadbalancer.server.port=4040
     # environment:
