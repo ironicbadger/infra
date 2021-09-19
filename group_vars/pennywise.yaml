@@ -274,3 +274,36 @@ containers:
       - "{{ appdata_path }}/bookstack/db:/config"
     include_global_env_vars: true
     restart: unless-stopped
+  ###
+  - service_name: joplinserver
+    active: true
+    image: joplin/server
+    depends_on:
+      - joplin_db
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.joplin.rule=Host(`joplin.{{ local_domain }}`)"
+      - traefik.http.routers.joplin.tls.certresolver=cloudflare
+      - traefik.http.services.joplin.loadbalancer.server.port=22300
+    environment:
+      - APP_PORT=22300
+      - "APP_BASE_URL=https://joplin.{{ local_domain }}"
+      - DB_CLIENT=pg
+      - POSTGRES_PASSWORD={{ container_mysql_root_password }}
+      - POSTGRES_DATABASE=joplin
+      - POSTGRES_USER=joplin
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=joplin_db
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: joplin_db
+    active: true
+    image: postgres:13.1
+    environment:
+      - "POSTGRES_PASSWORD={{ container_mysql_root_password }}"
+      - POSTGRES_USER=joplin
+      - "POSTGRES_DB=joplin"
+    volumes:
+      - "{{ appdata_path }}/joplin/db:/var/lib/postgresql/data"
+    include_global_env_vars: true
+    restart: unless-stopped
