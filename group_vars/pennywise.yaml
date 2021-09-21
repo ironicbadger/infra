@@ -276,7 +276,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: joplinserver
-    active: true
+    active: false
     image: joplin/server
     depends_on:
       - joplin_db
@@ -297,7 +297,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: joplin_db
-    active: true
+    active: false
     image: postgres:13.1
     environment:
       - "POSTGRES_PASSWORD={{ container_mysql_root_password }}"
