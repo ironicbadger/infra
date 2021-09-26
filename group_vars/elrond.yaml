@@ -169,6 +169,40 @@ containers:
       - PHOTOPRISM_JPEG_QUALITY=92                    # Set to 95 for high-quality thumbnails (25-100)
       - PHOTOPRISM_DARKTABLE_PRESETS=false          # Use darktable presets (disables concurrent raw to jpeg conversion)
     restart: unless-stopped
+  ###
+  - service_name: bookstack
+    active: true
+    image: linuxserver/bookstack
+    depends_on:
+      - bookstack_db
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.bookstack.rule=Host(`wiki.{{ local_domain }}`)"
+      - traefik.http.routers.bookstack.tls.certresolver=cloudflare
+    ports:
+      - 6875:80
+    environment:
+      - "APP_URL=https://wiki.{{ local_domain }}"
+      - DB_HOST=bookstack_db
+      - DB_USER=bookstack
+      - "DB_PASS={{ container_mysql_root_password }}"
+      - DB_DATABASE=bookstackapp
+    volumes:
+      - "{{ appdata_path }}/bookstack/config:/config"
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: bookstack_db
+    active: true
+    image: linuxserver/mariadb
+    environment:
+      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
+      - MYSQL_DATABASE=bookstackapp
+      - MYSQL_USER=bookstack
+      - "MYSQL_PASSWORD={{ container_mysql_root_password }}"
+    volumes:
+      - "{{ appdata_path }}/bookstack/db:/config"
+    include_global_env_vars: true
+    restart: unless-stopped
 
 
   ###
