@@ -249,11 +249,11 @@ authelia_users:
       - admin
       - dev
 authelia_rules:
-  - domain: "*.m.wd.{{ domain_me }}"
+  - domain: "*.m.{{ local_domain }}"
     policy: bypass
     resources:
       - '^/api.*$'
-  - domain: "*.m.wd.{{ domain_me }}"
+  - domain: "*.m.{{ local_domain }}"
     policy: one_factor
   - domain: "plex.{{ domain_me }}"
     policy: one_factor
@@ -266,6 +266,7 @@ authelia_rules:
 # ironicbadger.docker_compose_generator
 appdata_path: /mnt/nvme2tb/appdata
 download_path: /opt/downloads # in use?
+local_domain: "wd.{{ domain_me }}"
 
 containers:
   ###
@@ -291,12 +292,12 @@ containers:
     image: authelia/authelia
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.authelia.rule=Host(`login.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.authelia.rule=Host(`login.m.{{ local_domain }}`)"
       - traefik.http.routers.authelia.entrypoints=websecure
       - traefik.http.routers.authelia.tls=true
       - traefik.http.routers.authelia.tls.certresolver=cloudflare
       - traefik.http.services.authelia.loadbalancer.server.port=9091
-      - "traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://login.m.wd.{{ domain_me }}/"
+      - "traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://login.m.{{ local_domain }}/"
       - traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true
       - traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email
     volumes:
@@ -335,7 +336,7 @@ containers:
       - plex
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.tautulli.rule=Host(`tautulli.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.tautulli.rule=Host(`tautulli.m.{{ local_domain }}`)"
       - traefik.http.routers.tautulli.entrypoints=websecure
       - traefik.http.routers.tautulli.tls.certresolver=cloudflare
       - traefik.http.services.tautulli.loadbalancer.server.port=8181
@@ -350,11 +351,11 @@ containers:
     image: linuxserver/nzbget
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.nzbget.rule=Host(`nzbget.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.nzbget.rule=Host(`nzbget.m.{{ local_domain }}`)"
       - traefik.http.routers.nzbget.entrypoints=websecure
       - traefik.http.routers.nzbget.tls.certresolver=cloudflare
       - traefik.http.routers.nzbget.middlewares=authelia@docker
-      - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.{{ local_domain }}`)"
       - traefik.http.routers.nzbgetapi.entrypoints=websecure
       - traefik.http.routers.nzbgetapi.tls.certresolver=cloudflare
     volumes:
@@ -370,7 +371,7 @@ containers:
       - nzbget
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.sonarr.rule=Host(`sonarr.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.m.{{ local_domain }}`)"
       - traefik.http.routers.sonarr.entrypoints=websecure
       - traefik.http.routers.sonarr.tls.certresolver=cloudflare
       - traefik.http.routers.sonarr.middlewares=authelia@docker
@@ -390,7 +391,7 @@ containers:
       - "{{ download_path }}/complete/movies:/downloads/complete/movies"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.radarr.rule=Host(`radarr.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.radarr.rule=Host(`radarr.m.{{ local_domain }}`)"
       - traefik.http.routers.radarr.entrypoints=websecure
       - traefik.http.routers.radarr.tls.certresolver=cloudflare
       - traefik.http.routers.radarr.middlewares=authelia@docker
@@ -419,7 +420,7 @@ containers:
     image: gregyankovoy/chowdown
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.chowdown.rule=Host(`recipes.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.chowdown.rule=Host(`recipes.m.{{ local_domain }}`)"
       - traefik.http.routers.chowdown.entrypoints=websecure
       - traefik.http.routers.chowdown.tls.certresolver=cloudflare
       - traefik.http.services.chowdown.loadbalancer.server.port=4000
@@ -558,7 +559,7 @@ containers:
       - "{{ morpheus_main_storage_path }}/audiobooks:/books"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.booksonicair.rule=Host(`booksonicair.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.booksonicair.rule=Host(`booksonicair.m.{{ local_domain }}`)"
       - traefik.http.routers.booksonicair.entrypoints=websecure
       - traefik.http.routers.booksonicair.tls.certresolver=cloudflare
       - traefik.http.services.booksonicair.loadbalancer.server.port=4040
@@ -575,7 +576,7 @@ containers:
       - "{{ appdata_path }}/smokeping/data:/data"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.smokeping.rule=Host(`smokeping.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.smokeping.rule=Host(`smokeping.m.{{ local_domain }}`)"
       - traefik.http.routers.smokeping.entrypoints=websecure
       - traefik.http.routers.smokeping.tls.certresolver=cloudflare
       - traefik.http.services.smokeping.loadbalancer.server.port=80
@@ -617,13 +618,13 @@ containers:
       - DRONE_GIT_ALWAYS_AUTH=true
       - "DRONE_GITEA_CLIENT_ID={{ drone_gitea_client_id }}"
       - "DRONE_GITEA_CLIENT_SECRET={{ drone_gitea_client_secret }}"
-      - "DRONE_SERVER_HOST=drone.m.wd.{{ domain_me }}"
+      - "DRONE_SERVER_HOST=drone.m.{{ local_domain }}"
       - DRONE_SERVER_PROTO=https
       - DRONE_RPC_SECRET=super-duper-secret
       - "DRONE_USER_CREATE=username:alexktz,admin:true"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.drone.rule=Host(`drone.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.drone.rule=Host(`drone.m.{{ local_domain }}`)"
       - traefik.http.routers.drone.entrypoints=websecure
       - traefik.http.routers.drone.tls.certresolver=cloudflare
       - traefik.http.services.drone.loadbalancer.server.port=80
@@ -637,7 +638,7 @@ containers:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - DRONE_RPC_PROTO=https
-      - "DRONE_RPC_HOST=drone.m.wd.{{ domain_me }}"
+      - "DRONE_RPC_HOST=drone.m.{{ local_domain }}"
       - DRONE_RPC_SECRET=super-duper-secret
       - DRONE_RUNNER_CAPACITY=2
       - "DRONE_RUNNER_NAME={{ hostname_morpheus }}"
@@ -655,7 +656,7 @@ containers:
     mem_limit: 2048m
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.btsync.rule=Host(`sync.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.btsync.rule=Host(`sync.m.{{ local_domain }}`)"
       - traefik.http.routers.btsync.entrypoints=websecure
       - traefik.http.routers.btsync.tls.certresolver=cloudflare
       - traefik.http.services.btsync.loadbalancer.server.port=8888
@@ -671,7 +672,7 @@ containers:
       - 8008:80
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.librespeed.rule=Host(`speed.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.librespeed.rule=Host(`speed.m.{{ local_domain }}`)"
       - traefik.http.routers.librespeed.entrypoints=websecure
       - traefik.http.routers.librespeed.tls.certresolver=cloudflare
       - traefik.http.services.librespeed.loadbalancer.server.port=80
@@ -687,7 +688,7 @@ containers:
     image: lycheeorg/lychee
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.lychee.rule=Host(`gallery.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.lychee.rule=Host(`gallery.m.{{ local_domain }}`)"
       - traefik.http.routers.lychee.entrypoints=websecure
       - traefik.http.routers.lychee.tls.certresolver=cloudflare
       - traefik.http.services.lychee.loadbalancer.server.port=80
@@ -725,7 +726,7 @@ containers:
     image: nginx:mainline-alpine
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.nginx.rule=Host(`ninja.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.nginx.rule=Host(`ninja.m.{{ local_domain }}`)"
       - traefik.http.routers.nginx.entrypoints=websecure
       - traefik.http.routers.nginx.tls.certresolver=cloudflare
       - traefik.http.services.nginx.loadbalancer.server.port=80
@@ -771,7 +772,7 @@ containers:
     image: linuxserver/scrutiny
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.scrutiny.rule=Host(`scrutiny.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.scrutiny.rule=Host(`scrutiny.m.{{ local_domain }}`)"
       - traefik.http.routers.scrutiny.entrypoints=websecure
       - traefik.http.routers.scrutiny.tls.certresolver=cloudflare
       - traefik.http.services.scrutiny.loadbalancer.server.port=8080
@@ -876,7 +877,7 @@ containers:
     privileged: true
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.frigate.rule=Host(`frigate.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.frigate.rule=Host(`frigate.m.{{ local_domain }}`)"
       - traefik.http.routers.frigate.entrypoints=websecure
       - traefik.http.routers.frigate.tls.certresolver=cloudflare
       - traefik.http.services.frigate.loadbalancer.server.port=5000
@@ -898,7 +899,7 @@ containers:
     image: linuxserver/paperless-ng
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.paperless.rule=Host(`paperless.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.paperless.rule=Host(`paperless.m.{{ local_domain }}`)"
       - traefik.http.routers.paperless.entrypoints=websecure
       - traefik.http.routers.paperless.tls.certresolver=cloudflare
     volumes:
@@ -915,7 +916,7 @@ containers:
     image: hkotel/mealie:v0.5.1
     labels:
       - traefik.enable=true
-      - traefik.http.routers.mealie.rule=Host(`mealie.m.wd.{{ domain_me }}`)
+      - traefik.http.routers.mealie.rule=Host(`mealie.m.{{ local_domain }}`)
       - traefik.http.routers.mealie.entrypoints=websecure
       - traefik.http.routers.mealie.tls.certresolver=cloudflare
       #- traefik.http.services.mealie.loadbalancer.server.port=80
@@ -985,7 +986,7 @@ containers:
     image: griefed/sui
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.sui.rule=Host(`sui.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.sui.rule=Host(`sui.m.{{ local_domain }}`)"
       - traefik.http.routers.sui.entrypoints=websecure
       - traefik.http.routers.sui.tls.certresolver=cloudflare
       #- traefik.http.routers.sui.middlewares=authelia@docker
@@ -993,7 +994,7 @@ containers:
       - "{{ appdata_path }}/sui:/config"
     environment:
       - PROTOCOL=http
-      - "DOMAIN=sui.m.wd.{{ domain_me }}"
+      - "DOMAIN=sui.m.{{ local_domain }}"
     include_global_env_vars: true
     restart: unless-stopped
   ###
@@ -1002,7 +1003,7 @@ containers:
     image: linuxserver/prowlarr:develop
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.m.{{ local_domain }}`)"
       - traefik.http.routers.prowlarr.entrypoints=websecure
       - traefik.http.routers.prowlarr.tls.certresolver=cloudflare
       - traefik.http.routers.prowlarr.middlewares=authelia@docker
@@ -1026,7 +1027,7 @@ containers:
     image: nginx
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.wellandwiki.rule=Host(`wellandwiki.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.wellandwiki.rule=Host(`wellandwiki.m.{{ local_domain }}`)"
       - traefik.http.routers.wellandwiki.entrypoints=websecure
       - traefik.http.routers.wellandwiki.tls.certresolver=cloudflare
     volumes:
@@ -1038,7 +1039,7 @@ containers:
     image: mrlt8/wyze-bridge
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.wyzebridge.rule=Host(`wyzebridge.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.wyzebridge.rule=Host(`wyzebridge.m.{{ local_domain }}`)"
       - traefik.http.routers.wyzebridge.entrypoints=websecure
       - traefik.http.routers.wyzebridge.tls.certresolver=cloudflare
     ports:
@@ -1055,7 +1056,7 @@ containers:
     image: amir20/dozzle
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.dozzle.rule=Host(`dozzle.m.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.dozzle.rule=Host(`dozzle.m.{{ local_domain }}`)"
       - traefik.http.routers.dozzle.entrypoints=websecure
       - traefik.http.routers.dozzle.tls.certresolver=cloudflare
       - traefik.http.services.dozzle.loadbalancer.server.port=8080
@@ -1063,17 +1064,20 @@ containers:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
   ###
-  - service_name: babybuddy
-    active: false
-    image: linuxserver/babybuddy
+  - service_name: photostructure
+    active: true
+    image: photostructure/server:stable
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.babybuddy.rule=Host(`babybuddy.m.wd.{{ domain_me }}`)"
-      - traefik.http.routers.babybuddy.entrypoints=websecure
-      - traefik.http.routers.babybuddy.tls.certresolver=cloudflare
-      #- traefik.http.services.dozzle.loadbalancer.server.port=8080
+      - "traefik.http.routers.photostructure.rule=Host(`photostructure.m.{{ local_domain }}`)"
+      - traefik.http.routers.photostructure.tls.certresolver=cloudflare
+      - traefik.http.services.photostructure.loadbalancer.server.port=1787
     volumes:
-      - "{{ appdata_path }}/babybuddy:/config" 
+      - "{{ appdata_path }}/photostructure:/ps/config"
+      - "{{ appdata_path }}/photostructure/tmp:/ps/tmp"
+      - "{{ appdata_path }}/photostructure/logs:/ps/logs"
+      - /mnt/storage/photos/alex/photostructure:/ps/library
+      - /mnt/storage/photos/alex/icloud:/var/alex/icloud
     include_global_env_vars: true
     restart: unless-stopped
 
