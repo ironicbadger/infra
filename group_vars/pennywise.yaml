@@ -307,3 +307,39 @@ containers:
       - "{{ appdata_path }}/joplin/db:/var/lib/postgresql/data"
     include_global_env_vars: true
     restart: unless-stopped
+  ###
+  - service_name: lychee
+    active: true
+    image: lycheeorg/lychee:v4.3.0
+    volumes:
+      - "{{ appdata_path }}/lychee/app/config:/config"
+      - "{{ appdata_path }}/lychee/app/uploads:/uploads"
+      - "{{ appdata_path }}/lychee/app/sym:/sym"
+      - /mnt/z2/pennywise/photos/geoff/unsorted:/originals
+    environment:
+      - PHP_TZ=America/New_York
+      - DB_CONNECTION=mysql
+      - DB_HOST=lychee-db
+      - DB_PORT=3306
+      - "DB_USERNAME={{ mysql_user_lychee }}"
+      - "DB_DATABASE={{ mysql_database_lychee }}"
+      - "DB_PASSWORD={{ mysql_password_lychee }}"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.lychee.rule=Host(`images.{{ local_domain }}`)"
+      - traefik.http.routers.lychee.tls.certresolver=cloudflare
+    depends_on:
+      - lychee-db
+    restart: unless-stopped
+  - service_name: lychee-db
+    active: true
+    image: mariadb:10.5.5-focal
+    volumes:
+      - "{{ appdata_path }}/ktz_lychee/db:/var/lib/mysql" 
+    environment:
+      - "MYSQL_ROOT_PASSWORD={{ mysql_root_password }}"
+      - "MYSQL_PASSWORD={{ mysql_password_lychee }}"
+      - "MYSQL_DATABASE={{ mysql_database_lychee }}"
+      - "MYSQL_USER={{ mysql_user_lychee }}"
+    include_global_env_vars: false
+    restart: unless-stopped
