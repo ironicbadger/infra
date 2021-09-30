@@ -147,7 +147,7 @@ syncoid_cron_jobs:
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --name plexmetamanager --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }} --data-binary "@-"', name: 'plexmeta', weekday: '*/1' }
 
   ## morpheus to elrond jobs
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic }}/start && /usr/local/bin/autorestic backup -av -c /home/alex/.autorestic.yml | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic  }} --data-binary "@-"', name: 'morpheus to elrond - autorestic', weekday: '*', hour: '13' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic }}/start && /usr/local/bin/autorestic backup -av -c /root/.autorestic.yml | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic  }} --data-binary "@-"', name: 'morpheus to elrond - autorestic', weekday: '*', hour: '13' }
 
 
 # ironicbadger.snapraid

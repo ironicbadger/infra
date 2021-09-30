@@ -57,7 +57,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: minio
-    active: false
+    active: true
     image: minio/minio
     labels:
       - traefik.enable=true
@@ -82,7 +82,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: netdata
-    active: false
+    active: true
     image: netdata/netdata
     hostname: "{{ ansible_hostname }}"
     labels:

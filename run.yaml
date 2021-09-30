@@ -40,7 +40,7 @@
       - role: ktz-plexmetamanager
         tags: compose
       - role: ktz-autorestic
-        tags: autorestic
+        tags: replication
 
   - hosts: pennywise
     vars_files:
