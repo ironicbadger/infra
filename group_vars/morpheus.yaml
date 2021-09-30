@@ -34,6 +34,9 @@ package_list:
   - name: mutt
   - name: ncdu
   - name: net-tools
+  - name: nut
+  - name: nut-client
+  - name: nut-server
   - name: nfs-kernel-server
   - name: nmap
   - name: nvme-cli
