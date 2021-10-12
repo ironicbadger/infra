@@ -231,6 +231,7 @@ zfs_disks:
 
 fstab_mergerfs:
   - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=epmfs,dropcacheonclose=true,minfreespace=250G,fsname=mergerfs" }  
+  - { source: "/mnt/disk*", mountpoint: "/mnt/jbod", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=epmfs,dropcacheonclose=true,minfreespace=250G,fsname=jbod" }  
 
 snapraid_email_address: alexktz@gmail.com
 snapraid_gmail_pass: "{{ snapraid_email_password }}"
@@ -403,19 +404,18 @@ containers:
   ###
   - service_name: tiddlywiki
     active: true
-    image: mazzolino/tiddlywiki
+    image: elasticdog/tiddlywiki
     labels:
       - traefik.enable=true
       - "traefik.http.routers.tiddlywiki.rule=Host(`wiki.{{ domain_me }}`)"
-      - traefik.http.routers.tiddlywiki.entrypoints=websecure
       - traefik.http.routers.tiddlywiki.tls.certresolver=cloudflare
       - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
       - traefik.http.routers.tiddlywiki.middlewares=authelia@docker
-    environment:
-      - USERNAME=
-      - PASSWORD=
+    # environment:
+    #   - USERNAME=
+    #   - PASSWORD=
     volumes:
-      - "{{ appdata_path }}/tiddlywiki:/var/lib/tiddlywiki"
+      - "{{ appdata_path }}/tiddlywiki/mywiki:/tiddlywiki"
     restart: unless-stopped
   ###
   - service_name: chowdown
