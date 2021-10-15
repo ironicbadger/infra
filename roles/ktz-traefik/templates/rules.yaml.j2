@@ -52,7 +52,7 @@ http:
         scheme: https
     authelia:
       forwardAuth:
-        address: "http://authelia:9091/api/verify?rd=https://login.m.ktz.lol"
+        address: "http://authelia:9091/api/verify?rd=https://login.m.wd.{{ domain_me }}"
     default-headers:
       headers:
         frameDeny: true

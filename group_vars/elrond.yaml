@@ -1,7 +1,7 @@
 ---
 
 ntp_timezone: Europe/London
-local_domain: "el.gg.{{ domain_me }}"
+local_domain: "gg.{{ domain_me }}"
 
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases_file: /var/services/homes/alexktz/.bashrc
@@ -30,7 +30,6 @@ containers:
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
     command:
       - --entrypoints.web.address=:80
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
@@ -104,15 +103,11 @@ containers:
   - service_name: adguard
     active: true
     image: adguard/adguardhome
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.adguard.rule=Host(`adguard.{{ local_domain }}`)"
-      - traefik.http.routers.adguard.entrypoints=websecure
-      - traefik.http.routers.adguard.tls.certresolver=cloudflare
-      - traefik.http.services.adguard.loadbalancer.server.port=8080
     ports:
       - 53:53/tcp
       - 53:53/udp
+      - 3000:3000
+      - 8080:8080
     volumes:
       - "{{ appdata_path }}/adguardhome/work:/opt/adguardhome/work"
       - "{{ appdata_path }}/adguardhome/config:/opt/adguardhome/conf"
@@ -135,7 +130,79 @@ containers:
       - /volume1/storage/photos/mum/unsorted:/var/mum/unsorted
     include_global_env_vars: true
     restart: unless-stopped
-
+###
+###
+  - service_name: photoprism
+    active: true
+    image: photoprism/photoprism:latest
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.photoprism.rule=Host(`photoprism.{{ local_domain }}`)"
+      - traefik.http.routers.photoprism.tls.certresolver=cloudflare
+      - traefik.http.services.photoprism.loadbalancer.server.port=2342
+    volumes:
+      - "{{ appdata_path }}/photoprism/app:/photoprism/storage" 
+      - "/volume1/storage/photos/mum/images:/photoprism/originals/mum/sorted"
+    environment:
+      - UID=1026
+      - GID=100
+      - "PHOTOPRISM_ADMIN_PASSWORD={{ container_mysql_root_password }}"     # Initial admin password: PLEASE CHANGE!
+      - PHOTOPRISM_DEBUG=false                      # Run in debug mode (shows additional log messages)
+      - PHOTOPRISM_READONLY=false                   # Don't modify originals directory (reduced functionality)
+      - PHOTOPRISM_SITE_URL="https://photoprism.{{ local_domain }}"  # Canonical / public site URL
+      - PHOTOPRISM_SITE_TITLE="PhotoPrism"
+      - PHOTOPRISM_SITE_CAPTION="Browse Your Life"
+      - PHOTOPRISM_SITE_DESCRIPTION="ktz."
+      - PHOTOPRISM_SITE_AUTHOR="ktz"
+      - PHOTOPRISM_HTTP_HOST=0.0.0.0
+      - PHOTOPRISM_HTTP_PORT=2342
+      - PHOTOPRISM_DATABASE_DRIVER=sqlite           # SQLite is an embedded database that doesn't require a server
+      #- PHOTOPRISM_DATABASE_DRIVER=mysql          # Use MariaDB (or MySQL) instead of SQLite for improved performance
+      # PHOTOPRISM_DATABASE_DSN: "photoprism:insecure@tcp(mariadb:3306)/photoprism?charset=utf8mb4,utf8&parseTime=true"
+      - PHOTOPRISM_SIDECAR_JSON=true                # Automatically create JSON sidecar files using Exiftool
+      - PHOTOPRISM_SIDECAR_YAML=true                # Automatically backup metadata to YAML sidecar files
+      - PHOTOPRISM_THUMB_FILTER=lanczos             # Resample filter, best to worst: blackman, lanczos, cubic, linear
+      - PHOTOPRISM_THUMB_UNCACHED=false             # Enable on-demand thumbnail rendering (high memory and cpu usage)
+      - PHOTOPRISM_THUMB_SIZE=2048                    # Pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
+      - PHOTOPRISM_THUMB_SIZE_UNCACHED=7680           # On-demand rendering size limit (default 7680, min 720, max 7680)
+      - PHOTOPRISM_JPEG_SIZE=7680                     # Size limit for converted image files in pixels (720-30000)
+      - PHOTOPRISM_JPEG_QUALITY=92                    # Set to 95 for high-quality thumbnails (25-100)
+      - PHOTOPRISM_DARKTABLE_PRESETS=false          # Use darktable presets (disables concurrent raw to jpeg conversion)
+    restart: unless-stopped
+  ###
+  - service_name: bookstack
+    active: true
+    image: linuxserver/bookstack
+    depends_on:
+      - bookstack_db
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.bookstack.rule=Host(`wiki.{{ local_domain }}`)"
+      - traefik.http.routers.bookstack.tls.certresolver=cloudflare
+    ports:
+      - 6875:80
+    environment:
+      - "APP_URL=https://wiki.{{ local_domain }}"
+      - DB_HOST=bookstack_db
+      - DB_USER=bookstack
+      - "DB_PASS={{ container_mysql_root_password }}"
+      - DB_DATABASE=bookstackapp
+    volumes:
+      - "{{ appdata_path }}/bookstack/config:/config"
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: bookstack_db
+    active: true
+    image: linuxserver/mariadb
+    environment:
+      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
+      - MYSQL_DATABASE=bookstackapp
+      - MYSQL_USER=bookstack
+      - "MYSQL_PASSWORD={{ container_mysql_root_password }}"
+    volumes:
+      - "{{ appdata_path }}/bookstack/db:/config"
+    include_global_env_vars: true
+    restart: unless-stopped
 
 
   ###
