@@ -1,0 +1,19 @@
+---
+kind: pipeline
+type: docker
+name: mcompose
+steps:
+- name: mcompose
+  image: squidfunk/mkdocs-material:7.1.9
+  volumes:
+  - name: site
+    path: /site
+  commands:
+  - pip install -U -r ./requirements.txt
+  - mkdocs build
+  - cp -r site/ /site
+  - chmod -R 777 /site
+volumes:
+- name: site
+  host:
+    path: /mnt/nvme2tb/appdata/wellandwiki
