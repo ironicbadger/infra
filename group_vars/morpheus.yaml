@@ -297,9 +297,7 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.authelia.rule=Host(`login.m.{{ local_domain }}`)"
-      - traefik.http.routers.authelia.entrypoints=websecure
       - traefik.http.routers.authelia.tls=true
-      - traefik.http.routers.authelia.tls.certresolver=cloudflare
       - traefik.http.services.authelia.loadbalancer.server.port=9091
       - "traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://login.m.{{ local_domain }}/"
       - traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true
@@ -322,10 +320,7 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.plex.rule=Host(`plex.{{ domain_me }}`)"
-      - traefik.http.routers.plex.entrypoints=websecure
       - traefik.http.services.plex.loadbalancer.server.port=32400
-      - traefik.http.routers.plex.tls.certresolver=cloudflare
-      #- traefik.http.routers.plex.middlewares=authelia@docker
     volumes:
       - /intel2tbnvme/appdata/plex/config:/config
       - /intel2tbnvme/appdata/plex/transcode:/transcode
@@ -341,9 +336,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.tautulli.rule=Host(`tautulli.m.{{ local_domain }}`)"
-      - traefik.http.routers.tautulli.entrypoints=websecure
-      - traefik.http.routers.tautulli.tls.certresolver=cloudflare
-      - traefik.http.services.tautulli.loadbalancer.server.port=8181
     volumes:
       - "{{ appdata_path }}/tautulli:/config"
       - "{{ appdata_path }}/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro"
@@ -356,12 +348,8 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.nzbget.rule=Host(`nzbget.m.{{ local_domain }}`)"
-      - traefik.http.routers.nzbget.entrypoints=websecure
-      - traefik.http.routers.nzbget.tls.certresolver=cloudflare
       - traefik.http.routers.nzbget.middlewares=authelia@docker
       - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.{{ local_domain }}`)"
-      - traefik.http.routers.nzbgetapi.entrypoints=websecure
-      - traefik.http.routers.nzbgetapi.tls.certresolver=cloudflare
     volumes:
       - "{{ appdata_path }}/nzbget/config:/config"
       - "{{ download_path }}:/downloads"
@@ -376,8 +364,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.m.{{ local_domain }}`)"
-      - traefik.http.routers.sonarr.entrypoints=websecure
-      - traefik.http.routers.sonarr.tls.certresolver=cloudflare
       - traefik.http.routers.sonarr.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/sonarr:/config"
@@ -396,26 +382,23 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.radarr.rule=Host(`radarr.m.{{ local_domain }}`)"
-      - traefik.http.routers.radarr.entrypoints=websecure
-      - traefik.http.routers.radarr.tls.certresolver=cloudflare
       - traefik.http.routers.radarr.middlewares=authelia@docker
     restart: unless-stopped
     include_global_env_vars: true
   ###
   - service_name: tiddlywiki
     active: true
-    image: elasticdog/tiddlywiki
+    image: mazzolino/tiddlywiki
     labels:
       - traefik.enable=true
       - "traefik.http.routers.tiddlywiki.rule=Host(`wiki.{{ domain_me }}`)"
-      - traefik.http.routers.tiddlywiki.tls.certresolver=cloudflare
       - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
       - traefik.http.routers.tiddlywiki.middlewares=authelia@docker
-    # environment:
-    #   - USERNAME=
-    #   - PASSWORD=
+    environment:
+      - USERNAME=
+      - PASSWORD=
     volumes:
-      - "{{ appdata_path }}/tiddlywiki/mywiki:/tiddlywiki"
+      - "{{ appdata_path }}/tiddlywiki:/var/lib/tiddlywiki"
     restart: unless-stopped
   ###
   - service_name: chowdown
@@ -424,16 +407,11 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.chowdown.rule=Host(`recipes.m.{{ local_domain }}`)"
-      - traefik.http.routers.chowdown.entrypoints=websecure
-      - traefik.http.routers.chowdown.tls.certresolver=cloudflare
-      - traefik.http.services.chowdown.loadbalancer.server.port=4000
     volumes:
       - "{{ appdata_path }}/chowdown/config:/config"
       - "{{ appdata_path }}/chowdown/recipes:/config/_recipes"
       - "{{ appdata_path }}/chowdown/posts:/config/_posts"
       - "{{ appdata_path }}/chowdown/images:/config/images"
-    ports:
-      - 4000:4000
     restart: unless-stopped
   ###
   - service_name: nextcloud
@@ -444,8 +422,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.nc.rule=Host(`nc.{{ domain_cloud }}`)"
-      - traefik.http.routers.nc.entrypoints=websecure
-      - traefik.http.routers.nc.tls.certresolver=cloudflare
     volumes:
       - "{{ appdata_path }}/nextcloud:/var/www/html"
     restart: unless-stopped
@@ -470,8 +446,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.prom.rule=Host(`prometheus.{{ domain_me }}`)"
-      - traefik.http.routers.prom.entrypoints=websecure
-      - traefik.http.routers.prom.tls.certresolver=cloudflare
     ports:
       - 9090:9090
     privileged: true
@@ -499,7 +473,7 @@ containers:
       - traefik.enable=true
       - "traefik.http.routers.grafana.rule=(Host(`al.{{ domain_me }}`) && PathPrefix(`/grafana`))"
       - traefik.http.routers.grafana.entrypoints=websecure
-      - traefik.http.routers.grafana.tls.certresolver=cloudflare
+      #- traefik.http.routers.grafana.tls.certresolver=cloudflare
       - traefik.http.services.grafana.loadbalancer.server.port=3000
     environment:
       - "GF_SERVER_ROOT_URL=https://al.{{ domain_me }}/grafana"
@@ -527,7 +501,7 @@ containers:
       - traefik.enable=true
       - "traefik.http.routers.duplicati.rule=Host(`duplicati.{{ domain_me }}`)"
       - traefik.http.routers.duplicati.entrypoints=websecure
-      - traefik.http.routers.duplicati.tls.certresolver=cloudflare
+      #- traefik.http.routers.duplicati.tls.certresolver=cloudflare
       - traefik.http.services.duplicati.loadbalancer.server.port=8200
     volumes:
       - "{{ appdata_path }}/duplicati:/config"
@@ -547,8 +521,7 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.booksonic.rule=Host(`booksonic.{{ domain_me }}`)"
-      - traefik.http.routers.booksonic.tls.certresolver=cloudflare
-      - traefik.http.services.booksonic.loadbalancer.server.port=4040
+      #- traefik.http.services.booksonic.loadbalancer.server.port=4040
     # environment:
     #   - CONTEXT_PATH=booksonic
     mem_limit: 1024m
@@ -563,8 +536,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.booksonicair.rule=Host(`booksonicair.m.{{ local_domain }}`)"
-      - traefik.http.routers.booksonicair.entrypoints=websecure
-      - traefik.http.routers.booksonicair.tls.certresolver=cloudflare
       - traefik.http.services.booksonicair.loadbalancer.server.port=4040
     environment:
       - CONTEXT_PATH=booksonicair
@@ -580,9 +551,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.smokeping.rule=Host(`smokeping.m.{{ local_domain }}`)"
-      - traefik.http.routers.smokeping.entrypoints=websecure
-      - traefik.http.routers.smokeping.tls.certresolver=cloudflare
-      - traefik.http.services.smokeping.loadbalancer.server.port=80
     include_global_env_vars: true
     restart: unless-stopped
   ###
@@ -605,11 +573,8 @@ containers:
     labels:
       - traefik.enable=true
       - traefik.http.routers.git.rule=Host(`git.ktz.me`)
-      - traefik.http.routers.git.entrypoints=websecure
-      - traefik.http.routers.git.tls.certresolver=cloudflare
       - traefik.http.services.git.loadbalancer.server.port=3000
     ports:
-      - "3333:3000"
       - '"2222:2222"'
     restart: unless-stopped
   ###
@@ -628,9 +593,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.drone.rule=Host(`drone.m.{{ local_domain }}`)"
-      - traefik.http.routers.drone.entrypoints=websecure
-      - traefik.http.routers.drone.tls.certresolver=cloudflare
-      - traefik.http.services.drone.loadbalancer.server.port=80
     ports:
       - "3001:80"
     restart: unless-stopped
@@ -660,9 +622,7 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.btsync.rule=Host(`sync.m.{{ local_domain }}`)"
-      - traefik.http.routers.btsync.entrypoints=websecure
-      - traefik.http.routers.btsync.tls.certresolver=cloudflare
-      - traefik.http.services.btsync.loadbalancer.server.port=8888
+      #- traefik.http.services.btsync.loadbalancer.server.port=8888
     ports:
       - "55555:55555"
     include_global_env_vars: true
@@ -676,9 +636,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.librespeed.rule=Host(`speed.m.{{ local_domain }}`)"
-      - traefik.http.routers.librespeed.entrypoints=websecure
-      - traefik.http.routers.librespeed.tls.certresolver=cloudflare
-      - traefik.http.services.librespeed.loadbalancer.server.port=80
     environment:
       - MODE=standalone
       - TELEMETRY=true
@@ -692,9 +649,7 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.lychee.rule=Host(`gallery.m.{{ local_domain }}`)"
-      - traefik.http.routers.lychee.entrypoints=websecure
-      - traefik.http.routers.lychee.tls.certresolver=cloudflare
-      - traefik.http.services.lychee.loadbalancer.server.port=80
+      #- traefik.http.services.lychee.loadbalancer.server.port=80
     depends_on:
       - mysql
     volumes:
@@ -730,9 +685,7 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.nginx.rule=Host(`ninja.m.{{ local_domain }}`)"
-      - traefik.http.routers.nginx.entrypoints=websecure
-      - traefik.http.routers.nginx.tls.certresolver=cloudflare
-      - traefik.http.services.nginx.loadbalancer.server.port=80
+      #- traefik.http.services.nginx.loadbalancer.server.port=80
     volumes:
       - "{{ appdata_path }}/invoiceninja/ninja.conf:/etc/nginx/conf.d/default.conf:ro"
       - "{{ appdata_path }}/invoiceninja/storage:/var/www/app/storage"
@@ -776,8 +729,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.scrutiny.rule=Host(`scrutiny.m.{{ local_domain }}`)"
-      - traefik.http.routers.scrutiny.entrypoints=websecure
-      - traefik.http.routers.scrutiny.tls.certresolver=cloudflare
       - traefik.http.services.scrutiny.loadbalancer.server.port=8080
     cap_add:
       - SYS_RAWIO
@@ -800,8 +751,6 @@ containers:
     labels:
       - traefik.enable=true
       - traefik.http.routers.photoprism.rule=Host(`photoprism.ktz.me`)
-      - traefik.http.routers.photoprism.entrypoints=websecure
-      - traefik.http.routers.photoprism.tls.certresolver=cloudflare
       - traefik.http.services.photoprism.loadbalancer.server.port=2342
     volumes:
       - "{{ appdata_path }}/photoprism/app:/photoprism/storage" 
@@ -858,8 +807,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.transmission.rule=Host(`transmission.{{ domain_me }}`)"
-      - traefik.http.routers.transmission.entrypoints=websecure
-      - traefik.http.routers.transmission.tls.certresolver=cloudflare
       - traefik.http.services.transmission.loadbalancer.server.port=9091
     volumes:
       - "{{ appdata_path }}/transmission:/config"
@@ -881,8 +828,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.frigate.rule=Host(`frigate.m.{{ local_domain }}`)"
-      - traefik.http.routers.frigate.entrypoints=websecure
-      - traefik.http.routers.frigate.tls.certresolver=cloudflare
       - traefik.http.services.frigate.loadbalancer.server.port=5000
     volumes:
       - "{{ appdata_path }}/frigate/config:/config:ro"
@@ -903,8 +848,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.paperless.rule=Host(`paperless.m.{{ local_domain }}`)"
-      - traefik.http.routers.paperless.entrypoints=websecure
-      - traefik.http.routers.paperless.tls.certresolver=cloudflare
     volumes:
       - "{{ appdata_path }}/paperless/config:/config"
       - "{{ appdata_path }}/paperless/data:/data"
@@ -920,11 +863,6 @@ containers:
     labels:
       - traefik.enable=true
       - traefik.http.routers.mealie.rule=Host(`mealie.m.{{ local_domain }}`)
-      - traefik.http.routers.mealie.entrypoints=websecure
-      - traefik.http.routers.mealie.tls.certresolver=cloudflare
-      #- traefik.http.services.mealie.loadbalancer.server.port=80
-    ports:
-      - 8881:80
     environment:
       - DB_TYPE=sqlite
     volumes:
@@ -939,8 +877,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.filerun.rule=Host(`filerun.{{ domain_me }}`)"
-      - traefik.http.routers.filerun.entrypoints=websecure
-      - traefik.http.routers.filerun.tls.certresolver=cloudflare
     volumes:
       - "{{ appdata_path }}/filerun/app:/filerun/html"
       - "{{ cartman_main_storage_path }}:/user-files"
@@ -990,9 +926,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.sui.rule=Host(`sui.m.{{ local_domain }}`)"
-      - traefik.http.routers.sui.entrypoints=websecure
-      - traefik.http.routers.sui.tls.certresolver=cloudflare
-      #- traefik.http.routers.sui.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/sui:/config"
     environment:
@@ -1007,8 +940,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.m.{{ local_domain }}`)"
-      - traefik.http.routers.prowlarr.entrypoints=websecure
-      - traefik.http.routers.prowlarr.tls.certresolver=cloudflare
       - traefik.http.routers.prowlarr.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/prowlarr:/config"
@@ -1031,8 +962,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.wellandwiki.rule=Host(`wellandwiki.m.{{ local_domain }}`)"
-      - traefik.http.routers.wellandwiki.entrypoints=websecure
-      - traefik.http.routers.wellandwiki.tls.certresolver=cloudflare
     volumes:
       - "{{ appdata_path }}/wellandwiki/site:/usr/share/nginx/html:ro" 
     restart: unless-stopped
@@ -1043,8 +972,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.wyzebridge.rule=Host(`wyzebridge.m.{{ local_domain }}`)"
-      - traefik.http.routers.wyzebridge.entrypoints=websecure
-      - traefik.http.routers.wyzebridge.tls.certresolver=cloudflare
     ports:
       - 1935:1935
       - 8554:8554
@@ -1060,9 +987,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.dozzle.rule=Host(`dozzle.m.{{ local_domain }}`)"
-      - traefik.http.routers.dozzle.entrypoints=websecure
-      - traefik.http.routers.dozzle.tls.certresolver=cloudflare
-      - traefik.http.services.dozzle.loadbalancer.server.port=8080
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
@@ -1073,7 +997,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.photostructure.rule=Host(`photostructure.m.{{ local_domain }}`)"
-      - traefik.http.routers.photostructure.tls.certresolver=cloudflare
       - traefik.http.services.photostructure.loadbalancer.server.port=1787
     volumes:
       - "{{ appdata_path }}/photostructure:/ps/config"

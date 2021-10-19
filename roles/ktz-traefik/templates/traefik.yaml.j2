@@ -1,50 +1,60 @@
 entryPoints:
-    web:
-        address: :80
-        http:
-          redirections:
-            entryPoint:
-              to: websecure
-              scheme: https
-    websecure:
-        address: :443
-    traefik:
-        address: ":8080"
+  web:
+    address: :80
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: :443
+    http:
+      tls:
+        certresolver: cloudflare
+        domains:
+          - main: {{ domain_me }}
+            sans: "*.{{ domain_me }}"
+          - main: wd.{{ domain_me }}
+            sans: "*.wd.{{ domain_me }}"
+          - main: m.wd.{{ domain_me }}
+            sans: "*.m.wd.{{ domain_me }}"
+  traefik:
+    address: ":8080"
     
 ping: {}
 
 providers:
-    docker:
-        endpoint: unix:///var/run/docker.sock
-        watch: true
-        exposedByDefault: false
+  docker:
+    endpoint: unix:///var/run/docker.sock
+    watch: true
+    exposedByDefault: false
 {% if traefik_file_provider %}
-    file:
-      filename: /etc/traefik/rules.yaml
+  file:
+    filename: /etc/traefik/rules.yaml
 {% endif %}
 
 {% if traefik_enable_dashboard %}
 api:
-    dashboard: false
-    insecure: false
+  dashboard: false
+  insecure: false
 {% endif %}
 
 log:
-    level: info
+  level: info
 
 certificatesResolvers:
-    cloudflare:
-        acme:
-            email: alexktz@gmail.com
-            storage: /etc/traefik/acme.json
-            dnsChallenge:
-                provider: cloudflare
-                delayBeforeCheck: 0
-                resolvers:
-                - 1.1.1.1:53
-                - 1.0.0.1:53
+  cloudflare:
+    acme:
+      email: alexktz@gmail.com
+      storage: /etc/traefik/acme.json
+      dnsChallenge:
+        provider: cloudflare
+        delayBeforeCheck: 0
+        resolvers:
+          - 1.1.1.1:53
+          - 1.0.0.1:53
 
 {% if traefik_insecure_transport %}
 serversTransport:
-    insecureSkipVerify: true
+  insecureSkipVerify: true
 {% endif %}
