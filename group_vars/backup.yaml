@@ -27,7 +27,7 @@ package_list:
   - name: tmux
   - name: tree
   - name: wget
-  - name: zfs-linux-lts
+  - name: zfs-linux
 
 # ktz-sanoid
 sanoid_config_source: sanoid-morpheus.conf

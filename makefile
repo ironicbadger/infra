@@ -56,7 +56,7 @@ dhcp:
 	ansible-playbook -b run.yaml --limit dhcp 
 
 backup:
-	ansible-playbook -b run.yaml --limit backup 
+	ansible-playbook -b run.yaml --limit backup --ask-become-pass
 
 update:
 	ansible-playbook update.yaml --limit servers 

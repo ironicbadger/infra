@@ -72,9 +72,9 @@
     roles:
       - role: grog.package
       - role: ironicbadger.ansible_role_hddtemp
-      - role: ktz-boot-notification
+      #- role: ktz-boot-notification
       - role: ktz-figurine
-      - role: ktz-sanoid
+      #- role: ktz-sanoid
 
   - hosts: dev
     vars_files:
