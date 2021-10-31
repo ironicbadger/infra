@@ -33,6 +33,17 @@ plex:
     clean_bundles: true
     empty_trash: true
     optimize: false
+trakt:
+  client_id: {{ plexmm_trakt_client_id }}
+  client_secret: {{ plexmm_trakt_client_secret }}
+  authorization:
+    # everything below is autofilled by the script
+    access_token:
+    token_type:
+    expires_in:
+    refresh_token:
+    scope: public
+    created_at:
 tmdb:
     apikey: {{ plexmm_tmdb_apikey }}
     language: en
