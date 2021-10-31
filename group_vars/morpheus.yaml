@@ -5,15 +5,6 @@ hostname_morpheus: morpheus
 hostname_cartman: "{{ hostname_morpheus }}" #todo fix
 main_username: alex
 
-# ktz-traefik
-traefik_file_provider: true
-traefik_enable_dashboard: false #defaults to false
-traefik_insecure_transport: false #defaults to false
-
-# ironicbadger.docker_compose_generator
-appdata_path: /intel2tbnvme/appdata
-storage_path: /mnt/storage
-
 # grog.package
 package_list:
   - name: bash-completion
@@ -199,7 +190,6 @@ bash_aliases:
 # ktz-cartman
 docker_zfs_override: true
 morpheus_main_storage_path: /mnt/storage
-cartman_main_storage_path: "{{ morpheus_main_storage_path }}" #todo fixme
 extra_mountpoints:
   - { path: "{{ morpheus_main_storage_path }}" }
   #- { path: /opt, diskbyid: "UUID=cbf30089-2d57-4e83-ad62-763992d0f57a", fs: ext4, opts: "defaults,discard" }
@@ -230,7 +220,7 @@ zfs_disks:
 
 
 fstab_mergerfs:
-  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "{{ cartman_main_storage_path }}", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=epmfs,dropcacheonclose=true,minfreespace=250G,fsname=mergerfs" }  
+  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "/mnt/storage", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=epmfs,dropcacheonclose=true,minfreespace=250G,fsname=mergerfs" }  
   - { source: "/mnt/disk*", mountpoint: "/mnt/jbod", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=epmfs,dropcacheonclose=true,minfreespace=250G,fsname=jbod" }  
 
 snapraid_email_address: alexktz@gmail.com
@@ -269,7 +259,8 @@ authelia_rules:
 
 # ironicbadger.docker_compose_generator
 appdata_path: /mnt/nvme2tb/appdata
-download_path: /opt/downloads # in use?
+download_path: /mnt/nvme2tb/downloads
+storage_path: /mnt/storage
 local_domain: "wd.{{ domain_me }}"
 
 containers:
@@ -322,8 +313,8 @@ containers:
       - "traefik.http.routers.plex.rule=Host(`plex.{{ domain_me }}`)"
       - traefik.http.services.plex.loadbalancer.server.port=32400
     volumes:
-      - /intel2tbnvme/appdata/plex/config:/config
-      - /intel2tbnvme/appdata/plex/transcode:/transcode
+      - "{{ appdata_path }}/plex/config:/config"
+      - "{{ appdata_path }}/plex/transcode:/transcode"
       - "{{ morpheus_main_storage_path }}:/data"
     include_global_env_vars: true
     restart: unless-stopped
@@ -879,7 +870,7 @@ containers:
       - "traefik.http.routers.filerun.rule=Host(`filerun.{{ domain_me }}`)"
     volumes:
       - "{{ appdata_path }}/filerun/app:/filerun/html"
-      - "{{ cartman_main_storage_path }}:/user-files"
+      - "{{ morpheus_main_storage_path }}:/user-files"
     environment:
       - FR_DB_HOST=filerundb
       - FR_DB_PORT=3306

@@ -29,7 +29,7 @@
       - role: ktz-sanoid
         tags: replication
       - role: ktz-cartman
-      - role: ktz-apcupsd
+      #- role: ktz-apcupsd
       - role: ktz-authelia
         tags: compose
       - role: ironicbadger.ansible_role_docker_compose_generator
@@ -74,7 +74,7 @@
       - role: ironicbadger.ansible_role_hddtemp
       #- role: ktz-boot-notification
       - role: ktz-figurine
-      #- role: ktz-sanoid
+      - role: ktz-sanoid
 
   - hosts: dev
     vars_files:
