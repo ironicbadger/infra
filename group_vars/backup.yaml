@@ -41,11 +41,11 @@ syncoid_cron_jobs:
       weekday: '*', 
       hour: '*',
       minute: '01' }
-  - { job: '{{ syncoid_binary_path }} -r m:intel2tbnvme {{ backup_dataset_morpheus }}/intel2tbnvme && {{ syncoid_healthcheck_url }}/{{ syncoid_backup_healthcheck_uuid_intel2tbnvme }}', 
-      name: 'morpheus_intel2tbnvme_replication', 
-      weekday: '*', 
-      hour: '*',
-      minute: '30' }
+#   - { job: '{{ syncoid_binary_path }} -r m:intel2tbnvme {{ backup_dataset_morpheus }}/intel2tbnvme && {{ syncoid_healthcheck_url }}/{{ syncoid_backup_healthcheck_uuid_intel2tbnvme }}', 
+#       name: 'morpheus_intel2tbnvme_replication', 
+#       weekday: '*', 
+#       hour: '*',
+#       minute: '30' }
   - { job: '{{ syncoid_binary_path }} -r m:ssd500-mirror {{ backup_dataset_morpheus }}/ssd500-mirror && {{ syncoid_healthcheck_url }}/{{ syncoid_backup_healthcheck_uuid_ssd500_mirror }}', 
       name: 'morpheus_ssd500-mirror_replication', 
       weekday: '*', 
