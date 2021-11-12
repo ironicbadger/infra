@@ -183,7 +183,8 @@ bash_aliases:
   - { alias: "appdata", command: "cd /mnt/nvme2tb/appdata" }
   - { alias: "zspace", command: "zfs list -o space" }
   - { alias: "zsnap", command: "zfs list -t snapshot" }
-  - { alias: "dfclean", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs"}
+  - { alias: "dfclean", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4"}
+  - { alias: "dffull", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs"}
   - { alias: "hdtemp", command: "sudo hddtemp /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]"}
   - { alias: "nvmetemp", command: "for i in {0..3}; do nvme smart-log /dev/nvme'$i'n1 | grep temperature; done;"}
 
@@ -198,15 +199,21 @@ extra_mountpoints:
 # ironicbadger.snapraid
 snapraid_runner: true
 snapraid_parity_disks:
-  - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJHZW1F-part1, fs: ext4, opts: defaults, content: false }
+  # parity upgraded nov 11th 2021 - 12tb to 14tb. 12tb moved to disk6
+  #- { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJHZW1F-part1, fs: ext4, opts: defaults, content: false }
+  - { path: /mnt/parity1, diskbyid: /dev/disk/by-id/ata-WDC_WD140EDGZ-11B1PA0_Y6GX1KWC-part1, fs: ext4, opts: defaults, content: false }
 
 snapraid_data_disks:
   - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJJ0K4F-part1, fs: xfs, opts: defaults, content: true }
-  - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-HGST_HDN728080ALE604_R6GPPDTY-part1, fs: ext4, opts: defaults, content: true }
-  #- { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-ST10000DM0004-2GR11L_ZJV6A8WV-part1, fs: xfs, opts: defaults, content: true }
+  # disk2 replaced nov 11th 2021 - 8tb to 14tb
+  #- { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-HGST_HDN728080ALE604_R6GPPDTY-part1, fs: ext4, opts: defaults, content: true }
+  - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-WDC_WD140EDGZ-11B1PA0_Y6GE3JJC-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk3, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ15VJD-part1, fs: xfs, opts: defaults, content: true }
-  - { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ2S3AD-part1, fs: xfs, opts: defaults, content: false }
+  # disk4 replaced nov 11th 2021 - 10tb to 12tb
+  #- { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ2S3AD-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD120EMAZ-11BLFA0_5PGENVSD-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJHZW1F-part1, fs: xfs, opts: defaults, content: false }
 
 zfs_disks:
   # ata-ST10000DM0004-2GR11L_ZJV5CF96 ## failed june 2021
@@ -572,6 +579,8 @@ containers:
   - service_name: drone
     active: true
     image: drone/drone:latest
+    volumes:
+      - "{{ appdata_path }}/drone:/data"
     environment:
       - "DRONE_GITEA_SERVER=https://git.{{ domain_me }}/"
       - DRONE_GIT_ALWAYS_AUTH=true
@@ -600,6 +609,8 @@ containers:
       - "DRONE_RUNNER_NAME={{ hostname_morpheus }}"
     ports: 
       - 3002:3000
+    depends_on:
+      - drone
     restart: unless-stopped
   ###
   - service_name: sync
@@ -955,6 +966,16 @@ containers:
       - "traefik.http.routers.wellandwiki.rule=Host(`wellandwiki.m.{{ local_domain }}`)"
     volumes:
       - "{{ appdata_path }}/wellandwiki/site:/usr/share/nginx/html:ro" 
+    restart: unless-stopped
+  ###
+  - service_name: foundation
+    active: true
+    image: nginx
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.foundation.rule=Host(`foundation.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/foundation/site:/usr/share/nginx/html:ro" 
     restart: unless-stopped
   ###
   - service_name: wyzebridge
