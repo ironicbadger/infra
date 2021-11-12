@@ -214,6 +214,7 @@ snapraid_data_disks:
   - { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD120EMAZ-11BLFA0_5PGENVSD-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJHZW1F-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk7, diskbyid: /dev/disk/by-id/ata-ST10000DM0004-2GR11L_ZJV5CF96-part1, fs: xfs, opts: defaults, content: false }
 
 zfs_disks:
   # ata-ST10000DM0004-2GR11L_ZJV5CF96 ## failed june 2021
