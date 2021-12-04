@@ -82,7 +82,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: netdata
-    active: true
+    active: false
     image: netdata/netdata
     hostname: "{{ ansible_hostname }}"
     labels:
@@ -108,6 +108,11 @@ containers:
       - 53:53/udp
       - 3000:3000
       - 8080:8080
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.adguard.rule=Host(`adguard.{{ local_domain }}`)"
+      - traefik.http.routers.adguard.tls.certresolver=cloudflare
+      - traefik.http.services.adguard.loadbalancer.server.port=8080
     volumes:
       - "{{ appdata_path }}/adguardhome/work:/opt/adguardhome/work"
       - "{{ appdata_path }}/adguardhome/config:/opt/adguardhome/conf"
