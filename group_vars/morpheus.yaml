@@ -492,25 +492,6 @@ containers:
       - "/intel2tbnvme/appdata/influxdb:/var/lib/influxdb"
     restart: unless-stopped
   ###
-  - service_name: duplicati
-    active: false
-    image: linuxserver/duplicati
-    hostname: "{{ hostname_morpheus }}"
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.duplicati.rule=Host(`duplicati.{{ domain_me }}`)"
-      - traefik.http.routers.duplicati.entrypoints=websecure
-      #- traefik.http.routers.duplicati.tls.certresolver=cloudflare
-      - traefik.http.services.duplicati.loadbalancer.server.port=8200
-    volumes:
-      - "{{ appdata_path }}/duplicati:/config"
-      - "{{ morpheus_main_storage_path }}/backups:/backups"
-      - "{{ morpheus_main_storage_path }}:/source/storage"
-      - /mnt/tank:/source/tank
-      - /opt:/source/opt
-    include_global_env_vars: true
-    restart: unless-stopped
-  ###
   - service_name: booksonic
     active: true
     image: linuxserver/booksonic:1.2-ls75
