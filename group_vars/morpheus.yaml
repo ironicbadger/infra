@@ -231,9 +231,9 @@ fstab_mergerfs:
   - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "/mnt/storage", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=epmfs,dropcacheonclose=true,minfreespace=250G,fsname=mergerfs" }  
   - { source: "/mnt/disk*", mountpoint: "/mnt/jbod", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=epmfs,dropcacheonclose=true,minfreespace=250G,fsname=jbod" }  
 
-snapraid_email_address: alexktz@gmail.com
-snapraid_gmail_pass: "{{ snapraid_email_password }}"
-snapraid_healthcheck_io_uuid: "{{ snapraid_healthcheck_secret }}"
+snapraid_runner_email_address: "{{ gmail_address }}"
+snapraid_runner_gmail_pass: "{{ snapraid_email_password }}"
+snapraid_sync_healthcheck_io_uuid: "{{ snapraid_healthcheck_secret }}"
 
 # ktz-traefik
 traefik_file_provider: true
@@ -1018,6 +1018,49 @@ containers:
       - "JELLYFIN_PublishedServerUrl=jellyfin.m.{{ local_domain }}"
     include_global_env_vars: true
     restart: unless-stopped
+  ###
+  - service_name: tdarr
+    active: true
+    image: haveagitgat/tdarr
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.tdarr.rule=Host(`tdarr.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/tdarr/transcode:/temp"
+      - "{{ appdata_path }}/tdarr/server:/app/server"
+      - "{{ appdata_path }}/tdarr/configs:/app/configs"
+      - "{{ appdata_path }}/tdarr/logs:/app/logs"
+      - "{{ morpheus_main_storage_path }}:/mnt/storage"
+    environment:
+      - "serverIP=192.168.1.10"
+      - "serverPort=8266"
+      - "webUIPort=8265"
+    ports:
+      - 8265:8265
+      - 8266:8266
+      - 8267:8267
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: tdarr-node
+    active: true
+    image: haveagitgat/tdarr_node
+    devices:
+      - /dev/dri:/dev/dri
+    network_mode: service:tdarr
+    volumes:
+      - "{{ appdata_path }}/tdarr/configs:/app/configs"
+      - "{{ appdata_path }}/tdarr/logs:/app/logs"
+      - "{{ morpheus_main_storage_path }}:/mnt/storage"
+    environment:
+      - "nodeID=morpheusQSV"
+      - "nodeIP=192.168.1.10"
+      - "nodePort=8267"
+      - "serverIP=192.168.1.10"
+      - "serverPort=8266"
+    include_global_env_vars: true
+    restart: unless-stopped
+
+
 
   # template for docker-compose services
   #
@@ -1029,8 +1072,8 @@ containers:
   #   labels:
   #     - traefik.enable=true
   #     - "traefik.http.routers.XXXXXXXX.rule=Host(`plex.{{ domain_me }}`)"
-  #     - traefik.http.routers.XXXXXXX.entrypoints=websecure
-  #     - traefik.http.routers.XXXXXXX.tls.certresolver=cloudflare
+  #     #- traefik.http.routers.XXXXXXX.entrypoints=websecure
+  #     #- traefik.http.routers.XXXXXXX.tls.certresolver=cloudflare
   #     - traefik.http.services.XXXXXXX.loadbalancer.server.port=80
   #     #- traefik.http.routers.XXXXXXX.middlewares=authelia@docker
   #   volumes:
