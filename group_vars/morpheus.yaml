@@ -367,7 +367,7 @@ containers:
     volumes:
       - "{{ appdata_path }}/sonarr:/config"
       - "{{ download_path }}/complete/tv:/downloads/complete/tv"
-      - /mnt/storage/tv:/tv
+      - /mnt/jbod/tv:/tv
     restart: unless-stopped
     include_global_env_vars: true
   ###
@@ -376,8 +376,8 @@ containers:
     image: linuxserver/radarr
     volumes:
       - "{{ appdata_path }}/radarr:/config"
-      - "{{ morpheus_main_storage_path }}/movies:/movies"
       - "{{ download_path }}/complete/movies:/downloads/complete/movies"
+      - /mnt/jbod/movies:/movies
     labels:
       - traefik.enable=true
       - "traefik.http.routers.radarr.rule=Host(`radarr.m.{{ local_domain }}`)"
@@ -1002,7 +1002,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: jellyfin
-    active: true
+    active: false
     image: jellyfin/jellyfin
     network_mode: host
     devices:
