@@ -55,8 +55,8 @@ vpnwd:
 dhcp:
 	ansible-playbook -b run.yaml --limit dhcp 
 
-backup:
-	ansible-playbook -b run.yaml --limit backup --ask-become-pass
+anton:
+	ansible-playbook -b run.yaml --limit anton --ask-become-pass
 
 update:
 	ansible-playbook update.yaml --limit servers 

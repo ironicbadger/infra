@@ -1,0 +1,57 @@
+---
+
+target_os: proxmox
+
+# grog.package
+package_list:
+  - name: bash-completion
+  - name: curl
+  - name: fio
+  - name: git
+  - name: hddtemp
+  - name: htop
+  - name: iftop
+  - name: iotop
+  - name: lm-sensors
+  - name: mc
+  - name: ncdu
+  - name: net-tools
+  - name: nfs-kernel-server
+  - name: nmap
+  - name: ssh
+  #- name: open-vm-tools #vmware
+  - name: python
+  - name: qemu-guest-agent
+  - name: sanoid
+  - name: smartmontools
+  - name: sudo
+  - name: tmux
+  - name: tree
+  - name: wget
+  #- name: zfs-linux
+
+# ktz-sanoid
+sanoid_config_source: sanoid-morpheus.conf
+syncoid_healthcheck_url: "curl -fsS --retry 3 https://hc.{{ domain_cloud }}/ping"
+
+syncoid_cron_jobs:
+  - { job: '{{ syncoid_binary_path }} -r alex@m:tank backups/morpheus/tank && {{ syncoid_healthcheck_url }}/{{ syncoid_backup_healthcheck_uuid_tank }}', 
+      name: 'morpheus_tank_replication', 
+      weekday: '*', 
+      hour: '*',
+      minute: '01' }
+#   - { job: '{{ syncoid_binary_path }} -r alex@m:intel2tbnvme backups/morpheus/intel2tbnvme && {{ syncoid_healthcheck_url }}/{{ syncoid_backup_healthcheck_uuid_intel2tbnvme }}', 
+#       name: 'morpheus_intel2tbnvme_replication', 
+#       weekday: '*', 
+#       hour: '*',
+#       minute: '30' }
+  - { job: '{{ syncoid_binary_path }} -r alex@m:ssd500-mirror backups/morpheus/ssd500-mirror && {{ syncoid_healthcheck_url }}/{{ syncoid_backup_healthcheck_uuid_ssd500_mirror }}', 
+      name: 'morpheus_ssd500_mirror_replication', 
+      weekday: '*', 
+      hour: '*',
+      minute: '45' }
+  - { job: '{{ syncoid_binary_path }} -r alex@m:nvme2tb backups/morpheus/nvme2tb && {{ syncoid_healthcheck_url }}/{{ syncoid_backup_healthcheck_uuid_nvme2tb }}', 
+      name: 'morpheus_nvme2tb_replication', 
+      weekday: '*', 
+      hour: '*',
+      minute: '55' }
