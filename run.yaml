@@ -72,6 +72,7 @@
     roles:
       - role: grog.package
       - role: ironicbadger.ansible_role_hddtemp
+      - role: ironicbadger.ansible_role_bash_aliases
       - role: ktz-boot-notification
       - role: ktz-figurine
       - role: ktz-sanoid
