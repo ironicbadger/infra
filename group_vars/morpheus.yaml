@@ -385,6 +385,20 @@ containers:
     restart: unless-stopped
     include_global_env_vars: true
   ###
+  - service_name: lidarr
+    active: true
+    image: linuxserver/lidarr
+    volumes:
+      - "{{ appdata_path }}/lidarr:/config"
+      - "{{ download_path }}/complete/music:/downloads/complete/music"
+      - /mnt/storage/music/flac:/music
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.lidarr.rule=Host(`lidarr.m.{{ local_domain }}`)"
+      - traefik.http.routers.lidarr.middlewares=authelia@docker
+    restart: unless-stopped
+    include_global_env_vars: true
+  ###
   - service_name: tiddlywiki
     active: true
     image: mazzolino/tiddlywiki
