@@ -391,11 +391,62 @@ containers:
     volumes:
       - "{{ appdata_path }}/lidarr:/config"
       - "{{ download_path }}/complete/music:/downloads/complete/music"
+      - "{{ download_path }}/intermediate/music:/downloads-amd"
       - /mnt/storage/music/flac:/music
     labels:
       - traefik.enable=true
       - "traefik.http.routers.lidarr.rule=Host(`lidarr.m.{{ local_domain }}`)"
       - traefik.http.routers.lidarr.middlewares=authelia@docker
+    restart: unless-stopped
+    include_global_env_vars: true
+  - service_name: amd
+    active: true
+    image: randomninjaatk/amd
+    volumes:
+      - "{{ appdata_path }}/lidarramd:/config"
+      - "{{ download_path }}/intermediate/music:/downloads-amd"
+    environment:
+      - AUTOSTART=true
+      - SCRIPTINTERVAL=30m
+      - DOWNLOADMODE=wanted
+      - FALLBACKSEARCH=True
+      - LIST=both
+      - SearchType=both
+      - Concurrency=2
+      - EMBEDDED_COVER_QUALITY=80
+      - FORMAT=FLAC
+      - BITRATE=320
+      - ENABLEPOSTPROCESSING=true
+      - FORCECONVERT=false
+      - requirequality=false
+      - MatchDistance=10
+      - replaygain=true
+      - FolderPermissions=766
+      - FilePermissions=666
+      - MBRAINZMIRROR=https://musicbrainz.org
+      - MBRATELIMIT=1
+      - LidarrUrl=http://lidarr:8686
+      - "LidarrAPIkey={{ lidarr_apikey }}"
+      - "ARL_TOKEN={{ deezer_arl }}"
+      - NOTIFYPLEX=false
+      - PLEXLIBRARYNAME=Music
+      - PLEXURL=http://192.168.1.10:32400
+      - "PLEXTOKEN={{ plexmm_plex_token }}"
+      - ALBUM_TYPE_FILTER=COMPILE
+      - POSTPROCESSTHREADS=1
+    restart: unless-stopped
+    include_global_env_vars: true
+  - service_name: musicbrainz
+    active: false
+    image: linuxserver/musicbrainz
+    volumes:
+      - "/ssd500-mirror/musicbrainz/config:/config"
+      - "/ssd500-mirror/musicbrainz/data:/data"
+    environment:
+      - "BRAINZCODE={{ musicbrainz_token }}"
+      - WEBADDRESS=192.168.1.10
+    ports:
+      - 5000:5000
     restart: unless-stopped
     include_global_env_vars: true
   ###
