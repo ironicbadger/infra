@@ -229,7 +229,7 @@ zfs_disks:
 
 fstab_mergerfs:
   - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "/mnt/storage", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=epmfs,dropcacheonclose=true,minfreespace=250G,fsname=mergerfs" }  
-  - { source: "/mnt/disk*", mountpoint: "/mnt/jbod", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=epmfs,dropcacheonclose=true,minfreespace=250G,fsname=jbod" }  
+  - { source: "/mnt/disk*", mountpoint: "/mnt/jbod", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=mspmfs,dropcacheonclose=true,minfreespace=250G,fsname=jbod" }  
 
 snapraid_runner_email_address: "{{ gmail_address }}"
 snapraid_runner_gmail_pass: "{{ snapraid_email_password }}"
