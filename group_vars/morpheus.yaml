@@ -145,7 +145,7 @@ syncoid_cron_jobs:
 
 
 # ironicbadger.snapraid
-snapraid_bin_path: /usr/bin/snapraid
+snapraid_bin_path: /usr/local/bin/snapraid
 snapraid_runner_cron_jobs:
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_snapraid }}/start && {{ snapraid_runner_command }} | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_snapraid }} --data-binary "@-"', name: 'snapraid_runner', weekday: '*', hour: '01' }
 
@@ -661,17 +661,15 @@ containers:
     restart: unless-stopped
   ###
   - service_name: sync
-    active: false
+    active: true
     image: linuxserver/resilio-sync
     hostname: "{{ hostname_morpheus }}"
     volumes:
       - "{{ appdata_path }}/sync:/config"
       - "{{ morpheus_main_storage_path }}:/sync"
-    mem_limit: 2048m
     labels:
       - traefik.enable=true
       - "traefik.http.routers.btsync.rule=Host(`sync.m.{{ local_domain }}`)"
-      #- traefik.http.services.btsync.loadbalancer.server.port=8888
     ports:
       - "55555:55555"
     include_global_env_vars: true
@@ -1026,7 +1024,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: wyzebridge
-    active: true
+    active: false
     image: mrlt8/wyze-bridge
     labels:
       - traefik.enable=true
@@ -1051,7 +1049,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: photostructure
-    active: true
+    active: false
     image: photostructure/server:stable
     labels:
       - traefik.enable=true
@@ -1085,7 +1083,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: tdarr
-    active: true
+    active: false
     image: haveagitgat/tdarr
     labels:
       - traefik.enable=true
@@ -1107,7 +1105,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: tdarr-node
-    active: true
+    active: false
     image: haveagitgat/tdarr_node
     devices:
       - /dev/dri:/dev/dri
