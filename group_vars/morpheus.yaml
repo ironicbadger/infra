@@ -312,7 +312,7 @@ containers:
   ###
   - service_name: plex
     active: true
-    image: plexinc/pms-docker
+    image: plexinc/pms-docker:1.25.3.5409-f11334058
     network_mode: host
     devices:
       - /dev/dri:/dev/dri
