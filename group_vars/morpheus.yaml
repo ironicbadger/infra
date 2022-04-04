@@ -126,7 +126,7 @@ syncoid_cron_jobs:
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/audiobooks p:z2/morpheus/tank/fuse/audiobooks | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }} --data-binary "@-"', name: 'morpheus to pennywise audiobooks', weekday: '*', hour: '1' }
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/documents p:z2/morpheus/tank/fuse/documents | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }} --data-binary "@-"', name: 'morpheus to pennywise documents', weekday: '*', hour: '3' }
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/drone p:z2/morpheus/tank/fuse/drone | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }} --data-binary "@-"', name: 'morpheus to pennywise drone', weekday: '*', hour: '4',  }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/music p:z2/morpheus/tank/fuse/music | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }} --data-binary "@-"', name: 'morpheus to pennywise music', weekday: '*', hour: '5' }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/music p:z2/morpheus/tank/fuse/music | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }} --data-binary "@-"', name: 'morpheus to pennywise music', weekday: '*', hour: '5' }
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/photos p:z2/morpheus/tank/fuse/photos | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }} --data-binary "@-"', name: 'morpheus to pennywise photos', weekday: '*', hour: '6' }
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/podcast p:z2/morpheus/tank/fuse/podcast | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }} --data-binary "@-"', name: 'morpheus to pennywise podcast', weekday: '*', hour: '7' }
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/software p:z2/morpheus/tank/fuse/software | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }} --data-binary "@-"', name: 'morpheus to pennywise software', weekday: '*', hour: '8' }
@@ -392,7 +392,7 @@ containers:
       - "{{ appdata_path }}/lidarr:/config"
       - "{{ download_path }}/complete/music:/downloads/complete/music"
       - "{{ download_path }}/intermediate/music:/downloads-amd"
-      - /mnt/storage/music/flac:/music
+      - /mnt/storage/flac/flac:/music
     labels:
       - traefik.enable=true
       - "traefik.http.routers.lidarr.rule=Host(`lidarr.m.{{ local_domain }}`)"
@@ -407,7 +407,7 @@ containers:
       - "{{ download_path }}/intermediate/music:/downloads-amd"
     environment:
       - AUTOSTART=true
-      - SCRIPTINTERVAL=30m
+      - SCRIPTINTERVAL=7d
       - DOWNLOADMODE=wanted
       - FALLBACKSEARCH=True
       - LIST=both
@@ -891,7 +891,7 @@ containers:
   ###
   - service_name: paperless
     active: true
-    image: linuxserver/paperless-ng
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
     labels:
       - traefik.enable=true
       - "traefik.http.routers.paperless.rule=Host(`paperless.m.{{ local_domain }}`)"
