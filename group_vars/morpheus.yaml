@@ -400,7 +400,7 @@ containers:
     restart: unless-stopped
     include_global_env_vars: true
   - service_name: amd
-    active: true
+    active: false
     image: randomninjaatk/amd
     volumes:
       - "{{ appdata_path }}/lidarramd:/config"
@@ -562,7 +562,7 @@ containers:
     image: linuxserver/booksonic:1.2-ls75
     volumes:
       - "{{ appdata_path }}/booksonic:/config"
-      - "{{ morpheus_main_storage_path }}/audiobooks:/books"
+      - "{{ morpheus_main_storage_path }}/audiobooks/library:/books"
     labels:
       - traefik.enable=true
       - "traefik.http.routers.booksonic.rule=Host(`booksonic.{{ domain_cloud }}`)"
@@ -994,7 +994,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plexmeta
-    active: false
+    active: true
     image: meisnate12/plex-meta-manager
     volumes:
       - "{{ appdata_path }}/plexmeta/config:/config"
