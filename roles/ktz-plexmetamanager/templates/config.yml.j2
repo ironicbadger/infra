@@ -7,6 +7,17 @@ libraries:
           - git: meisnate12/Movies
           - git: meisnate12/Metadata
           - git: meisnate12/Studios
+          - url: https://raw.githubusercontent.com/meisnate12/Plex-Meta-Manager-Configs/master/Frexe/Movies/Studio.yml
+          - url: https://raw.githubusercontent.com/meisnate12/Plex-Meta-Manager-Configs/master/Frexe/Movies/Collections/DC.yml
+          - url: https://raw.githubusercontent.com/meisnate12/Plex-Meta-Manager-Configs/master/Frexe/Movies/Collections/DreamWorks%20Animation.yml
+          - url: https://raw.githubusercontent.com/meisnate12/Plex-Meta-Manager-Configs/master/Frexe/Movies/Collections/Illumination%20Entertainment.yml
+          - url: https://raw.githubusercontent.com/meisnate12/Plex-Meta-Manager-Configs/master/Frexe/Movies/Collections/Marvel%20Cinematic%20Universe.yml
+          - url: https://raw.githubusercontent.com/meisnate12/Plex-Meta-Manager-Configs/master/Frexe/Movies/Collections/Middle%20Earth.yml
+          - url: https://raw.githubusercontent.com/meisnate12/Plex-Meta-Manager-Configs/master/Frexe/Movies/Collections/Parody%20Movies.yml
+          - url: https://raw.githubusercontent.com/meisnate12/Plex-Meta-Manager-Configs/master/Frexe/Movies/Collections/Pixar.yml
+          - url: https://raw.githubusercontent.com/meisnate12/Plex-Meta-Manager-Configs/master/Frexe/Movies/Collections/Sony%20Pictures%20Animation.yml
+          - url: https://raw.githubusercontent.com/meisnate12/Plex-Meta-Manager-Configs/master/Frexe/Movies/Collections/Walt%20Disney%20Animation.yml
+          - url: https://raw.githubusercontent.com/meisnate12/Plex-Meta-Manager-Configs/master/Frexe/Movies/Collections/Wizarding%20World.yml
         mass_critic_rating_update: tmdb
         mass_audience_rating_update: tmdb
         split_duplicates: true
@@ -44,6 +55,7 @@ trakt:
     refresh_token:
     scope: public
     created_at:
+  pin: {{ plexmm_trakt_pin }}
 tmdb:
     apikey: {{ plexmm_tmdb_apikey }}
     language: en
