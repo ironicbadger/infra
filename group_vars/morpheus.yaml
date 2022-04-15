@@ -310,6 +310,20 @@ containers:
     image: redis
     restart: unless-stopped
   ###
+  - service_name: flame
+    active: true
+    image: pawelmalak/flame
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.flame.rule=Host(`flame.m.{{ local_domain }}`)"
+    environment:
+      - "PASSWORD={{ main_pass_lower }}"
+    volumes:
+      - "{{ appdata_path }}/flame:/app/data"
+      - /var/run/docker.sock:/var/run/docker.sock
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
   - service_name: plex
     active: true
     image: plexinc/pms-docker:1.25.3.5409-f11334058
@@ -320,6 +334,10 @@ containers:
       - traefik.enable=true
       - "traefik.http.routers.plex.rule=Host(`plex.{{ domain_me }}`)"
       - traefik.http.services.plex.loadbalancer.server.port=32400
+      - flame.type=app
+      - flame.name=Plex
+      - "flame.url=https://plex.{{ domain_me }}"
+      - flame.icon=plex
     volumes:
       - "{{ appdata_path }}/plex/config:/config"
       - "{{ appdata_path }}/plex/transcode:/transcode"
@@ -335,6 +353,10 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.tautulli.rule=Host(`tautulli.m.{{ local_domain }}`)"
+      - flame.type=app
+      - flame.name=Tautulli
+      - "flame.url=https://tautulli.m.{{ local_domain }}"
+      - flame.icon=chart-areaspline
     volumes:
       - "{{ appdata_path }}/tautulli:/config"
       - "{{ appdata_path }}/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro"
@@ -349,6 +371,10 @@ containers:
       - "traefik.http.routers.nzbget.rule=Host(`nzbget.m.{{ local_domain }}`)"
       - traefik.http.routers.nzbget.middlewares=authelia@docker
       - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.{{ local_domain }}`)"
+      - flame.type=app
+      - flame.name=NZBget
+      - "flame.url=https://nzbget.m.{{ local_domain }}"
+      - flame.icon=download
     volumes:
       - "{{ appdata_path }}/nzbget/config:/config"
       - "{{ download_path }}:/downloads"
@@ -364,6 +390,10 @@ containers:
       - traefik.enable=true
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.m.{{ local_domain }}`)"
       - traefik.http.routers.sonarr.middlewares=authelia@docker
+      - flame.type=app
+      - flame.name=Sonarr
+      - "flame.url=https://sonarr.m.{{ local_domain }}"
+      - flame.icon=television-classic
     volumes:
       - "{{ appdata_path }}/sonarr:/config"
       - "{{ download_path }}/complete/tv:/downloads/complete/tv"
@@ -382,6 +412,10 @@ containers:
       - traefik.enable=true
       - "traefik.http.routers.radarr.rule=Host(`radarr.m.{{ local_domain }}`)"
       - traefik.http.routers.radarr.middlewares=authelia@docker
+      - flame.type=app
+      - flame.name=Radarr
+      - "flame.url=https://radarr.m.{{ local_domain }}"
+      - flame.icon=movie-open-outline
     restart: unless-stopped
     include_global_env_vars: true
   ###
@@ -397,6 +431,10 @@ containers:
       - traefik.enable=true
       - "traefik.http.routers.lidarr.rule=Host(`lidarr.m.{{ local_domain }}`)"
       - traefik.http.routers.lidarr.middlewares=authelia@docker
+      - flame.type=app
+      - flame.name=Lidarr
+      - "flame.url=https://lidarr.m.wd.{{ domain_me }}"
+      - flame.icon=music-box-outline
     restart: unless-stopped
     include_global_env_vars: true
   - service_name: amd
@@ -458,6 +496,10 @@ containers:
       - "traefik.http.routers.tiddlywiki.rule=Host(`wiki.{{ domain_me }}`)"
       - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
       - traefik.http.routers.tiddlywiki.middlewares=authelia@docker
+      - flame.type=app
+      - flame.name=Tiddlywiki
+      - "flame.url=https://wiki.{{ domain_me }}"
+      - flame.icon=book-information-variant
     environment:
       - USERNAME=
       - PASSWORD=
@@ -471,6 +513,10 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.chowdown.rule=Host(`recipes.m.{{ local_domain }}`)"
+      - flame.type=app
+      - flame.name=Chowdown
+      - "flame.url=https://recipes.m.wd.{{ domain_me }}"
+      - flame.icon=carrot
     volumes:
       - "{{ appdata_path }}/chowdown/config:/config"
       - "{{ appdata_path }}/chowdown/recipes:/config/_recipes"
@@ -486,6 +532,10 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.nc.rule=Host(`nc.{{ domain_cloud }}`)"
+      - flame.type=app
+      - flame.name=Nextcloud
+      - "flame.url=https://nc.{{ domain_cloud }}"
+      - flame.icon=cloud-upload-outline
     volumes:
       - "{{ appdata_path }}/nextcloud:/var/www/html"
     restart: unless-stopped
@@ -567,6 +617,10 @@ containers:
       - traefik.enable=true
       - "traefik.http.routers.booksonic.rule=Host(`booksonic.{{ domain_cloud }}`)"
       - traefik.http.services.booksonic.loadbalancer.server.port=4040
+      - flame.type=app
+      - flame.name=Booksonic
+      - "flame.url=https://booksonic.{{ domain_cloud }}"
+      - flame.icon=book-play
     # environment:
     #   - CONTEXT_PATH=booksonic
     mem_limit: 1024m
@@ -596,6 +650,10 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.smokeping.rule=Host(`smokeping.m.{{ local_domain }}`)"
+      - flame.type=app
+      - flame.name=Smokeping
+      - "flame.url=https://smokeping.m.{{ local_domain }}/smokeping/smokeping.cgi"
+      - flame.icon=smoke
     include_global_env_vars: true
     restart: unless-stopped
   ###
