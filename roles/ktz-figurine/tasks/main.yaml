@@ -7,9 +7,9 @@
 
 - name: download and unpack figurine
   unarchive:
-    src: https://github.com/arsham/figurine/releases/download/v1.0.1/figurine_linux_v1.0.1.tar.gz
+    src: https://github.com/arsham/figurine/releases/download/v1.1.3/figurine_linux_v1.1.3.tar.gz
     dest: /tmp
-    remote_src: yes
+    remote_src: True
   when: not file_result.stat.exists
 
 - name: move extracted file to bin directory
