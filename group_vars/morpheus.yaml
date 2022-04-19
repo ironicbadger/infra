@@ -139,6 +139,7 @@ syncoid_cron_jobs:
 
   ## morpheus local jobs
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --name plexmetamanager --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }} --data-binary "@-"', name: 'plexmeta', weekday: '*/1' }
+  - { job: 'docker restart plextraktsync', name: 'plextraktsync', weekday: '*12' }
 
   ## morpheus to elrond jobs
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic }}/start && /usr/local/bin/autorestic backup -av -c /root/.autorestic.yml | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic  }} --data-binary "@-"', name: 'morpheus to elrond - autorestic', weekday: '*', hour: '13' }
@@ -326,7 +327,7 @@ containers:
   ###
   - service_name: plex
     active: true
-    image: plexinc/pms-docker:1.25.3.5409-f11334058
+    image: plexinc/pms-docker
     network_mode: host
     devices:
       - /dev/dri:/dev/dri
@@ -1061,6 +1062,13 @@ containers:
       - PMM_TIME=01:22
     restart: unless-stopped
   ###
+  - service_name: plextraktsync
+    active: true
+    image: ghcr.io/taxel/plextraktsync
+    volumes:
+      - "{{ appdata_path }}/plextraktsync/config:/app/config"
+    restart: unless-stopped
+  ###
   - service_name: wellandwiki
     active: true
     image: nginx
@@ -1123,7 +1131,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: jellyfin
-    active: false
+    active: true
     image: jellyfin/jellyfin
     network_mode: host
     devices:
@@ -1190,6 +1198,22 @@ containers:
       - traefik.http.services.change.loadbalancer.server.port=5000
     volumes:
       - "{{ appdata_path }}/changedetect:/datastore"
+    restart: unless-stopped
+  ###
+  - service_name: abs
+    active: true
+    image: advplyr/audiobookshelf
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.audiobookshelf.rule=Host(`abs.m.{{ local_domain }}`)"
+      #- traefik.http.routers.XXXXXXX.entrypoints=websecure
+      #- traefik.http.routers.XXXXXXX.tls.certresolver=cloudflare
+      #- traefik.http.services.audiobookshelf.loadbalancer.server.port=80
+      #- traefik.http.routers.XXXXXXX.middlewares=authelia@docker
+    volumes:
+      - "{{ morpheus_main_storage_path }}/audiobooks/library:/audiobooks"
+      - "{{ appdata_path }}/audiobookshelf/metadata:/metadata"
+      - "{{ appdata_path }}/audiobookshelf/config:/config"
     restart: unless-stopped
 
   # template for docker-compose services
