@@ -101,7 +101,7 @@ containers:
       - /sys:/host/sys:ro
   ###
   - service_name: adguard
-    active: true
+    active: false
     image: adguard/adguardhome
     ports:
       - 53:53/tcp
@@ -119,7 +119,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: photostructure
-    active: true
+    active: false
     image: photostructure/server:stable
     labels:
       - traefik.enable=true
@@ -136,9 +136,8 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
 ###
-###
   - service_name: photoprism
-    active: true
+    active: false
     image: photoprism/photoprism:latest
     labels:
       - traefik.enable=true
