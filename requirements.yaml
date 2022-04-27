@@ -4,11 +4,11 @@
 - src: geerlingguy.github-users
 - src: grog.package
 - src: rossmcdonald.telegraf
-- src: ironicbadger.ansible_role_docker_compose_generator
-- src: ironicbadger.ansible_role_bash_aliases
-- src: ironicbadger.ansible_role_hddtemp
-- src: ironicbadger.ansible_role_snapraid
-- src: ironicbadger.ansible_role_proxmox_nag_removal
+- src: ironicbadger.docker_compose_generator
+- src: ironicbadger.bash_aliases
+- src: ironicbadger.hddtemp
+- src: ironicbadger.snapraid
+- src: ironicbadger.proxmox_nag_removal
 
 - src: ironicbadger.ansible_users
 - src: weareinteractive.environment
