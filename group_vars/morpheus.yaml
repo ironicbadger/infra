@@ -743,7 +743,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plextraktsync
-    active: true
+    active: false
     image: ghcr.io/taxel/plextraktsync
     volumes:
       - "{{ appdata_path }}/plextraktsync/config:/app/config"

@@ -6,6 +6,7 @@
 - src: rossmcdonald.telegraf
 - src: ironicbadger.docker_compose_generator
 - src: ironicbadger.bash_aliases
+- src: ironicbadger.figurine
 - src: ironicbadger.hddtemp
 - src: ironicbadger.snapraid
 - src: ironicbadger.proxmox_nag_removal

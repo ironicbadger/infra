@@ -24,11 +24,11 @@
       - role: ironicbadger.hddtemp
       - role: ironicbadger.proxmox_nag_removal
       - role: ironicbadger.bash_aliases
-      - role: ktz-figurine
+      - role: ironicbadger.figurine
       - role: ktz-boot-notification
       - role: ktz-sanoid
         tags: replication
-      - role: ktz-cartman
+      - role: ktz-morpheus
       #- role: ktz-apcupsd
       - role: ktz-authelia
         tags: compose
@@ -51,7 +51,7 @@
       - role: ironicbadger.hddtemp
       #- role: ironicbadger.proxmox_nag_removal
       - role: ironicbadger.bash_aliases
-      - role: ktz-figurine
+      - role: ironicbadger.figurine
       - role: ktz-boot-notification
       - role: ktz-sanoid
       - role: ktz-traefik
@@ -73,8 +73,8 @@
       - role: grog.package
       - role: ironicbadger.hddtemp
       - role: ironicbadger.bash_aliases
+      - role: ironicbadger.figurine
       - role: ktz-boot-notification
-      - role: ktz-figurine
       - role: ktz-sanoid
 
   - hosts: dev
@@ -105,7 +105,7 @@
       - role: geerlingguy.docker
       - role: geerlingguy.ntp
       - role: ironicbadger.bash_aliases
-      - role: ktz-figurine
+      - role: ironicbadger.figurine
     tasks:
       - hostname:
           name: "galgatebst"
@@ -116,7 +116,7 @@
     roles:
       - role: grog.package
       - role: ktz-boot-notification
-      - role: ktz-figurine
+      - role: ironicbadger.figurine
     tasks:
       - hostname:
           name: "vpnwd"
