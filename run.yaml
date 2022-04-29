@@ -1,7 +1,7 @@
 ---
   # - hosts: all
   #   roles:
-  #     - role: ironicbadger.ansible_role_bash_aliases
+  #     - role: ironicbadger.bash_aliases
   #   tasks:
   #     - name: remove ubuntu motd spam
   #       become: true
@@ -21,9 +21,9 @@
       - role: geerlingguy.docker
       - role: grog.package
       - role: rossmcdonald.telegraf
-      - role: ironicbadger.ansible_role_hddtemp
-      - role: ironicbadger.ansible_role_proxmox_nag_removal
-      - role: ironicbadger.ansible_role_bash_aliases
+      - role: ironicbadger.hddtemp
+      - role: ironicbadger.proxmox_nag_removal
+      - role: ironicbadger.bash_aliases
       - role: ktz-figurine
       - role: ktz-boot-notification
       - role: ktz-sanoid
@@ -32,11 +32,11 @@
       #- role: ktz-apcupsd
       - role: ktz-authelia
         tags: compose
-      - role: ironicbadger.ansible_role_docker_compose_generator
+      - role: ironicbadger.docker_compose_generator
         tags: compose
       - role: ktz-traefik
         tags: compose
-      - role: ironicbadger.ansible_role_snapraid
+      - role: ironicbadger.snapraid
       - role: ktz-plexmetamanager
         tags: compose
       - role: ktz-autorestic
@@ -48,14 +48,14 @@
     roles:
       - role: geerlingguy.docker
       - role: grog.package
-      - role: ironicbadger.ansible_role_hddtemp
-      #- role: ironicbadger.ansible_role_proxmox_nag_removal
-      - role: ironicbadger.ansible_role_bash_aliases
+      - role: ironicbadger.hddtemp
+      #- role: ironicbadger.proxmox_nag_removal
+      - role: ironicbadger.bash_aliases
       - role: ktz-figurine
       - role: ktz-boot-notification
       - role: ktz-sanoid
       - role: ktz-traefik
-      - role: ironicbadger.ansible_role_docker_compose_generator
+      - role: ironicbadger.docker_compose_generator
         tags: compose
 
 
@@ -71,8 +71,8 @@
       - 'vars/vault.yaml'
     roles:
       - role: grog.package
-      - role: ironicbadger.ansible_role_hddtemp
-      - role: ironicbadger.ansible_role_bash_aliases
+      - role: ironicbadger.hddtemp
+      - role: ironicbadger.bash_aliases
       - role: ktz-boot-notification
       - role: ktz-figurine
       - role: ktz-sanoid
@@ -93,8 +93,8 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      #- role: ironicbadger.ansible_role_bash_aliases
-      - role: ironicbadger.ansible_role_docker_compose_generator
+      #- role: ironicbadger.bash_aliases
+      - role: ironicbadger.docker_compose_generator
         tags: compose
 
   - hosts: galgatebst
@@ -104,7 +104,7 @@
       - role: grog.package
       - role: geerlingguy.docker
       - role: geerlingguy.ntp
-      - role: ironicbadger.ansible_role_bash_aliases
+      - role: ironicbadger.bash_aliases
       - role: ktz-figurine
     tasks:
       - hostname:
