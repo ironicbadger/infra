@@ -10,7 +10,6 @@
 - src: ironicbadger.snapraid
 - src: ironicbadger.proxmox_nag_removal
 
-- src: ironicbadger.ansible_users
 - src: weareinteractive.environment
 
 # - src: geerlingguy.docker
