@@ -1,0 +1,26 @@
+  ###
+  - service_name: prometheus
+    active: false
+    image: prom/prometheus
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.prom.rule=Host(`prometheus.{{ domain_me }}`)"
+    ports:
+      - 9090:9090
+    privileged: true
+    volumes:
+      - "{{ appdata_path }}/prometheus:/etc/prometheus"
+    restart: unless-stopped
+  - service_name: vmware_exporter
+    active: false
+    container_name: vmware_exporter
+    image: pryorda/vmware_exporter:v0.16.0
+    ports:
+      - 9272:9272
+    mem_limit: 512m
+    environment:
+      - "VSPHERE_HOST={{ vsphere_host }}"
+      - "VSPHERE_IGNORE_SSL=True"
+      - "VSPHERE_USER={{ vsphere_user }}"
+      - "VSPHERE_PASSWORD={{ vsphere_password }}"
+    restart: unless-stopped

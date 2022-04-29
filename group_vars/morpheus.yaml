@@ -438,56 +438,6 @@ containers:
       - flame.icon=music-box-outline
     restart: unless-stopped
     include_global_env_vars: true
-  - service_name: amd
-    active: false
-    image: randomninjaatk/amd
-    volumes:
-      - "{{ appdata_path }}/lidarramd:/config"
-      - "{{ download_path }}/intermediate/music:/downloads-amd"
-    environment:
-      - AUTOSTART=true
-      - SCRIPTINTERVAL=7d
-      - DOWNLOADMODE=wanted
-      - FALLBACKSEARCH=True
-      - LIST=both
-      - SearchType=both
-      - Concurrency=2
-      - EMBEDDED_COVER_QUALITY=80
-      - FORMAT=FLAC
-      - BITRATE=320
-      - ENABLEPOSTPROCESSING=true
-      - FORCECONVERT=false
-      - requirequality=false
-      - MatchDistance=10
-      - replaygain=true
-      - FolderPermissions=766
-      - FilePermissions=666
-      - MBRAINZMIRROR=https://musicbrainz.org
-      - MBRATELIMIT=1
-      - LidarrUrl=http://lidarr:8686
-      - "LidarrAPIkey={{ lidarr_apikey }}"
-      - "ARL_TOKEN={{ deezer_arl }}"
-      - NOTIFYPLEX=false
-      - PLEXLIBRARYNAME=Music
-      - PLEXURL=http://192.168.1.10:32400
-      - "PLEXTOKEN={{ plexmm_plex_token }}"
-      - ALBUM_TYPE_FILTER=COMPILE
-      - POSTPROCESSTHREADS=1
-    restart: unless-stopped
-    include_global_env_vars: true
-  - service_name: musicbrainz
-    active: false
-    image: linuxserver/musicbrainz
-    volumes:
-      - "/ssd500-mirror/musicbrainz/config:/config"
-      - "/ssd500-mirror/musicbrainz/data:/data"
-    environment:
-      - "BRAINZCODE={{ musicbrainz_token }}"
-      - WEBADDRESS=192.168.1.10
-    ports:
-      - 5000:5000
-    restart: unless-stopped
-    include_global_env_vars: true
   ###
   - service_name: tiddlywiki
     active: true
@@ -553,93 +503,6 @@ containers:
       - MYSQL_USER=nextcloud
     volumes:
       - "{{ appdata_path }}/mysql:/var/lib/mysql"
-    restart: unless-stopped
-  ###
-  - service_name: prometheus
-    active: false
-    image: prom/prometheus
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.prom.rule=Host(`prometheus.{{ domain_me }}`)"
-    ports:
-      - 9090:9090
-    privileged: true
-    volumes:
-      - "{{ appdata_path }}/prometheus:/etc/prometheus"
-    restart: unless-stopped
-  - service_name: vmware_exporter
-    active: false
-    container_name: vmware_exporter
-    image: pryorda/vmware_exporter:v0.16.0
-    ports:
-      - 9272:9272
-    mem_limit: 512m
-    environment:
-      - "VSPHERE_HOST={{ vsphere_host }}"
-      - "VSPHERE_IGNORE_SSL=True"
-      - "VSPHERE_USER={{ vsphere_user }}"
-      - "VSPHERE_PASSWORD={{ vsphere_password }}"
-    restart: unless-stopped
-  ###
-  - service_name: grafana
-    active: false
-    image: grafana/grafana
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.grafana.rule=(Host(`al.{{ domain_me }}`) && PathPrefix(`/grafana`))"
-      - traefik.http.routers.grafana.entrypoints=websecure
-      #- traefik.http.routers.grafana.tls.certresolver=cloudflare
-      - traefik.http.services.grafana.loadbalancer.server.port=3000
-    environment:
-      - "GF_SERVER_ROOT_URL=https://al.{{ domain_me }}/grafana"
-      - "GF_SERVER_SERVE_FROM_SUB_PATH=true"
-      - "GF_SERVER_DOMAIN=al.{{ domain_me }}"
-    volumes:
-      - "{{ appdata_path }}/grafana/data:/var/lib/grafana"
-    restart: unless-stopped
-  ###
-  - service_name: influxdb
-    active: false
-    container_name: influx
-    image: influxdb
-    ports:
-      - "8086:8086"
-    volumes:
-      - "/intel2tbnvme/appdata/influxdb:/var/lib/influxdb"
-    restart: unless-stopped
-  ###
-  - service_name: booksonic
-    active: true
-    image: linuxserver/booksonic:1.2-ls75
-    volumes:
-      - "{{ appdata_path }}/booksonic:/config"
-      - "{{ morpheus_main_storage_path }}/audiobooks/library:/books"
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.booksonic.rule=Host(`booksonic.{{ domain_cloud }}`)"
-      - traefik.http.services.booksonic.loadbalancer.server.port=4040
-      - flame.type=app
-      - flame.name=Booksonic
-      - "flame.url=https://booksonic.{{ domain_cloud }}"
-      - flame.icon=book-play
-    # environment:
-    #   - CONTEXT_PATH=booksonic
-    mem_limit: 1024m
-    include_global_env_vars: true
-    restart: unless-stopped
-  - service_name: bsair
-    active: false
-    image: bs
-    volumes:
-      - "{{ appdata_path }}/booksonicair:/config"
-      - "{{ morpheus_main_storage_path }}/audiobooks:/books"
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.booksonicair.rule=Host(`booksonicair.m.{{ local_domain }}`)"
-      - traefik.http.services.booksonicair.loadbalancer.server.port=4040
-    environment:
-      - CONTEXT_PATH=booksonicair
-    include_global_env_vars: true
     restart: unless-stopped
   ###
   - service_name: smokeping
@@ -773,25 +636,12 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   ###
-  - service_name: deepstack
-    active: false
-    image: deepquestai/deepstack
-    container_name: deepstack
-    ports:
-      - 5000:5000
-    volumes:
-      - "{{ appdata_path }}/deepstack:/datastore"
-    environment:
-      - VISION-DETECTION=True
-    restart: unless-stopped
-  ###
   - service_name: ninja_nginx
     active: true
     image: nginx:mainline-alpine
     labels:
       - traefik.enable=true
       - "traefik.http.routers.nginx.rule=Host(`ninja.m.{{ local_domain }}`)"
-      #- traefik.http.services.nginx.loadbalancer.server.port=80
     volumes:
       - "{{ appdata_path }}/invoiceninja/ninja.conf:/etc/nginx/conf.d/default.conf:ro"
       - "{{ appdata_path }}/invoiceninja/storage:/var/www/app/storage"
@@ -828,125 +678,6 @@ containers:
       - REQUIRE_HTTPS=true
       - "TRUSTED_PROXIES='*'"
     restart: unless-stopped
-###
-  - service_name: scrutiny
-    active: false
-    image: linuxserver/scrutiny
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.scrutiny.rule=Host(`scrutiny.m.{{ local_domain }}`)"
-      - traefik.http.services.scrutiny.loadbalancer.server.port=8080
-    cap_add:
-      - SYS_RAWIO
-      - SYS_ADMIN
-    devices:
-      - /dev:/dev
-    volumes:
-      - "{{ appdata_path }}/scrutiny:/config" 
-      - /run/udev:/run/udev:ro
-    include_global_env_vars: true
-    environment:
-      - SCRUTINY_COLLECTOR=true
-      - SCRUTINY_WEB=true
-    privileged: true
-    restart: unless-stopped
-###
-  - service_name: photoprism
-    active: false
-    image: photoprism/photoprism:latest
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.photoprism.rule=Host(`photoprism.ktz.me`)
-      - traefik.http.services.photoprism.loadbalancer.server.port=2342
-    volumes:
-      - "{{ appdata_path }}/photoprism/app:/photoprism/storage" 
-      - "{{ morpheus_main_storage_path }}/photos/alex/legacy/images.old:/photoprism/originals/imagesold"
-    environment:
-      - UID=1000
-      - GID=1000
-      - PHOTOPRISM_ADMIN_PASSWORD=pleasechange     # Initial admin password: PLEASE CHANGE!
-      - PHOTOPRISM_DEBUG=false                      # Run in debug mode (shows additional log messages)
-      - PHOTOPRISM_PUBLIC=false                     # No authentication required (disables password protection)
-      - PHOTOPRISM_READONLY=false                   # Don't modify originals directory (reduced functionality)
-      - PHOTOPRISM_UPLOAD_NSFW=true                 # Allow uploads that MAY be offensive
-      - PHOTOPRISM_DETECT_NSFW=false                # Flag photos as private that MAY be offensive
-      - PHOTOPRISM_EXPERIMENTAL=false               # Enable experimental features
-      - PHOTOPRISM_SITE_URL="https://photoprism.ktz.me"  # Canonical / public site URL
-      - PHOTOPRISM_SITE_TITLE="PhotoPrism"
-      - PHOTOPRISM_SITE_CAPTION="Browse Your Life"
-      - PHOTOPRISM_SITE_DESCRIPTION="ktz."
-      - PHOTOPRISM_SITE_AUTHOR="Alex Kretzschmar"
-      - PHOTOPRISM_HTTP_HOST=0.0.0.0
-      - PHOTOPRISM_HTTP_PORT=2342
-      - PHOTOPRISM_SETTINGS_HIDDEN=false            # Users can not view or change settings
-      - PHOTOPRISM_DATABASE_DRIVER=sqlite           # SQLite is an embedded database that doesn't require a server
-      #- PHOTOPRISM_DATABASE_DRIVER=mysql          # Use MariaDB (or MySQL) instead of SQLite for improved performance
-      # PHOTOPRISM_DATABASE_DSN: "photoprism:insecure@tcp(mariadb:3306)/photoprism?charset=utf8mb4,utf8&parseTime=true"
-      - PHOTOPRISM_SIDECAR_JSON=true                # Automatically create JSON sidecar files using Exiftool
-      - PHOTOPRISM_SIDECAR_YAML=true                # Automatically backup metadata to YAML sidecar files
-      - PHOTOPRISM_THUMB_FILTER=lanczos             # Resample filter, best to worst: blackman, lanczos, cubic, linear
-      - PHOTOPRISM_THUMB_UNCACHED=false             # Enable on-demand thumbnail rendering (high memory and cpu usage)
-      - PHOTOPRISM_THUMB_SIZE=2048                    # Pre-rendered thumbnail size limit (default 2048, min 720, max 7680)
-      # PHOTOPRISM_THUMB_SIZE: 4096                  # Retina 4K, DCI 4K (requires more storage); 7680 for 8K Ultra HD
-      - PHOTOPRISM_THUMB_SIZE_UNCACHED=7680           # On-demand rendering size limit (default 7680, min 720, max 7680)
-      - PHOTOPRISM_JPEG_SIZE=7680                     # Size limit for converted image files in pixels (720-30000)
-      - PHOTOPRISM_JPEG_QUALITY=92                    # Set to 95 for high-quality thumbnails (25-100)
-      - PHOTOPRISM_DARKTABLE_PRESETS=false          # Use darktable presets (disables concurrent raw to jpeg conversion)
-    restart: unless-stopped
-  - service_name: photoprism_db
-    active: false
-    image: mariadb:10.5
-    volumes:
-      - "{{ appdata_path }}/photoprism/db:/var/lib/mysql" 
-    environment:
-      - MYSQL_ROOT_PASSWORD=pleasechange
-      - MYSQL_USER=photoprism
-      - MYSQL_PASSWORD=insecure
-      - MYSQL_DATABASE=photoprism
-    restart: unless-stopped
-  ###
-  - service_name: transmission
-    active: false
-    image: haugene/transmission-openvpn
-    cap_add:
-      - NET_ADMIN
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.transmission.rule=Host(`transmission.{{ domain_me }}`)"
-      - traefik.http.services.transmission.loadbalancer.server.port=9091
-    volumes:
-      - "{{ appdata_path }}/transmission:/config"
-      - /opt/downloads/torrents:/data
-    ports:
-      - 9091:9091
-    environment:
-      - "OPENVPN_PROVIDER={{ transmission_openvpn_provider }}"
-      - "OPENVPN_CONFIG={{ transmission_openvpn_config }}"
-      - "OPENVPN_USERNAME={{ transmission_openvpn_username }}"
-      - "OPENVPN_PASSWORD={{ transmission_openvpn_password }}"
-      - "LOCAL_NETWORK={{ transmission_openvpn_local_network }}"
-    restart: unless-stopped
-###
-  - service_name: frigate
-    active: false
-    image: blakeblackshear/frigate:0.9.0-rc2-amd64
-    privileged: true
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.frigate.rule=Host(`frigate.m.{{ local_domain }}`)"
-      - traefik.http.services.frigate.loadbalancer.server.port=5000
-    volumes:
-      - "{{ appdata_path }}/frigate/config:/config:ro"
-      - /opt/frigate:/media/frigate
-      - /etc/localtime:/etc/localtime:ro
-    environment:
-      - "FRIGATE_RTSP_PASSWORD='password'"
-    ports:
-      - '5000:5000'
-    devices:
-      - /dev/bus/usb:/dev/bus/usb
-      - /dev/dri/renderD128
-    restart: unless-stopped
   ###
   - service_name: paperless
     active: true
@@ -974,57 +705,6 @@ containers:
     volumes:
       - "{{ appdata_path }}/mealie:/app/data"
     restart: unless-stopped  
-###
-  - service_name: filerun
-    active: false
-    image: afian/filerun
-    depends_on:
-      - filerundb
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.filerun.rule=Host(`filerun.{{ domain_me }}`)"
-    volumes:
-      - "{{ appdata_path }}/filerun/app:/filerun/html"
-      - "{{ morpheus_main_storage_path }}:/user-files"
-    environment:
-      - FR_DB_HOST=filerundb
-      - FR_DB_PORT=3306
-      - FR_DB_NAME=filerun
-      - FR_DB_USER=filerun
-      - "FR_DB_PASS={{ container_mysql_password }}"
-      - APACHE_RUN_USER=www-data
-      - APACHE_RUN_USER_ID=33
-      - APACHE_RUN_GROUP=www-data
-      - APACHE_RUN_GROUP_ID=33
-    restart: unless-stopped
-  - service_name: filerundb
-    active: false
-    image: mariadb:10.1
-    volumes:
-      - "{{ appdata_path }}/filerun/db:/config"
-    environment:
-      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
-      - "MYSQL_PASSWORD={{ container_mysql_password }}"
-      - MYSQL_DATABASE=filerun
-      - MYSQL_USER=filerun
-    include_global_env_vars: #optional - defaults to false
-    restart: unless-stopped
-  - service_name: fileruntika
-    active: false
-    image: logicalspark/docker-tikaserver
-    restart: unless-stopped
-    ###
-  - service_name: filerunelastic
-    active: false
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.2.4
-    volumes:
-      - "{{ appdata_path }}/filerun/elastic:/usr/share/elasticsearch/data"
-    mem_limit: 1g
-    environment:
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    restart: unless-stopped
   ###
   - service_name: sui
     active: true
@@ -1089,21 +769,6 @@ containers:
       - "{{ appdata_path }}/foundation/site:/usr/share/nginx/html:ro" 
     restart: unless-stopped
   ###
-  - service_name: wyzebridge
-    active: false
-    image: mrlt8/wyze-bridge
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.wyzebridge.rule=Host(`wyzebridge.m.{{ local_domain }}`)"
-    ports:
-      - 1935:1935
-      - 8554:8554
-      - 8888:8888
-    environment:
-      - "WYZE_EMAIL={{ wyze_email }}"
-      - "WYZE_PASSWORD={{ wyze_password }}"
-    restart: unless-stopped
-  ###
   - service_name: dozzle
     active: true
     image: amir20/dozzle
@@ -1112,22 +777,6 @@ containers:
       - "traefik.http.routers.dozzle.rule=Host(`dozzle.m.{{ local_domain }}`)"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
-  ###
-  - service_name: photostructure
-    active: false
-    image: photostructure/server:stable
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.photostructure.rule=Host(`photostructure.m.{{ local_domain }}`)"
-      - traefik.http.services.photostructure.loadbalancer.server.port=1787
-    volumes:
-      - "{{ appdata_path }}/photostructure:/ps/config"
-      - "{{ appdata_path }}/photostructure/tmp:/ps/tmp"
-      - "{{ appdata_path }}/photostructure/logs:/ps/logs"
-      - /mnt/storage/photos/alex/photostructure:/ps/library
-      - /mnt/storage/photos/alex/icloud:/var/alex/icloud
-    include_global_env_vars: true
     restart: unless-stopped
   ###
   - service_name: jellyfin
@@ -1148,47 +797,6 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   ###
-  - service_name: tdarr
-    active: false
-    image: haveagitgat/tdarr
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.tdarr.rule=Host(`tdarr.m.{{ local_domain }}`)"
-    volumes:
-      - "{{ appdata_path }}/tdarr/transcode:/temp"
-      - "{{ appdata_path }}/tdarr/server:/app/server"
-      - "{{ appdata_path }}/tdarr/configs:/app/configs"
-      - "{{ appdata_path }}/tdarr/logs:/app/logs"
-      - "{{ morpheus_main_storage_path }}:/mnt/storage"
-    environment:
-      - "serverIP=192.168.1.10"
-      - "serverPort=8266"
-      - "webUIPort=8265"
-    ports:
-      - 8265:8265
-      - 8266:8266
-      - 8267:8267
-    include_global_env_vars: true
-    restart: unless-stopped
-  - service_name: tdarr-node
-    active: false
-    image: haveagitgat/tdarr_node
-    devices:
-      - /dev/dri:/dev/dri
-    network_mode: service:tdarr
-    volumes:
-      - "{{ appdata_path }}/tdarr/configs:/app/configs"
-      - "{{ appdata_path }}/tdarr/logs:/app/logs"
-      - "{{ morpheus_main_storage_path }}:/mnt/storage"
-    environment:
-      - "nodeID=morpheusQSV"
-      - "nodeIP=192.168.1.10"
-      - "nodePort=8267"
-      - "serverIP=192.168.1.10"
-      - "serverPort=8266"
-    include_global_env_vars: true
-    restart: unless-stopped
-  ###
   - service_name: changedetect
     active: true
     image: dgtlmoon/changedetection.io
@@ -1206,10 +814,6 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.audiobookshelf.rule=Host(`abs.m.{{ local_domain }}`)"
-      #- traefik.http.routers.XXXXXXX.entrypoints=websecure
-      #- traefik.http.routers.XXXXXXX.tls.certresolver=cloudflare
-      #- traefik.http.services.audiobookshelf.loadbalancer.server.port=80
-      #- traefik.http.routers.XXXXXXX.middlewares=authelia@docker
     volumes:
       - "{{ morpheus_main_storage_path }}/audiobooks/library:/audiobooks"
       - "{{ appdata_path }}/audiobookshelf/metadata:/metadata"
@@ -1225,7 +829,7 @@ containers:
   #   container_name: #optional - only required if diff to service_name
   #   labels:
   #     - traefik.enable=true
-  #     - "traefik.http.routers.XXXXXXXX.rule=Host(`plex.{{ domain_me }}`)"
+  #     - "traefik.http.routers.XXXXXXXX.rule=Host(`abs.m.{{ local_domain }}`)"
   #     #- traefik.http.routers.XXXXXXX.entrypoints=websecure
   #     #- traefik.http.routers.XXXXXXX.tls.certresolver=cloudflare
   #     - traefik.http.services.XXXXXXX.loadbalancer.server.port=80

@@ -1,0 +1,40 @@
+  - service_name: tdarr
+    active: false
+    image: haveagitgat/tdarr
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.tdarr.rule=Host(`tdarr.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/tdarr/transcode:/temp"
+      - "{{ appdata_path }}/tdarr/server:/app/server"
+      - "{{ appdata_path }}/tdarr/configs:/app/configs"
+      - "{{ appdata_path }}/tdarr/logs:/app/logs"
+      - "{{ morpheus_main_storage_path }}:/mnt/storage"
+    environment:
+      - "serverIP=192.168.1.10"
+      - "serverPort=8266"
+      - "webUIPort=8265"
+    ports:
+      - 8265:8265
+      - 8266:8266
+      - 8267:8267
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: tdarr-node
+    active: false
+    image: haveagitgat/tdarr_node
+    devices:
+      - /dev/dri:/dev/dri
+    network_mode: service:tdarr
+    volumes:
+      - "{{ appdata_path }}/tdarr/configs:/app/configs"
+      - "{{ appdata_path }}/tdarr/logs:/app/logs"
+      - "{{ morpheus_main_storage_path }}:/mnt/storage"
+    environment:
+      - "nodeID=morpheusQSV"
+      - "nodeIP=192.168.1.10"
+      - "nodePort=8267"
+      - "serverIP=192.168.1.10"
+      - "serverPort=8266"
+    include_global_env_vars: true
+    restart: unless-stopped

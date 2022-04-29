@@ -1,0 +1,16 @@
+  ###
+  - service_name: photostructure
+    active: false
+    image: photostructure/server:stable
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.photostructure.rule=Host(`photostructure.m.{{ local_domain }}`)"
+      - traefik.http.services.photostructure.loadbalancer.server.port=1787
+    volumes:
+      - "{{ appdata_path }}/photostructure:/ps/config"
+      - "{{ appdata_path }}/photostructure/tmp:/ps/tmp"
+      - "{{ appdata_path }}/photostructure/logs:/ps/logs"
+      - /mnt/storage/photos/alex/photostructure:/ps/library
+      - /mnt/storage/photos/alex/icloud:/var/alex/icloud
+    include_global_env_vars: true
+    restart: unless-stopped

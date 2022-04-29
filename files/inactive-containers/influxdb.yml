@@ -1,0 +1,10 @@
+  ###
+  - service_name: influxdb
+    active: false
+    container_name: influx
+    image: influxdb
+    ports:
+      - "8086:8086"
+    volumes:
+      - "/intel2tbnvme/appdata/influxdb:/var/lib/influxdb"
+    restart: unless-stopped

@@ -1,0 +1,22 @@
+###
+  - service_name: scrutiny
+    active: false
+    image: linuxserver/scrutiny
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.scrutiny.rule=Host(`scrutiny.m.{{ local_domain }}`)"
+      - traefik.http.services.scrutiny.loadbalancer.server.port=8080
+    cap_add:
+      - SYS_RAWIO
+      - SYS_ADMIN
+    devices:
+      - /dev:/dev
+    volumes:
+      - "{{ appdata_path }}/scrutiny:/config" 
+      - /run/udev:/run/udev:ro
+    include_global_env_vars: true
+    environment:
+      - SCRUTINY_COLLECTOR=true
+      - SCRUTINY_WEB=true
+    privileged: true
+    restart: unless-stopped

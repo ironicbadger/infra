@@ -1,0 +1,12 @@
+  ###
+  - service_name: deepstack
+    active: false
+    image: deepquestai/deepstack
+    container_name: deepstack
+    ports:
+      - 5000:5000
+    volumes:
+      - "{{ appdata_path }}/deepstack:/datastore"
+    environment:
+      - VISION-DETECTION=True
+    restart: unless-stopped

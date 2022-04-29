@@ -1,0 +1,35 @@
+  - service_name: bsair
+    active: false
+    image: bs
+    volumes:
+      - "{{ appdata_path }}/booksonicair:/config"
+      - "{{ morpheus_main_storage_path }}/audiobooks:/books"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.booksonicair.rule=Host(`booksonicair.m.{{ local_domain }}`)"
+      - traefik.http.services.booksonicair.loadbalancer.server.port=4040
+    environment:
+      - CONTEXT_PATH=booksonicair
+    include_global_env_vars: true
+    restart: unless-stopped
+
+  ###
+  - service_name: booksonic
+    active: true
+    image: linuxserver/booksonic:1.2-ls75
+    volumes:
+      - "{{ appdata_path }}/booksonic:/config"
+      - "{{ morpheus_main_storage_path }}/audiobooks/library:/books"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.booksonic.rule=Host(`booksonic.{{ domain_cloud }}`)"
+      - traefik.http.services.booksonic.loadbalancer.server.port=4040
+      - flame.type=app
+      - flame.name=Booksonic
+      - "flame.url=https://booksonic.{{ domain_cloud }}"
+      - flame.icon=book-play
+    # environment:
+    #   - CONTEXT_PATH=booksonic
+    mem_limit: 1024m
+    include_global_env_vars: true
+    restart: unless-stopped
