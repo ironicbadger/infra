@@ -46,18 +46,6 @@ package_list:
   - name: tree
   - name: wget
 
-# ironicbadger.ansible_users
-users:
-  - username: "{{ main_username }}"
-    github_username: ironicbadger
-    name: "{{ main_username }}"
-    groups: ['wheel']
-    uid: "{{ main_uid }}"
-groups_to_create:
-  - name: "{{ main_groupname }}"
-    gid: "{{ main_gid }}"
-  - name: wheel
-
 # weareinteractive.environment
 environment_config: {
   "PUID": "{{ main_gid }}",
@@ -75,6 +63,9 @@ security_autoupdate_enabled: true
 security_fail2ban_enabled: true
 security_sudoers_passwordless:
   - alex
+
+# geerlingguy.docker
+docker_compose_version: 1.29.2
 
 # ironicbadger.docker_compose_generator
 appdata_path: /opt/appdata
