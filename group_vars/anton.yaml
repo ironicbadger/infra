@@ -2,6 +2,10 @@
 
 target_os: proxmox
 
+# zfs
+# created as raidz for 18Tb of available storage
+# zpool create backups raidz /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G0Z7RZ /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G10VZZ /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ2S3AD
+
 # grog.package
 package_list:
   - name: bash-completion
