@@ -1,17 +1,17 @@
 ---
 
 - name: ensure python pip is available
-  package:
+  ansible.builtin.package:
     name: python3-pip
     state: present
 
 - name: install apprise
-  pip:
+  ansible.builtin.pip:
     name: apprise
   become: true
 
 - name: install script that cron will execute
-  template:
+  ansible.builtin.template:
     src: booted.sh.j2
     dest: /root/booted.sh
     owner: root
@@ -19,7 +19,7 @@
     mode: '700'
 
 - name: install boot notification script
-  cron:
+  ansible.builtin.cron:
     name: "boot notification to pushover"
     special_time: reboot
     job: /bin/bash /root/booted.sh

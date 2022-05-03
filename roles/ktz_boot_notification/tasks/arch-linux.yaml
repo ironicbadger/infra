@@ -1,12 +1,12 @@
 ---
 
 - name: install cronie
-  package:
+  ansible.builtin.package:
     name: cronie
     state: present
 
 - name: enable cronie service
-  systemd:
+  ansible.builtin.systemd:
     name: cronie
     state: restarted
-    enabled: yes
+    enabled: true
