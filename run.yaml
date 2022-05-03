@@ -25,7 +25,7 @@
       - role: ironicbadger.proxmox_nag_removal
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
-      - role: ktz-boot-notification
+      - role: ironicbadger.apprise_boot_notification
       - role: ktz-sanoid
         tags: replication
       - role: ktz-morpheus
@@ -52,7 +52,7 @@
       #- role: ironicbadger.proxmox_nag_removal
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
-      - role: ktz-boot-notification
+      - role: ironicbadger.apprise_boot_notification
       - role: ktz-sanoid
       - role: ktz-traefik
       - role: ironicbadger.docker_compose_generator
@@ -74,7 +74,7 @@
       - role: ironicbadger.hddtemp
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
-      - role: ktz-boot-notification
+      - role: ironicbadger.apprise_boot_notification
       - role: ktz-sanoid
 
   - hosts: dev
