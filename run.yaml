@@ -64,7 +64,7 @@
       - 'vars/vault.yaml'
     roles:
       - role: ktz-fancontrol
-      - role: ktz-boot-notification
+      - role: ironicbadger.apprise_boot_notification
 
   - hosts: anton
     vars_files:
@@ -81,7 +81,7 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      - role: ktz-boot-notification
+      - role: ironicbadger.apprise_boot_notification
 
   - hosts: dhcp
     vars_files:
@@ -115,7 +115,7 @@
       - 'vars/vault.yaml'
     roles:
       - role: grog.package
-      - role: ktz-boot-notification
+      - role: ironicbadger.apprise_boot_notification
       - role: ironicbadger.figurine
     tasks:
       - hostname:
