@@ -529,9 +529,9 @@ containers:
     environment:
       - "USER_UID={{ main_uid }}"
       - "USER_GID={{ main_gid }}"
-      - "ROOT_URL=https://git.ktz.me"
-      - "SSH_DOMAIN=git.ktz.me"
-      - "APP_NAME=git.ktz.me"
+      - "ROOT_URL=https://git.{{ domain_me }}"
+      - "SSH_DOMAIN=git.{{ domain_me }}"
+      - "APP_NAME=git.{{ domain_me }}"
       - "SSH_PORT=2222"
       - "DISABLE_REGISTRATION=true"
       - "REQUIRE_SIGNIN_VIEW=true"
@@ -539,7 +539,7 @@ containers:
       - "{{ appdata_path }}/gitea:/data"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.git.rule=Host(`git.ktz.me`)
+      - "traefik.http.routers.git.rule=Host(`git.{{ domain_me }}`)"
       - traefik.http.services.git.loadbalancer.server.port=3000
     ports:
       - '"2222:2222"'
