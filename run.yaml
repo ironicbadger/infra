@@ -70,6 +70,7 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
+      - role: artis3n.tailscale
       - role: grog.package
       - role: ironicbadger.hddtemp
       - role: ironicbadger.bash_aliases
