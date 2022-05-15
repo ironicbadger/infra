@@ -55,6 +55,7 @@ snapraid_config_excludes:
   - "/lost+found/"
   - "downloads/"
   - "appdata/"
+  - "/mnt/disk7/umbrel/"
   - "*.!sync"
   - ".AppleDouble"
   - "._AppleDouble"
@@ -66,6 +67,7 @@ snapraid_config_excludes:
   - ".TemporaryItems"
   - ".Trashes"
   - ".AppleDB"
+  - ".nfo"
 
 ## telegraf
 telegraf_plugins_base:
