@@ -72,6 +72,7 @@
     roles:
       - role: artis3n.tailscale
       - role: grog.package
+      - role: ironicbadger.proxmox_nag_removal
       - role: ironicbadger.hddtemp
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
