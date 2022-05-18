@@ -1,0 +1,47 @@
+  ###
+  - service_name: ta
+    active: false
+    image: bbilly1/tubearchivist:latest
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.tubearchivist.rule=Host(`tube.m.{{ local_domain }}`)"
+    environment:
+      - ES_URL=http://ta-elastic:9200
+      - REDIS_HOST=ta-redis
+      - TA_USERNAME=alex
+      - TA_PASSWORD=badger
+      - ELASTIC_PASSWORD=badger
+      - "HOST_UID={{ main_uid }}"
+      - "HOST_GID={{ main_gid }}"
+    depends_on:
+      - ta-elastic
+      - ta-redis
+    volumes:
+      - "{{ morpheus_main_storage_path }}/youtube:/youtube"
+      - "{{ appdata_path }}/tubearchivist/cache:/cache"
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: ta-redis
+    active: false
+    image: redislabs/rejson:latest
+    volumes:
+      - "{{ appdata_path }}/tubearchivist/redis:/data"
+    depends_on:
+      - ta-elastic
+    restart: unless-stopped
+  - service_name: ta-elastic
+    active: false
+    image: bbilly1/tubearchivist-es
+    environment:
+      - "xpack.security.enabled=true"
+      - "ELASTIC_PASSWORD=badger"
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - "{{ appdata_path }}/tubearchivist/elastic:/usr/share/elasticsearch/data"
+    include_global_env_vars: true
+    restart: unless-stopped
