@@ -837,7 +837,6 @@ containers:
     volumes:
       - "{{ appdata_path }}/tandoor/static:/opt/recipes/staticfiles"
       - "{{ appdata_path }}/tandoor/media:/opt/recipes/mediafiles"
-      #- "{{ appdata_path }}/tandoor/nginx:/opt/recipes/nginx/conf.d"
     env_file:
       - "{{ appdata_path }}/tandoor/docker/env"
     depends_on:
