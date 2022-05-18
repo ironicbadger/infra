@@ -822,52 +822,44 @@ containers:
       - "{{ appdata_path }}/audiobookshelf/config:/config"
     restart: unless-stopped
   ###
-  - service_name: ta
+  - service_name: tandoor-db
     active: true
-    image: bbilly1/tubearchivist:latest
+    image: postgres:11-alpine
+    volumes:
+      - "{{ appdata_path }}/tandoor/db:/var/lib/postgresql/data"
+    env_file:
+      - "{{ appdata_path }}/tandoor/docker/env"
+    restart: unless-stopped
+  ###
+  - service_name: tandoor
+    active: true
+    image: vabene1111/recipes
+    volumes:
+      - "{{ appdata_path }}/tandoor/static:/opt/recipes/staticfiles"
+      - "{{ appdata_path }}/tandoor/media:/opt/recipes/mediafiles"
+      #- "{{ appdata_path }}/tandoor/nginx:/opt/recipes/nginx/conf.d"
+    env_file:
+      - "{{ appdata_path }}/tandoor/docker/env"
+    depends_on:
+      - tandoor-db
+    restart: unless-stopped
+  ###
+  - service_name: tandoor-nginx
+    active: true
+    image: nginx:mainline-alpine
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.tubearchivist.rule=Host(`tube.m.{{ local_domain }}`)"
-    environment:
-      - ES_URL=http://ta-elastic:9200
-      - REDIS_HOST=ta-redis
-      - TA_USERNAME=alex
-      - TA_PASSWORD=badger
-      - ELASTIC_PASSWORD=badger
-      - "HOST_UID={{ main_uid }}"
-      - "HOST_GID={{ main_gid }}"
+      - "traefik.http.routers.tandoor.rule=Host(`tandoor.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/tandoor/static:/static:ro"
+      - "{{ appdata_path }}/tandoor/media:/media:ro"
+      - "{{ appdata_path }}/tandoor/nginx:/etc/nginx/conf.d"
+    env_file:
+      - "{{ appdata_path }}/tandoor/docker/env"
     depends_on:
-      - ta-elastic
-      - ta-redis
-    volumes:
-      - "{{ morpheus_main_storage_path }}/youtube:/youtube"
-      - "{{ appdata_path }}/tubearchivist/cache:/cache"
-    include_global_env_vars: true
+      - tandoor
     restart: unless-stopped
-  - service_name: ta-redis
-    active: true
-    image: redislabs/rejson:latest
-    volumes:
-      - "{{ appdata_path }}/tubearchivist/redis:/data"
-    depends_on:
-      - ta-elastic
-    restart: unless-stopped
-  - service_name: ta-elastic
-    active: true
-    image: bbilly1/tubearchivist-es
-    environment:
-      - "xpack.security.enabled=true"
-      - "ELASTIC_PASSWORD=badger"
-      - "discovery.type=single-node"
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - "{{ appdata_path }}/tubearchivist/elastic:/usr/share/elasticsearch/data"
-    include_global_env_vars: true
-    restart: unless-stopped
+    
 
   # template for docker-compose services
   #
