@@ -849,6 +849,7 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.tandoor.rule=Host(`tandoor.m.{{ local_domain }}`)"
+      - traefik.http.routers.tandoor.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/tandoor/static:/static:ro"
       - "{{ appdata_path }}/tandoor/media:/media:ro"
@@ -857,6 +858,7 @@ containers:
       - "{{ appdata_path }}/tandoor/docker/env"
     depends_on:
       - tandoor
+      - authelia
     restart: unless-stopped
     
 
