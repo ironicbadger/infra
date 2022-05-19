@@ -818,6 +818,7 @@ containers:
       - "traefik.http.routers.audiobookshelf.rule=Host(`abs.m.{{ local_domain }}`)"
     volumes:
       - "{{ morpheus_main_storage_path }}/audiobooks/library:/audiobooks"
+      - "{{ morpheus_main_storage_path }}/audiobooks/podcasts:/podcasts"
       - "{{ appdata_path }}/audiobookshelf/metadata:/metadata"
       - "{{ appdata_path }}/audiobookshelf/config:/config"
     restart: unless-stopped
@@ -859,6 +860,19 @@ containers:
     depends_on:
       - tandoor
       - authelia
+    restart: unless-stopped
+  ###
+  - service_name: filebrowser
+    active: true
+    image: filebrowser/filebrowser:s6
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.fb.rule=Host(`files.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ morpheus_main_storage_path }}:/srv"
+      - "{{ appdata_path }}/filebrowser/db:/database.db"
+      - "{{ appdata_path }}/filebrowser/filebrowser.json:/.filebrowser.json"
+    include_global_env_vars: true
     restart: unless-stopped
     
 
