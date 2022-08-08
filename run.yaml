@@ -20,7 +20,7 @@
     roles:
       - role: geerlingguy.docker
       - role: grog.package
-      - role: rossmcdonald.telegraf
+      #- role: rossmcdonald.telegraf
       - role: ironicbadger.hddtemp
       - role: ironicbadger.proxmox_nag_removal
       - role: ironicbadger.bash_aliases
@@ -78,12 +78,6 @@
       - role: ironicbadger.figurine
       - role: ironicbadger.apprise_boot_notification
       - role: ktz-sanoid
-
-  - hosts: dev
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: ironicbadger.apprise_boot_notification
 
   - hosts: dhcp
     vars_files:

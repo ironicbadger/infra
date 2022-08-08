@@ -1,5 +1,6 @@
 - src: artis3n.tailscale
 - src: geerlingguy.docker
+- src: geerlingguy.docker_arm
 - src: geerlingguy.security
 - src: geerlingguy.ntp
 - src: geerlingguy.github-users
