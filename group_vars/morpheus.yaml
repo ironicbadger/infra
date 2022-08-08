@@ -541,12 +541,15 @@ containers:
       - "SSH_PORT=2222"
       - "DISABLE_REGISTRATION=true"
       - "REQUIRE_SIGNIN_VIEW=true"
+      - TZ=America/New_York
+      - "ALLOWED_HOST_LIST=drone.m.wd.ktz.me"
     volumes:
       - "{{ appdata_path }}/gitea:/data"
     labels:
       - traefik.enable=true
       - "traefik.http.routers.git.rule=Host(`git.{{ domain_me }}`)"
       - traefik.http.services.git.loadbalancer.server.port=3000
+    
     ports:
       - '"2222:2222"'
     restart: unless-stopped
@@ -563,8 +566,10 @@ containers:
       - "DRONE_GITEA_CLIENT_SECRET={{ drone_gitea_client_secret }}"
       - "DRONE_SERVER_HOST=drone.m.{{ local_domain }}"
       - DRONE_SERVER_PROTO=https
-      - DRONE_RPC_SECRET=super-duper-secret
+      - "DRONE_RPC_SECRET={{ drone_gitea_webhook_secret }}"
       - "DRONE_USER_CREATE=username:alexktz,admin:true"
+      - DRONE_LOGS_DEBUG=true
+      - TZ=America/New_York
     labels:
       - traefik.enable=true
       - "traefik.http.routers.drone.rule=Host(`drone.m.{{ local_domain }}`)"
@@ -579,7 +584,7 @@ containers:
     environment:
       - DRONE_RPC_PROTO=https
       - "DRONE_RPC_HOST=drone.m.{{ local_domain }}"
-      - DRONE_RPC_SECRET=super-duper-secret
+      - "DRONE_RPC_SECRET={{ drone_gitea_webhook_secret }}"
       - DRONE_RUNNER_CAPACITY=2
       - "DRONE_RUNNER_NAME={{ hostname_morpheus }}"
     ports: 
@@ -686,7 +691,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: paperless
-    active: true
+    active: false
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     labels:
       - traefik.enable=true
@@ -749,7 +754,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plextraktsync
-    active: false
+    active: true
     image: ghcr.io/taxel/plextraktsync
     volumes:
       - "{{ appdata_path }}/plextraktsync/config:/app/config"
@@ -877,6 +882,44 @@ containers:
       - "{{ appdata_path }}/filebrowser/db:/database.db"
       - "{{ appdata_path }}/filebrowser/filebrowser.json:/.filebrowser.json"
     include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: scrutiny
+    active: true
+    image: ghcr.io/analogj/scrutiny:beta-omnibus
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.scrutiny.rule=Host(`scrutiny.m.{{ local_domain }}`)"
+      - traefik.http.services.scrutiny.loadbalancer.server.port=8080
+    cap_add:
+      - SYS_RAWIO
+      - SYS_ADMIN
+    devices:
+      - /dev:/dev
+    volumes:
+      - "{{ appdata_path }}/scrutiny/config:/opt/scrutiny/config" 
+      - "{{ appdata_path }}/scrutiny/influx:/opt/scrutiny/influxdb" 
+      - /run/udev:/run/udev:ro
+    include_global_env_vars: false
+    # environment:
+    #   - SCRUTINY_COLLECTOR=true
+    #   - SCRUTINY_WEB=true
+    privileged: true
+    restart: unless-stopped
+  ###
+  - service_name: notifiarr
+    active: true
+    image: golift/notifiarr
+    privileged: true
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.notifiarr.rule=Host(`notifiarr.m.{{ local_domain }}`)"
+      - traefik.http.services.notifiarr.loadbalancer.server.port=5454
+    volumes:
+      - "{{ appdata_path }}/notifiarr/notifiarr.conf:/config/notifiarr.conf"
+      - /var/run/utmp:/var/run/utmp
+    environment:
+      - DN_SNAPSHOT_MONITOR_DRIVES=true
     restart: unless-stopped
     
 
