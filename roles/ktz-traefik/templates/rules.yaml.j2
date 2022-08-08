@@ -3,15 +3,8 @@ http:
     router-blueiris:
       entryPoints:
         - websecure
-      rule: "Host(`bi.{{ domain_me }}`)"
+      rule: "Host(`bi.wd.{{ domain_me }}`)"
       service: service-blueiris
-      tls:
-        certResolver: cloudflare
-    router-octoprintog:
-      entryPoints:
-        - websecure
-      rule: "Host(`boris.{{ domain_me }}`)"
-      service: service-octoprintog
       tls:
         certResolver: cloudflare
     router-octoprint:
@@ -21,31 +14,15 @@ http:
       service: service-octoprint
       tls:
         certResolver: cloudflare
-    router-proxmox:
-      entryPoints:
-        - websecure
-      rule: "Host(`px.wd.{{ domain_me }}`)"
-      service: service-proxmox
-      tls:
-        certResolver: cloudflare
   services:
     service-blueiris:
       loadBalancer:
         servers:
-        - url: "http://192.168.1.200:83"
-    service-octoprintog:
-      loadBalancer:
-        servers:
-        - url: "http://192.168.2.3:80"
+        - url: "http://10.42.1.100:83"
     service-octoprint:
       loadBalancer:
         servers:
-        - url: "http://192.168.2.4:80"
-    service-proxmox:
-      loadBalancer:
-        servers:
-        - url: "https://px.wd.{{ domain_me }}:8006"
-          scheme: https
+        - url: "http://192.168.13.16:80"
   middlewares:
     https-redirect:
       redirectScheme:
