@@ -179,17 +179,17 @@ bash_aliases:
   - { alias: "dstop", command: "docker stop `docker ps -aq`" }
   - { alias: "drm", command: "docker rm `docker ps -aq`" }
   - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml "}
-  - { alias: "dcporph", command: "docker-compose -f ~/docker-compose.yml up -d --remove-orphans"}
+  - { alias: "dcporph", command: "docker-compose -f ~/docker-compose.yml up -d --remove-orphans" }
   - { alias: "dprune", command: "docker image prune" }
   - { alias: "dprunesys", command: "docker system prune --all" }
-  - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop"}
+  - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop" }
   - { alias: "appdata", command: "cd /mnt/nvme2tb/appdata" }
   - { alias: "zspace", command: "zfs list -o space" }
   - { alias: "zsnap", command: "zfs list -t snapshot" }
-  - { alias: "dfclean", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4"}
-  - { alias: "dffull", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs"}
-  - { alias: "hdtemp", command: "sudo hddtemp /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]"}
-  - { alias: "nvmetemp", command: "for i in {0..3}; do nvme smart-log /dev/nvme'$i'n1 | grep temperature; done;"}
+  - { alias: "dfclean", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 | sort -k 6" }
+  - { alias: "dffull", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs" }
+  - { alias: "hdtemp", command: "sudo hddtemp /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]" }
+  - { alias: "nvmetemp", command: "for i in {0..3}; do nvme smart-log /dev/nvme'$i'n1 | grep temperature; done;" }
 
 # ktz-cartman
 docker_zfs_override: true
@@ -207,7 +207,7 @@ snapraid_parity_disks:
 snapraid_data_disks:
   - { path: /mnt/disk1, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PJJ0K4F-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-WDC_WD140EDGZ-11B1PA0_Y6GE3JJC-part1, fs: xfs, opts: defaults, content: true }
-  - { path: /mnt/disk3, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ15VJD-part1, fs: xfs, opts: defaults, content: true }
+  - { path: /mnt/tempdisk, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ15VJD-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD120EMAZ-11BLFA0_5PGENVSD-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD140EDGZ-11B1PA0_9LJ8JJ8G-part1, fs: xfs, opts: defaults, content: false }
@@ -791,7 +791,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: jellyfin
-    active: false
+    active: true
     image: jellyfin/jellyfin
     network_mode: host
     devices:
