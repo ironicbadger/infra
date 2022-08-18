@@ -246,6 +246,7 @@ snapraid_sync_healthcheck_io_uuid: "{{ snapraid_healthcheck_secret }}"
 traefik_file_provider: true
 traefik_enable_dashboard: false #defaults to false
 traefik_insecure_transport: false #defaults to false
+traefik_exposed_by_default: true
 
 ## ktz-authelia
 authelia_users:
@@ -337,6 +338,8 @@ containers:
     image: meisnate12/plex-meta-manager
     volumes:
       - "{{ appdata_path }}/plexmeta/config:/config"
+    labels:
+      - traefik.enable=false
     environment:
       - TZ=America/New_York
       - PMM_TIME=01:22
@@ -347,6 +350,8 @@ containers:
     image: ghcr.io/taxel/plextraktsync
     volumes:
       - "{{ appdata_path }}/plextraktsync/config:/app/config"
+    labels:
+      - traefik.enable=false
     restart: unless-stopped
 ###
   - service_name: tautulli
@@ -785,7 +790,28 @@ containers:
       - "{{ appdata_path }}/filebrowser/filebrowser.json:/.filebrowser.json"
     include_global_env_vars: true
     restart: unless-stopped
-    
+  ###
+  - service_name: petio
+    active: true
+    image: ghcr.io/petio-team/petio:latest
+    ports:
+      - 7777:7777
+      - 7778:7778
+    labels:
+      - "traefik.http.routers.petio.rule=Host(`petio.m.{{ local_domain }}`)"
+      - traefik.http.services.petio.loadbalancer.server.port=7777
+    depends_on:
+        - petio-db
+    volumes:
+      - "{{ appdata_path }}/petio/config:/app/api/config"
+      - "{{ appdata_path }}/petio/logs:/app/logs"
+    restart: unless-stopped
+  - service_name: petio-db
+    active: true
+    image: mongo:4.4
+    volumes:
+      - "{{ appdata_path }}/petio/db:/data/db"
+    restart: unless-stopped
 
   # template for docker-compose services
   #
