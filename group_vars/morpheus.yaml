@@ -301,7 +301,6 @@ containers:
     active: true
     image: authelia/authelia
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.authelia.rule=Host(`login.m.{{ local_domain }}`)"
       - traefik.http.routers.authelia.tls=true
       - traefik.http.services.authelia.loadbalancer.server.port=9091
@@ -317,20 +316,6 @@ containers:
     image: redis
     restart: unless-stopped
   ###
-  - service_name: flame
-    active: true
-    image: pawelmalak/flame
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.flame.rule=Host(`flame.m.{{ local_domain }}`)"
-    environment:
-      - "PASSWORD={{ main_pass_lower }}"
-    volumes:
-      - "{{ appdata_path }}/flame:/app/data"
-      - /var/run/docker.sock:/var/run/docker.sock
-    include_global_env_vars: true
-    restart: unless-stopped
-  ###
   - service_name: plex
     active: true
     image: plexinc/pms-docker
@@ -338,18 +323,30 @@ containers:
     devices:
       - /dev/dri:/dev/dri
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.plex.rule=Host(`plex.{{ domain_me }}`)"
       - traefik.http.services.plex.loadbalancer.server.port=32400
-      - flame.type=app
-      - flame.name=Plex
-      - "flame.url=https://plex.{{ domain_me }}"
-      - flame.icon=plex
     volumes:
       - "{{ appdata_path }}/plex/config:/config"
       - "{{ appdata_path }}/plex/transcode:/transcode"
       - "{{ morpheus_main_storage_path }}:/data"
     include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: plexmeta
+    active: true
+    image: meisnate12/plex-meta-manager
+    volumes:
+      - "{{ appdata_path }}/plexmeta/config:/config"
+    environment:
+      - TZ=America/New_York
+      - PMM_TIME=01:22
+    restart: unless-stopped
+  ###
+  - service_name: plextraktsync
+    active: true
+    image: ghcr.io/taxel/plextraktsync
+    volumes:
+      - "{{ appdata_path }}/plextraktsync/config:/app/config"
     restart: unless-stopped
 ###
   - service_name: tautulli
@@ -358,15 +355,21 @@ containers:
     depends_on:
       - plex
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.tautulli.rule=Host(`tautulli.m.{{ local_domain }}`)"
-      - flame.type=app
-      - flame.name=Tautulli
-      - "flame.url=https://tautulli.m.{{ local_domain }}"
-      - flame.icon=chart-areaspline
     volumes:
       - "{{ appdata_path }}/tautulli:/config"
       - "{{ appdata_path }}/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro"
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: prowlarr
+    active: true
+    image: linuxserver/prowlarr:develop
+    labels:
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.m.{{ local_domain }}`)"
+      - traefik.http.routers.prowlarr.middlewares=authelia@docker
+    volumes:
+      - "{{ appdata_path }}/prowlarr:/config"
     include_global_env_vars: true
     restart: unless-stopped
   ###
@@ -374,14 +377,9 @@ containers:
     active: true
     image: linuxserver/nzbget
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.nzbget.rule=Host(`nzbget.m.{{ local_domain }}`)"
       - traefik.http.routers.nzbget.middlewares=authelia@docker
       - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.{{ local_domain }}`)"
-      - flame.type=app
-      - flame.name=NZBget
-      - "flame.url=https://nzbget.m.{{ local_domain }}"
-      - flame.icon=download
     volumes:
       - "{{ appdata_path }}/nzbget/config:/config"
       - "{{ download_path }}:/downloads"
@@ -394,13 +392,8 @@ containers:
     depends_on:
       - nzbget
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.m.{{ local_domain }}`)"
       - traefik.http.routers.sonarr.middlewares=authelia@docker
-      - flame.type=app
-      - flame.name=Sonarr
-      - "flame.url=https://sonarr.m.{{ local_domain }}"
-      - flame.icon=television-classic
     volumes:
       - "{{ appdata_path }}/sonarr:/config"
       - "{{ download_path }}/complete/tv:/downloads/complete/tv"
@@ -416,13 +409,8 @@ containers:
       - "{{ download_path }}/complete/movies:/downloads/complete/movies"
       - /mnt/jbod/movies:/movies
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.radarr.rule=Host(`radarr.m.{{ local_domain }}`)"
       - traefik.http.routers.radarr.middlewares=authelia@docker
-      - flame.type=app
-      - flame.name=Radarr
-      - "flame.url=https://radarr.m.{{ local_domain }}"
-      - flame.icon=movie-open-outline
     restart: unless-stopped
     include_global_env_vars: true
   ###
@@ -435,13 +423,8 @@ containers:
       - "{{ download_path }}/intermediate/music:/downloads-amd"
       - /mnt/storage/flac/flac:/music
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.lidarr.rule=Host(`lidarr.m.{{ local_domain }}`)"
       - traefik.http.routers.lidarr.middlewares=authelia@docker
-      - flame.type=app
-      - flame.name=Lidarr
-      - "flame.url=https://lidarr.m.wd.{{ domain_me }}"
-      - flame.icon=music-box-outline
     restart: unless-stopped
     include_global_env_vars: true
   ###
@@ -449,14 +432,8 @@ containers:
     active: true
     image: mazzolino/tiddlywiki
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.tiddlywiki.rule=Host(`wiki.{{ domain_me }}`)"
       - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
-      - traefik.http.routers.tiddlywiki.middlewares=authelia@docker
-      - flame.type=app
-      - flame.name=Tiddlywiki
-      - "flame.url=https://wiki.{{ domain_me }}"
-      - flame.icon=book-information-variant
     environment:
       - USERNAME=
       - PASSWORD=
@@ -468,12 +445,7 @@ containers:
     active: true
     image: gregyankovoy/chowdown
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.chowdown.rule=Host(`recipes.m.{{ local_domain }}`)"
-      - flame.type=app
-      - flame.name=Chowdown
-      - "flame.url=https://recipes.m.wd.{{ domain_me }}"
-      - flame.icon=carrot
     volumes:
       - "{{ appdata_path }}/chowdown/config:/config"
       - "{{ appdata_path }}/chowdown/recipes:/config/_recipes"
@@ -487,12 +459,7 @@ containers:
     depends_on:
       - mysql
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.nc.rule=Host(`nc.{{ domain_cloud }}`)"
-      - flame.type=app
-      - flame.name=Nextcloud
-      - "flame.url=https://nc.{{ domain_cloud }}"
-      - flame.icon=cloud-upload-outline
     volumes:
       - "{{ appdata_path }}/nextcloud:/var/www/html"
     restart: unless-stopped
@@ -518,12 +485,7 @@ containers:
       - "{{ appdata_path }}/smokeping/config:/config"
       - "{{ appdata_path }}/smokeping/data:/data"
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.smokeping.rule=Host(`smokeping.m.{{ local_domain }}`)"
-      - flame.type=app
-      - flame.name=Smokeping
-      - "flame.url=https://smokeping.m.{{ local_domain }}/smokeping/smokeping.cgi"
-      - flame.icon=smoke
     include_global_env_vars: true
     restart: unless-stopped
   ###
@@ -546,10 +508,8 @@ containers:
     volumes:
       - "{{ appdata_path }}/gitea:/data"
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.git.rule=Host(`git.{{ domain_me }}`)"
       - traefik.http.services.git.loadbalancer.server.port=3000
-    
     ports:
       - '"2222:2222"'
     restart: unless-stopped
@@ -571,7 +531,6 @@ containers:
       - DRONE_LOGS_DEBUG=true
       - TZ=America/New_York
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.drone.rule=Host(`drone.m.{{ local_domain }}`)"
     ports:
       - "3001:80"
@@ -594,14 +553,13 @@ containers:
     restart: unless-stopped
   ###
   - service_name: sync
-    active: true
+    active: false
     image: linuxserver/resilio-sync
     hostname: "{{ hostname_morpheus }}"
     volumes:
       - "{{ appdata_path }}/sync:/config"
       - "{{ morpheus_main_storage_path }}:/sync"
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.btsync.rule=Host(`sync.m.{{ local_domain }}`)"
     ports:
       - "55555:55555"
@@ -614,8 +572,7 @@ containers:
     ports:
       - 8008:80
     labels:
-      - traefik.enable=true
-      - "traefik.http.routers.librespeed.rule=Host(`speed.m.{{ local_domain }}`)"
+      - "traefik.http.routers.librespeed.rule=Host(`speedtest.m.{{ local_domain }}`)"
     environment:
       - MODE=standalone
       - TELEMETRY=true
@@ -627,9 +584,7 @@ containers:
     active: true
     image: lycheeorg/lychee
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.lychee.rule=Host(`gallery.m.{{ local_domain }}`)"
-      #- traefik.http.services.lychee.loadbalancer.server.port=80
     depends_on:
       - mysql
     volumes:
@@ -651,7 +606,6 @@ containers:
     active: true
     image: nginx:mainline-alpine
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.ninja.rule=Host(`ninja.m.{{ local_domain }}`)"
     volumes:
       - "{{ appdata_path }}/invoiceninja/ninja.conf:/etc/nginx/conf.d/default.conf:ro"
@@ -694,7 +648,6 @@ containers:
     active: false
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.paperless.rule=Host(`paperless.m.{{ local_domain }}`)"
     volumes:
       - "{{ appdata_path }}/paperless/config:/config"
@@ -709,7 +662,6 @@ containers:
     active: true
     image: hkotel/mealie:v0.5.1
     labels:
-      - traefik.enable=true
       - traefik.http.routers.mealie.rule=Host(`mealie.m.{{ local_domain }}`)
     environment:
       - DB_TYPE=sqlite
@@ -717,54 +669,10 @@ containers:
       - "{{ appdata_path }}/mealie:/app/data"
     restart: unless-stopped  
   ###
-  - service_name: sui
-    active: true
-    image: griefed/sui
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.sui.rule=Host(`sui.m.{{ local_domain }}`)"
-    volumes:
-      - "{{ appdata_path }}/sui:/config"
-    environment:
-      - PROTOCOL=http
-      - "DOMAIN=sui.m.{{ local_domain }}"
-    include_global_env_vars: true
-    restart: unless-stopped
-  ###
-  - service_name: prowlarr
-    active: true
-    image: linuxserver/prowlarr:develop
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.m.{{ local_domain }}`)"
-      - traefik.http.routers.prowlarr.middlewares=authelia@docker
-    volumes:
-      - "{{ appdata_path }}/prowlarr:/config"
-    include_global_env_vars: true
-    restart: unless-stopped
-  ###
-  - service_name: plexmeta
-    active: true
-    image: meisnate12/plex-meta-manager
-    volumes:
-      - "{{ appdata_path }}/plexmeta/config:/config"
-    environment:
-      - TZ=America/New_York
-      - PMM_TIME=01:22
-    restart: unless-stopped
-  ###
-  - service_name: plextraktsync
-    active: true
-    image: ghcr.io/taxel/plextraktsync
-    volumes:
-      - "{{ appdata_path }}/plextraktsync/config:/app/config"
-    restart: unless-stopped
-  ###
   - service_name: wellandwiki
     active: true
     image: nginx
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.wellandwiki.rule=Host(`wellandwiki.m.{{ local_domain }}`)"
     volumes:
       - "{{ appdata_path }}/wellandwiki/site:/usr/share/nginx/html:ro" 
@@ -784,20 +692,18 @@ containers:
     active: true
     image: amir20/dozzle
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.dozzle.rule=Host(`dozzle.m.{{ local_domain }}`)"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
   ###
   - service_name: jellyfin
-    active: false
+    active: true
     image: jellyfin/jellyfin
     network_mode: host
     devices:
       - /dev/dri:/dev/dri
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.m.{{ local_domain }}`)"
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
     volumes:
@@ -812,7 +718,6 @@ containers:
     active: true
     image: dgtlmoon/changedetection.io
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.change.rule=Host(`change.m.{{ local_domain }}`)"
       - traefik.http.services.change.loadbalancer.server.port=5000
     volumes:
@@ -823,7 +728,6 @@ containers:
     active: true
     image: advplyr/audiobookshelf
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.audiobookshelf.rule=Host(`abs.m.{{ local_domain }}`)"
     volumes:
       - "{{ morpheus_main_storage_path }}/audiobooks/library:/audiobooks"
@@ -857,7 +761,6 @@ containers:
     active: true
     image: nginx:mainline-alpine
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.tandoor.rule=Host(`tandoor.m.{{ local_domain }}`)"
       - traefik.http.routers.tandoor.middlewares=authelia@docker
     volumes:
@@ -875,51 +778,12 @@ containers:
     active: true
     image: filebrowser/filebrowser:s6
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.fb.rule=Host(`files.m.{{ local_domain }}`)"
     volumes:
       - "{{ morpheus_main_storage_path }}:/srv"
       - "{{ appdata_path }}/filebrowser/db:/database.db"
       - "{{ appdata_path }}/filebrowser/filebrowser.json:/.filebrowser.json"
     include_global_env_vars: true
-    restart: unless-stopped
-  ###
-  - service_name: scrutiny
-    active: true
-    image: ghcr.io/analogj/scrutiny:beta-omnibus
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.scrutiny.rule=Host(`scrutiny.m.{{ local_domain }}`)"
-      - traefik.http.services.scrutiny.loadbalancer.server.port=8080
-    cap_add:
-      - SYS_RAWIO
-      - SYS_ADMIN
-    devices:
-      - /dev:/dev
-    volumes:
-      - "{{ appdata_path }}/scrutiny/config:/opt/scrutiny/config" 
-      - "{{ appdata_path }}/scrutiny/influx:/opt/scrutiny/influxdb" 
-      - /run/udev:/run/udev:ro
-    include_global_env_vars: false
-    # environment:
-    #   - SCRUTINY_COLLECTOR=true
-    #   - SCRUTINY_WEB=true
-    privileged: true
-    restart: unless-stopped
-  ###
-  - service_name: notifiarr
-    active: true
-    image: golift/notifiarr
-    privileged: true
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.notifiarr.rule=Host(`notifiarr.m.{{ local_domain }}`)"
-      - traefik.http.services.notifiarr.loadbalancer.server.port=5454
-    volumes:
-      - "{{ appdata_path }}/notifiarr/notifiarr.conf:/config/notifiarr.conf"
-      - /var/run/utmp:/var/run/utmp
-    environment:
-      - DN_SNAPSHOT_MONITOR_DRIVES=true
     restart: unless-stopped
     
 
