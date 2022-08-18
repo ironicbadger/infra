@@ -17,7 +17,7 @@ providers:
     docker:
         endpoint: unix:///var/run/docker.sock
         watch: true
-        exposedByDefault: false
+        exposedByDefault: true
     file:
       filename: /etc/traefik/rules.yaml
 
