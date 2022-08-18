@@ -794,9 +794,6 @@ containers:
   - service_name: petio
     active: true
     image: ghcr.io/petio-team/petio:latest
-    ports:
-      - 7777:7777
-      - 7778:7778
     labels:
       - "traefik.http.routers.petio.rule=Host(`petio.m.{{ local_domain }}`)"
       - traefik.http.services.petio.loadbalancer.server.port=7777
@@ -811,6 +808,15 @@ containers:
     image: mongo:4.4
     volumes:
       - "{{ appdata_path }}/petio/db:/data/db"
+    restart: unless-stopped
+  ###
+  - service_name: overseerr
+    active: true
+    image: sctx/overseerr:latest
+    labels:
+      - "traefik.http.routers.overseerr.rule=Host(`overseerr.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/overseerr:/app/config"
     restart: unless-stopped
 
   # template for docker-compose services
