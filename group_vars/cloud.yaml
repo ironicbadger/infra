@@ -222,7 +222,8 @@ containers:
       - traefik.enable=true
       - "traefik.http.routers.librespeed.rule=Host(`speedtest.{{ domain_cloud }}`)"
       - traefik.http.routers.librespeed.entrypoints=websecure
-      - traefik.http.routers.librespeed.tls.certresolver=cloudflare
+      - traefik.http.routers.librespeed.certresolver=cloudflare
+    environment:
       - MODE=standalone
       - TELEMETRY=true
       - "PASSWORD={{ librespeed_password }}"
