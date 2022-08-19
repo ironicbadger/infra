@@ -213,7 +213,7 @@ containers:
       - "{{ appdata_path_zfs }}/pms-wiki/site:/usr/share/nginx/html:ro" 
     restart: unless-stopped
 ###
-  - service_name: librespeed
+  - service_name: ktz-librespeed
     active: true
     image: linuxserver/librespeed
     ports:
@@ -221,7 +221,8 @@ containers:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.librespeed.rule=Host(`speedtest.{{ domain_cloud }}`)"
-    environment:
+      - traefik.http.routers.librespeed.entrypoints=websecure
+      - traefik.http.routers.librespeed.tls.certresolver=cloudflare
       - MODE=standalone
       - TELEMETRY=true
       - "PASSWORD={{ librespeed_password }}"
