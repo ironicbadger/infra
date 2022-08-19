@@ -70,6 +70,7 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
+      - role: geerlingguy.docker
       - role: artis3n.tailscale
       - role: grog.package
       - role: ironicbadger.proxmox_nag_removal
