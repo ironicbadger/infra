@@ -58,14 +58,6 @@
       - role: ironicbadger.docker_compose_generator
         tags: compose
 
-
-  - hosts: fancontrol
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: ktz-fancontrol
-      - role: ironicbadger.apprise_boot_notification
-
   - hosts: anton
     vars_files:
       - 'vars/vault.yaml'
@@ -79,6 +71,20 @@
       - role: ironicbadger.figurine
       - role: ironicbadger.apprise_boot_notification
       - role: ktz-sanoid
+
+  - hosts: cloud
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: geerlingguy.docker
+      - role: artis3n.tailscale
+      - role: grog.package
+      - role: ironicbadger.bash_aliases
+      - role: ironicbadger.figurine
+      #- role: ktz-sanoid
+      - role: ktz-traefik
+      - role: ironicbadger.docker_compose_generator
+        tags: compose
 
   - hosts: dhcp
     vars_files:
