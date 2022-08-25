@@ -58,6 +58,9 @@ dhcp:
 anton:
 	ansible-playbook -b run.yaml --limit anton --ask-become-pass
 
+opnsensewd:
+	ansible-playbook -b run.yaml --limit opnsensewd --ask-become-pass
+
 update:
 	ansible-playbook update.yaml --limit servers 
 

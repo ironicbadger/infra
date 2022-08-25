@@ -123,3 +123,9 @@
     tasks:
       - hostname:
           name: "vpnwd"
+
+  - hosts: opnsensewd
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ktz-opnsense-caddy
