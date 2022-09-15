@@ -185,10 +185,10 @@ bash_aliases:
   - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop" }
   - { alias: "appdata", command: "cd /mnt/nvme2tb/appdata" }
   - { alias: "zspace", command: "zfs list -o space" }
-  - { alias: "zsnap", command: "zfs list -t snapshot" }
+  - { alias: "zsnap", command: "zfs list -r nvme2tb -o space | sort -k4 --human-numeric-sort" }
   - { alias: "dfclean", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 | sort -k 6" }
   - { alias: "dffull", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs" }
-  - { alias: "hdtemp", command: "sudo hddtemp /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]" }
+  - { alias: "hdtemp", command: "sudo hddtemp -q /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]" }
   - { alias: "nvmetemp", command: "for i in {0..3}; do nvme smart-log /dev/nvme'$i'n1 | grep temperature; done;" }
 
 # ktz-cartman
@@ -244,8 +244,8 @@ snapraid_sync_healthcheck_io_uuid: "{{ snapraid_healthcheck_secret }}"
 
 # ktz-traefik
 traefik_file_provider: true
-traefik_enable_dashboard: false #defaults to false
-traefik_insecure_transport: false #defaults to false
+traefik_enable_dashboard: true #defaults to false
+traefik_insecure_transport: true #defaults to false
 traefik_exposed_by_default: true
 
 ## ktz-authelia
@@ -267,7 +267,7 @@ authelia_rules:
     policy: one_factor
   - domain: "plex.{{ domain_me }}"
     policy: one_factor
-  - domain: "wiki.{{ domain_me }}"
+  - domain: "wiki.m.wd.{{ domain_me }}"
     policy: one_factor
   - domain: "nc.{{ domain_cloud }}"
     policy: bypass
@@ -437,7 +437,7 @@ containers:
     active: true
     image: mazzolino/tiddlywiki
     labels:
-      - "traefik.http.routers.tiddlywiki.rule=Host(`wiki.{{ domain_me }}`)"
+      - "traefik.http.routers.tiddlywiki.rule=Host(`wiki.m.wd.{{ domain_me }}`)"
       - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
     environment:
       - USERNAME=
