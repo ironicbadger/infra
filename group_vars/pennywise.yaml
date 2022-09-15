@@ -27,9 +27,9 @@ bash_aliases:
   - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop" }
   - { alias: "appdata", command: "cd /home/alex/appdata" }
   - { alias: "zspace", command: "zfs list -o space" }
-  - { alias: "zsnap", command: "zfs list -t snapshot" }
+  - { alias: "zsnap", command: "zfs list -r nvme2tb -o space | sort -k4 --human-numeric-sort" }
   - { alias: "dfclean", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs | sort -k 6" }
-  - { alias: "hdtemp", command: "sudo hddtemp /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]" }
+  - { alias: "hdtemp", command: "sudo hddtemp -q /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]" }
   - { alias: "nvmetemp", command: "for i in {0..3}; do nvme smart-log /dev/nvme'$i'n1 | grep temperature; done;" } 
 
 # grog.package
