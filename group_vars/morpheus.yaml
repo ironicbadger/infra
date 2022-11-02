@@ -799,6 +799,20 @@ containers:
     volumes:
       - "{{ appdata_path }}/overseerr:/app/config"
     restart: unless-stopped
+  ###
+  - service_name: roon
+    active: false
+    image: steefdebruijn/docker-roonserver
+    network_mode: host
+    hostname: morpheus
+    labels:
+      - "traefik.http.routers.roon.rule=Host(`roon.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/roon/app:/app"
+      - "{{ appdata_path }}/roon/backups:/backup"
+      - "{{ appdata_path }}/roon/data:/data"
+      - "{{ morpheus_main_storage_path }}/flac:/music"
+    restart: unless-stopped
 
   # template for docker-compose services
   #
