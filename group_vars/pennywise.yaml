@@ -25,7 +25,7 @@ bash_aliases:
   - { alias: "dprune", command: "docker image prune" }
   - { alias: "dprunesys", command: "docker system prune --all" }
   - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop" }
-  - { alias: "appdata", command: "cd /home/alex/appdata" }
+  - { alias: "appdata", command: "cd /mnt/z2/pennywise/appdata" }
   - { alias: "zspace", command: "zfs list -o space" }
   - { alias: "zsnap", command: "zfs list -o space | sort -k4 --human-numeric-sort" }
   - { alias: "dfclean", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs | sort -k 6" }
