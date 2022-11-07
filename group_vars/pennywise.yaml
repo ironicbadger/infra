@@ -111,9 +111,11 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plex
-    active: false
+    active: true
     image: plexinc/pms-docker
     network_mode: host
+    devices:
+      - /dev/dri:/dev/dri
     labels:
       - traefik.enable=true
       - "traefik.http.routers.plex.rule=Host(`plex.{{ local_domain }}`)"
