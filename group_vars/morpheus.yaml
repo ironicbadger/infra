@@ -225,6 +225,7 @@ snapraid_data_disks:
   #- { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_2YJ2S3AD-part1, fs: xfs, opts: defaults, content: false }
 
 zfs_disks:
+  # replaced WDC_WD100EMAZ-00WJTA0_2YJ7E2VD with WDC_WUH721414ALE604_Z2GJ4V4T ## dec 12th 22
   # replaced ST10000NE0008-2JM101_ZPW0N45T with WD140EFGX-68B0GN0_9LJSSYVG ## dec 4th 22
   # ata-ST10000DM0004-2GR11L_ZJV5CF96 ## failed june 2021
   # ata-ST10000NE0008-2JM101_ZPW0N45T ## installed june 2021
