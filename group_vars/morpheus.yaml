@@ -803,18 +803,44 @@ containers:
       - "{{ appdata_path }}/overseerr:/app/config"
     restart: unless-stopped
   ###
-  - service_name: roon
-    active: false
-    image: steefdebruijn/docker-roonserver
-    network_mode: host
-    hostname: morpheus
+  - service_name: code
+    active: true
+    image: lscr.io/linuxserver/code-server:latest
+    environment:
+      - "PASSWORD=1234"
+      - "PROXY_DOMAIN=code.m.{{ local_domain }}" #optional
+      - DEFAULT_WORKSPACE=/config/workspace #optional
     labels:
-      - "traefik.http.routers.roon.rule=Host(`roon.m.{{ local_domain }}`)"
+      - "traefik.http.routers.code.rule=Host(`code.m.{{ local_domain }}`)"
     volumes:
-      - "{{ appdata_path }}/roon/app:/app"
-      - "{{ appdata_path }}/roon/backups:/backup"
-      - "{{ appdata_path }}/roon/data:/data"
-      - "{{ morpheus_main_storage_path }}/flac:/music"
+      - "{{ appdata_path }}/code/config:/config"
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: prometheus
+    active: true
+    image: prom/prometheus
+    labels:
+      - "traefik.http.routers.prom.rule=Host(`prom.m.{{ local_domain }}`)"
+    ports:
+      - 9091:9090
+    privileged: true
+    volumes:
+      - "{{ appdata_path }}/prometheus:/etc/prometheus"
+    restart: unless-stopped
+  ###
+  - service_name: grafana
+    active: true
+    image: grafana/grafana
+    labels:
+      - "traefik.http.routers.grafana.rule=Host(`grafana.m.{{ local_domain }}`)"
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+    environment:
+      - "GF_SERVER_ROOT_URL=https://grafana.m.wd.{{ local_domain }}"
+      - "GF_SERVER_SERVE_FROM_SUB_PATH=true"
+      - "GF_SERVER_DOMAIN=grafana.m.{{ local_domain }}"
+    volumes:
+      - "{{ appdata_path }}/grafana/data:/var/lib/grafana"
     restart: unless-stopped
 
   # template for docker-compose services
