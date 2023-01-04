@@ -321,7 +321,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plex
-    active: true
+    active: false
     image: plexinc/pms-docker
     network_mode: host
     devices:
@@ -337,8 +337,10 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plexmeta
-    active: true
+    active: false
     image: meisnate12/plex-meta-manager
+    depends_on:
+      - plex
     volumes:
       - "{{ appdata_path }}/plexmeta/config:/config"
     labels:
@@ -349,8 +351,10 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plextraktsync
-    active: true
+    active: false
     image: ghcr.io/taxel/plextraktsync
+    depends_on:
+      - plex
     volumes:
       - "{{ appdata_path }}/plextraktsync/config:/app/config"
     labels:
@@ -358,7 +362,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: tautulli
-    active: true
+    active: false
     image: linuxserver/tautulli
     depends_on:
       - plex
