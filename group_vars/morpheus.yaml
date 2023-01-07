@@ -190,6 +190,7 @@ bash_aliases:
   - { alias: "dffull", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs" }
   - { alias: "hdtemp", command: "sudo hddtemp -q /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]" }
   - { alias: "nvmetemp", command: "for i in {0..3}; do nvme smart-log /dev/nvme'$i'n1 | grep temperature; done;" }
+  - { alias: "itop", command: "sudo intel_gpu_top" }
 
 # ktz-cartman
 docker_zfs_override: true
