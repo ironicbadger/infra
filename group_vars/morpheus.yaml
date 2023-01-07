@@ -722,6 +722,8 @@ containers:
     volumes:
       - "{{ appdata_path }}/jellyfin:/config"
       - "{{ morpheus_main_storage_path }}:/data"
+      # ram transcode
+      - /dev/shm:/transcode
     environment:
       - "JELLYFIN_PublishedServerUrl=jellyfin.m.{{ local_domain }}"
     include_global_env_vars: true
