@@ -108,3 +108,5 @@ galaxy_roles
 vault.yaml
 
 .editorconfig
+
+credentials.auto.tfvars
