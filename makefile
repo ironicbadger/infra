@@ -4,11 +4,8 @@ bastion:
 bcomp:
 	ansible-playbook run.yaml --limit bastion  --tags compose
 
-c:
-	ansible-playbook -b run.yaml --limit cartman --ask-become-pass 
-
-ccomp:
-	ansible-playbook run.yaml --limit cartman  --tags compose
+m1:
+	ansible-playbook -b run.yaml --limit m1 --ask-become-pass 
 
 g:
 	ansible-playbook -b run.yaml --limit galgatebst --ask-become-pass 

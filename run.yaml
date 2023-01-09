@@ -72,6 +72,15 @@
       - role: ironicbadger.apprise_boot_notification
       - role: ktz-sanoid
 
+  - hosts: m1
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: geerlingguy.docker
+      - role: grog.package
+      - role: ironicbadger.proxmox_nag_removal
+      - role: ironicbadger.figurine
+
   - hosts: cloud
     vars_files:
       - 'vars/vault.yaml'
