@@ -26,11 +26,7 @@ variable "cluster_udt_name" {
     type = string
 }
 
-variable "cluster_udt_masters" {
-    type = map
-}
-
-variable "cluster_udt_nodes" {
+variable "cluster_udt" {
     type = map
 }
 

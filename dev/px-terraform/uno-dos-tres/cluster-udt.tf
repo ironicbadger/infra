@@ -1,64 +1,95 @@
-# # https://tothecloud.dev/terraform-loop-through-nested-map/
+# # # https://tothecloud.dev/terraform-loop-through-nested-map/
 
-resource "proxmox_vm_qemu" "udt_master" {
-    #name = "${var.cluster_udt_name}-m${format("%02d", count.index + 1)}"
-    name        = "${var.cluster_udt_name}-${element(keys(var.cluster_udt_masters), count.index)}"
-    target_node = var.cluster_udt_masters[element(keys(var.cluster_udt_masters), count.index)]["target"]
-    count       = length(var.cluster_udt_masters)
-    vmid        = 2000 + count.index
+# resource "proxmox_vm_qemu" "udt_master" {
+#     #name = "${var.cluster_udt_name}-m${format("%02d", count.index + 1)}"
+#     name        = "${var.cluster_udt_name}-${element(keys(var.cluster_udt_masters), count.index)}"
+#     target_node = var.cluster_udt_masters[element(keys(var.cluster_udt_masters), count.index)]["target"]
+#     count       = length(var.cluster_udt_masters)
+#     vmid        = 2000 + count.index
 
-    clone = "ubuntu-cloud-2204"
-    full_clone = true
-    cores = 4
-    memory = 4096
-    agent = 0
-    automatic_reboot = false
+#     clone = "ubuntu-cloud-2204"
+#     full_clone = true
+#     cores = 4
+#     memory = 4096
+#     agent = 0
+#     automatic_reboot = false
     
-    network {
-        bridge = "vmbr0"
-        model = "virtio"
-        macaddr = var.cluster_udt_masters[element(keys(var.cluster_udt_masters), count.index)]["mac"]
-    }
+#     network {
+#         bridge = "vmbr0"
+#         model = "virtio"
+#         macaddr = var.cluster_udt_masters[element(keys(var.cluster_udt_masters), count.index)]["mac"]
+#     }
 
-    disk {
-      type = "scsi"
-      size = "15G"
-      storage = "local"
-    }
+#     disk {
+#       type = "scsi"
+#       size = "15G"
+#       storage = "local"
+#     }
 
-    lifecycle {
-      ignore_changes = [
-        ipconfig0 #dhcp related after initial clone
-      ]
-    }
-}
+#     lifecycle {
+#       ignore_changes = [
+#         ipconfig0 #dhcp related after initial clone
+#       ]
+#     }
+# }
 
-resource "proxmox_vm_qemu" "udt_node" {
-    name        = "${var.cluster_udt_name}-${element(keys(var.cluster_udt_nodes), count.index)}"
-    target_node = var.cluster_udt_nodes[element(keys(var.cluster_udt_nodes), count.index)]["target"]
-    count       = length(var.cluster_udt_nodes)
-    vmid        = 2010 + count.index
+# resource "proxmox_vm_qemu" "udt_node" {
+#     name        = "${var.cluster_udt_name}-${element(keys(var.cluster_udt_nodes), count.index)}"
+#     target_node = var.cluster_udt_nodes[element(keys(var.cluster_udt_nodes), count.index)]["target"]
+#     count       = length(var.cluster_udt_nodes)
+#     vmid        = 2010 + count.index
+
+#     clone = "ubuntu-cloud-2204"
+#     full_clone = true
+#     cores = 4
+#     memory = 4096
+#     agent = 0
+
+#     network {
+#         bridge = "vmbr0"
+#         model = "virtio"
+#         macaddr = var.cluster_udt_nodes[element(keys(var.cluster_udt_nodes), count.index)]["mac"]
+#     }
+#     disk {
+#       type = "scsi"
+#       size = "15G"
+#       storage = "local"
+#     }
+
+#     lifecycle {
+#       ignore_changes = [
+#         ipconfig0 #dhcp related after initial clone
+#       ]
+#     }
+# }
+
+resource "proxmox_vm_qemu" "node" {
+    for_each = var.cluster_udt
+
+    name = "${var.cluster_udt_name}-${each.key}"
+    target_node = each.value["target"]
+    vmid = 2000 + index(keys(var.cluster_udt), each.key)
 
     clone = "ubuntu-cloud-2204"
     full_clone = true
-    cores = 4
+    cores = 2
     memory = 4096
     agent = 0
 
     network {
         bridge = "vmbr0"
         model = "virtio"
-        macaddr = var.cluster_udt_nodes[element(keys(var.cluster_udt_nodes), count.index)]["mac"]
+        macaddr = each.value["mac"]
     }
     disk {
       type = "scsi"
-      size = "15G"
-      storage = "local"
+      size = each.value["disk"]
+      storage = each.value["storage"]
     }
 
     lifecycle {
       ignore_changes = [
         ipconfig0 #dhcp related after initial clone
       ]
-    }
+    }    
 }
