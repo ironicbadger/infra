@@ -24,7 +24,9 @@ resource "proxmox_vm_qemu" "node" {
 
     lifecycle {
       ignore_changes = [
-        ipconfig0 #dhcp related after initial clone
+        ipconfig0, #dhcp related after initial clone
+        ciuser,
+        sshkeys
       ]
     }    
 }
