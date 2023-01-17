@@ -45,7 +45,7 @@ log:
 certificatesResolvers:
   cloudflare:
     acme:
-      email: alexktz@gmail.com
+      email: {{ gmail_address }}
       storage: /etc/traefik/acme.json
       dnsChallenge:
         provider: cloudflare
