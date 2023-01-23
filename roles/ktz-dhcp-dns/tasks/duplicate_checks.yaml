@@ -18,6 +18,14 @@
     - data_check.reservation_count_total == data_check.reservation_ip_unique
     - data_check.reservation_count_total == data_check.reservation_hostname_unique
 
+# then if fail try and find the problem item...
+
+# then actually fail
+# - name: Example using fail and when together
+#   ansible.builtin.fail:
+#     msg: The system may not be provisioned according to the CMDB status.
+#   when: cmdb_status != "to-be-staged"
+
 # - name: Create a list of all MAC addresses
 #   set_fact:
 #     list_macs: "{{ list_macs|default([]) }} + [ '{{ item.mac }}' ]"
