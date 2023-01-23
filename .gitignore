@@ -91,6 +91,9 @@ $RECYCLE.BIN/
 *.tfstate.*
 *.hcl
 
+# python
+__pycache__
+
 # Crash log files
 crash.log
 
