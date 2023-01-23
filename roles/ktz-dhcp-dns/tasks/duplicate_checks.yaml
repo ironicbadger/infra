@@ -1,0 +1,53 @@
+---
+
+- set_fact:
+    data_check: |
+      {
+        'reservation_count_total': {{ dhcp_reservations|length }},
+        'reservation_mac_unique': {{ (dhcp_reservations | selectattr('mac', 'defined') | map(attribute='mac') | list) | unique | length }},
+        'reservation_ip_unique': {{ (dhcp_reservations | selectattr('ip', 'defined') | map(attribute='ip') | list) | unique | length }},
+        'reservation_hostname_unique': {{ (dhcp_reservations | selectattr('hostname', 'defined') | map(attribute='hostname') | list) | unique | length }}
+      }
+
+- debug:
+    var: data_check
+
+- assert:
+    that:
+    - data_check.reservation_count_total == data_check.reservation_mac_unique
+    - data_check.reservation_count_total == data_check.reservation_ip_unique
+    - data_check.reservation_count_total == data_check.reservation_hostname_unique
+
+# - name: Create a list of all MAC addresses
+#   set_fact:
+#     list_macs: "{{ list_macs|default([]) }} + [ '{{ item.mac }}' ]"
+#   loop:
+#     "{{ dhcp_reservations }}"
+
+# - name: Find duplicate MAC addresses
+#   set_fact:
+#     list_duplicates: "{{ list_duplicates|default([]) + [item] }}"
+#   loop: 
+#     - "{{ list_macs }}"
+#   loop_control:
+#     extended: yes
+#   #when: item == ansible_loop.nextitem|default('')
+
+# - name: Fail if a duplicate MAC address is found
+#   fail:
+#     msg: Duplicate MACs found! {{ list_duplicates|unique }}
+#   when: "list_macs|unique != list_macs"
+
+
+# ## IPs
+# - name: Create a list of all IP addresses
+#   set_fact:
+#     list_ips: "{{ list_ips|default([]) }} + [ '{{ item.ip }}' ]"
+#   loop:
+#     "{{ dhcp_reservations }}"
+
+# - debug:
+#     var: "{{ item }}"
+#   loop: 
+#     - "{{ list_ips|sort }}"
+#   when: item == ansible_loop.nextitem|default('')
