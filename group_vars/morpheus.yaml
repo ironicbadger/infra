@@ -147,6 +147,8 @@ syncoid_cron_jobs:
   ## morpheus to elrond jobs
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic }}/start && /usr/local/bin/autorestic backup -av -c /root/.autorestic.yml | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic  }} --data-binary "@-"', name: 'morpheus to elrond - autorestic', weekday: '*', hour: '13' }
 
+# geerlingguy.nfs
+nfs_exports: [ "/mnt/storage/proxmox    *(rw,sync,no_root_squash,fsid=25)"]
 
 # ironicbadger.snapraid
 snapraid_bin_path: /usr/local/bin/snapraid
