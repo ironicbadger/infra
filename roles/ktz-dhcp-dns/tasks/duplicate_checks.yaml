@@ -13,7 +13,7 @@
             'reservation_hostname_unique': {{ (dhcp_reservations | selectattr('hostname', 'defined') | map(attribute='hostname') | list) | unique | length }}
           }
 
-    - name: friendly neighbourhood debug output
+    - name: prints counts for basic duplicate checks
       debug:
         var: dupe_check
 
@@ -25,29 +25,13 @@
         - dupe_check.reservation_count_total == dupe_check.reservation_hostname_unique
   
   rescue:
-    - name: Fail when errors
-      ansible.builtin.debug:
-        msg: 'Duplicate MAC, IP or hostname found. Running duplication checks.'
-
-    - name: Create a list of all MAC addresses
-      set_fact:
-        list_macs: "{{ dhcp_reservations | selectattr('mac', 'defined') | map(attribute='mac') }}"
-
-    - name: Create a list of all IP addresses
-      set_fact:
-        list_ips: "{{ dhcp_reservations | selectattr('ip', 'defined') | map(attribute='ip') }}"
-
-    - name: Create a list of all hostnames
-      set_fact:
-        list_hostnames: "{{ dhcp_reservations | selectattr('hostname', 'defined') | map(attribute='hostname') }}"
-
     - name: dupe check
       debug:
         msg: "Duplicate entry: {{ item | duplicates }}"
       loop:
-        - "{{ list_macs }}"
-        - "{{ list_ips }}"
-        - "{{ list_hostnames }}"
+        - "{{ dhcp_reservations | selectattr('mac', 'defined') | map(attribute='mac') }}"
+        - "{{ dhcp_reservations | selectattr('ip', 'defined') | map(attribute='ip') }}"
+        - "{{ dhcp_reservations | selectattr('hostname', 'defined') | map(attribute='hostname') }}"
 
     - name: Fail when errors
       ansible.builtin.fail:
