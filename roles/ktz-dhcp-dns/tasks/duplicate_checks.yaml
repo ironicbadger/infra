@@ -1,5 +1,6 @@
 ---
 
+# source: https://www.reddit.com/r/ansible/comments/b5tzp1/ansible_get_list_of_subelements_and_assert_for/
 - set_fact:
     data_check: |
       {
