@@ -63,7 +63,7 @@ dhcp_reservations:
   - {mac: 48:b0:2d:05:2b:61, ip: 10.42.1.60, hostname: shield-bonus}
   - {mac: 00:04:4b:48:e5:f1, ip: 10.42.1.61, hostname: shield-lounge}
   - {mac: cc:a1:2b:6e:18:d7, ip: 10.42.1.62, hostname: roku-kitchen-tv}
-  - {mac: 9c:95:61:3b:4c:e5, ip: 10.42.1.63, hostname: roku-lounge-tv}
+  - {mac: 9c:95:61:3b:4c:e5, ip: 10.42.1.63, hostname: roku-livingroom-tv}
   - {mac: 74:40:be:ac:99:de, ip: 10.42.1.64, hostname: lgc9-bonus-tv}
   - {mac: ec:0b:ae:98:c8:2b, ip: 10.42.1.65, hostname: broadlink-remote-bonus}
 
@@ -186,3 +186,7 @@ dhcp_reservations:
   #- {mac: 5c:c5:d4:db:65:1e, ip: 10.42.13.113, hostname: x240-wifi}
 
 
+## BLOCKED until identity confirmed
+
+# blocked in unifi
+# 7c:a6:b0:a6:d9:51 10.42.15.173 * *
