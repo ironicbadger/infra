@@ -86,6 +86,9 @@ dhcp_reservations:
 
   #########
   ## local IoT
+  - {mac: f0:45:da:39:fc:29, ip: 10.42.5.1, hostname: venstar_downstairs}
+  - {mac: 74:e1:82:23:18:25, ip: 10.42.5.2, hostname: venstar_upstairs}
+
   - {mac: 2c:f4:32:a9:cf:56, ip: 10.42.5.10, hostname: sonoff_basic_kitchen_hob}
   - {mac: 2c:f4:32:a9:cc:c8, ip: 10.42.5.11, hostname: sonoff_basic_garage_nook_lights}
   - {mac: bc:dd:c2:44:8f:ac, ip: 10.42.5.12, hostname: sonoffsv_garage_door_workshop}
@@ -98,14 +101,16 @@ dhcp_reservations:
 
   - {mac: cc:50:e3:03:95:61, ip: 10.42.5.50, hostname: sp20_unknown}
   - {mac: cc:50:e3:03:44:a6, ip: 10.42.5.51, hostname: sp20_loungetv}
+  - {mac: 80:7d:3a:7d:8c:66, ip: 10.42.5.52, hostname: sp20_basement_rack}
 
   - {mac: 50:02:91:ec:a9:df, ip: 10.42.5.60, hostname: cfsp_bonus_sun}
-  - {mac: 50:02:91:ec:e0:9c, ip: 10.42.5.61, hostname: cfsp_driveway_wall_lights}
-  - {mac: 50:02:91:ec:a9:de, ip: 10.42.5.62, hostname: cfsp_guest_room_heater}
+  - {mac: 50:02:91:ec:a9:de, ip: 10.42.5.61, hostname: cfsp_driveway_wall_lights}
+  - {mac: a8:48:fa:e3:57:03, ip: 10.42.5.62, hostname: cfsp_tinkerspace_uplights}
 
   - {mac: 24:62:ab:f9:26:9c, ip: 10.42.5.80, hostname: esp32_energy_monitor}
   - {mac: 8c:aa:b5:8c:6c:14, ip: 10.42.5.81, hostname: esp32_xiths_upstairs_bonus}
   - {mac: fc:f5:c4:26:fc:0c, ip: 10.42.5.82, hostname: esp32_xiths_upstairs_bedrooms}
+  - {mac: 98:f4:ab:da:66:33, ip: 10.42.5.83, hostname: sensor-attic-temp}
 
   ### WLED
   - {mac: 84:f3:eb:e3:71:3b, ip: 10.42.5.90, hostname: wled_kitchen_wetbar}
@@ -143,6 +148,7 @@ dhcp_reservations:
   - {mac: 1e:5d:2f:4d:7f:87, ip: 10.42.13.13, hostname: alex-oneplus7t}
 
   #- {mac: 00:50:56:9f:22:3c, ip: 10.42.13.40, hostname: cat-ipad}
+  - {mac: 0c:e4:41:ef:49:59, ip: 10.42.13.41, hostname: cat-laptop} #m1 air
 
   #- {mac: 00:50:56:9f:22:3c, ip: 10.42.13.80, hostname: ella-ipad}
 
