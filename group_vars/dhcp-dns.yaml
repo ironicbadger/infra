@@ -52,7 +52,7 @@ dhcp_reservations:
 
   #########
   ## misc servers  
-  - {mac: e4:5f:01:08:89:ca, ip: 10.42.1.50, hostname: bricktop} #pi4
+  - {mac: e4:5f:01:08:89:ca, ip: 10.42.1.50, hostname: octopi-bricktop} #pi4
   - {mac: b8:27:eb:2f:ee:4f, ip: 10.42.1.51, hostname: pi3} #pi3
   - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.52, hostname: gavinbelson}
   - {mac: 00:18:dd:06:8d:4c, ip: 10.42.1.53, hostname: hdhomerun}
@@ -100,12 +100,14 @@ dhcp_reservations:
   - {mac: c8:2b:96:10:fa:03, ip: 10.42.5.33, hostname: shelly2_kitchen_lights}
   - {mac: 98:f4:ab:f3:e8:c8, ip: 10.42.5.34, hostname: shelly2_wallswitch_rear_outdoor_lights}
   - {mac: 84:cc:a8:9f:c8:7b, ip: 10.42.5.35, hostname: shelly1_basement_lights}
+  - {mac: 98:f4:ab:f3:1e:f4, ip: 10.42.5.36, hostname: shelly2_kitchen_bumpout_lights}
+  - {mac: e8:db:84:a1:d5:cc, ip: 10.42.5.37, hostname: shelly2_downstairs_hallway}
 
   - {mac: cc:50:e3:03:95:61, ip: 10.42.5.50, hostname: sp20_unknown}
   - {mac: cc:50:e3:03:44:a6, ip: 10.42.5.51, hostname: sp20_loungetv}
   - {mac: 80:7d:3a:7d:8c:66, ip: 10.42.5.52, hostname: sp20_basement_rack}
   - {mac: cc:50:e3:03:a1:55, ip: 10.42.5.53, hostname: sp20_garage_car}
-  - {mac: cc:50:e3:57:b7:e3, ip: 10.42.5.54, hostname: sp20_dronecharger} #TODO: where is this for real?
+  - {mac: cc:50:e3:57:b7:e3, ip: 10.42.5.54, hostname: sp20_morpheus}
   - {mac: a4:cf:12:c4:12:46, ip: 10.42.5.55, hostname: ss30_bonustv}
   - {mac: 3c:71:bf:20:51:e8, ip: 10.42.5.56, hostname: sp20_guitar}
 
@@ -115,7 +117,7 @@ dhcp_reservations:
   - {mac: 98:cd:ac:25:b5:01, ip: 10.42.5.63, hostname: cfsp_bricktop}
   - {mac: 98:cd:ac:25:7b:35, ip: 10.42.5.64, hostname: cfsp_bonusdesk_testing}
   - {mac: e8:db:84:c9:40:00, ip: 10.42.5.65, hostname: cfsp_musicroom_dresser_lamp}
-  #- {mac: e8:db:84:c9:40:00, ip: 10.42.5.65, hostname: cfsp_musicroom_piano_lamp}
+  - {mac: dc:4f:22:67:c3:80, ip: 10.42.5.66, hostname: cfsp_musicroom_piano_lamp}
 
   - {mac: 24:62:ab:f9:26:9c, ip: 10.42.5.80, hostname: esp32_energy_monitor}
   - {mac: 8c:aa:b5:8c:6c:14, ip: 10.42.5.81, hostname: esp32_xiths_upstairs_bonus}
@@ -123,6 +125,8 @@ dhcp_reservations:
   - {mac: 8c:aa:b5:8b:39:1c, ip: 10.42.5.83, hostname: esp32_xiths_downstairs}
   - {mac: 98:f4:ab:da:66:33, ip: 10.42.5.84, hostname: sensor-attic-temp}
   - {mac: 84:f3:eb:e3:d8:92, ip: 10.42.5.85, hostname: sensor-basement-temp}
+  - {mac: ec:fa:bc:c2:b6:a3, ip: 10.42.5.86, hostname: sensor-outdoor-temp}
+  - {mac: 84:0d:8e:b1:12:05, ip: 10.42.5.87, hostname: sensor-bonus-closet-temp}
 
   ### WLED
   - {mac: 84:f3:eb:e3:71:3b, ip: 10.42.5.90, hostname: wled_kitchen_wetbar}
@@ -139,17 +143,21 @@ dhcp_reservations:
   - {mac: 50:ec:50:18:ae:7a, ip: 10.42.5.183, hostname: robovac_upstairs}
   - {mac: b4:e6:2d:4e:47:01, ip: 10.42.5.184, hostname: eufy-vac}
 
+  ## LG Appliances
   - {mac: 74:40:be:c4:79:cf, ip: 10.42.5.185, hostname: lg-washer}
   - {mac: 2c:2b:f9:97:d8:b7, ip: 10.42.5.186, hostname: lg-dryer}
   - {mac: 74:9e:a5:af:b7:58, ip: 10.42.5.187, hostname: lg-bonusac}
 
-
-  #   ### Yeelights
-  # - {mac: 5c:e5:0c:e1:77:b2, ip: 10.42.5.200, hostname: yeelink_bonus_tinkerspace_1}
+  ## Yeelights
+  - {mac: 5c:e5:0c:e1:77:b2, ip: 10.42.5.200, hostname: yeelink_bonus_tinkerspace_1}
   - {mac: 5c:e5:0c:e1:75:fd, ip: 10.42.5.201, hostname: yeelink_bonus_tinkerspace_2}
-  # - {mac: 5c:e5:0c:e1:7a:20, ip: 10.42.5.202, hostname: yeelink_bonus_tinkerspace_3}
+  - {mac: 5c:e5:0c:e1:7a:20, ip: 10.42.5.202, hostname: yeelink_bonus_tinkerspace_3}
   - {mac: 5c:e5:0c:e1:77:b7, ip: 10.42.5.203, hostname: yeelink_bonus_tv_corner} #TODO: where?
   - {mac: 7c:49:eb:19:93:53, ip: 10.42.5.204, hostname: yeelink_bonus_cat_desk} #TODO: where?
+
+  ## Elgato 
+  - {mac: 3c:6a:9d:19:06:d5, ip: 10.42.5.205, hostname: elgato_keylight_left} #d9fe
+  #- {mac: 7c:49:eb:19:93:53, ip: 10.42.5.206, hostname: elgato_keylight_right} 
 
   # ### Shelly Bulbs
   # #7c:49:eb:19:93:53
@@ -160,15 +168,16 @@ dhcp_reservations:
   ## primary clients (desktop, servers, laptops, phones, tablets)
   - {mac: f0:2f:4b:00:a3:d5, ip: 10.42.13.10, hostname: slartibartfast}
   - {mac: C4:AC:AA:05:04:16, ip: 10.42.13.11, hostname: alex-iphone}
-  - {mac: 4a:15:ad:12:a8:c1, ip: 10.42.13.12, hostname: alex-ipad}
+  - {mac: 70:ea:5a:12:bb:70, ip: 10.42.13.12, hostname: alex-ipad}
   - {mac: 1e:5d:2f:4d:7f:87, ip: 10.42.13.13, hostname: alex-oneplus7t}
+  - {mac: bc:d0:74:15:d5:d1, ip: 10.42.13.14, hostname: alex-laptop-work}
 
   #- {mac: 00:50:56:9f:22:3c, ip: 10.42.13.40, hostname: cat-ipad}
   - {mac: 0c:e4:41:ef:49:59, ip: 10.42.13.41, hostname: cat-laptop} #m1 air
 
   #- {mac: 00:50:56:9f:22:3c, ip: 10.42.13.80, hostname: ella-ipad}
 
-  #- {mac: 64:4b:f0:19:05:a3, ip: 10.42.13.100, hostname: caldigit-ts3}
+  - {mac: 64:4b:f0:19:05:a3, ip: 10.42.13.100, hostname: caldigit-ts3}
   #- {mac: 64:4b:f0:19:05:a3, ip: 10.42.13.101, hostname: caldigit-ts4}
 
   #- {mac: 38:ba:f8:59:fd:a3, ip: 10.42.13.110, hostname: t480s-ethernet}
