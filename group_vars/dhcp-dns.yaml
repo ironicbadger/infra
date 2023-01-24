@@ -1,5 +1,9 @@
 ---
+# ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
+bash_aliases:
+  - { alias: "leases", command: "watch cat /etc/pihole/dhcp.leases" }
 
+# ktz-dhcpdns
 default_domain: "wd.ktz.me"
 
 network_cidr: 10.42.0.0/20
@@ -189,4 +193,5 @@ dhcp_reservations:
 ## BLOCKED until identity confirmed
 
 # blocked in unifi
-# 7c:a6:b0:a6:d9:51 10.42.15.173 * *
+# 7c:a6:b0:a6:d9:51
+# 3e:df:33:de:2f:d4
