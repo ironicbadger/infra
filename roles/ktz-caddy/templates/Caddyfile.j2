@@ -32,6 +32,7 @@ c137.{{ domain_wd_me }} {
 
 # pihole
 dns.{{ domain_wd_me }} {
+  redir / /admin
   reverse_proxy http://10.42.0.253
   import cloudflare
 }
