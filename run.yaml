@@ -94,6 +94,7 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
+      - role: ironicbadger.bash_aliases
       - role: ktz-dhcp-dns
 
   - hosts: elrond
