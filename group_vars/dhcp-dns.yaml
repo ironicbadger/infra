@@ -98,22 +98,38 @@ dhcp_reservations:
   - {mac: 8c:aa:b5:05:79:ff, ip: 10.42.5.31, hostname: shelly1pm_garage_driveway_light}
   - {mac: c8:2b:96:10:bf:24, ip: 10.42.5.32, hostname: shelly2_garage_main_lights}
   - {mac: c8:2b:96:10:fa:03, ip: 10.42.5.33, hostname: shelly2_kitchen_lights}
+  - {mac: 98:f4:ab:f3:e8:c8, ip: 10.42.5.34, hostname: shelly2_wallswitch_rear_outdoor_lights}
+  - {mac: 84:cc:a8:9f:c8:7b, ip: 10.42.5.35, hostname: shelly1_basement_lights}
 
   - {mac: cc:50:e3:03:95:61, ip: 10.42.5.50, hostname: sp20_unknown}
   - {mac: cc:50:e3:03:44:a6, ip: 10.42.5.51, hostname: sp20_loungetv}
   - {mac: 80:7d:3a:7d:8c:66, ip: 10.42.5.52, hostname: sp20_basement_rack}
+  - {mac: cc:50:e3:03:a1:55, ip: 10.42.5.53, hostname: sp20_garage_car}
+  - {mac: cc:50:e3:57:b7:e3, ip: 10.42.5.54, hostname: sp20_dronecharger} #TODO: where is this for real?
+  - {mac: a4:cf:12:c4:12:46, ip: 10.42.5.55, hostname: ss30_bonustv}
+  - {mac: 3c:71:bf:20:51:e8, ip: 10.42.5.56, hostname: sp20_guitar}
 
   - {mac: 50:02:91:ec:a9:df, ip: 10.42.5.60, hostname: cfsp_bonus_sun}
   - {mac: 50:02:91:ec:a9:de, ip: 10.42.5.61, hostname: cfsp_driveway_wall_lights}
   - {mac: a8:48:fa:e3:57:03, ip: 10.42.5.62, hostname: cfsp_tinkerspace_uplights}
+  - {mac: 98:cd:ac:25:b5:01, ip: 10.42.5.63, hostname: cfsp_bricktop}
+  - {mac: 98:cd:ac:25:7b:35, ip: 10.42.5.64, hostname: cfsp_bonusdesk_testing}
+  - {mac: e8:db:84:c9:40:00, ip: 10.42.5.65, hostname: cfsp_musicroom_dresser_lamp}
+  #- {mac: e8:db:84:c9:40:00, ip: 10.42.5.65, hostname: cfsp_musicroom_piano_lamp}
 
   - {mac: 24:62:ab:f9:26:9c, ip: 10.42.5.80, hostname: esp32_energy_monitor}
   - {mac: 8c:aa:b5:8c:6c:14, ip: 10.42.5.81, hostname: esp32_xiths_upstairs_bonus}
   - {mac: fc:f5:c4:26:fc:0c, ip: 10.42.5.82, hostname: esp32_xiths_upstairs_bedrooms}
-  - {mac: 98:f4:ab:da:66:33, ip: 10.42.5.83, hostname: sensor-attic-temp}
+  - {mac: 8c:aa:b5:8b:39:1c, ip: 10.42.5.83, hostname: esp32_xiths_downstairs}
+  - {mac: 98:f4:ab:da:66:33, ip: 10.42.5.84, hostname: sensor-attic-temp}
+  - {mac: 84:f3:eb:e3:d8:92, ip: 10.42.5.85, hostname: sensor-basement-temp}
 
   ### WLED
   - {mac: 84:f3:eb:e3:71:3b, ip: 10.42.5.90, hostname: wled_kitchen_wetbar}
+
+  ### Local IoT Projects
+  - {mac: a8:03:2a:e2:f7:58, ip: 10.42.5.100, hostname: flightdisplay_rdu}
+
 
   #########
   ## cloud IoT
@@ -130,10 +146,10 @@ dhcp_reservations:
 
   #   ### Yeelights
   # - {mac: 5c:e5:0c:e1:77:b2, ip: 10.42.5.200, hostname: yeelink_bonus_tinkerspace_1}
-  # - {mac: 5c:e5:0c:e1:75:fd, ip: 10.42.5.201, hostname: yeelink_bonus_tinkerspace_2}
+  - {mac: 5c:e5:0c:e1:75:fd, ip: 10.42.5.201, hostname: yeelink_bonus_tinkerspace_2}
   # - {mac: 5c:e5:0c:e1:7a:20, ip: 10.42.5.202, hostname: yeelink_bonus_tinkerspace_3}
-  # - {mac: 5c:e5:0c:e1:77:b7, ip: 10.42.5.203, hostname: yeelink_bonus_tv_corner}
-  # - {mac: 7c:49:eb:19:93:53, ip: 10.42.5.204, hostname: yeelink_bonus_cat_desk}
+  - {mac: 5c:e5:0c:e1:77:b7, ip: 10.42.5.203, hostname: yeelink_bonus_tv_corner} #TODO: where?
+  - {mac: 7c:49:eb:19:93:53, ip: 10.42.5.204, hostname: yeelink_bonus_cat_desk} #TODO: where?
 
   # ### Shelly Bulbs
   # #7c:49:eb:19:93:53
