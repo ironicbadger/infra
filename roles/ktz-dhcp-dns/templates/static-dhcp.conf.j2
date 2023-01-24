@@ -1,0 +1,4 @@
+# {{ ansible_managed }}
+{% for client in dhcp_reservations %}
+dhcp-host={{ client.mac }},{{ client.ip }},{{ client.hostname }}
+{% endfor %}

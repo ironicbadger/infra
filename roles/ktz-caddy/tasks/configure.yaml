@@ -1,0 +1,32 @@
+---
+
+- name: install caddy service file
+  template:
+    src: templates/caddy.service.j2
+    dest: "/etc/systemd/system/caddy.service"
+    owner: root
+    group: root
+
+- name: ensure Caddyfile target dir exists
+  file:
+    path: "{{ caddy_linux_caddyfile_path }}"
+    state: directory
+
+- name: template and install Caddyfile
+  template:
+    src: templates/Caddyfile.j2
+    dest: "{{ caddy_linux_caddyfile_path }}/Caddyfile"
+    owner: root
+    group: root
+    #validate: caddy fmt --overwrite
+  #notify: restart caddy
+
+- name: Enable caddy service
+  ansible.builtin.systemd:
+    name: caddy
+    enabled: yes
+    state: reloaded
+    daemon_reload: yes
+
+
+-

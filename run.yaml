@@ -1,18 +1,12 @@
 ---
-  # - hosts: all
-  #   roles:
-  #     - role: ironicbadger.bash_aliases
-  #   tasks:
-  #     - name: remove ubuntu motd spam
-  #       become: true
-  #       file:
-  #         path: "/etc/update-motd.d/{{ item }}"
-  #         state: absent
-  #       loop:
-  #         - 80-livepatch
-  #         - 95-hwe-eol
-  #         - 10-help-text
-  #       when: ansible_distribution == 'Ubuntu'
+  - hosts: c137
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: grog.package
+      - role: ironicbadger.proxmox_nag_removal
+      - role: ironicbadger.bash_aliases
+      - role: ironicbadger.figurine
 
   - hosts: morpheus
     vars_files:
@@ -29,6 +23,7 @@
       - role: ktz-sanoid
         tags: replication
       - role: ktz-morpheus
+      - role: geerlingguy.nfs
       #- role: ktz-apcupsd
       - role: ktz-authelia
         tags: compose
@@ -95,11 +90,11 @@
       - role: ironicbadger.docker_compose_generator
         tags: compose
 
-  - hosts: dhcp
+  - hosts: dhcp-dns
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      - role: ktz-dhcp
+      - role: ktz-dhcp-dns
 
   - hosts: elrond
     vars_files:
@@ -138,3 +133,10 @@
       - 'vars/vault.yaml'
     roles:
       - role: ktz-opnsense-caddy
+
+
+  - hosts: caddy
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ktz-caddy

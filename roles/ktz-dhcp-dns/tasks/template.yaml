@@ -1,0 +1,46 @@
+---
+
+- name: ensure target dirs exists
+  file:
+    path: /etc/dnsmasq.d
+    state: directory
+    owner: root
+    group: root
+  loop:
+    - /etc/dnsmasq.d
+    - /etc/pihole
+
+- name: write setupVars file
+  template:
+    src: ../templates/pihole-setupVars.conf.j2
+    dest: /etc/pihole/setupVars.conf
+    owner: root
+    group: root
+  
+- name: write dns file
+  template:
+    src: ../templates/dns-overrides.conf.j2
+    dest: /etc/dnsmasq.d/03-dns-overrides.conf
+    owner: root
+    group: root
+  notify: restart pihole dns
+
+- name: write static dhcp file
+  template:
+    src: ../templates/static-dhcp.conf.j2
+    dest: /etc/dnsmasq.d/03-static-dhcp.conf
+    owner: root
+    group: root
+  register: dhcp_changed
+
+- name: revoke existing leases if dhcpd file changed
+  file:
+    path: /etc/pihole/dhcp.leases
+    state: absent
+  when: dhcp_changed.changed
+
+- name: revoke existing leases if dhcpd file changed
+  file:
+    path: /etc/pihole/dhcp.leases
+    state: touch
+  when: dhcp_changed.changed

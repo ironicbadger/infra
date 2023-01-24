@@ -1,0 +1,4 @@
+---
+
+- name: restart pihole dns
+  shell: pihole restartdns

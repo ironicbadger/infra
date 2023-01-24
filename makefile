@@ -1,11 +1,11 @@
-bastion:
-	ansible-playbook -b run.yaml --limit bastion --ask-become-pass 
-
-bcomp:
-	ansible-playbook run.yaml --limit bastion  --tags compose
+dhcpdns:
+	ansible-playbook -b run.yaml --limit dhcp-dns
 
 m1:
 	ansible-playbook -b run.yaml --limit m1 --ask-become-pass 
+
+c137:
+	ansible-playbook -b run.yaml --limit c137 --ask-become-pass 
 
 g:
 	ansible-playbook -b run.yaml --limit galgatebst --ask-become-pass 
@@ -57,6 +57,9 @@ anton:
 
 opnsensewd:
 	ansible-playbook -b run.yaml --limit opnsensewd --ask-become-pass
+
+caddy:
+	ansible-playbook -b run.yaml --limit caddy
 
 update:
 	ansible-playbook update.yaml --limit servers 

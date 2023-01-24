@@ -1,0 +1,13 @@
+# {{ ansible_managed }}
+{% for override in dns_overrides %}
+address=/{{ override.custom_dns }}/{{ override.ip }}
+{% endfor %}
+{% for client in dhcp_reservations %}
+{% if client.custom_dns is defined %}
+{% for item in client.custom_dns %}
+address=/{{ item }}.{{ default_domain }}/{{ client.ip }}
+{% endfor %}
+{% else %}
+address=/{{ client.hostname }}.{{ default_domain }}/{{ client.ip }}
+{% endif %}
+{% endfor %}
