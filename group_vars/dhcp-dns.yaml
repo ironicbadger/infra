@@ -37,6 +37,7 @@ dhcp_reservations:
   ## morpheus - PRIMARY SERVER
   - {mac: D0:50:99:DC:4D:D5, ip: 10.42.1.10, hostname: morpheus, custom_dns: ["m"]} #eno1
   - {mac: D0:50:99:F2:D9:38, ip: 10.42.1.11, hostname: morpheus-ipmi}
+  - {mac: d0:50:99:f2:d6:4b, ip: 10.42.1.12, hostname: morpheus-ipmi2} #wtf?
   ### morpheus services
   - {mac: 3E:79:66:00:87:F7, ip: 10.42.1.99, hostname: ha}
   - {mac: F2:8F:35:40:8A:9C, ip: 10.42.1.98, hostname: redhat-irc}
@@ -59,21 +60,26 @@ dhcp_reservations:
 
   #########
   ## misc servers  
-  - {mac: e4:5f:01:08:89:ca, ip: 10.42.1.50, hostname: octopi-bricktop} #pi4
-  - {mac: b8:27:eb:2f:ee:4f, ip: 10.42.1.51, hostname: pi3} #pi3
-  - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.52, hostname: gavinbelson}
-  - {mac: 00:18:dd:06:8d:4c, ip: 10.42.1.53, hostname: hdhomerun}
-  - {mac: 00:15:64:03:0a:5e, ip: 10.42.1.54, hostname: x32rack}
-  - {mac: 00:15:64:08:25:31, ip: 10.42.1.55, hostname: x-touch}
+  - {mac: e4:5f:01:08:89:ca, ip: 10.42.1.50, hostname: octopi-bricktop} #pi4 4gb
+  - {mac: e4:5f:01:08:be:cb, ip: 10.42.1.51, hostname: pi4-2gb} #pi4 2gb
+  #- {mac: e4:5f:01:08:89:ca, ip: 10.42.1.52, hostname: pi4-8gb} #pi4 8gb
+  - {mac: b8:27:eb:2f:ee:4f, ip: 10.42.1.53, hostname: pi3} #pi3
+  - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.54, hostname: gavinbelson} #wallpc
+
+  #########
+  ## audio equipment
+  - {mac: 00:15:64:03:0a:5e, ip: 10.42.1.90, hostname: x32rack}
+  - {mac: 00:15:64:08:25:31, ip: 10.42.1.91, hostname: x-touch}
 
   #########
   ## media players and TVs
-  - {mac: 48:b0:2d:05:2b:61, ip: 10.42.1.60, hostname: shield-bonus}
-  - {mac: 00:04:4b:48:e5:f1, ip: 10.42.1.61, hostname: shield-lounge}
-  - {mac: cc:a1:2b:6e:18:d7, ip: 10.42.1.62, hostname: roku-kitchen-tv}
-  - {mac: 9c:95:61:3b:4c:e5, ip: 10.42.1.63, hostname: roku-livingroom-tv}
-  - {mac: 74:40:be:ac:99:de, ip: 10.42.1.64, hostname: lgc9-bonus-tv}
-  - {mac: ec:0b:ae:98:c8:2b, ip: 10.42.1.65, hostname: broadlink-remote-bonus}
+  - {mac: 48:b0:2d:05:2b:61, ip: 10.42.1.100, hostname: shield-bonus}
+  - {mac: 00:04:4b:48:e5:f1, ip: 10.42.1.101, hostname: shield-lounge}
+  - {mac: cc:a1:2b:6e:18:d7, ip: 10.42.1.102, hostname: roku-kitchen-tv}
+  - {mac: 9c:95:61:3b:4c:e5, ip: 10.42.1.103, hostname: roku-livingroom-tv}
+  - {mac: 74:40:be:ac:99:de, ip: 10.42.1.104, hostname: lgc9-bonus-tv}
+  - {mac: ec:0b:ae:98:c8:2b, ip: 10.42.1.105, hostname: broadlink-remote-bonus}
+  - {mac: 00:18:dd:06:8d:4c, ip: 10.42.1.106, hostname: hdhomerun}
 
   #########
   ## cameras (Wyze, PoE)
@@ -201,7 +207,7 @@ dhcp_reservations:
 
   - {mac: 0c:e4:41:ef:49:59, ip: 10.42.13.40, hostname: cat-laptop} #m1 air
   - {mac: dc:b5:4f:ab:cf:65, ip: 10.42.13.41, hostname: cat-iphone}
-  #- {mac: 00:50:56:9f:22:3c, ip: 10.42.13.42, hostname: cat-ipad}
+  - {mac: 58:64:C4:6D:21:E0, ip: 10.42.13.42, hostname: cat-ipad}
   - {mac: 84:d6:d0:fb:90:ce, ip: 10.42.13.43, hostname: cat-fire} #m1 air
 
   #- {mac: 00:50:56:9f:22:3c, ip: 10.42.13.80, hostname: ella-ipad}
