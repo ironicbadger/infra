@@ -64,6 +64,7 @@ dhcp_reservations:
   - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.52, hostname: gavinbelson}
   - {mac: 00:18:dd:06:8d:4c, ip: 10.42.1.53, hostname: hdhomerun}
   - {mac: 00:15:64:03:0a:5e, ip: 10.42.1.54, hostname: x32rack}
+  - {mac: 00:15:64:08:25:31, ip: 10.42.1.55, hostname: x-touch}
 
   #########
   ## media players and TVs
@@ -144,16 +145,27 @@ dhcp_reservations:
 
   #########
   ## cloud IoT
-  - {mac: 24:6f:28:14:81:7a, ip: 10.42.5.180, hostname: thermoworks-signals}
-  - {mac: fc:01:7c:ab:80:6b, ip: 10.42.5.181, hostname: brother-printer}
-  - {mac: 50:ec:50:10:ac:fe, ip: 10.42.5.182, hostname: robovac_downstairs}
-  - {mac: 50:ec:50:18:ae:7a, ip: 10.42.5.183, hostname: robovac_upstairs}
-  - {mac: b4:e6:2d:4e:47:01, ip: 10.42.5.184, hostname: eufy-vac}
+  - {mac: 84:d6:c5:0c:37:fd, ip: 10.42.5.170, hostname: solaredge-conversion-therapy-box}
+  - {mac: 24:6f:28:14:81:7a, ip: 10.42.5.171, hostname: thermoworks-signals}
+  - {mac: fc:01:7c:ab:80:6b, ip: 10.42.5.172, hostname: brother-printer}
+  - {mac: 50:ec:50:10:ac:fe, ip: 10.42.5.173, hostname: robovac_downstairs}
+  - {mac: 50:ec:50:18:ae:7a, ip: 10.42.5.174, hostname: robovac_upstairs}
+  - {mac: b4:e6:2d:4e:47:01, ip: 10.42.5.175, hostname: eufy-vac}
+  
+  ## Voice assistant boxes
+  - {mac: 50:f5:da:03:38:94, ip: 10.42.5.180, hostname: amazon-echo-garage}
+  - {mac: 20:1f:3b:89:da:6a, ip: 10.42.5.181, hostname: google-privacy-invasion-device1}
+  - {mac: f8:0f:f9:4c:d9:88, ip: 10.42.5.182, hostname: google-privacy-invasion-device2}
+  - {mac: 1c:f2:9a:54:de:55, ip: 10.42.5.183, hostname: google-privacy-invasion-device3}
+  - {mac: f8:0f:f9:60:a0:0d, ip: 10.42.5.184, hostname: google-privacy-invasion-device4}
+  - {mac: 1c:f2:9a:6b:9c:b8, ip: 10.42.5.185, hostname: google-privacy-invasion-device5}
+  # - {mac: 50:f5:da:03:38:94, ip: 10.42.5.186, hostname: google-privacy-invasion-device6}
+  
 
   ## LG Appliances
-  - {mac: 74:40:be:c4:79:cf, ip: 10.42.5.185, hostname: lg-washer}
-  - {mac: 2c:2b:f9:97:d8:b7, ip: 10.42.5.186, hostname: lg-dryer}
-  - {mac: 74:9e:a5:af:b7:58, ip: 10.42.5.187, hostname: lg-bonusac}
+  - {mac: 74:40:be:c4:79:cf, ip: 10.42.5.197, hostname: lg-washer}
+  - {mac: 2c:2b:f9:97:d8:b7, ip: 10.42.5.198, hostname: lg-dryer}
+  - {mac: 74:9e:a5:af:b7:58, ip: 10.42.5.199, hostname: lg-bonusac}
 
   ## Yeelights
   - {mac: 5c:e5:0c:e1:77:b2, ip: 10.42.5.200, hostname: yeelink_bonus_tinkerspace_1}
@@ -171,21 +183,30 @@ dhcp_reservations:
   # #ec:fa:bc:6f:77:bf
   # #ec:fa:bc:6f:77:ee
 
+  ## Govee
+  - {mac: d4:ad:fc:23:e3:c3, ip: 10.42.5.211, hostname: govee-lightbar-bonus-tv}
+  - {mac: d4:ad:fc:23:6b:4e, ip: 10.42.5.212, hostname: govee-lightbar-bonus-drums}
+  - {mac: d4:ad:fc:22:e7:02, ip: 10.42.5.210, hostname: govee-ledstick-bonus-corner}
+  - {mac: d4:ad:fc:22:e7:76, ip: 10.42.5.213, hostname: govee-ledstick-bonus-sofa}
+  - {mac: d4:ad:fc:03:70:20, ip: 10.42.5.214, hostname: govee-ledbar-bonus-window}
+  - {mac: 7c:a6:b0:a6:d9:51, ip: 10.42.5.218, hostname: govee-outdoor-deck-stringlight}
+
   #########
   ## primary clients (desktop, servers, laptops, phones, tablets)
   - {mac: f0:2f:4b:00:a3:d5, ip: 10.42.13.10, hostname: slartibartfast}
   - {mac: C4:AC:AA:05:04:16, ip: 10.42.13.11, hostname: alex-iphone}
   - {mac: 70:ea:5a:12:bb:70, ip: 10.42.13.12, hostname: alex-ipad}
-  - {mac: 1e:5d:2f:4d:7f:87, ip: 10.42.13.13, hostname: alex-oneplus7t}
+  - {mac: 48:01:c5:6e:f1:59, ip: 10.42.13.13, hostname: alex-oneplus7t}
   - {mac: bc:d0:74:15:d5:d1, ip: 10.42.13.14, hostname: alex-laptop-work}
 
   #- {mac: 00:50:56:9f:22:3c, ip: 10.42.13.40, hostname: cat-ipad}
   - {mac: 0c:e4:41:ef:49:59, ip: 10.42.13.41, hostname: cat-laptop} #m1 air
+  - {mac: 84:d6:d0:fb:90:ce, ip: 10.42.13.42, hostname: cat-fire} #m1 air
 
   #- {mac: 00:50:56:9f:22:3c, ip: 10.42.13.80, hostname: ella-ipad}
 
   - {mac: 64:4b:f0:19:05:a3, ip: 10.42.13.100, hostname: caldigit-ts3}
-  #- {mac: 64:4b:f0:19:05:a3, ip: 10.42.13.101, hostname: caldigit-ts4}
+  - {mac: 64:4b:f0:37:2b:84, ip: 10.42.13.101, hostname: caldigit-ts4}
 
   #- {mac: 38:ba:f8:59:fd:a3, ip: 10.42.13.110, hostname: t480s-ethernet}
   #- {mac: 38:ba:f8:59:fd:a3, ip: 10.42.13.111, hostname: t480s-wifi}
@@ -196,5 +217,6 @@ dhcp_reservations:
 ## BLOCKED until identity confirmed
 
 # blocked in unifi
-# 7c:a6:b0:a6:d9:51
+# be:71:0c:09:54:49
 # 3e:df:33:de:2f:d4
+# 3c:6a:9d:14:dd:82 - dexatek
