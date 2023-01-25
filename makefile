@@ -5,7 +5,10 @@ m1:
 	ansible-playbook -b run.yaml --limit m1 --ask-become-pass 
 
 c137:
-	ansible-playbook -b run.yaml --limit c137 --ask-become-pass 
+	ansible-playbook -b run.yaml --limit c137
+
+nginx:
+	ansible-playbook -b run.yaml --limit nginx
 
 g:
 	ansible-playbook -b run.yaml --limit galgatebst --ask-become-pass 

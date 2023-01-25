@@ -141,3 +141,9 @@
       - 'vars/vault.yaml'
     roles:
       - role: ktz-caddy
+
+  - hosts: nginx
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: geerlingguy.docker
