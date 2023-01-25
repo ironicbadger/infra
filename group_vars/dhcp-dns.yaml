@@ -199,9 +199,10 @@ dhcp_reservations:
   - {mac: 48:01:c5:6e:f1:59, ip: 10.42.13.13, hostname: alex-oneplus7t}
   - {mac: bc:d0:74:15:d5:d1, ip: 10.42.13.14, hostname: alex-laptop-work}
 
-  #- {mac: 00:50:56:9f:22:3c, ip: 10.42.13.40, hostname: cat-ipad}
-  - {mac: 0c:e4:41:ef:49:59, ip: 10.42.13.41, hostname: cat-laptop} #m1 air
-  - {mac: 84:d6:d0:fb:90:ce, ip: 10.42.13.42, hostname: cat-fire} #m1 air
+  - {mac: 0c:e4:41:ef:49:59, ip: 10.42.13.40, hostname: cat-laptop} #m1 air
+  - {mac: dc:b5:4f:ab:cf:65, ip: 10.42.13.41, hostname: cat-iphone}
+  #- {mac: 00:50:56:9f:22:3c, ip: 10.42.13.42, hostname: cat-ipad}
+  - {mac: 84:d6:d0:fb:90:ce, ip: 10.42.13.43, hostname: cat-fire} #m1 air
 
   #- {mac: 00:50:56:9f:22:3c, ip: 10.42.13.80, hostname: ella-ipad}
 
