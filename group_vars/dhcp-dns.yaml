@@ -62,14 +62,14 @@ dhcp_reservations:
   ## misc servers  
   - {mac: e4:5f:01:08:89:ca, ip: 10.42.1.50, hostname: octopi-bricktop} #pi4 4gb
   - {mac: e4:5f:01:08:be:cb, ip: 10.42.1.51, hostname: pi4-2gb} #pi4 2gb
-  #- {mac: e4:5f:01:08:89:ca, ip: 10.42.1.52, hostname: pi4-8gb} #pi4 8gb
+  - {mac: dc:a6:32:b1:16:27, ip: 10.42.1.52, hostname: pi4-8gb} #pi4 8gb
   - {mac: b8:27:eb:2f:ee:4f, ip: 10.42.1.53, hostname: pi3} #pi3
   - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.54, hostname: gavinbelson} #wallpc
 
   #########
   ## audio equipment
   - {mac: 00:15:64:03:0a:5e, ip: 10.42.1.90, hostname: x32rack}
-  - {mac: 00:15:64:08:25:31, ip: 10.42.1.91, hostname: x-touch}
+  - {mac: 00:15:64:08:25:31, ip: 10.42.1.91, hostname: xtouch}
 
   #########
   ## media players and TVs
@@ -114,8 +114,8 @@ dhcp_reservations:
   - {mac: c8:2b:96:10:fa:03, ip: 10.42.5.33, hostname: shelly2_kitchen_lights}
   - {mac: 98:f4:ab:f3:e8:c8, ip: 10.42.5.34, hostname: shelly2_wallswitch_rear_outdoor_lights}
   - {mac: 84:cc:a8:9f:c8:7b, ip: 10.42.5.35, hostname: shelly1_basement_lights}
-  - {mac: 98:f4:ab:f3:1e:f4, ip: 10.42.5.36, hostname: shelly2_kitchen_bumpout_lights}
-  - {mac: e8:db:84:a1:d5:cc, ip: 10.42.5.37, hostname: shelly2_downstairs_hallway}
+  - {mac: 98:f4:ab:f3:1e:f4, ip: 10.42.5.36, hostname: shelly2_kitchen_bumpout_lights} #tasmota
+  - {mac: e8:db:84:a1:d5:cc, ip: 10.42.5.37, hostname: shelly2_downstairs_hallway} #tasmota
 
   - {mac: cc:50:e3:03:95:61, ip: 10.42.5.50, hostname: sp20_unknown}
   - {mac: cc:50:e3:03:44:a6, ip: 10.42.5.51, hostname: sp20_loungetv}

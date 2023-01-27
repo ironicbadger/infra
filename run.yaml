@@ -133,17 +133,67 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
+      - role: ironicbadger.figurine
+      - role: geerlingguy.ntp
       - role: ktz-opnsense-caddy
-
 
   - hosts: caddy
     vars_files:
       - 'vars/vault.yaml'
     roles:
+      - role: ironicbadger.figurine
+      - role: geerlingguy.ntp
       - role: ktz-caddy
 
   - hosts: nginx
     vars_files:
       - 'vars/vault.yaml'
     roles:
+      - role: ironicbadger.figurine
+      - role: geerlingguy.ntp
       - role: geerlingguy.docker
+
+  - hosts: tailscale
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ironicbadger.figurine
+      - role: geerlingguy.ntp
+      - role: artis3n.tailscale
+
+  - hosts: c137-services
+    vars_files:
+      - 'vars/vault.yaml'
+    pre_tasks:
+      - name: Update APT Cache
+        become: true
+        apt:
+          update_cache: yes
+    tasks:
+      - name: Update packages
+        ansible.builtin.apt:
+          update_cache: "True"
+          force_apt_get: "True"
+          cache_valid_time: 3600
+          upgrade: "True"
+
+      - name: Check if a reboot is needed for Debian and Ubuntu boxes
+        register: reboot_required_file
+        ansible.builtin.stat:
+          path: /var/run/reboot-required
+          get_md5: no
+
+      - name: Reboot the server
+        throttle: 1
+        ansible.builtin.reboot:
+          msg: Reboot initiated by Ansible due to updates which require one
+          connect_timeout: 5
+          reboot_timeout: 300
+          pre_reboot_delay: 0
+          post_reboot_delay: 30
+          test_command: uptime
+        when: reboot_required_file.stat.exists
+
+    roles:
+      - role: ironicbadger.figurine
+      - role: geerlingguy.ntp

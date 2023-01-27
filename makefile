@@ -7,8 +7,14 @@ m1:
 c137:
 	ansible-playbook -b run.yaml --limit c137
 
+c137-services:
+	ansible-playbook -b run.yaml --limit c137-services
+
 nginx:
 	ansible-playbook -b run.yaml --limit nginx
+
+tailscale:
+	ansible-playbook -b run.yaml --limit tailscale
 
 g:
 	ansible-playbook -b run.yaml --limit galgatebst --ask-become-pass 
