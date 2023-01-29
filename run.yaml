@@ -96,6 +96,7 @@
     roles:
       - role: ironicbadger.bash_aliases
       - role: ktz-dhcp-dns
+        tags: dhcpdns
 
   - hosts: elrond
     vars_files:

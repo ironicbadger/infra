@@ -1,5 +1,5 @@
 dhcpdns:
-	ansible-playbook -b run.yaml --limit dhcp-dns
+	ansible-playbook -b run.yaml --limit dhcp-dns --tags dhcpdns
 
 m1:
 	ansible-playbook -b run.yaml --limit m1 --ask-become-pass 
