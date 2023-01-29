@@ -180,7 +180,7 @@ dhcp_reservations:
   - {mac: 5c:e5:0c:e1:75:fd, ip: 10.42.5.201, hostname: yeelink_bonus_tinkerspace_2}
   - {mac: 5c:e5:0c:e1:7a:20, ip: 10.42.5.202, hostname: yeelink_bonus_tinkerspace_3}
   - {mac: 5c:e5:0c:e1:77:b7, ip: 10.42.5.203, hostname: yeelink_bonus_tv_corner} #TODO: where?
-  - {mac: 7c:49:eb:19:93:53, ip: 10.42.5.204, hostname: yeelink_bonus_cat_desk} #TODO: where?
+  - {mac: 7c:49:eb:19:93:53, ip: 10.42.5.204, hostname: yeelink_bonus_drum_rgb}
 
   ## Elgato 
   - {mac: 3c:6a:9d:19:06:d5, ip: 10.42.5.205, hostname: elgato_keylight_left} #d9fe
