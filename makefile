@@ -70,9 +70,6 @@ opnsensewd:
 caddy:
 	ansible-playbook -b run.yaml --limit caddy
 
-update:
-	ansible-playbook update.yaml --limit servers 
-
 reqs:
 	ansible-galaxy install -r requirements.yaml
 
