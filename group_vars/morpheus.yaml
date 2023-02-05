@@ -336,7 +336,7 @@ containers:
     volumes:
       - "{{ appdata_path }}/plex/config:/config"
       - "{{ appdata_path }}/plex/transcode:/transcode"
-      - "{{ morpheus_main_storage_path }}:/data"
+      - "{{ morpheus_main_storage_path }}:/data:ro"
     include_global_env_vars: true
     restart: unless-stopped
   ###
@@ -569,12 +569,12 @@ containers:
     restart: unless-stopped
   ###
   - service_name: sync
-    active: true
+    active: false
     image: linuxserver/resilio-sync
     hostname: "{{ hostname_morpheus }}"
     volumes:
       - "{{ appdata_path }}/sync:/config"
-      - "{{ morpheus_main_storage_path }}:/sync"
+      #- "{{ morpheus_main_storage_path }}:/sync" # make the scope smaller
     labels:
       - "traefik.http.routers.btsync.rule=Host(`sync.m.{{ local_domain }}`)"
     ports:
@@ -716,7 +716,6 @@ containers:
   - service_name: jellyfin
     active: true
     image: jellyfin/jellyfin
-    network_mode: host
     devices:
       - /dev/dri:/dev/dri
     labels:
@@ -724,7 +723,7 @@ containers:
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
     volumes:
       - "{{ appdata_path }}/jellyfin:/config"
-      - "{{ morpheus_main_storage_path }}:/data"
+      - "{{ morpheus_main_storage_path }}:/data:ro"
       # ram transcode
       - /dev/shm:/transcode
     environment:
@@ -748,7 +747,7 @@ containers:
     labels:
       - "traefik.http.routers.audiobookshelf.rule=Host(`abs.m.{{ local_domain }}`)"
     volumes:
-      - "{{ morpheus_main_storage_path }}/audiobooks/library:/audiobooks"
+      - "{{ morpheus_main_storage_path }}/audiobooks/library:/audiobooks:ro"
       - "{{ morpheus_main_storage_path }}/audiobooks/podcasts:/podcasts"
       - "{{ appdata_path }}/audiobookshelf/metadata:/metadata"
       - "{{ appdata_path }}/audiobookshelf/config:/config"
@@ -793,7 +792,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: filebrowser
-    active: true
+    active: false
     image: filebrowser/filebrowser:s6
     labels:
       - "traefik.http.routers.fb.rule=Host(`files.m.{{ local_domain }}`)"
