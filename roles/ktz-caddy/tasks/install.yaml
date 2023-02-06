@@ -1,18 +1,9 @@
 ---
 
-# this expects that you've already installed the mimugmail caddy plugin for
-# opnsense in order to get the init scripts that the plugin provides.
-
-# removal here is a bug i need to resolve in future
-- name: remove existing binary
-  file:
-    path: /usr/local/bin/caddy
-    state: absent
-
 - name: download latest release
   get_url:                                                           
     url: "{{ caddy_amd64_linux_cloudflare_binary_url }}"                       
     dest: /usr/local/bin/caddy
     owner: root
-    group: wheel
+    group: root
     mode: a+x

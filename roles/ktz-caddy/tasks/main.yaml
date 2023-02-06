@@ -1,8 +1,8 @@
 ---
 
-# - name: install caddy
-#   include_tasks:
-#     file: install.yaml
+- name: install caddy
+  include_tasks:
+    file: install.yaml
 
 - name: configure caddy rules
   include_tasks:

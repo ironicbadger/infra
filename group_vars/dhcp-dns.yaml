@@ -3,6 +3,9 @@
 bash_aliases:
   - { alias: "leases", command: "watch cat /etc/pihole/dhcp.leases" }
 
+# ironicbadger.figurine
+figurine_name: wd-core
+
 # ktz-dhcpdns
 default_domain: "wd.ktz.me"
 
@@ -21,13 +24,14 @@ dns_overrides:
   - {ip: 10.42.0.251, custom_dns: "ipmi.anton.wd.ktz.me"}
   - {ip: 10.42.1.99, custom_dns: "hass.ktz.me"}
   - {ip: 10.42.1.10, custom_dns: "nc.ktz.cloud"}
+  - {ip: 10.42.1.10, custom_dns: "git.ktz.me"}
   - {ip: 100.105.174.16, custom_dns: "gg.ktz.me"}
 
 dhcp_reservations:
   # CORE INFRA
   ## c137 - FIREWALL
-  - {mac: 7C:2B:E1:13:84:D7, ip: 10.42.0.1, hostname: c137}
-  #- {mac: 7C:2B:E1:13:84:D8, ip: 10.42.0.254, hostname: NICnotused}
+  #- {mac: 7C:2B:E1:13:84:D7, ip: 10.42.0.1, hostname: c137} # gave weird vmbr0 errors
+  - {mac: 7C:2B:E1:13:84:D8, ip: 10.42.0.1, hostname: c137}
   #- {mac: 7C:2B:E1:13:84:D9, ip: WAN, hostname: opnsenseWAN} # WAN DHCP - passed through
   - {mac: 7C:2B:E1:13:84:DA, ip: 10.42.0.254, hostname: opnsense, custom_dns: ["opnsense.c137"]} # LAN - passed through
   ### c137 services
@@ -89,8 +93,11 @@ dhcp_reservations:
   - {mac: 9c:8e:cd:22:2b:ff, ip: 10.42.2.10, hostname: amcrest-driveway-left}
   - {mac: ec:71:db:ba:75:13, ip: 10.42.2.11, hostname: reolink-driveway-right}
   - {mac: ec:71:db:00:60:b3, ip: 10.42.2.12, hostname: reolink-deck}
-  #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.13, hostname: reolink-new1}
+  - {mac: ec:71:db:8a:55:a9, ip: 10.42.2.13, hostname: reolink-doorbell}
+  #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.14, hostname: reolink-new1}
   #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.14, hostname: reolink-new2}
+  #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.14, hostname: reolink-new3}
+  #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.14, hostname: reolink-new4}
 
   - {mac: 80:91:33:d1:90:f7, ip: 10.42.2.110, hostname: ezviz-doorbell}
   - {mac: d0:3f:27:4e:90:ca, ip: 10.42.2.111, hostname: wyze-bonus}
