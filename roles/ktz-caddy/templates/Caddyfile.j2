@@ -93,24 +93,3 @@ bricktop.{{ domain_wd_me }} {
   }
   import cloudflare
 }
-
-# ipmi
-ipmi.m.{{ domain_wd_me }} {
-  reverse_proxy https://10.42.1.11 {
-    transport http {
-      tls_insecure_skip_verify
-    }
-  }
-  import cloudflare
-  import headers
-}
-
-ipmi.anton.{{ domain_wd_me }} {
-  reverse_proxy https://10.42.1.21 {
-    transport http {
-      tls_insecure_skip_verify
-    }
-  }
-  import cloudflare
-  import headers
-}
