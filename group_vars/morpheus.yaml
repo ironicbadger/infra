@@ -853,7 +853,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: wyzebridge
-    active: true
+    active: false
     image: mrlt8/wyze-bridge
     labels:
       - "traefik.http.routers.wyzebridge.rule=Host(`wyze.m.{{ local_domain }}`)"
