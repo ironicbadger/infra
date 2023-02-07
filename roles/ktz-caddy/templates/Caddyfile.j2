@@ -37,6 +37,13 @@ dns.{{ domain_wd_me }} {
   import cloudflare
 }
 
+# dhcp
+dhcp.{{ domain_wd_me }} {
+  redir / /dhcp.leases
+  reverse_proxy http://10.42.0.253:81
+  import cloudflare
+}
+
 #opnsense
 opnsense.{{ domain_wd_me }} {
   reverse_proxy https://10.42.0.254:443 {

@@ -90,13 +90,7 @@
       - role: ironicbadger.docker_compose_generator
         tags: compose
 
-  - hosts: dhcp-dns
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: ironicbadger.bash_aliases
-      - role: ktz-dhcp-dns
-        tags: dhcpdns
+
 
   - hosts: elrond
     vars_files:
@@ -137,6 +131,16 @@
       - role: ironicbadger.figurine
       - role: geerlingguy.ntp
       - role: ktz-opnsense-caddy
+
+  - hosts: dhcp-dns
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: geerlingguy.docker
+      - role: ironicbadger.docker_compose_generator
+      - role: ironicbadger.bash_aliases
+      - role: ktz-dhcp-dns
+        tags: dhcpdns
 
   - hosts: caddy
     vars_files:

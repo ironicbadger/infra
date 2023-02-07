@@ -2,13 +2,20 @@
 # ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
 bash_aliases:
   - { alias: "leases", command: "watch cat /etc/pihole/dhcp.leases" }
+  - { alias: "dtail", command: "docker logs -tf --tail='50' " }
+  - { alias: "dstop", command: "docker stop `docker ps -aq`" }
+  - { alias: "drm", command: "docker rm `docker ps -aq`" }
+  - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml "}
+  - { alias: "dcporph", command: "docker-compose -f ~/docker-compose.yml up -d --remove-orphans" }
+  - { alias: "dprune", command: "docker image prune" }
+  - { alias: "dprunesys", command: "docker system prune --all" }
+  - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop" }
 
 # ironicbadger.figurine
 figurine_name: wd-core
 
 # ktz-dhcpdns
 default_domain: "wd.ktz.me"
-
 network_cidr: 10.42.0.0/20
 dhcp_range_start: 10.42.15.100
 dhcp_range_end: 10.42.15.250
@@ -237,3 +244,14 @@ dhcp_reservations:
 # be:71:0c:09:54:49
 # 3e:df:33:de:2f:d4
 # 3c:6a:9d:14:dd:82 - dexatek
+
+
+containers:
+  - service_name: leases
+    active: true
+    image: nginx
+    volumes:
+      - "/etc/pihole:/usr/share/nginx/html:ro"
+    ports:
+      - 81:80
+    restart: unless-stopped
