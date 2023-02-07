@@ -92,12 +92,13 @@ dhcp_reservations:
   
   - {mac: 9c:8e:cd:22:2b:ff, ip: 10.42.2.10, hostname: amcrest-driveway-left}
   - {mac: ec:71:db:ba:75:13, ip: 10.42.2.11, hostname: reolink-driveway-right}
-  - {mac: ec:71:db:00:60:b3, ip: 10.42.2.12, hostname: reolink-deck}
+  #- {mac: ec:71:db:ba:75:13, ip: 10.42.2.12, hostname: reolink-?}
   - {mac: ec:71:db:8a:55:a9, ip: 10.42.2.13, hostname: reolink-doorbell}
-  #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.14, hostname: reolink-new1}
-  #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.14, hostname: reolink-new2}
-  #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.14, hostname: reolink-new3}
-  #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.14, hostname: reolink-new4}
+  - {mac: ec:71:db:e7:c3:27, ip: 10.42.2.14, hostname: reolink-bins}
+  - {mac: ec:71:db:b1:f4:48, ip: 10.42.2.15, hostname: reolink-yard-upper}
+  #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.16, hostname: reolink-yard-lower}
+  - {mac: ec:71:db:00:60:b3, ip: 10.42.2.17, hostname: reolink-deck}
+  #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.18, hostname: reolink-deck-under}
 
   - {mac: 80:91:33:d1:90:f7, ip: 10.42.2.110, hostname: ezviz-doorbell}
   - {mac: d0:3f:27:4e:90:ca, ip: 10.42.2.111, hostname: wyze-bonus}
