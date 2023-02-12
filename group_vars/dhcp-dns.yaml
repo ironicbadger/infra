@@ -51,10 +51,11 @@ dhcp_reservations:
   - {mac: D0:50:99:F2:D9:38, ip: 10.42.1.11, hostname: morpheus-ipmi}
   - {mac: d0:50:99:f2:d6:4b, ip: 10.42.1.12, hostname: morpheus-ipmi2} #wtf?
   ### morpheus services
-  - {mac: 3E:79:66:00:87:F7, ip: 10.42.1.99, hostname: ha}
+  - {mac: e4:5f:01:97:c1:af, ip: 10.42.1.99, hostname: ha}
   - {mac: F2:8F:35:40:8A:9C, ip: 10.42.1.98, hostname: redhat-irc}
   - {mac: 92:A9:C6:04:AE:CA, ip: 10.42.1.97, hostname: dev}
   - {mac: BA:F4:A4:1E:EF:C0, ip: 10.42.1.96, hostname: cat-calibre}
+  - {mac: 3E:79:66:00:87:F7, ip: 10.42.1.95, hostname: ha-vm}
 
   ## anton - BACKUP SERVER
   - {mac: D0:50:99:DB:B2:2D, ip: 10.42.1.20, hostname: anton} #eno1
@@ -65,18 +66,31 @@ dhcp_reservations:
 
   #########
   ## networking equipment
-  - {mac: 04:18:d6:c0:95:62, ip: 10.42.1.40, hostname: unifi-bonus}  
-  - {mac: 80:2a:a8:90:4c:9d, ip: 10.42.1.41, hostname: unifi-hallway}  
-  - {mac: e0:63:da:33:2a:fd, ip: 10.42.1.42, hostname: unifi-kitchen}  
-  - {mac: e0:63:da:67:f3:8c, ip: 10.42.1.43, hostname: unifi-deck}
+  ### wifi
+  - {mac: 04:18:d6:c0:95:62, ip: 10.42.1.40, hostname: unifi-uap-ac-pro-bonus}  
+  - {mac: 80:2a:a8:90:4c:9d, ip: 10.42.1.41, hostname: unifi-uap-ac-pro-hallway}  
+  - {mac: e0:63:da:33:2a:fd, ip: 10.42.1.42, hostname: unifi-uap-ac-iw-kitchen}  
+  - {mac: e0:63:da:67:f3:8c, ip: 10.42.1.43, hostname: unifi-uap-ac-m-deck}
+  ### primary switches
+  - {mac: d0:21:f9:4d:bc:3d, ip: 10.42.1.50, hostname: unifi-usw-flex-xg-bonus}
+  - {mac: d0:21:f9:4d:bc:28, ip: 10.42.1.51, hostname: unifi-usw-flex-xg-basement}
+  ### poe switches
+  - {mac: ac:8b:a9:a1:58:16, ip: 10.42.1.55, hostname: unifi-usw-24poe-bonus}
+  - {mac: ac:8b:a9:a1:59:d8, ip: 10.42.1.56, hostname: unifi-usw-24poe-basement}
+  ### other switches
+  - {mac: 60:22:32:46:6f:c5, ip: 10.42.1.60, hostname: unifi-usw-flex-mini1}
+  - {mac: d0:21:f9:bb:ff:e2, ip: 10.42.1.61, hostname: unifi-usw-flex-mini2}
+  - {mac: 60:22:32:46:7f:d4, ip: 10.42.1.62, hostname: unifi-usw-flex-mini3}
+  - {mac: 60:22:32:46:6f:64, ip: 10.42.1.63, hostname: unifi-usw-flex-mini4}
+  - {mac: d0:21:f9:bd:82:9e, ip: 10.42.1.64, hostname: unifi-usw-flex-mini5}
 
   #########
   ## misc servers  
-  - {mac: e4:5f:01:08:89:ca, ip: 10.42.1.50, hostname: octopi-bricktop} #pi4 4gb
-  - {mac: e4:5f:01:08:be:cb, ip: 10.42.1.51, hostname: pi4-2gb} #pi4 2gb
-  - {mac: dc:a6:32:b1:16:27, ip: 10.42.1.52, hostname: pi4-8gb} #pi4 8gb
-  - {mac: b8:27:eb:2f:ee:4f, ip: 10.42.1.53, hostname: pi3} #pi3
-  - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.54, hostname: gavinbelson} #wallpc
+  - {mac: e4:5f:01:08:89:ca, ip: 10.42.1.80, hostname: octopi-bricktop} #pi4 4gb
+  - {mac: e4:5f:01:08:be:cb, ip: 10.42.1.81, hostname: pi4-2gb} #pi4 2gb
+  - {mac: dc:a6:32:b1:16:27, ip: 10.42.1.82, hostname: pi4-8gb} #pi4 8gb
+  - {mac: b8:27:eb:2f:ee:4f, ip: 10.42.1.83, hostname: pi3} #pi3
+  - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.84, hostname: gavinbelson} #wallpc
 
   #########
   ## audio equipment
@@ -95,7 +109,8 @@ dhcp_reservations:
 
   #########
   ## cameras (Wyze, PoE)
-  - {mac: f4:39:09:44:1d:d5, ip: 10.42.2.1, hostname: blueiris}
+  - {mac: 00:8e:25:73:02:1e, ip: 10.42.2.1, hostname: blueiris}
+  - {mac: f4:39:09:44:1d:d5, ip: 10.42.2.2, hostname: blueiris-1gb}
   
   - {mac: 9c:8e:cd:22:2b:ff, ip: 10.42.2.10, hostname: amcrest-driveway-left}
   - {mac: ec:71:db:ba:75:13, ip: 10.42.2.11, hostname: reolink-driveway-right}
@@ -183,6 +198,7 @@ dhcp_reservations:
   - {mac: f8:0f:f9:60:a0:0d, ip: 10.42.5.184, hostname: google-privacy-invasion-device4}
   - {mac: 1c:f2:9a:6b:9c:b8, ip: 10.42.5.185, hostname: google-privacy-invasion-device5}
   # - {mac: 50:f5:da:03:38:94, ip: 10.42.5.186, hostname: google-privacy-invasion-device6}
+  - {mac: ac:bc:b5:c9:fc:3b, ip: 10.42.5.187, hostname: homepod-kitchen}
   
 
   ## LG Appliances
