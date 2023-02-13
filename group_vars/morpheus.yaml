@@ -294,7 +294,7 @@ containers:
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
+      #- 8080:8080
     extra_hosts:
       - host.docker.internal:172.17.0.1
     environment:
@@ -661,7 +661,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: paperless
-    active: false
+    active: true
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     labels:
       - "traefik.http.routers.paperless.rule=Host(`paperless.m.{{ local_domain }}`)"
@@ -671,6 +671,8 @@ containers:
     environment:
       - PAPERLESS_CONSUMER_RECURSIVE=true
       - PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS=true
+      - PAPERLESS_URL=https://paperless.m.{{ local_domain }}
+      - PAPERLESS_REDIS=redis://redis
     include_global_env_vars: true
     restart: unless-stopped
 ###
@@ -852,21 +854,6 @@ containers:
       - "{{ appdata_path }}/grafana/data:/var/lib/grafana"
     restart: unless-stopped
   ###
-  - service_name: wyzebridge
-    active: false
-    image: mrlt8/wyze-bridge
-    labels:
-      - "traefik.http.routers.wyzebridge.rule=Host(`wyze.m.{{ local_domain }}`)"
-      - traefik.http.services.wyzebridge.loadbalancer.server.port=5000
-    environment:
-      - "WYZE_EMAIL={{ gmail_address }}"
-      - "WYZE_PASSWORD={{ wyze_password }}"
-    ports:
-      - 1935:1935
-      - 8554:8554
-      - 8888:8888
-      - 5000:5000
-    restart: unless-stopped
 
 
   # template for docker-compose services
