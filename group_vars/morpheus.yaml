@@ -750,6 +750,7 @@ containers:
       - "traefik.http.routers.audiobookshelf.rule=Host(`abs.m.{{ local_domain }}`)"
     volumes:
       - "{{ morpheus_main_storage_path }}/audiobooks/library:/audiobooks:ro"
+      - "{{ morpheus_main_storage_path }}/audiobooks/library2:/audiobooks2:ro"
       - "{{ morpheus_main_storage_path }}/audiobooks/podcasts:/podcasts"
       - "{{ appdata_path }}/audiobookshelf/metadata:/metadata"
       - "{{ appdata_path }}/audiobookshelf/config:/config"
