@@ -67,7 +67,7 @@ containers:
     ports:
       - 80:80
       - 443:443
-      - 8080:8080
+      #- 8080:8080
     command:
       - --log.level=info
       - --accesslog=false
@@ -104,6 +104,7 @@ containers:
       - traefik.http.services.ubiq.loadbalancer.server.port=8443
     ports:
       - "{{ cloud_unifi_port_advertise }}:{{ cloud_unifi_port_advertise_int }}"
+      - 8080:8080
       - 3478:3478/udp
     mem_limit: 1g
     volumes:
