@@ -109,8 +109,8 @@ dhcp_reservations:
 
   #########
   ## cameras (Wyze, PoE)
-  - {mac: 00:8e:25:73:02:1e, ip: 10.42.2.1, hostname: blueiris}
-  - {mac: f4:39:09:44:1d:d5, ip: 10.42.2.2, hostname: blueiris-1gb}
+  - {mac: f4:39:09:44:1d:d5, ip: 10.42.2.1, hostname: blueiris}
+  - {mac: 00:8e:25:73:02:1e, ip: 10.42.2.2, hostname: blueiris25}
   
   - {mac: 9c:8e:cd:22:2b:ff, ip: 10.42.2.10, hostname: amcrest-driveway-left}
   - {mac: ec:71:db:ba:75:13, ip: 10.42.2.11, hostname: reolink-driveway-right}
