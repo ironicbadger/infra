@@ -16,9 +16,9 @@ figurine_name: wd-core
 
 # ktz-dhcpdns
 default_domain: "wd.ktz.me"
-network_cidr: 10.42.0.0/20
-dhcp_range_start: 10.42.15.100
-dhcp_range_end: 10.42.15.250
+network_cidr: 10.42.0.0/21
+dhcp_range_start: 10.42.7.100
+dhcp_range_end: 10.42.7.250
 dhcp_router: 10.42.0.254
 dhcp_active: "true"
 
@@ -231,22 +231,22 @@ dhcp_reservations:
 
   #########
   ## primary clients (desktop, servers, laptops, phones, tablets)
-  - {mac: f0:2f:4b:00:a3:d5, ip: 10.42.13.10, hostname: slartibartfast}
-  - {mac: C4:AC:AA:05:04:16, ip: 10.42.13.11, hostname: alex-iphone}
-  - {mac: 70:ea:5a:12:bb:70, ip: 10.42.13.12, hostname: alex-ipad}
-  - {mac: 48:01:c5:6e:f1:59, ip: 10.42.13.13, hostname: alex-oneplus7t}
-  - {mac: bc:d0:74:15:d5:d1, ip: 10.42.13.14, hostname: alex-laptop-work}
-  - {mac: 2c:3b:70:d5:59:09, ip: 10.42.13.15, hostname: steam-deck}
+  - {mac: f0:2f:4b:00:a3:d5, ip: 10.42.3.10, hostname: slartibartfast}
+  - {mac: C4:AC:AA:05:04:16, ip: 10.42.3.11, hostname: alex-iphone}
+  - {mac: 70:ea:5a:12:bb:70, ip: 10.42.3.12, hostname: alex-ipad}
+  - {mac: 48:01:c5:6e:f1:59, ip: 10.42.3.13, hostname: alex-oneplus7t}
+  - {mac: bc:d0:74:15:d5:d1, ip: 10.42.3.14, hostname: alex-laptop-work}
+  - {mac: 2c:3b:70:d5:59:09, ip: 10.42.3.15, hostname: steam-deck}
 
-  - {mac: 0c:e4:41:ef:49:59, ip: 10.42.13.40, hostname: cat-laptop} #m1 air
-  - {mac: dc:b5:4f:ab:cf:65, ip: 10.42.13.41, hostname: cat-iphone}
-  - {mac: 58:64:C4:6D:21:E0, ip: 10.42.13.42, hostname: cat-ipad}
-  - {mac: 84:d6:d0:fb:90:ce, ip: 10.42.13.43, hostname: cat-fire} #m1 air
+  - {mac: 0c:e4:41:ef:49:59, ip: 10.42.3.40, hostname: cat-laptop} #m1 air
+  - {mac: dc:b5:4f:ab:cf:65, ip: 10.42.3.41, hostname: cat-iphone}
+  - {mac: 58:64:C4:6D:21:E0, ip: 10.42.3.42, hostname: cat-ipad}
+  - {mac: 84:d6:d0:fb:90:ce, ip: 10.42.3.43, hostname: cat-fire} #m1 air
 
   #- {mac: 00:50:56:9f:22:3c, ip: 10.42.13.80, hostname: ella-ipad}
 
-  - {mac: 64:4b:f0:19:05:a3, ip: 10.42.13.100, hostname: caldigit-ts3}
-  - {mac: 64:4b:f0:37:2b:84, ip: 10.42.13.101, hostname: caldigit-ts4}
+  - {mac: 64:4b:f0:19:05:a3, ip: 10.42.3.100, hostname: caldigit-ts3}
+  - {mac: 64:4b:f0:37:2b:84, ip: 10.42.3.101, hostname: caldigit-ts4}
 
   #- {mac: 38:ba:f8:59:fd:a3, ip: 10.42.13.110, hostname: t480s-ethernet}
   #- {mac: 38:ba:f8:59:fd:a3, ip: 10.42.13.111, hostname: t480s-wifi}
