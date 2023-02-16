@@ -27,8 +27,8 @@ dns_overrides:
   - {ip: 10.42.0.252, custom_dns: "wd.ktz.me"}
   - {ip: 10.42.0.252, custom_dns: "opnsense.wd.ktz.me"}
   - {ip: 10.42.0.252, custom_dns: "dns.wd.ktz.me"}
-  - {ip: 10.42.0.251, custom_dns: "ipmi.m.wd.ktz.me"}
-  - {ip: 10.42.0.251, custom_dns: "ipmi.anton.wd.ktz.me"}
+  #- {ip: 10.42.0.251, custom_dns: "ipmi.m.wd.ktz.me"}
+  #- {ip: 10.42.0.251, custom_dns: "ipmi.anton.wd.ktz.me"}
   - {ip: 10.42.1.99, custom_dns: "hass.ktz.me"}
   - {ip: 10.42.1.10, custom_dns: "nc.ktz.cloud"}
   - {ip: 10.42.1.10, custom_dns: "git.ktz.me"}
@@ -36,11 +36,13 @@ dns_overrides:
 
 dhcp_reservations:
   # CORE INFRA
-  ## c137 - FIREWALL
-  #- {mac: 7C:2B:E1:13:84:D7, ip: 10.42.0.1, hostname: c137} # gave weird vmbr0 errors
-  - {mac: 7C:2B:E1:13:84:D8, ip: 10.42.0.1, hostname: c137}
+  ## FIREWALL
+  - {mac: 70:54:d2:45:9d:86, ip: 10.42.0.254, hostname: opnsense, custom_dns: ["opnsense.firewall"]}
+  ## c137
+  - {mac: 7C:2B:E1:13:84:D7, ip: 10.42.0.1, hostname: c137}
+  #- {mac: 7C:2B:E1:13:84:D8, ip: 10.42.0.1, hostname: c137}
   #- {mac: 7C:2B:E1:13:84:D9, ip: WAN, hostname: opnsenseWAN} # WAN DHCP - passed through
-  - {mac: 7C:2B:E1:13:84:DA, ip: 10.42.0.254, hostname: opnsense, custom_dns: ["opnsense.c137"]} # LAN - passed through
+  #- {mac: 7C:2B:E1:13:84:DA, ip: 10.42.0.254, hostname: opnsense, custom_dns: ["opnsense.c137"]} # LAN - passed through
   ### c137 services
   - {mac: CE:87:AE:C2:BB:AE, ip: 10.42.0.251, hostname: nginx}
   - {mac: 7E:23:21:86:2C:43, ip: 10.42.0.252, hostname: caddy}
@@ -77,6 +79,7 @@ dhcp_reservations:
   ### poe switches
   - {mac: ac:8b:a9:a1:58:16, ip: 10.42.1.55, hostname: unifi-usw-24poe-bonus}
   - {mac: ac:8b:a9:a1:59:d8, ip: 10.42.1.56, hostname: unifi-usw-24poe-basement}
+  - {mac: ac:8b:a9:68:63:2b, ip: 10.42.1.57, hostname: unifi-usw-lite-16-poe}
   ### other switches
   - {mac: 60:22:32:46:6f:c5, ip: 10.42.1.60, hostname: unifi-usw-flex-mini1}
   - {mac: d0:21:f9:bb:ff:e2, ip: 10.42.1.61, hostname: unifi-usw-flex-mini2}
