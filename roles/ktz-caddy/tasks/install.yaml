@@ -7,3 +7,8 @@
     owner: root
     group: root
     mode: a+x
+
+- name: Add the caddy user
+  ansible.builtin.user:
+    name: caddy
+    group: caddy
