@@ -59,6 +59,7 @@ dhcp_reservations:
 
   ## anton - BACKUP SERVER
   - {mac: D0:50:99:DB:B2:2D, ip: 10.42.1.20, hostname: anton} #eno1
+  #- {mac: D0:50:99:DB:B2:2E, ip: 10.42.1.xx, hostname: anton-eth2}
   - {mac: D0:50:99:F2:8F:57, ip: 10.42.1.21, hostname: anton-ipmi} 
 
   ## m1 - TEST SERVER
