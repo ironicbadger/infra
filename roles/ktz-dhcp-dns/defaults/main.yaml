@@ -1,0 +1,5 @@
+---
+
+dnsmasq_config_dir: /etc/dnsmasq.d
+pihole_config_dir: /etc/pihole
+running_as_container: false

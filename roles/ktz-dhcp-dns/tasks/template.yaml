@@ -2,25 +2,25 @@
 
 - name: ensure target dirs exists
   file:
-    path: /etc/dnsmasq.d
+    path: "{{ item }}"
     state: directory
     owner: root
     group: root
   loop:
-    - /etc/dnsmasq.d
-    - /etc/pihole
+    - "{{ dnsmasq_config_dir }}"
+    - "{{ pihole_config_dir }}"
 
 - name: write setupVars file
   template:
     src: ../templates/pihole-setupVars.conf.j2
-    dest: /etc/pihole/setupVars.conf
+    dest: "{{ pihole_config_dir }}/setupVars.conf"
     owner: root
     group: root
   
 - name: write dns file
   template:
     src: ../templates/dns-overrides.conf.j2
-    dest: /etc/dnsmasq.d/03-dns-overrides.conf
+    dest: "{{ dnsmasq_config_dir }}/03-dns-overrides.conf"
     owner: root
     group: root
   notify: restart pihole dns
@@ -31,7 +31,7 @@
 - name: write pihole dhcp configuration file
   template:
     src: ../templates/pihole-dhcp.conf.j2
-    dest: /etc/dnsmasq.d/02-pihole-dhcp.conf
+    dest: "{{ dnsmasq_config_dir }}/02-pihole-dhcp.conf"
     owner: root
     group: root
   notify: restart pihole dns
@@ -39,19 +39,19 @@
 - name: write static dhcp file
   template:
     src: ../templates/static-dhcp.conf.j2
-    dest: /etc/dnsmasq.d/03-static-dhcp.conf
+    dest: "{{ dnsmasq_config_dir }}/03-static-dhcp.conf"
     owner: root
     group: root
   register: dhcp_changed
 
 - name: revoke existing leases if dhcpd file changed
   file:
-    path: /etc/pihole/dhcp.leases
+    path: "{{ pihole_config_dir }}/dhcp.leases"
     state: absent
   when: dhcp_changed.changed
 
 - name: revoke existing leases if dhcpd file changed
   file:
-    path: /etc/pihole/dhcp.leases
+    path: "{{ pihole_config_dir }}/dhcp.leases"
     state: touch
   when: dhcp_changed.changed
