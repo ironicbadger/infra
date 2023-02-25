@@ -497,6 +497,7 @@ containers:
   - service_name: smokeping
     active: true
     image: linuxserver/smokeping
+    hostname: morpheus
     volumes:
       - "{{ appdata_path }}/smokeping/config:/config"
       - "{{ appdata_path }}/smokeping/data:/data"
