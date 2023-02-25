@@ -37,7 +37,7 @@ package_list:
   - name: nmap
   - name: openssh-server
   - name: open-vm-tools
-  - name: python
+  - name: python3
   - name: qemu-guest-agent
   - name: screen
   - name: smartmontools
