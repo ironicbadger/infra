@@ -8,6 +8,28 @@
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
 
+  - hosts: pihole
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: geerlingguy.ntp
+      - role: ironicbadger.figurine
+      - role: ktz-dhcp-dns
+        tags: pihole, dns, dhcp
+
+  - hosts: unifi
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: geerlingguy.ntp
+      - role: geerlingguy.docker
+      - role: ironicbadger.figurine
+      - role: ironicbadger.bash_aliases
+        tags: bash
+      - role: ironicbadger.docker_compose_generator
+        tags: compose
+
+
   - hosts: morpheus
     vars_files:
       - 'vars/vault.yaml'
@@ -90,8 +112,6 @@
       - role: ironicbadger.docker_compose_generator
         tags: compose
 
-
-
   - hosts: elrond
     vars_files:
       - 'vars/vault.yaml'
@@ -99,30 +119,6 @@
       #- role: ironicbadger.bash_aliases
       - role: ironicbadger.docker_compose_generator
         tags: compose
-
-  - hosts: galgatebst
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: grog.package
-      - role: geerlingguy.docker
-      - role: geerlingguy.ntp
-      - role: ironicbadger.bash_aliases
-      - role: ironicbadger.figurine
-    tasks:
-      - hostname:
-          name: "galgatebst"
-
-  - hosts: vpnwd
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: grog.package
-      - role: ironicbadger.apprise_boot_notification
-      - role: ironicbadger.figurine
-    tasks:
-      - hostname:
-          name: "vpnwd"
 
   - hosts: opnsensewd
     vars_files:
@@ -132,73 +128,21 @@
       - role: geerlingguy.ntp
       - role: ktz-opnsense-caddy
 
-  - hosts: dhcp-dns
+
+
+  - hosts: pi8
     vars_files:
       - 'vars/vault.yaml'
     roles:
+      - role: grog.package
+        tags: packages
+      - role: geerlingguy.ntp
       - role: geerlingguy.docker
-      - role: ironicbadger.docker_compose_generator
+      - role: ironicbadger.figurine
+        tags: figurine
       - role: ironicbadger.bash_aliases
+        tags: bash
+      - role: ironicbadger.docker_compose_generator
+        tags: compose
       - role: ktz-dhcp-dns
-        tags: dhcpdns
-
-  - hosts: caddy
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: ironicbadger.figurine
-      - role: geerlingguy.ntp
-      - role: ktz-caddy
-
-  - hosts: nginx
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: ironicbadger.figurine
-      - role: geerlingguy.ntp
-      - role: geerlingguy.docker
-
-  - hosts: tailscale
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: ironicbadger.figurine
-      - role: geerlingguy.ntp
-      - role: artis3n.tailscale
-
-  - hosts: c137-services
-    vars_files:
-      - 'vars/vault.yaml'
-    pre_tasks:
-      - name: Update APT Cache
-        become: true
-        apt:
-          update_cache: yes
-    tasks:
-      - name: Update packages
-        ansible.builtin.apt:
-          update_cache: "True"
-          force_apt_get: "True"
-          cache_valid_time: 3600
-          upgrade: "True"
-
-      - name: Check if a reboot is needed for Debian and Ubuntu boxes
-        register: reboot_required_file
-        ansible.builtin.stat:
-          path: /var/run/reboot-required
-          get_md5: no
-
-      - name: Reboot the server
-        throttle: 1
-        ansible.builtin.reboot:
-          msg: Reboot initiated by Ansible due to updates which require one
-          connect_timeout: 5
-          reboot_timeout: 300
-          pre_reboot_delay: 0
-          post_reboot_delay: 30
-          test_command: uptime
-        when: reboot_required_file.stat.exists
-
-    roles:
-      - role: ironicbadger.figurine
-      - role: geerlingguy.ntp
+        tags: pihole, dns, dhcp
