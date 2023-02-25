@@ -91,6 +91,16 @@ bi.{{ domain_wd_me }} {
   import cloudflare
 }
 
+# unifi local
+unifi.{{ domain_wd_me }} {
+  reverse_proxy https://10.42.0.250:8443 {
+    transport http {
+      tls_insecure_skip_verify
+    }
+  }
+  import cloudflare
+}
+
 # octoprint
 bricktop.{{ domain_wd_me }} {
   reverse_proxy https://10.42.1.80:443 {
