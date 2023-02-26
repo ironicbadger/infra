@@ -101,13 +101,14 @@ dhcp_reservations:
   - {mac: CE:87:AE:C2:BB:AE, ip: 10.42.0.251, hostname: nginx}
   - {mac: 7E:23:21:86:2C:43, ip: 10.42.0.252, hostname: caddy}
   - {mac: FE:31:84:32:25:A3, ip: 10.42.0.253, hostname: pihole}
+  #- {mac: e4:5f:01:97:c1:af, ip: 10.42.1.99, hostname: ha} #homeassistant-yellow
+  - {mac: 02:98:D5:58:5D:7D, ip: 10.42.1.99, hostname: ha} #homeassistant-vm
 
   ## morpheus - PRIMARY SERVER
   - {mac: D0:50:99:DC:4D:D5, ip: 10.42.1.10, hostname: morpheus, custom_dns: ["m"]} #eno1
   - {mac: D0:50:99:F2:D9:38, ip: 10.42.1.11, hostname: morpheus-ipmi}
   - {mac: d0:50:99:f2:d6:4b, ip: 10.42.1.12, hostname: morpheus-ipmi2} #wtf?
   ### morpheus services
-  - {mac: e4:5f:01:97:c1:af, ip: 10.42.1.99, hostname: ha}
   - {mac: F2:8F:35:40:8A:9C, ip: 10.42.1.98, hostname: redhat-irc}
   - {mac: 92:A9:C6:04:AE:CA, ip: 10.42.1.97, hostname: dev}
   - {mac: BA:F4:A4:1E:EF:C0, ip: 10.42.1.96, hostname: cat-calibre}
@@ -148,7 +149,7 @@ dhcp_reservations:
   - {mac: e4:5f:01:08:be:cb, ip: 10.42.1.81, hostname: pi4-2gb} #pi4 2gb
   - {mac: b8:27:eb:2f:ee:4f, ip: 10.42.1.83, hostname: pi3} #pi3
   - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.84, hostname: gavinbelson} #wallpc  
-  - {mac: dc:a6:32:b1:16:27, ip: 10.42.0.85, hostname: pi8} #pi4 8gb
+  - {mac: dc:a6:32:b1:16:27, ip: 10.42.1.85, hostname: pi8} #pi4 8gb
 
   #########
   ## audio equipment

@@ -91,6 +91,16 @@ bi.{{ domain_wd_me }} {
   import cloudflare
 }
 
+# pikvm
+pikvm.{{ domain_wd_me }} {
+  reverse_proxy https://10.42.1.85:443 {
+    transport http {
+      tls_insecure_skip_verify
+    }
+  }
+  import cloudflare
+}
+
 # unifi local
 unifi.{{ domain_wd_me }} {
   reverse_proxy https://10.42.0.250:8443 {

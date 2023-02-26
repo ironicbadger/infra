@@ -17,6 +17,15 @@
       - role: ktz-dhcp-dns
         tags: pihole, dns, dhcp
 
+  - hosts: caddy
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: geerlingguy.ntp
+      - role: ironicbadger.figurine
+      - role: ktz-caddy
+        tags: caddy
+
   - hosts: unifi
     vars_files:
       - 'vars/vault.yaml'
