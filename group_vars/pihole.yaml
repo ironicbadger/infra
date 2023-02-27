@@ -101,8 +101,8 @@ dhcp_reservations:
   - {mac: CE:87:AE:C2:BB:AE, ip: 10.42.0.251, hostname: nginx}
   - {mac: 7E:23:21:86:2C:43, ip: 10.42.0.252, hostname: caddy}
   - {mac: FE:31:84:32:25:A3, ip: 10.42.0.253, hostname: pihole}
-  #- {mac: e4:5f:01:97:c1:af, ip: 10.42.1.99, hostname: ha} #homeassistant-yellow
-  - {mac: 02:98:D5:58:5D:7D, ip: 10.42.1.99, hostname: ha} #homeassistant-vm
+  - {mac: e4:5f:01:97:c1:af, ip: 10.42.1.99, hostname: ha} #homeassistant-yellow
+  #- {mac: 02:98:D5:58:5D:7D, ip: 10.42.1.99, hostname: ha} #homeassistant-vm
 
   ## morpheus - PRIMARY SERVER
   - {mac: D0:50:99:DC:4D:D5, ip: 10.42.1.10, hostname: morpheus, custom_dns: ["m"]} #eno1
@@ -207,9 +207,9 @@ dhcp_reservations:
   - {mac: 98:f4:ab:f3:1e:f4, ip: 10.42.5.36, hostname: shelly2_kitchen_bumpout_lights} #tasmota
   - {mac: e8:db:84:a1:d5:cc, ip: 10.42.5.37, hostname: shelly2_downstairs_hallway} #tasmota
 
-  - {mac: cc:50:e3:03:95:61, ip: 10.42.5.50, hostname: sp20_unknown}
-  - {mac: cc:50:e3:03:44:a6, ip: 10.42.5.51, hostname: sp20_loungetv}
-  - {mac: 80:7d:3a:7d:8c:66, ip: 10.42.5.52, hostname: sp20_basement_rack}
+  - {mac: cc:50:e3:03:95:61, ip: 10.42.5.50, hostname: sp20-lounge-left-builtin-light}
+  - {mac: cc:50:e3:03:44:a6, ip: 10.42.5.51, hostname: sp20_loungetv} #notinuse
+  - {mac: 80:7d:3a:7d:8c:66, ip: 10.42.5.52, hostname: sp20_basement_rack} #notinuse
   - {mac: cc:50:e3:03:a1:55, ip: 10.42.5.53, hostname: sp20_garage_car}
   - {mac: cc:50:e3:57:b7:e3, ip: 10.42.5.54, hostname: sp20_morpheus}
   - {mac: a4:cf:12:c4:12:46, ip: 10.42.5.55, hostname: ss30_bonustv}
