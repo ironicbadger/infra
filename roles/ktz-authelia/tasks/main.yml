@@ -2,7 +2,7 @@
 
 - name: ensure target dir exists
   file:
-    dest: "{{ appdata_path }}/authelia/"
+    dest: "{{ appdata_path }}/short/authelia/"
     state: directory
     owner: "{{ main_uid }}"
     group: "{{ main_gid }}"
@@ -11,7 +11,7 @@
 - name: template authelia config
   template:
     src: templates/users.yml.j2
-    dest: "{{ appdata_path }}/authelia/users_database.yml"
+    dest: "{{ appdata_path }}/short/authelia/users_database.yml"
     owner: "{{ main_uid }}"
     group: "{{ main_gid }}"
   become: true
@@ -19,7 +19,7 @@
 - name: template authelia rules
   template:
     src: templates/configuration.yml.j2
-    dest: "{{ appdata_path }}/authelia/configuration.yml"
+    dest: "{{ appdata_path }}/short/authelia/configuration.yml"
     owner: "root"
     group: "root"
   become: true

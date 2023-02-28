@@ -1,7 +1,7 @@
 ---
 - name: ensure target dir exists
   file:
-    dest: "{{ appdata_path }}/traefik/"
+    dest: "{{ appdata_path }}/short/traefik/"
     state: directory
     owner: "{{ main_uid }}"
     group: "{{ main_gid }}"
@@ -9,7 +9,7 @@
 - name: template traefik config
   template:
     src: templates/traefik.yaml.j2
-    dest: "{{ appdata_path }}/traefik/traefik.yaml"
+    dest: "{{ appdata_path }}/short/traefik/traefik.yaml"
     owner: "{{ main_uid }}"
     group: "{{ main_gid }}"
   tags: traefik
@@ -17,7 +17,7 @@
 - name: copy traefik rules
   template:
     src: templates/rules.yaml.j2
-    dest: "{{ appdata_path }}/traefik/rules.yaml"
+    dest: "{{ appdata_path }}/short/traefik/rules.yaml"
     owner: "{{ main_uid }}"
     group: "{{ main_gid }}"
   when: traefik_file_provider

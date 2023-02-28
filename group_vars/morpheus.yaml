@@ -301,7 +301,7 @@ containers:
       - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
       - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
     volumes:
-      - "{{ appdata_path }}/traefik:/etc/traefik"
+      - "{{ appdata_path }}/short/traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     restart: unless-stopped
   ###
@@ -316,7 +316,7 @@ containers:
       - traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true
       - traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email
     volumes:
-      - "{{ appdata_path }}/authelia:/config"
+      - "{{ appdata_path }}/short/authelia:/config"
     expose:
     restart: unless-stopped
   - service_name: redis
@@ -334,8 +334,8 @@ containers:
       - "traefik.http.routers.plex.rule=Host(`plex.{{ domain_me }}`)"
       - traefik.http.services.plex.loadbalancer.server.port=32400
     volumes:
-      - "{{ appdata_path }}/plex/config:/config"
-      - "{{ appdata_path }}/plex/transcode:/transcode"
+      - "{{ appdata_path }}/mediaservers/plex/config:/config"
+      - "{{ appdata_path }}/mediaservers/plex/transcode:/transcode"
       - "{{ morpheus_main_storage_path }}:/data:ro"
     include_global_env_vars: true
     restart: unless-stopped
@@ -346,7 +346,7 @@ containers:
     depends_on:
       - plex
     volumes:
-      - "{{ appdata_path }}/plexmeta/config:/config"
+      - "{{ appdata_path }}/mediaservers/plexmeta/config:/config"
     labels:
       - traefik.enable=false
     environment:
@@ -360,7 +360,7 @@ containers:
     depends_on:
       - plex
     volumes:
-      - "{{ appdata_path }}/plextraktsync/config:/app/config"
+      - "{{ appdata_path }}/mediaservers/plextraktsync/config:/app/config"
     labels:
       - traefik.enable=false
     restart: unless-stopped
@@ -373,8 +373,8 @@ containers:
     labels:
       - "traefik.http.routers.tautulli.rule=Host(`tautulli.m.{{ local_domain }}`)"
     volumes:
-      - "{{ appdata_path }}/tautulli:/config"
-      - "{{ appdata_path }}/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro"
+      - "{{ appdata_path }}/mediaservers/tautulli:/config"
+      - "{{ appdata_path }}/mediaservers/plex/Library/Application Support/Plex Media Server/Logs:/logs:ro"
     include_global_env_vars: true
     restart: unless-stopped
   ###
@@ -385,7 +385,7 @@ containers:
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.m.{{ local_domain }}`)"
       - traefik.http.routers.prowlarr.middlewares=authelia@docker
     volumes:
-      - "{{ appdata_path }}/prowlarr:/config"
+      - "{{ appdata_path }}/arrmatey/prowlarr:/config"
     include_global_env_vars: true
     restart: unless-stopped
   ###
@@ -397,7 +397,7 @@ containers:
       - traefik.http.routers.nzbget.middlewares=authelia@docker
       - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.{{ local_domain }}`)"
     volumes:
-      - "{{ appdata_path }}/nzbget/config:/config"
+      - "{{ appdata_path }}/arrmatey/nzbget/config:/config"
       - "{{ download_path }}:/downloads"
     restart: unless-stopped
     include_global_env_vars: true
@@ -411,7 +411,7 @@ containers:
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.m.{{ local_domain }}`)"
       - traefik.http.routers.sonarr.middlewares=authelia@docker
     volumes:
-      - "{{ appdata_path }}/sonarr:/config"
+      - "{{ appdata_path }}/arrmatey/sonarr:/config"
       - "{{ download_path }}/complete/tv:/downloads/complete/tv"
       - /mnt/jbod/tv:/tv
     restart: unless-stopped
@@ -421,7 +421,7 @@ containers:
     active: true
     image: linuxserver/radarr
     volumes:
-      - "{{ appdata_path }}/radarr:/config"
+      - "{{ appdata_path }}/arrmatey/radarr:/config"
       - "{{ download_path }}/complete/movies:/downloads/complete/movies"
       - /mnt/jbod/movies:/movies
     labels:
@@ -434,7 +434,7 @@ containers:
     active: true
     image: linuxserver/lidarr
     volumes:
-      - "{{ appdata_path }}/lidarr:/config"
+      - "{{ appdata_path }}/arrmatey/lidarr:/config"
       - "{{ download_path }}/complete/music:/downloads/complete/music"
       - "{{ download_path }}/intermediate/music:/downloads-amd"
       - /mnt/storage/flac/flac:/music
@@ -454,7 +454,7 @@ containers:
       - USERNAME=
       - PASSWORD=
     volumes:
-      - "{{ appdata_path }}/tiddlywiki:/var/lib/tiddlywiki"
+      - "{{ appdata_path }}/short/tiddlywiki:/var/lib/tiddlywiki"
     restart: unless-stopped
   ###
   - service_name: chowdown
@@ -463,10 +463,10 @@ containers:
     labels:
       - "traefik.http.routers.chowdown.rule=Host(`recipes.m.{{ local_domain }}`)"
     volumes:
-      - "{{ appdata_path }}/chowdown/config:/config"
-      - "{{ appdata_path }}/chowdown/recipes:/config/_recipes"
-      - "{{ appdata_path }}/chowdown/posts:/config/_posts"
-      - "{{ appdata_path }}/chowdown/images:/config/images"
+      - "{{ appdata_path }}/long/chowdown/config:/config"
+      - "{{ appdata_path }}/long/chowdown/recipes:/config/_recipes"
+      - "{{ appdata_path }}/long/chowdown/posts:/config/_posts"
+      - "{{ appdata_path }}/long/chowdown/images:/config/images"
     restart: unless-stopped
   ###
   - service_name: nextcloud
@@ -477,7 +477,7 @@ containers:
     labels:
       - "traefik.http.routers.nc.rule=Host(`nc.{{ domain_cloud }}`)"
     volumes:
-      - "{{ appdata_path }}/nextcloud:/var/www/html"
+      - "{{ appdata_path }}/long/nextcloud:/var/www/html"
     restart: unless-stopped
   ###
   - service_name: mysql
@@ -491,7 +491,7 @@ containers:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
     volumes:
-      - "{{ appdata_path }}/mysql:/var/lib/mysql"
+      - "{{ appdata_path }}/databases/mysql:/var/lib/mysql"
     restart: unless-stopped
   ###
   - service_name: smokeping
@@ -499,8 +499,8 @@ containers:
     image: linuxserver/smokeping
     hostname: morpheus
     volumes:
-      - "{{ appdata_path }}/smokeping/config:/config"
-      - "{{ appdata_path }}/smokeping/data:/data"
+      - "{{ appdata_path }}/databases/smokeping/config:/config"
+      - "{{ appdata_path }}/databases/smokeping/data:/data"
     labels:
       - "traefik.http.routers.smokeping.rule=Host(`smokeping.m.{{ local_domain }}`)"
     include_global_env_vars: true
@@ -523,7 +523,7 @@ containers:
       - TZ=America/New_York
       - "ALLOWED_HOST_LIST=drone.m.wd.ktz.me"
     volumes:
-      - "{{ appdata_path }}/gitea:/data"
+      - "{{ appdata_path }}/long/gitea:/data"
     labels:
       - "traefik.http.routers.git.rule=Host(`git.{{ domain_me }}`)"
       - traefik.http.services.git.loadbalancer.server.port=3000
@@ -535,7 +535,7 @@ containers:
     active: true
     image: drone/drone:latest
     volumes:
-      - "{{ appdata_path }}/drone:/data"
+      - "{{ appdata_path }}/short/drone:/data"
     environment:
       - "DRONE_GITEA_SERVER=https://git.{{ domain_me }}/"
       - DRONE_GIT_ALWAYS_AUTH=true
@@ -574,7 +574,7 @@ containers:
     image: linuxserver/resilio-sync
     hostname: "{{ hostname_morpheus }}"
     volumes:
-      - "{{ appdata_path }}/sync:/config"
+      - "{{ appdata_path }}/short/sync:/config"
       #- "{{ morpheus_main_storage_path }}:/sync" # make the scope smaller
     labels:
       - "traefik.http.routers.btsync.rule=Host(`sync.m.{{ local_domain }}`)"
@@ -605,9 +605,9 @@ containers:
     depends_on:
       - mysql
     volumes:
-      - "{{ appdata_path }}/lychee/config:/config"
-      - "{{ appdata_path }}/lychee/uploads:/uploads"
-      - "{{ appdata_path }}/lychee/sym:/sym"
+      - "{{ appdata_path }}/long/lychee/config:/config"
+      - "{{ appdata_path }}/long/lychee/uploads:/uploads"
+      - "{{ appdata_path }}/long/lychee/sym:/sym"
     environment:
       - PHP_TZ=America/New_York
       - DB_CONNECTION=mysql
@@ -625,10 +625,10 @@ containers:
     labels:
       - "traefik.http.routers.ninja.rule=Host(`ninja.m.{{ local_domain }}`)"
     volumes:
-      - "{{ appdata_path }}/invoiceninja/ninja.conf:/etc/nginx/conf.d/default.conf:ro"
-      - "{{ appdata_path }}/invoiceninja/storage:/var/www/app/storage"
-      - "{{ appdata_path }}/invoiceninja/public/logo:/var/www/app/logo"
-      - "{{ appdata_path }}/invoiceninja/public:/var/www/app/public"
+      - "{{ appdata_path }}/long/invoiceninja/ninja.conf:/etc/nginx/conf.d/default.conf:ro"
+      - "{{ appdata_path }}/long/invoiceninja/storage:/var/www/app/storage"
+      - "{{ appdata_path }}/long/invoiceninja/public/logo:/var/www/app/logo"
+      - "{{ appdata_path }}/long/invoiceninja/public:/var/www/app/public"
     restart: unless-stopped
   ###
   - service_name: invoiceninja
@@ -637,9 +637,9 @@ containers:
     depends_on:
       - mysql
     volumes:
-      - "{{ appdata_path }}/invoiceninja/storage:/var/www/app/storage"
-      - "{{ appdata_path }}/invoiceninja/public/logo:/var/www/app/logo"
-      - "{{ appdata_path }}/invoiceninja/public:/var/www/app/public"
+      - "{{ appdata_path }}/long/invoiceninja/storage:/var/www/app/storage"
+      - "{{ appdata_path }}/long/invoiceninja/public/logo:/var/www/app/logo"
+      - "{{ appdata_path }}/long/invoiceninja/public:/var/www/app/public"
     environment:
       - MYSQL_DATABASE=ninja
       - "MYSQL_ROOT_PASSWORD={{ container_mysql_password}}"
@@ -667,8 +667,8 @@ containers:
     labels:
       - "traefik.http.routers.paperless.rule=Host(`paperless.m.{{ local_domain }}`)"
     volumes:
-      - "{{ appdata_path }}/paperless/config:/config"
-      - "{{ appdata_path }}/paperless/data:/data"
+      - "{{ appdata_path }}/long/paperless/config:/config"
+      - "{{ appdata_path }}/long/paperless/data:/data"
     environment:
       - PAPERLESS_CONSUMER_RECURSIVE=true
       - PAPERLESS_CONSUMER_SUBDIRS_AS_TAGS=true
@@ -685,7 +685,7 @@ containers:
     environment:
       - DB_TYPE=sqlite
     volumes:
-      - "{{ appdata_path }}/mealie:/app/data"
+      - "{{ appdata_path }}/short/mealie:/app/data"
     restart: unless-stopped  
   ###
   - service_name: wellandwiki
@@ -694,7 +694,7 @@ containers:
     labels:
       - "traefik.http.routers.wellandwiki.rule=Host(`wellandwiki.m.{{ local_domain }}`)"
     volumes:
-      - "{{ appdata_path }}/wellandwiki/site:/usr/share/nginx/html:ro" 
+      - "{{ appdata_path }}/short/wellandwiki/site:/usr/share/nginx/html:ro" 
     restart: unless-stopped
   ###
   - service_name: foundation
@@ -704,7 +704,7 @@ containers:
       - traefik.enable=true
       - "traefik.http.routers.foundation.rule=Host(`foundation.m.{{ local_domain }}`)"
     volumes:
-      - "{{ appdata_path }}/foundation/site:/usr/share/nginx/html:ro" 
+      - "{{ appdata_path }}/short/foundation/site:/usr/share/nginx/html:ro" 
     restart: unless-stopped
   ###
   - service_name: dozzle
@@ -725,7 +725,7 @@ containers:
       - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.m.{{ local_domain }}`)"
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
     volumes:
-      - "{{ appdata_path }}/jellyfin:/config"
+      - "{{ appdata_path }}/mediaservers/jellyfin:/config"
       - "{{ morpheus_main_storage_path }}:/data:ro"
       # ram transcode
       - /dev/shm:/transcode
@@ -741,7 +741,7 @@ containers:
       - "traefik.http.routers.change.rule=Host(`change.m.{{ local_domain }}`)"
       - traefik.http.services.change.loadbalancer.server.port=5000
     volumes:
-      - "{{ appdata_path }}/changedetect:/datastore"
+      - "{{ appdata_path }}/databases/changedetect:/datastore"
     restart: unless-stopped
   ###
   - service_name: abs
@@ -753,27 +753,27 @@ containers:
       - "{{ morpheus_main_storage_path }}/audiobooks/library:/audiobooks:ro"
       - "{{ morpheus_main_storage_path }}/audiobooks/library2:/audiobooks2:ro"
       - "{{ morpheus_main_storage_path }}/audiobooks/podcasts:/podcasts"
-      - "{{ appdata_path }}/audiobookshelf/metadata:/metadata"
-      - "{{ appdata_path }}/audiobookshelf/config:/config"
+      - "{{ appdata_path }}/mediaservers/audiobookshelf/metadata:/metadata"
+      - "{{ appdata_path }}/mediaservers//audiobookshelf/config:/config"
     restart: unless-stopped
   ###
   - service_name: tandoor-db
     active: true
     image: postgres:11-alpine
     volumes:
-      - "{{ appdata_path }}/tandoor/db:/var/lib/postgresql/data"
+      - "{{ appdata_path }}/short/tandoor/db:/var/lib/postgresql/data"
     env_file:
-      - "{{ appdata_path }}/tandoor/docker/env"
+      - "{{ appdata_path }}/short/tandoor/docker/env"
     restart: unless-stopped
   ###
   - service_name: tandoor
     active: true
     image: vabene1111/recipes
     volumes:
-      - "{{ appdata_path }}/tandoor/static:/opt/recipes/staticfiles"
-      - "{{ appdata_path }}/tandoor/media:/opt/recipes/mediafiles"
+      - "{{ appdata_path }}/short/tandoor/static:/opt/recipes/staticfiles"
+      - "{{ appdata_path }}/short/tandoor/media:/opt/recipes/mediafiles"
     env_file:
-      - "{{ appdata_path }}/tandoor/docker/env"
+      - "{{ appdata_path }}/short/tandoor/docker/env"
     depends_on:
       - tandoor-db
     restart: unless-stopped
@@ -785,11 +785,11 @@ containers:
       - "traefik.http.routers.tandoor.rule=Host(`tandoor.m.{{ local_domain }}`)"
       - traefik.http.routers.tandoor.middlewares=authelia@docker
     volumes:
-      - "{{ appdata_path }}/tandoor/static:/static:ro"
-      - "{{ appdata_path }}/tandoor/media:/media:ro"
-      - "{{ appdata_path }}/tandoor/nginx:/etc/nginx/conf.d"
+      - "{{ appdata_path }}/short/tandoor/static:/static:ro"
+      - "{{ appdata_path }}/short/tandoor/media:/media:ro"
+      - "{{ appdata_path }}/short/tandoor/nginx:/etc/nginx/conf.d"
     env_file:
-      - "{{ appdata_path }}/tandoor/docker/env"
+      - "{{ appdata_path }}/short/tandoor/docker/env"
     depends_on:
       - tandoor
       - authelia
@@ -802,8 +802,8 @@ containers:
       - "traefik.http.routers.fb.rule=Host(`files.m.{{ local_domain }}`)"
     volumes:
       - "{{ morpheus_main_storage_path }}:/srv"
-      - "{{ appdata_path }}/filebrowser/db:/database.db"
-      - "{{ appdata_path }}/filebrowser/filebrowser.json:/.filebrowser.json"
+      - "{{ appdata_path }}/short/filebrowser/db:/database.db"
+      - "{{ appdata_path }}/short/filebrowser/filebrowser.json:/.filebrowser.json"
     include_global_env_vars: true
     restart: unless-stopped
   ###
@@ -813,7 +813,7 @@ containers:
     labels:
       - "traefik.http.routers.overseerr.rule=Host(`overseerr.m.{{ local_domain }}`)"
     volumes:
-      - "{{ appdata_path }}/overseerr:/app/config"
+      - "{{ appdata_path }}/arrmatey/overseerr:/app/config"
     restart: unless-stopped
   ###
   - service_name: code
@@ -826,12 +826,12 @@ containers:
     labels:
       - "traefik.http.routers.code.rule=Host(`code.m.{{ local_domain }}`)"
     volumes:
-      - "{{ appdata_path }}/code/config:/config"
+      - "{{ appdata_path }}/short/code/config:/config"
     include_global_env_vars: true
     restart: unless-stopped
   ###
   - service_name: prometheus
-    active: true
+    active: false
     image: prom/prometheus
     labels:
       - "traefik.http.routers.prom.rule=Host(`prom.m.{{ local_domain }}`)"
@@ -853,7 +853,7 @@ containers:
       - "GF_SERVER_SERVE_FROM_SUB_PATH=true"
       - "GF_SERVER_DOMAIN=grafana.m.{{ local_domain }}"
     volumes:
-      - "{{ appdata_path }}/grafana/data:/var/lib/grafana"
+      - "{{ appdata_path }}/short/grafana/data:/var/lib/grafana"
     restart: unless-stopped
   ###
 
