@@ -95,8 +95,6 @@ telegraf_plugins_base:
         - "/mnt/disk5"
         - "/mnt/disk6"
         - "/mnt/disk7"
-        - "/mnt/disk8"
-        - "/mnt/disk9"
         - "/mnt/parity1"
         - "/mnt/parity2"
         - "/mnt/storage"
@@ -213,10 +211,10 @@ snapraid_data_disks:
   - { path: /mnt/disk2, diskbyid: /dev/disk/by-id/ata-WDC_WD140EDGZ-11B1PA0_Y6GE3JJC-part1, fs: xfs, opts: defaults, content: true }
   - { path: /mnt/disk3, diskbyid: /dev/disk/by-id/ata-WDC_WD120EDAZ-11F3RA0_5PK9EAHE-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk4, diskbyid: /dev/disk/by-id/ata-WDC_WD120EMAZ-11BLFA0_5PGENVSD-part1, fs: xfs, opts: defaults, content: true }
-  - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
+  #- { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD100EMAZ-00WJTA0_16G1016Z-part1, fs: xfs, opts: defaults, content: false }
+  - { path: /mnt/disk5, diskbyid: /dev/disk/by-id/ata-WDC_WD140EDGZ-11B2DA2_3HG7TJ8N-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk6, diskbyid: /dev/disk/by-id/ata-WDC_WD140EDGZ-11B1PA0_9LJ8JJ8G-part1, fs: xfs, opts: defaults, content: false }
   - { path: /mnt/disk7, diskbyid: /dev/disk/by-id/ata-ST10000DM0004-2GR11L_ZJV5CF96-part1, fs: xfs, opts: defaults, content: false }
-  - { path: /mnt/disk8, diskbyid: /dev/disk/by-id/ata-WDC_WD140EDGZ-11B2DA2_3HG7TJ8N-part1, fs: xfs, opts: defaults, content: false }
 
 # retired_disks:
   # disk6 replaced may 21st 2022 - failure. sent back to WDC under warranty.
@@ -754,7 +752,7 @@ containers:
       - "{{ morpheus_main_storage_path }}/audiobooks/library2:/audiobooks2:ro"
       - "{{ morpheus_main_storage_path }}/audiobooks/podcasts:/podcasts"
       - "{{ appdata_path }}/mediaservers/audiobookshelf/metadata:/metadata"
-      - "{{ appdata_path }}/mediaservers//audiobookshelf/config:/config"
+      - "{{ appdata_path }}/mediaservers/audiobookshelf/config:/config"
     restart: unless-stopped
   ###
   - service_name: tandoor-db
