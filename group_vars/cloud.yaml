@@ -230,3 +230,15 @@ containers:
       - "PASSWORD={{ librespeed_password }}"
     include_global_env_vars: true
     restart: unless-stopped
+###
+  - service_name: ktz-systems
+    active: true
+    image: nginx
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ktzsystems.rule=Host(`ktzsystems.com`)
+      - traefik.http.routers.ktzsystems.entrypoints=websecure
+      - traefik.http.routers.ktzsystems.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path_zfs }}/ktzsystems/public:/usr/share/nginx/html:ro" 
+    restart: unless-stopped
