@@ -132,8 +132,8 @@ dhcp_reservations:
   #- {mac: 80:2a:a8:90:4c:9d, ip: 10.42.1.41, hostname: unifi-uap-ac-pro-hallway}  
 
   ### primary switches
-  - {mac: d0:21:f9:4d:bc:3d, ip: 10.42.1.50, hostname: unifi-usw-flex-xg-bonus}
-  - {mac: d0:21:f9:4d:bc:28, ip: 10.42.1.51, hostname: unifi-usw-flex-xg-basement}
+  - {mac: 60:22:32:59:ad:d5, ip: 10.42.1.50, hostname: unifi-usw-aggregation-bonus}
+  - {mac: 60:22:32:59:ae:47, ip: 10.42.1.51, hostname: unifi-usw-aggregation-basement}
   ### poe switches
   - {mac: ac:8b:a9:a1:58:16, ip: 10.42.1.55, hostname: unifi-usw-24poe-bonus}
   - {mac: ac:8b:a9:a1:59:d8, ip: 10.42.1.56, hostname: unifi-usw-24poe-basement}
