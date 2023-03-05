@@ -280,7 +280,7 @@ authelia_rules:
 
 # ironicbadger.docker_compose_generator
 appdata_path: /mnt/nvme2tb/appdata
-download_path: /mnt/intel2tbnvme/downloads
+download_path: /mnt/ssd1tb/downloads
 storage_path: /mnt/storage
 local_domain: "wd.{{ domain_me }}"
 
