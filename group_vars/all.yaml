@@ -33,6 +33,7 @@ package_list:
   - name: mc
   - name: ncdu
   - name: net-tools
+  - name: nfs-kernel-server
   - name: nmap
   - name: openssh-server
   - name: python3

@@ -7,6 +7,7 @@
     owner: root
     group: root
     mode: a+x
+  ignore_errors: true
 
 - name: Add the caddy user
   ansible.builtin.user:

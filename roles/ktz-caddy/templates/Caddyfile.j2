@@ -85,6 +85,16 @@ px.anton.{{ domain_wd_me }} {
   import cloudflare
 }
 
+# zoidberg
+zoidberg.{{ domain_wd_me }} {
+  reverse_proxy https://10.42.1.42:8006 {
+    transport http {
+      tls_insecure_skip_verify
+    }
+  }
+  import cloudflare
+}
+
 # blue iris
 bi.{{ domain_wd_me }} {
   reverse_proxy http://10.42.2.1:83
