@@ -107,6 +107,15 @@
       - role: ironicbadger.proxmox_nag_removal
       - role: ironicbadger.figurine
 
+  - hosts: zoidberg
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ironicbadger.proxmox_nag_removal
+      #- role: ironicbadger.figurine
+      - role: grog.package
+      - role: geerlingguy.docker
+
   - hosts: cloud
     vars_files:
       - 'vars/vault.yaml'
