@@ -1,0 +1,16 @@
+---
+
+- name: ensure htop is installed
+  ansible.builtin.package:
+    name: htop
+    state: present
+
+- name: ensure htoprc target dir exists
+  ansible.builtin.file:
+    path: "~/.config/htop"
+    state: directory
+
+- name: install htoprc in ansible run user home dir
+  ansible.builtin.copy:
+    src: htoprc
+    dest: "~/.config/htop/htoprc"

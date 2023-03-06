@@ -30,7 +30,6 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      - role: geerlingguy.ntp
       - role: geerlingguy.docker
       - role: ironicbadger.figurine
       - role: ironicbadger.bash_aliases
@@ -107,14 +106,7 @@
       - role: ironicbadger.proxmox_nag_removal
       - role: ironicbadger.figurine
 
-  - hosts: zoidberg
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: ironicbadger.proxmox_nag_removal
-      #- role: ironicbadger.figurine
-      - role: grog.package
-      - role: geerlingguy.docker
+
 
   - hosts: cloud
     vars_files:
@@ -164,3 +156,13 @@
         tags: compose
       - role: ktz-dhcp-dns
         tags: pihole, dns, dhcp
+
+  - hosts: zoidberg
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ironicbadger.proxmox_nag_removal
+      - role: ktz-htop
+      #- role: ironicbadger.figurine
+      - role: grog.package
+      - role: geerlingguy.docker
