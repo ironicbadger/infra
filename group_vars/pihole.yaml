@@ -122,6 +122,12 @@ dhcp_reservations:
   ## m1 - TEST SERVER
   - {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.30, hostname: m1}
 
+  ## bender - dell 7050-1
+  #- {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.41, hostname: dell7050-1}
+
+  ## zoidberg - dell 7050-2
+  - {mac: E4:B9:7A:FB:3E:53, ip: 10.42.1.42, hostname: dell7050-2}
+
   #########
   ## networking equipment
   ### wifi
@@ -312,7 +318,7 @@ dhcp_reservations:
   #- {mac: 38:ba:f8:59:fd:a3, ip: 10.42.13.110, hostname: t480s-ethernet}
   #- {mac: 38:ba:f8:59:fd:a3, ip: 10.42.13.111, hostname: t480s-wifi}
   #- {mac: 5c:c5:d4:db:65:1e, ip: 10.42.13.112, hostname: x240-ethernet}
-  #- {mac: 5c:c5:d4:db:65:1e, ip: 10.42.13.113, hostname: x240-wifi}
+  - {mac: 5c:c5:d4:db:65:1e, ip: 10.42.3.113, hostname: x240-wifi}
 
 
 ## BLOCKED until identity confirmed
