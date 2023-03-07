@@ -154,7 +154,7 @@ dhcp_reservations:
   ## misc servers
   - {mac: e4:5f:01:08:89:ca, ip: 10.42.1.80, hostname: octopi-bricktop} #pi4 4gb
   - {mac: e4:5f:01:08:be:cb, ip: 10.42.1.81, hostname: pi4-2gb} #pi4 2gb
-  - {mac: b8:27:eb:2f:ee:4f, ip: 10.42.1.83, hostname: pi3} #pi3
+  - {mac: b8:27:eb:2f:ee:4f, ip: 10.42.1.83, hostname: basement-nut-pi3} #pi3
   - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.84, hostname: gavinbelson} #wallpc  
   - {mac: dc:a6:32:b1:16:27, ip: 10.42.1.85, hostname: pi8} #pi4 8gb
 
