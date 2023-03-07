@@ -169,3 +169,7 @@
       #- role: ironicbadger.figurine
       - role: grog.package
       - role: geerlingguy.docker
+  
+  - hosts: rhauth
+    roles:
+      - role: ktz-rh-pinauth
