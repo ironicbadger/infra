@@ -304,7 +304,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: authelia
-    active: true
+    active: false
     image: authelia/authelia
     labels:
       - "traefik.http.routers.authelia.rule=Host(`login.m.{{ local_domain }}`)"
@@ -381,7 +381,7 @@ containers:
     image: linuxserver/prowlarr:develop
     labels:
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.m.{{ local_domain }}`)"
-      - traefik.http.routers.prowlarr.middlewares=authelia@docker
+      #- traefik.http.routers.prowlarr.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/arrmatey/prowlarr:/config"
     include_global_env_vars: true
@@ -392,7 +392,7 @@ containers:
     image: linuxserver/nzbget
     labels:
       - "traefik.http.routers.nzbget.rule=Host(`nzbget.m.{{ local_domain }}`)"
-      - traefik.http.routers.nzbget.middlewares=authelia@docker
+      #- traefik.http.routers.nzbget.middlewares=authelia@docker
       - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.{{ local_domain }}`)"
     volumes:
       - "{{ appdata_path }}/arrmatey/nzbget/config:/config"
@@ -407,7 +407,7 @@ containers:
       - nzbget
     labels:
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.m.{{ local_domain }}`)"
-      - traefik.http.routers.sonarr.middlewares=authelia@docker
+      #- traefik.http.routers.sonarr.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/arrmatey/sonarr:/config"
       - "{{ download_path }}/complete/tv:/downloads/complete/tv"
@@ -424,12 +424,12 @@ containers:
       - /mnt/jbod/movies:/movies
     labels:
       - "traefik.http.routers.radarr.rule=Host(`radarr.m.{{ local_domain }}`)"
-      - traefik.http.routers.radarr.middlewares=authelia@docker
+      #- traefik.http.routers.radarr.middlewares=authelia@docker
     restart: unless-stopped
     include_global_env_vars: true
   ###
   - service_name: lidarr
-    active: true
+    active: false
     image: linuxserver/lidarr
     volumes:
       - "{{ appdata_path }}/arrmatey/lidarr:/config"
@@ -438,7 +438,7 @@ containers:
       - /mnt/storage/flac/flac:/music
     labels:
       - "traefik.http.routers.lidarr.rule=Host(`lidarr.m.{{ local_domain }}`)"
-      - traefik.http.routers.lidarr.middlewares=authelia@docker
+      #- traefik.http.routers.lidarr.middlewares=authelia@docker
     restart: unless-stopped
     include_global_env_vars: true
   ###
@@ -781,7 +781,7 @@ containers:
     image: nginx:mainline-alpine
     labels:
       - "traefik.http.routers.tandoor.rule=Host(`tandoor.m.{{ local_domain }}`)"
-      - traefik.http.routers.tandoor.middlewares=authelia@docker
+      #- traefik.http.routers.tandoor.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/short/tandoor/static:/static:ro"
       - "{{ appdata_path }}/short/tandoor/media:/media:ro"
@@ -790,7 +790,7 @@ containers:
       - "{{ appdata_path }}/short/tandoor/docker/env"
     depends_on:
       - tandoor
-      - authelia
+      #- authelia
     restart: unless-stopped
   ###
   - service_name: filebrowser
