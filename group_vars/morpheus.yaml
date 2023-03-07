@@ -815,7 +815,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: code
-    active: true
+    active: false
     image: lscr.io/linuxserver/code-server:latest
     environment:
       - "PASSWORD=1234"
