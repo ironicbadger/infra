@@ -146,7 +146,7 @@ dhcp_reservations:
   - {mac: ac:8b:a9:68:63:2b, ip: 10.42.0.124, hostname: unifi-usw-lite-16-poe}
   ### other switches
   - {mac: 60:22:32:46:6f:c5, ip: 10.42.0.125, hostname: unifi-usw-flex-mini1-office}
-  - {mac: 60:22:32:46:7f:d4, ip: 10.42.0.126, hostname: unifi-usw-flex-mini3-spare}
+  - {mac: 60:22:32:46:7f:d4, ip: 10.42.0.126, hostname: unifi-usw-flex-mini3-basement}
   - {mac: 60:22:32:46:6f:64, ip: 10.42.0.127, hostname: unifi-usw-flex-mini4-bonusdrums}
   - {mac: d0:21:f9:bd:82:9e, ip: 10.42.0.128, hostname: unifi-usw-flex-mini5-bonustv}
 
