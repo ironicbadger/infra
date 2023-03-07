@@ -1,0 +1,3 @@
+[submodule "submodules/ktz-rh-pinauth"]
+	path = submodules/ktz-rh-pinauth
+	url = ssh://git@git.ktz.me:2222/alexktz/ktz-rh-pinauth.git
