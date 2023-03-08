@@ -169,6 +169,8 @@
       #- role: ironicbadger.figurine
       - role: grog.package
       - role: geerlingguy.docker
+      - role: ironicbadger.docker_compose_generator
+        tags: compose
   
   - hosts: rhauth
     roles:

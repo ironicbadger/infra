@@ -78,6 +78,7 @@ dns_overrides:
   - {ip: 10.42.0.252, custom_dns: "wd.ktz.me"}
   - {ip: 10.42.0.252, custom_dns: "opnsense.wd.ktz.me"}
   - {ip: 10.42.0.252, custom_dns: "dns.wd.ktz.me"}
+  - {ip: 10.42.0.252, custom_dns: "zoidberg.wd.ktz.me"}
   #- {ip: 10.42.0.251, custom_dns: "ipmi.m.wd.ktz.me"}
   #- {ip: 10.42.0.251, custom_dns: "ipmi.anton.wd.ktz.me"}
   - {ip: 10.42.1.99, custom_dns: "hass.ktz.me"}
@@ -108,12 +109,8 @@ dhcp_reservations:
   ## morpheus - PRIMARY SERVER
   - {mac: D0:50:99:DC:4D:D5, ip: 10.42.1.10, hostname: morpheus, custom_dns: ["m"]} #eno1
   - {mac: D0:50:99:F2:D9:38, ip: 10.42.1.11, hostname: morpheus-ipmi}
-  - {mac: d0:50:99:f2:d6:4b, ip: 10.42.1.12, hostname: morpheus-ipmi2} #wtf?
   ### morpheus services
-  - {mac: F2:8F:35:40:8A:9C, ip: 10.42.1.98, hostname: redhat-irc}
-  - {mac: 92:A9:C6:04:AE:CA, ip: 10.42.1.97, hostname: dev}
   - {mac: BA:F4:A4:1E:EF:C0, ip: 10.42.1.96, hostname: cat-calibre}
-  - {mac: 3E:79:66:00:87:F7, ip: 10.42.1.95, hostname: ha-vm}
 
   ## anton - BACKUP SERVER
   - {mac: D0:50:99:DB:B2:2D, ip: 10.42.1.20, hostname: anton} #eno1
@@ -126,7 +123,7 @@ dhcp_reservations:
   #- {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.41, hostname: dell7050-1}
 
   ## zoidberg - dell 7050-2
-  - {mac: E4:B9:7A:FB:3E:53, ip: 10.42.1.42, hostname: dell7050-2}
+  - {mac: E4:B9:7A:FB:3E:53, ip: 10.42.1.42, hostname: zoidberg, custom_dns: ["z"]}
 
   #########
   ## networking equipment
@@ -153,7 +150,7 @@ dhcp_reservations:
   #########
   ## misc servers
   - {mac: e4:5f:01:08:89:ca, ip: 10.42.1.80, hostname: octopi-bricktop} #pi4 4gb
-  - {mac: e4:5f:01:08:be:cb, ip: 10.42.1.81, hostname: pi4-2gb} #pi4 2gb
+  - {mac: e4:5f:01:08:be:cb, ip: 10.42.0.100, hostname: pi4-2gb} #pi4 2gb
   - {mac: b8:27:eb:2f:ee:4f, ip: 10.42.1.83, hostname: basement-nut-pi3} #pi3
   - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.84, hostname: gavinbelson} #wallpc  
   - {mac: dc:a6:32:b1:16:27, ip: 10.42.1.85, hostname: pi8} #pi4 8gb

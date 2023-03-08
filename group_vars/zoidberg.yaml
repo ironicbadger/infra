@@ -1,2 +1,100 @@
 ---
 
+## ironicbadger.docker_compose_generator
+docker_compose_generator_output_path: /root/
+appdata_path: /mnt/data/appdata
+local_domain: "z.wd.{{ domain_me }}"
+
+containers:  
+###
+  - service_name: traefik
+    active: true
+    image: traefik
+    container_name: tr
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    command:
+      - --log.level=debug
+      - --accesslog=false
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls.certresolver=cloudflare
+      - --certificatesresolvers.cloudflare.acme.dnschallenge=true
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      - "--certificatesresolvers.cloudflare.acme.email={{ cloudflare_account_email }}"
+      - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
+      - --serversTransport.insecureSkipVerify=true
+    volumes:
+      - "{{ appdata_path }}/traefik/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    environment:
+      - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
+      - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
+    restart: unless-stopped
+  ###
+  - service_name: influxdb
+    active: true
+    container_name: influx
+    image: influxdb
+    labels:
+      - traefik.enable=false
+    ports:
+      - "8086:8086"
+    volumes:
+      - "{{ appdata_path }}/influxdb:/var/lib/influxdb"
+    restart: unless-stopped
+  ###
+  - service_name: grafana
+    active: true
+    image: grafana/grafana
+    labels:
+      - "traefik.http.routers.grafana.rule=Host(`grafana.{{ local_domain }}`)"
+      - traefik.http.services.grafana.loadbalancer.server.port=3000
+      - traefik.http.routers.grafana.tls.certresolver=cloudflare
+    environment:
+      - "GF_SERVER_ROOT_URL=https://grafana.{{ local_domain }}"
+      - "GF_SERVER_DOMAIN=grafana.{{ local_domain }}"
+    volumes:
+      - "{{ appdata_path }}/grafana:/var/lib/grafana"
+    restart: unless-stopped
+  ###
+  - service_name: prometheus
+    active: false
+    image: prom/prometheus
+    labels:
+      - "traefik.http.routers.prom.rule=Host(`prometheus.{{ local_domain }}`)"
+      - traefik.http.routers.prom.tls.certresolver=cloudflare
+    ports:
+      - 9090:9090
+    privileged: true
+    volumes:
+      - "{{ appdata_path }}/prometheus:/etc/prometheus"
+    restart: unless-stopped
+  ###
+  - service_name: smokeping
+    active: true
+    image: linuxserver/smokeping
+    hostname: zoidberg
+    labels:
+      - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ local_domain }}`)"
+      - traefik.http.routers.smokeping.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/smokeping/config:/config"
+      - "{{ appdata_path }}/smokeping/data:/data"
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: nginx
+    active: true
+    image: nginx
+    labels:
+      - "traefik.http.routers.nginx.rule=Host(`nginx.{{ local_domain }}`)"
+      - traefik.http.routers.nginx.tls.certresolver=cloudflare
+    restart: unless-stopped
