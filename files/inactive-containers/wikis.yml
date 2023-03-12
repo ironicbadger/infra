@@ -1,0 +1,32 @@
+  ###
+  - service_name: tiddlywiki
+    active: true
+    image: mazzolino/tiddlywiki
+    labels:
+      - "traefik.http.routers.tiddlywiki.rule=Host(`wiki.m.wd.{{ domain_me }}`)"
+      - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
+    environment:
+      - USERNAME=
+      - PASSWORD=
+    volumes:
+      - "{{ appdata_path }}/short/tiddlywiki:/var/lib/tiddlywiki"
+    restart: unless-stopped
+  ###
+  - service_name: wellandwiki
+    active: true
+    image: nginx
+    labels:
+      - "traefik.http.routers.wellandwiki.rule=Host(`wellandwiki.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/short/wellandwiki/site:/usr/share/nginx/html:ro" 
+    restart: unless-stopped
+  ###
+  - service_name: foundation
+    active: true
+    image: nginx
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.foundation.rule=Host(`foundation.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/short/foundation/site:/usr/share/nginx/html:ro" 
+    restart: unless-stopped
