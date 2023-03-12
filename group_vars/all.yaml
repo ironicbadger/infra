@@ -74,45 +74,9 @@ docker_compose_generator_uid: "{{ main_uid }}"
 docker_compose_generator_gid: "{{ main_gid }}"
 docker_compose_generator_output_path: /home/alex
 
-# influxdb
-influxdb_ip: 192.168.1.10
-influxdb_port: 8086
-
 ## telegraf
 telegraf_influxdb_urls:
-  - "http://{{ influxdb_ip }}:{{ influxdb_port }}"
-telegraf_influxdb_database: telegraf
-telegraf_influxdb_username: root
-telegraf_influxdb_password: root
-telegraf_plugins_base:
-  - name: mem
-  - name: system
-  - name: cpu
-    options:
-      percpu: "true"
-      totalcpu: "true"
-      collect_cpu_time: "false"
-      report_active: "false"
-  - name: disk
-    options:
-      ignore_fs:
-        - "tmpfs"
-        - "devtmpfs"
-        - "devfs"
-      mountpoints:
-        - "/"
-  - name: diskio
-    options:
-      skip_serial_number: "true"
-  - name: kernel
-  - name: processes
-  - name: docker
-    options:
-      endpoint: "unix:///var/run/docker.sock"
-      perdevice: "true"
-  - name: hddtemp
-  - name: net
-    options:
-      interfaces:
-        - "ens192"
-  - name: sensors
+  - "http://10.42.1.42:8086"
+telegraf_influxdb_v2: true
+telegraf_influxdb_organization: ktz
+telegraf_plugins: "{{ telegraf_plugins_base }}"

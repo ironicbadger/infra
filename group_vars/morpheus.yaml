@@ -71,6 +71,8 @@ snapraid_config_excludes:
   - ".nfo"
 
 ## telegraf
+telegraf_influxdb_bucket: morpheus
+telegraf_influxdb_token: "{{ morpheus_influx_token }}"
 telegraf_plugins_base:
   - name: mem
   - name: system
@@ -96,9 +98,9 @@ telegraf_plugins_base:
         - "/mnt/disk6"
         - "/mnt/disk7"
         - "/mnt/parity1"
-        - "/mnt/parity2"
         - "/mnt/storage"
         - "/mnt/tank"
+        - "/mnt/jbod"
   - name: diskio
     options:
       skip_serial_number: "true"
@@ -112,7 +114,12 @@ telegraf_plugins_base:
   - name: net
     options:
       interfaces:
-        - "ens192"
+        - "eno1"
+        - "vmbr0"
+  - name: zfs
+    options:
+      poolMetrics: true
+      datasetMetrics: true
 
 # ktz-sanoid
 sanoid_build_from_source: true
@@ -322,6 +329,24 @@ containers:
     image: redis
     restart: unless-stopped
   ###
+  - service_name: jellyfin
+    active: true
+    image: jellyfin/jellyfin
+    devices:
+      - /dev/dri:/dev/dri
+    labels:
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.m.{{ local_domain }}`)"
+      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
+    volumes:
+      - "{{ appdata_path }}/mediaservers/jellyfin:/config"
+      - "{{ morpheus_main_storage_path }}:/data:ro"
+      # ram transcode
+      - /dev/shm:/transcode
+    environment:
+      - "JELLYFIN_PublishedServerUrl=jellyfin.m.{{ local_domain }}"
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
   - service_name: plex
     active: true
     image: plexinc/pms-docker
@@ -442,21 +467,8 @@ containers:
     restart: unless-stopped
     include_global_env_vars: true
   ###
-  - service_name: tiddlywiki
-    active: true
-    image: mazzolino/tiddlywiki
-    labels:
-      - "traefik.http.routers.tiddlywiki.rule=Host(`wiki.m.wd.{{ domain_me }}`)"
-      - traefik.http.services.tiddlywiki.loadbalancer.server.port=8080
-    environment:
-      - USERNAME=
-      - PASSWORD=
-    volumes:
-      - "{{ appdata_path }}/short/tiddlywiki:/var/lib/tiddlywiki"
-    restart: unless-stopped
-  ###
   - service_name: chowdown
-    active: true
+    active: false
     image: gregyankovoy/chowdown
     labels:
       - "traefik.http.routers.chowdown.rule=Host(`recipes.m.{{ local_domain }}`)"
@@ -686,25 +698,6 @@ containers:
       - "{{ appdata_path }}/short/mealie:/app/data"
     restart: unless-stopped  
   ###
-  - service_name: wellandwiki
-    active: true
-    image: nginx
-    labels:
-      - "traefik.http.routers.wellandwiki.rule=Host(`wellandwiki.m.{{ local_domain }}`)"
-    volumes:
-      - "{{ appdata_path }}/short/wellandwiki/site:/usr/share/nginx/html:ro" 
-    restart: unless-stopped
-  ###
-  - service_name: foundation
-    active: true
-    image: nginx
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.foundation.rule=Host(`foundation.m.{{ local_domain }}`)"
-    volumes:
-      - "{{ appdata_path }}/short/foundation/site:/usr/share/nginx/html:ro" 
-    restart: unless-stopped
-  ###
   - service_name: dozzle
     active: true
     image: amir20/dozzle
@@ -712,24 +705,6 @@ containers:
       - "traefik.http.routers.dozzle.rule=Host(`dozzle.m.{{ local_domain }}`)"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
-  ###
-  - service_name: jellyfin
-    active: true
-    image: jellyfin/jellyfin
-    devices:
-      - /dev/dri:/dev/dri
-    labels:
-      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.m.{{ local_domain }}`)"
-      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
-    volumes:
-      - "{{ appdata_path }}/mediaservers/jellyfin:/config"
-      - "{{ morpheus_main_storage_path }}:/data:ro"
-      # ram transcode
-      - /dev/shm:/transcode
-    environment:
-      - "JELLYFIN_PublishedServerUrl=jellyfin.m.{{ local_domain }}"
-    include_global_env_vars: true
     restart: unless-stopped
   ###
   - service_name: changedetect
@@ -755,44 +730,6 @@ containers:
       - "{{ appdata_path }}/mediaservers/audiobookshelf/config:/config"
     restart: unless-stopped
   ###
-  - service_name: tandoor-db
-    active: true
-    image: postgres:11-alpine
-    volumes:
-      - "{{ appdata_path }}/short/tandoor/db:/var/lib/postgresql/data"
-    env_file:
-      - "{{ appdata_path }}/short/tandoor/docker/env"
-    restart: unless-stopped
-  ###
-  - service_name: tandoor
-    active: true
-    image: vabene1111/recipes
-    volumes:
-      - "{{ appdata_path }}/short/tandoor/static:/opt/recipes/staticfiles"
-      - "{{ appdata_path }}/short/tandoor/media:/opt/recipes/mediafiles"
-    env_file:
-      - "{{ appdata_path }}/short/tandoor/docker/env"
-    depends_on:
-      - tandoor-db
-    restart: unless-stopped
-  ###
-  - service_name: tandoor-nginx
-    active: true
-    image: nginx:mainline-alpine
-    labels:
-      - "traefik.http.routers.tandoor.rule=Host(`tandoor.m.{{ local_domain }}`)"
-      #- traefik.http.routers.tandoor.middlewares=authelia@docker
-    volumes:
-      - "{{ appdata_path }}/short/tandoor/static:/static:ro"
-      - "{{ appdata_path }}/short/tandoor/media:/media:ro"
-      - "{{ appdata_path }}/short/tandoor/nginx:/etc/nginx/conf.d"
-    env_file:
-      - "{{ appdata_path }}/short/tandoor/docker/env"
-    depends_on:
-      - tandoor
-      #- authelia
-    restart: unless-stopped
-  ###
   - service_name: filebrowser
     active: false
     image: filebrowser/filebrowser:s6
@@ -814,46 +751,46 @@ containers:
       - "{{ appdata_path }}/arrmatey/overseerr:/app/config"
     restart: unless-stopped
   ###
-  - service_name: code
-    active: false
-    image: lscr.io/linuxserver/code-server:latest
-    environment:
-      - "PASSWORD=1234"
-      - "PROXY_DOMAIN=code.m.{{ local_domain }}" #optional
-      - DEFAULT_WORKSPACE=/config/workspace #optional
+  - service_name: tdarr
+    active: true
+    image: haveagitgat/tdarr
     labels:
-      - "traefik.http.routers.code.rule=Host(`code.m.{{ local_domain }}`)"
+      - traefik.enable=true
+      - "traefik.http.routers.tdarr.rule=Host(`tdarr.m.{{ local_domain }}`)"
     volumes:
-      - "{{ appdata_path }}/short/code/config:/config"
+      - "{{ appdata_path }}/arrmatey/tdarr/transcode:/temp"
+      - "{{ appdata_path }}/arrmatey/tdarr/server:/app/server"
+      - "{{ appdata_path }}/arrmatey/tdarr/configs:/app/configs"
+      - "{{ appdata_path }}/arrmatey/tdarr/logs:/app/logs"
+      - "{{ morpheus_main_storage_path }}:/mnt/storage"
+    environment:
+      - "serverIP=192.168.1.10"
+      - "serverPort=8266"
+      - "webUIPort=8265"
+    ports:
+      - 8265:8265
+      - 8266:8266
+      - 8267:8267
     include_global_env_vars: true
     restart: unless-stopped
-  ###
-  - service_name: prometheus
-    active: false
-    image: prom/prometheus
-    labels:
-      - "traefik.http.routers.prom.rule=Host(`prom.m.{{ local_domain }}`)"
-    ports:
-      - 9091:9090
-    privileged: true
-    volumes:
-      - "{{ appdata_path }}/prometheus:/etc/prometheus"
-    restart: unless-stopped
-  ###
-  - service_name: grafana
+  - service_name: tdarr-node
     active: true
-    image: grafana/grafana
-    labels:
-      - "traefik.http.routers.grafana.rule=Host(`grafana.m.{{ local_domain }}`)"
-      - traefik.http.services.grafana.loadbalancer.server.port=3000
-    environment:
-      - "GF_SERVER_ROOT_URL=https://grafana.m.wd.{{ local_domain }}"
-      - "GF_SERVER_SERVE_FROM_SUB_PATH=true"
-      - "GF_SERVER_DOMAIN=grafana.m.{{ local_domain }}"
+    image: haveagitgat/tdarr_node
+    devices:
+      - /dev/dri:/dev/dri
+    network_mode: service:tdarr
     volumes:
-      - "{{ appdata_path }}/short/grafana/data:/var/lib/grafana"
+      - "{{ appdata_path }}/arrmatey/tdarr/configs:/app/configs"
+      - "{{ appdata_path }}/arrmatey/tdarr/logs:/app/logs"
+      - "{{ morpheus_main_storage_path }}:/mnt/storage"
+    environment:
+      - "nodeID=morpheusQSV"
+      - "nodeIP=10.42.1.10"
+      - "nodePort=8267"
+      - "serverIP=10.42.1.10"
+      - "serverPort=8266"
+    include_global_env_vars: true
     restart: unless-stopped
-  ###
 
 
   # template for docker-compose services

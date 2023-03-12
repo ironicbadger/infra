@@ -44,10 +44,10 @@
     roles:
       - role: geerlingguy.docker
       - role: grog.package
-      #- role: rossmcdonald.telegraf
       - role: ironicbadger.hddtemp
       - role: ironicbadger.proxmox_nag_removal
       - role: ktz-htop
+      - role: rossmcdonald.telegraf
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
       - role: ironicbadger.apprise_boot_notification
@@ -169,6 +169,7 @@
       #- role: ironicbadger.figurine
       - role: grog.package
       - role: geerlingguy.docker
+      - role: ironicbadger.bash_aliases
       - role: ironicbadger.docker_compose_generator
         tags: compose
   
