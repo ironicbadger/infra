@@ -11,6 +11,8 @@ containers:
     active: true
     image: traefik
     container_name: tr
+    labels:
+      - traefik.enable=false
     ports:
       - 80:80
       - 443:443
@@ -39,16 +41,16 @@ containers:
       - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
     restart: unless-stopped
   ###
-  - service_name: influxdb
+  - service_name: influx
     active: true
-    container_name: influx
-    image: influxdb
+    image: influxdb:2.6
     labels:
-      - traefik.enable=false
+      - "traefik.http.routers.influx.rule=Host(`influx.{{ local_domain }}`)"
     ports:
       - "8086:8086"
     volumes:
-      - "{{ appdata_path }}/influxdb:/var/lib/influxdb"
+      - "{{ appdata_path }}/influxdb/config:/etc/influxdb2"
+      - "{{ appdata_path }}/influxdb/data:/var/lib/influxdb2"
     restart: unless-stopped
   ###
   - service_name: grafana
