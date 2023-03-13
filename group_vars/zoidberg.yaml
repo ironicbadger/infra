@@ -68,7 +68,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: prometheus
-    active: false
+    active: true
     image: prom/prometheus
     labels:
       - "traefik.http.routers.prom.rule=Host(`prometheus.{{ local_domain }}`)"
@@ -77,7 +77,8 @@ containers:
       - 9090:9090
     privileged: true
     volumes:
-      - "{{ appdata_path }}/prometheus:/etc/prometheus"
+      - "{{ appdata_path }}/prometheus/config:/etc/prometheus"
+      - "{{ appdata_path }}/prometheus/data:/prometheus"
     restart: unless-stopped
   ###
   - service_name: smokeping
