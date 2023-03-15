@@ -1,10 +1,15 @@
 ---
 
 - name: sanoid setup
-  include: sanoid.yaml
+  include_tasks: sanoid.yaml
   tags:
     - sanoid
   when: sanoid_build_from_source
+
+- name: configure sanoid
+  include_tasks: configure.yaml
+
+
 
 # todo remove this hack
 - name: ensure sanoid is installed
@@ -14,7 +19,7 @@
   ignore_errors: True
 
 - name: replication setup
-  include: replication.yaml
+  include_tasks: replication.yaml
   tags:
     - replication
 

@@ -11,3 +11,4 @@
     dom: "{{ item.dom|default('*') }}"
   with_items:
     - "{{ syncoid_cron_jobs }}"
+  when: syncoid_cron

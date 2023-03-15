@@ -10,14 +10,17 @@ target_os: proxmox
 package_list:
   - name: bash-completion
   - name: curl
+  - name: ethtool
   - name: fio
   - name: git
   - name: hddtemp
   - name: htop
   - name: iftop
   - name: iotop
+  - name: iperf3
   - name: lm-sensors
   - name: mc
+  - name: mollyguard
   - name: ncdu
   - name: net-tools
   - name: nfs-kernel-server
