@@ -8,8 +8,7 @@
 
 - name: configure sanoid
   include_tasks: configure.yaml
-
-
+  when: syncoid_configure
 
 # todo remove this hack
 - name: ensure sanoid is installed
