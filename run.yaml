@@ -98,7 +98,7 @@
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
       #- role: ironicbadger.apprise_boot_notification
-      #- role: ktz-sanoid
+      - role: ktz-sanoid
 
   - hosts: m1
     vars_files:
