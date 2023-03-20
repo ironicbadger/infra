@@ -83,7 +83,7 @@ containers:
   ###
   - service_name: smokeping
     active: true
-    image: linuxserver/smokeping
+    image: lscr.io/linuxserver/smokeping
     hostname: zoidberg
     labels:
       - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ local_domain }}`)"

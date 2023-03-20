@@ -36,7 +36,7 @@ containers:
 ###
   - service_name: unifi
     active: true
-    image: linuxserver/unifi-controller
+    image: lscr.io/linuxserver/unifi-controller
     ports:
       - 8443:8443
       - 8080:8080

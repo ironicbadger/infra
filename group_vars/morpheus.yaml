@@ -390,7 +390,7 @@ containers:
 ###
   - service_name: tautulli
     active: true
-    image: linuxserver/tautulli
+    image: lscr.io/linuxserver/tautulli
     depends_on:
       - plex
     labels:
@@ -403,7 +403,7 @@ containers:
   ###
   - service_name: prowlarr
     active: true
-    image: linuxserver/prowlarr:develop
+    image: lscr.io/linuxserver/prowlarr:develop
     labels:
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.m.{{ local_domain }}`)"
       #- traefik.http.routers.prowlarr.middlewares=authelia@docker
@@ -414,7 +414,7 @@ containers:
   ###
   - service_name: nzbget
     active: true
-    image: linuxserver/nzbget
+    image: lscr.io/linuxserver/nzbget
     labels:
       - "traefik.http.routers.nzbget.rule=Host(`nzbget.m.{{ local_domain }}`)"
       #- traefik.http.routers.nzbget.middlewares=authelia@docker
@@ -427,7 +427,7 @@ containers:
   ###
   - service_name: sonarr
     active: true
-    image: linuxserver/sonarr
+    image: lscr.io/linuxserver/sonarr
     depends_on:
       - nzbget
     labels:
@@ -442,7 +442,7 @@ containers:
   ###
   - service_name: radarr
     active: true
-    image: linuxserver/radarr
+    image: lscr.io/linuxserver/radarr
     volumes:
       - "{{ appdata_path }}/arrmatey/radarr:/config"
       - "{{ download_path }}/complete/movies:/downloads/complete/movies"
@@ -455,7 +455,7 @@ containers:
   ###
   - service_name: lidarr
     active: false
-    image: linuxserver/lidarr
+    image: lscr.io/linuxserver/lidarr
     volumes:
       - "{{ appdata_path }}/arrmatey/lidarr:/config"
       - "{{ download_path }}/complete/music:/downloads/complete/music"
@@ -466,18 +466,6 @@ containers:
       #- traefik.http.routers.lidarr.middlewares=authelia@docker
     restart: unless-stopped
     include_global_env_vars: true
-  ###
-  - service_name: chowdown
-    active: false
-    image: gregyankovoy/chowdown
-    labels:
-      - "traefik.http.routers.chowdown.rule=Host(`recipes.m.{{ local_domain }}`)"
-    volumes:
-      - "{{ appdata_path }}/long/chowdown/config:/config"
-      - "{{ appdata_path }}/long/chowdown/recipes:/config/_recipes"
-      - "{{ appdata_path }}/long/chowdown/posts:/config/_posts"
-      - "{{ appdata_path }}/long/chowdown/images:/config/images"
-    restart: unless-stopped
   ###
   - service_name: nextcloud
     active: true
@@ -506,7 +494,7 @@ containers:
   ###
   - service_name: smokeping
     active: true
-    image: linuxserver/smokeping
+    image: lscr.io/linuxserver/smokeping
     hostname: morpheus
     volumes:
       - "{{ appdata_path }}/databases/smokeping/config:/config"
@@ -581,7 +569,7 @@ containers:
   ###
   - service_name: sync
     active: false
-    image: linuxserver/resilio-sync
+    image: lscr.io/linuxserver/resilio-sync
     hostname: "{{ hostname_morpheus }}"
     volumes:
       - "{{ appdata_path }}/short/sync:/config"
@@ -595,7 +583,7 @@ containers:
   ###
   - service_name: librespeed
     active: true
-    image: linuxserver/librespeed
+    image: lscr.io/linuxserver/librespeed
     ports:
       - 8008:80
     labels:
