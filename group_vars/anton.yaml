@@ -10,14 +10,17 @@ target_os: proxmox
 package_list:
   - name: bash-completion
   - name: curl
+  - name: ethtool
   - name: fio
   - name: git
   - name: hddtemp
   - name: htop
   - name: iftop
   - name: iotop
+  - name: iperf3
   - name: lm-sensors
   - name: mc
+  - name: molly-guard
   - name: ncdu
   - name: net-tools
   - name: nfs-kernel-server
@@ -51,22 +54,19 @@ bash_aliases:
   - { alias: "hdtemp", command: "sudo hddtemp -q /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]"}
 
 # ktz-sanoid
-sanoid_config_source: sanoid-morpheus.conf
+#sanoid_config_source: sanoid-anton.conf
 syncoid_hc_url: "/usr/bin/curl -fsS --retry 3 https://hc.{{ domain_cloud }}/ping"
+syncoid_configure: false
+syncoid_cron: true
 
 syncoid_cron_jobs:
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_backup_healthcheck_uuid_tank }}/start && {{ syncoid_binary_path }} -r alex@m:tank backups/morpheus/tank | {{ syncoid_hc_url }}/{{ syncoid_backup_healthcheck_uuid_tank }} --data-binary "@-"', 
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_backup_healthcheck_uuid_tank }}/start && {{ syncoid_binary_path }} -r alex@m:tank/fuse backups/morpheus/tank/fuse | {{ syncoid_hc_url }}/{{ syncoid_backup_healthcheck_uuid_tank }} --data-binary "@-"', 
       name: 'morpheus_tank_replication', 
       weekday: '*', 
       hour: '*',
       minute: '14' }
-#   - { job: '{{ syncoid_binary_path }} -r alex@m:intel2tbnvme backups/morpheus/intel2tbnvme && {{ syncoid_hc_url }}/{{ syncoid_backup_healthcheck_uuid_intel2tbnvme }} --data-binary "@-"', 
-#       name: 'morpheus_intel2tbnvme_replication', 
-#       weekday: '*', 
-#       hour: '*',
-#       minute: '30' }
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_backup_healthcheck_uuid_ssd500_mirror }}/start && {{ syncoid_binary_path }} -r alex@m:ssd500-mirror backups/morpheus/ssd500-mirror | {{ syncoid_hc_url }}/{{ syncoid_backup_healthcheck_uuid_ssd500_mirror }} --data-binary "@-"', 
-      name: 'morpheus_ssd500_mirror_replication', 
+      name: 'morpheus_ssd1tb_mirror_replication', 
       weekday: '*', 
       hour: '*',
       minute: '45' }
@@ -75,3 +75,8 @@ syncoid_cron_jobs:
       weekday: '*', 
       hour: '*',
       minute: '55' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_backup_hc_uuid_zoidberg_to_anton }}/start && {{ syncoid_binary_path }} -r root@z:data/appdata backups/zoidberg/appdata | {{ syncoid_hc_url }}/{{ syncoid_backup_hc_uuid_zoidberg_to_anton }} --data-binary "@-"', 
+      name: 'zoidberg_replication', 
+      weekday: '*', 
+      hour: '*',
+      minute: '29' }

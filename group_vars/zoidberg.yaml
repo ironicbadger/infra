@@ -1,4 +1,7 @@
 ---
+## ktz-sanoid
+syncoid_cron: false
+sanoid_config_source: sanoid-zoidberg.conf
 
 ## ironicbadger.docker_compose_generator
 docker_compose_generator_output_path: /root/
@@ -69,7 +72,7 @@ containers:
   ###
   - service_name: prometheus
     active: true
-    image: prom/prometheus
+    image: prom/prometheus:v2.42.0
     labels:
       - "traefik.http.routers.prom.rule=Host(`prometheus.{{ local_domain }}`)"
       - traefik.http.routers.prom.tls.certresolver=cloudflare

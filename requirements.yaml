@@ -1,3 +1,4 @@
+roles:
 - src: ironicbadger.docker_compose_generator
 - src: ironicbadger.bash_aliases
 - src: ironicbadger.figurine
@@ -17,6 +18,9 @@
 - src: grog.package
 - src: rossmcdonald.telegraf
 - src: weareinteractive.environment
+
+collections:
+- prometheus.prometheus
 
 # submodules
 ## https://github.com/ironicbadger/ansible-role-caddy

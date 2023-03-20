@@ -37,17 +37,18 @@
       - role: ironicbadger.docker_compose_generator
         tags: compose
 
-
   - hosts: morpheus
     vars_files:
       - 'vars/vault.yaml'
     roles:
+      - role: ironicbadger.proxmox_nag_removal
+      - role: ktz-htop
       - role: geerlingguy.docker
       - role: grog.package
       - role: ironicbadger.hddtemp
-      - role: ironicbadger.proxmox_nag_removal
-      - role: ktz-htop
       - role: rossmcdonald.telegraf
+      - role: prometheus.prometheus.node_exporter
+        tags: prom
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
       - role: ironicbadger.apprise_boot_notification
@@ -71,10 +72,10 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
+      - role: ironicbadger.proxmox_nag_removal
       - role: geerlingguy.docker
       - role: grog.package
       - role: ironicbadger.hddtemp
-      - role: ironicbadger.proxmox_nag_removal
       - role: ktz-htop
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
@@ -88,28 +89,26 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      - role: geerlingguy.docker
-      - role: artis3n.tailscale
-      - role: grog.package
       - role: ironicbadger.proxmox_nag_removal
+      - role: geerlingguy.docker
+      #- role: artis3n.tailscale
+      - role: grog.package
       - role: ktz-htop
       - role: ironicbadger.hddtemp
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
-      - role: ironicbadger.apprise_boot_notification
+      #- role: ironicbadger.apprise_boot_notification
       - role: ktz-sanoid
 
   - hosts: m1
     vars_files:
       - 'vars/vault.yaml'
     roles:
+      - role: ironicbadger.proxmox_nag_removal
       - role: geerlingguy.docker
       - role: grog.package
-      - role: ironicbadger.proxmox_nag_removal
       - role: ironicbadger.figurine
       - role: ktz-htop
-
-
 
   - hosts: cloud
     vars_files:
@@ -141,8 +140,6 @@
       - role: geerlingguy.ntp
       - role: ktz-opnsense-caddy
 
-
-
   - hosts: pi8
     vars_files:
       - 'vars/vault.yaml'
@@ -170,6 +167,8 @@
       - role: grog.package
       - role: geerlingguy.docker
       - role: ironicbadger.bash_aliases
+      - role: ktz-sanoid
+        tags: replication
       - role: ironicbadger.docker_compose_generator
         tags: compose
   
