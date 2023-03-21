@@ -59,4 +59,4 @@
           command: caddy upgrade
         - name: restart caddy
           systemd: name=caddy state=restarted
-      when: caddy_installed
+      when: caddy_installed.rc == 0
