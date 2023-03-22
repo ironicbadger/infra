@@ -12,8 +12,8 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      - role: geerlingguy.ntp
-      - role: ironicbadger.figurine
+      #- role: geerlingguy.ntp
+      #- role: ironicbadger.figurine
       - role: ktz-dhcp-dns
         tags: pihole, dns, dhcp
 
