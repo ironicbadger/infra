@@ -87,8 +87,7 @@ dns_overrides:
   - {ip: 100.105.174.16, custom_dns: "gg.ktz.me"}
   - {ip: 10.42.0.250, custom_dns: "unifi"}
   - {ip: 10.42.0.250, custom_dns: "inform.unifi.wd.ktz.me"}
-  - {ip: 10.42.0.66, custom_dns: "nginx.test.badgersbits.io"}
-  - {ip: 10.42.7.223, custom_dns: "test.badgersbits.io"}
+  - {ip: 10.42.0.66, custom_dns: "test.badgersbits.io"}
 
 dhcp_reservations:
   # CORE INFRA
