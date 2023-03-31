@@ -93,7 +93,7 @@ containers:
 ###
   - service_name: ktz-unifi
     active: true
-    image: linuxserver/unifi-controller
+    image: lscr.io/linuxserver/unifi-controller
     labels:
       - traefik.enable=true
       - "traefik.http.routers.ubiq.rule=Host(`{{ cloud_url_ubiq }}`)"
@@ -216,7 +216,7 @@ containers:
 ###
   - service_name: ktz-librespeed
     active: true
-    image: linuxserver/librespeed
+    image: lscr.io/linuxserver/librespeed
     ports:
       - 8008:80
     labels:
