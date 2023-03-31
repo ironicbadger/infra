@@ -6,6 +6,7 @@ I use Ansible and Terraform to run my infrastructure and this repo is my contrib
 
 Here are a list of some of my blog posts relating to this repo:
 
+- https://www.youtube.com/@ktzsystems
 - https://perfectmediaserver.com/
 - https://arstechnica.com/gadgets/2021/06/the-big-alternatives-to-google-photos-showdown/
 - https://arstechnica.com/information-technology/2021/03/how-to-achieve-smart-home-nirvana-or-home-automation-without-subscription/
