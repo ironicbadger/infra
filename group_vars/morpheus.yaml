@@ -469,7 +469,7 @@ containers:
   ###
   - service_name: nextcloud
     active: true
-    image: nextcloud:stable
+    image: nextcloud:26
     depends_on:
       - mysql
     labels:
