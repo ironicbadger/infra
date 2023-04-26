@@ -470,6 +470,8 @@ containers:
   - service_name: nextcloud
     active: true
     image: nextcloud:26
+    devices:
+      - /dev/dri:/dev/dri
     depends_on:
       - mysql
     labels:
