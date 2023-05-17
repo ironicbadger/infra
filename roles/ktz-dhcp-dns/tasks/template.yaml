@@ -39,7 +39,7 @@
 - name: write static dhcp file
   template:
     src: ../templates/static-dhcp.conf.j2
-    dest: "{{ dnsmasq_config_dir }}/03-static-dhcp.conf"
+    dest: "{{ dnsmasq_config_dir }}/04-pihole-static-dhcp.conf"
     owner: root
     group: root
   register: dhcp_changed
