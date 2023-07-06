@@ -570,12 +570,12 @@ containers:
     restart: unless-stopped
   ###
   - service_name: sync
-    active: false
+    active: true
     image: lscr.io/linuxserver/resilio-sync
     hostname: "{{ hostname_morpheus }}"
     volumes:
       - "{{ appdata_path }}/short/sync:/config"
-      #- "{{ morpheus_main_storage_path }}:/sync" # make the scope smaller
+      - "{{ morpheus_main_storage_path }}/backups:/mnt/storage/backups"
     labels:
       - "traefik.http.routers.btsync.rule=Host(`sync.m.{{ local_domain }}`)"
     ports:
@@ -779,6 +779,18 @@ containers:
       - "nodePort=8267"
       - "serverIP=10.42.1.10"
       - "serverPort=8266"
+    include_global_env_vars: true
+    restart: unless-stopped
+###
+  - service_name: fasten
+    active: true
+    image: ghcr.io/fastenhealth/fasten-onprem:main
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.fasten.rule=Host(`fasten.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/long/fasten/db:/opt/fasten/db"
+      - "{{ appdata_path }}/long/fasten/config:/opt/fasten/config"
     include_global_env_vars: true
     restart: unless-stopped
 
