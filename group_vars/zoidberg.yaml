@@ -104,3 +104,17 @@ containers:
       - "traefik.http.routers.nginx.rule=Host(`nginx.{{ local_domain }}`)"
       - traefik.http.routers.nginx.tls.certresolver=cloudflare
     restart: unless-stopped
+  ###
+  - service_name: librespeed
+    active: true
+    image: lscr.io/linuxserver/librespeed
+    ports:
+      - 8008:80
+    labels:
+      - "traefik.http.routers.librespeed.rule=Host(`speedtest.{{ local_domain }}`)"
+    environment:
+      - MODE=standalone
+      - TELEMETRY=true
+      - "PASSWORD={{ librespeed_password }}"
+    include_global_env_vars: true
+    restart: unless-stopped
