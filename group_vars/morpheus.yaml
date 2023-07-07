@@ -793,6 +793,24 @@ containers:
       - "{{ appdata_path }}/long/fasten/config:/opt/fasten/config"
     include_global_env_vars: true
     restart: unless-stopped
+###
+  - service_name: syncthing
+    active: true
+    image: lscr.io/linuxserver/syncthing:latest
+    hostname: morpheus
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.syncthing.rule=Host(`syncthing.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/short/syncthing:/config"
+      - /mnt/storage/sports:/mnt/storage/sports
+    ports:
+      - 8384:8384
+      - 22000:22000/tcp
+      - 22000:22000/udp
+      - 21027:21027/udp
+    include_global_env_vars: true
+    restart: unless-stopped
 
 
   # template for docker-compose services
