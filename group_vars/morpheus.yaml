@@ -452,6 +452,21 @@ containers:
       #- traefik.http.routers.radarr.middlewares=authelia@docker
     restart: unless-stopped
     include_global_env_vars: true
+###
+  - service_name: readarr
+    active: true
+    image: cr.hotio.dev/hotio/readarr
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.readarr.rule=Host(`readarr.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/long/readarr:/config"
+      - "{{ download_path }}/complete/audiobook:/downloads/complete/audiobook"
+      - /mnt/storage/audiobooks:/audiobooks
+    ports:
+      - 8787:8787
+    include_global_env_vars: true
+    restart: unless-stopped
   ###
   - service_name: lidarr
     active: false
