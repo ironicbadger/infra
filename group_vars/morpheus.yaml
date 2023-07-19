@@ -826,6 +826,31 @@ containers:
       - 21027:21027/udp
     include_global_env_vars: true
     restart: unless-stopped
+###
+  - service_name: freshrss
+    active: true
+    image: lscr.io/linuxserver/freshrss:latest
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.freshrss.rule=Host(`freshrss.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/short/freshrss:/config"
+    include_global_env_vars: true
+    restart: unless-stopped
+###
+  - service_name: wallabag
+    active: true
+    image: wallabag/wallabag
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.wallabag.rule=Host(`wallabag.m.{{ local_domain }}`)"
+    environment:
+      - "SYMFONY__ENV__DOMAIN_NAME=https://wallabag.m.{{ local_domain }}"
+      - "SYMFONY__ENV__DATABASE_DRIVER=pdo_sqlite"
+    volumes:
+      - "{{ appdata_path }}/short/wallabag:/var/www/wallabag/data"
+    include_global_env_vars: false
+    restart: unless-stopped
 
 
   # template for docker-compose services
