@@ -1,0 +1,60 @@
+###
+  - service_name: ttrss-app
+    active: true
+    image: cthulhoo/ttrss-fpm-pgsql-static:latest
+    volumes:
+      - "{{ appdata_path }}/long/ttrss/db:/var/lib/postgresql/data"
+      - "{{ appdata_path }}/long/ttrss/app:/var/www/html"
+      - "{{ appdata_path }}/long/ttrss/config:/opt/tt-rss/config.d:ro"
+    env_file:
+      - "{{ appdata_path }}/long/ttrss/config/env"
+    depends_on:
+      - ttrss-db
+    restart: unless-stopped
+    #
+  - service_name: ttrss-db
+    active: true
+    image: postgres:12-alpine
+    volumes:
+      - "{{ appdata_path }}/long/ttrss/db:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123
+      - POSTGRES_DB=ttrss
+    restart: unless-stopped
+    #
+  - service_name: ttrss-backup
+    active: true
+    image: cthulhoo/ttrss-fpm-pgsql-static:latest
+    command: "/opt/tt-rss/dcron.sh -f"
+    volumes:
+      - "{{ appdata_path }}/long/ttrss/app:/var/www/html"
+      - "{{ appdata_path }}/long/ttrss/backups:/backups"
+    env_file:
+      - "{{ appdata_path }}/long/ttrss/config/env"
+    depends_on:
+      - ttrss-db
+    restart: unless-stopped
+    #
+  - service_name: ttrss-updater
+    active: true
+    image: cthulhoo/ttrss-fpm-pgsql-static:latest
+    command: "/opt/tt-rss/updater.sh"
+    volumes:
+      - "{{ appdata_path }}/long/ttrss/app:/var/www/html"
+      - "{{ appdata_path }}/long/ttrss/config:/opt/tt-rss/config.d:ro"
+    depends_on:
+      - ttrss-app
+    restart: unless-stopped
+    #
+  - service_name: ttrss-web
+    active: true
+    image: cthulhoo/ttrss-web-nginx:latest
+    # labels:
+    #   - traefik.enable=true
+    #   - "traefik.http.routers.ttrss.rule=Host(`ttrss.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/long/ttrss/app:/var/www/html:ro"
+    depends_on:
+      - ttrss-app
+    restart: unless-stopped
