@@ -242,3 +242,16 @@ containers:
     volumes:
       - "{{ appdata_path_zfs }}/ktzsystems/public:/usr/share/nginx/html:ro" 
     restart: unless-stopped
+###
+  - service_name: ktz-simplelinks
+    active: true
+    image: fascinated/simple-links:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ktzme.rule=Host(`alex.ktz.me`)
+      - traefik.http.routers.ktzme.entrypoints=websecure
+      - traefik.http.routers.ktzme.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path_zfs }}/ktzme/config/config.json:/usr/src/app/config.json:ro"
+      - "{{ appdata_path_zfs }}/ktzme/config/public:/usr/src/app/public:rw"
+    restart: unless-stopped
