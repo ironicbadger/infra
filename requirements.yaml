@@ -1,5 +1,6 @@
 roles:
-- src: ironicbadger.docker_compose_generator
+# moved to be a submodule for easier development
+#- src: ironicbadger.docker_compose_generator 
 - src: ironicbadger.bash_aliases
 - src: ironicbadger.figurine
 - src: ironicbadger.apprise_boot_notification
