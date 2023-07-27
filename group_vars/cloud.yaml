@@ -252,6 +252,6 @@ containers:
       - traefik.http.routers.ktzme.entrypoints=websecure
       - traefik.http.routers.ktzme.tls.certresolver=cloudflare
     volumes:
-      - "{{ appdata_path_zfs }}/ktzme/config/config.json:/usr/src/app/config.json:ro"
+      - "{{ appdata_path_zfs }}/ktzme/config/config.yml:/usr/src/app/config.yml:ro"
       - "{{ appdata_path_zfs }}/ktzme/config/public:/usr/src/app/public:rw"
-    restart: unless-stopped
+    restart: unless-stopped 

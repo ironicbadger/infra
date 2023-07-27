@@ -1,0 +1,70 @@
+configVersion: "0.2.0"
+name: "Alex Kretzschmar"
+description: "Brit living in the USA. Father. Podcaster. Tailscaler."
+avatar: "/avatar.webp"
+background:
+  showBackground: true
+  blur: true
+  darken:
+    enabled: true
+    amount: 0.7
+  backgroundImage: "/background.jpg"
+theme: "dark"
+infoCard:
+  transparency: 0.85
+discord:
+  id: "alexktz"
+options:
+  showSourceLink: true
+# Metadata for the website (controls embed settings and SEO info)
+# see: https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image
+metadata:
+  title: "Alex Kretzschmar"
+  description: "Brit living in the USA. Father. Podcaster. Tailscaler."
+  themeColor: "#6441a5"
+  authors:
+    - name: "alexktz"
+      url: "https://blog.ktz.me"
+links:
+# TailwindCSS colors
+# fontawesome.com/search icons
+  - title: "Self-Hosted Podcast"
+    url: "https://selfhosted.show"
+    icon: "fa-solid fa-microphone"
+    color: "bg-orange-600"
+  - title: "YouTube: KTZ Systems"
+    url: "https://www.youtube.com/@ktzsystems"
+    icon: "fab fa-youtube"
+    color: "bg-red-600"
+  - title: "GitHub"
+    url: "https://github.com/IronicBadger"
+    icon: "fa-brands fa-github"
+    color: "bg-neutral-950"
+  - title: "Blog"
+    url: "https://blog.ktz.me"
+    icon: "fa-solid fa-square-rss"
+    color: "bg-neutral-700"    
+  - title: "Perfect Media Server"
+    url: "https://perfectmediaserver.com"
+    icon: "fa-solid fa-folder"
+    color: "bg-neutral-700"
+  - title: "YouTube: Personal Stuff"
+    url: "https://www.youtube.com/@alexkretzschmar"
+    icon: "fab fa-youtube"
+    color: "bg-red-600"
+
+socialLinks:
+  # The icon to use
+  # see: https://fontawesome.com/search
+  - icon: "fa-brands fa-mastodon"
+    color: "#6d28d9"
+    url: "https://techhub.social/@ironicbadger"
+  - icon: "fab fa-twitter"
+    color: "#1DA1F2"
+    url: "https://twitter.com/ironicbadger"
+  - icon: "fab fa-reddit"
+    color: "#FF4300"
+    url: "https://www.reddit.com/user/Ironicbadger"
+  - icon: "fa-brands fa-linked"
+    color: "#1DA1F2"
+    url: "https://www.linkedin.com/in/alex-kretzschmar/"
