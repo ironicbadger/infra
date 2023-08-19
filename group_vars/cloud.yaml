@@ -214,6 +214,18 @@ containers:
       - "{{ appdata_path_zfs }}/pms-wiki/site:/usr/share/nginx/html:ro" 
     restart: unless-stopped
 ###
+  - service_name: ktz-nginx-pmswiki-demo
+    active: true
+    image: nginx
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pmswikidemo.rule=Host(`demo.perfectmediaserver.com`)
+      - traefik.http.routers.pmswikidemo.entrypoints=websecure
+      - traefik.http.routers.pmswikidemo.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path_zfs }}/pms-wiki-demo/site:/usr/share/nginx/html:ro" 
+    restart: unless-stopped
+###
   - service_name: ktz-librespeed
     active: true
     image: lscr.io/linuxserver/librespeed
