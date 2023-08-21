@@ -215,7 +215,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: ktz-nginx-pmswiki-demo
-    active: true
+    active: false
     image: nginx
     labels:
       - traefik.enable=true
