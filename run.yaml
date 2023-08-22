@@ -175,3 +175,10 @@
   - hosts: rhauth
     roles:
       - role: ktz-rh-pinauth
+
+  - hosts: proxmox
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ironicbadger.proxmox_nag_removal
+      - role: ktz-htop

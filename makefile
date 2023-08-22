@@ -34,9 +34,6 @@ p:
 pcomp:
 	ansible-playbook run.yaml --limit pennywise --tags compose
 
-q:
-	ansible-playbook -b run.yaml --limit quassel --ask-become-pass 
-
 cloud:
 	ansible-playbook -b run.yaml --limit cloud --ask-become-pass 
 
@@ -46,8 +43,8 @@ cloudcomp:
 fancontrol:
 	ansible-playbook -b run.yaml --limit fancontrol 
 
-vpnwd:
-	ansible-playbook -b run.yaml --limit vpnwd --ask-become-pass 
+proxmox:
+	ansible-playbook -b playbooks/proxmox-nag.yaml --limit proxmox --ask-become-pass 
 
 dhcp:
 	ansible-playbook -b run.yaml --limit dhcp 
@@ -61,8 +58,8 @@ opnsensewd:
 caddy:
 	ansible-playbook -b run.yaml --limit caddy
 
-update:
-	ansible-playbook update.yaml --limit servers 
+updatez:
+	ansible-playbook playbooks/zoidberg-updates.yaml --limit zoidbergskids -b --ask-become-pass
 
 reqs:
 	ansible-galaxy install -r requirements.yaml
