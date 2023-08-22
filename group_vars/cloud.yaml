@@ -211,7 +211,8 @@ containers:
       - traefik.http.routers.pmswiki.entrypoints=websecure
       - traefik.http.routers.pmswiki.tls.certresolver=cloudflare
     volumes:
-      - "{{ appdata_path_zfs }}/pms-wiki/site:/usr/share/nginx/html:ro" 
+      - "{{ appdata_path_zfs }}/pms-wiki/site:/usr/share/nginx/html:ro"
+      - "{{ appdata_path_zfs }}/pms-wiki/nginx:/etc/nginx/conf.d/:ro"
     restart: unless-stopped
 ###
   - service_name: ktz-nginx-pmswiki-demo
@@ -224,6 +225,7 @@ containers:
       - traefik.http.routers.pmswikidemo.tls.certresolver=cloudflare
     volumes:
       - "{{ appdata_path_zfs }}/pms-wiki-demo/site:/usr/share/nginx/html:ro" 
+      - "{{ appdata_path_zfs }}/pms-wiki/nginx:/etc/nginx/conf.d/:ro"
     restart: unless-stopped
 ###
   - service_name: ktz-librespeed
