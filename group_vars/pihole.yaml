@@ -150,6 +150,11 @@ dhcp_reservations:
   - {mac: 60:22:32:46:6f:64, ip: 10.42.0.127, hostname: unifi-usw-flex-mini4-bonusdrums}
   - {mac: d0:21:f9:bd:82:9e, ip: 10.42.0.128, hostname: unifi-usw-flex-mini5-bonustv}
 
+  ########
+  ## video making equipment
+  - {mac: 7c:2e:0d:1a:29:69, ip: 10.42.0.150, hostname: atem-mini-pro-iso}
+  
+
   #########
   ## misc servers
   - {mac: e4:5f:01:08:89:ca, ip: 10.42.1.80, hostname: octopi-bricktop} #pi4 4gb
@@ -157,6 +162,7 @@ dhcp_reservations:
   - {mac: b8:27:eb:2f:ee:4f, ip: 10.42.1.83, hostname: basement-nut-pi3} #pi3
   - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.84, hostname: gavinbelson} #wallpc  
   - {mac: dc:a6:32:b1:16:27, ip: 10.42.0.100, hostname: pi8} #pi4 8gb pikvm
+  - {mac: b8:27:eb:4a:f1:82, ip: 10.42.1.85, hostname: inkycal-bonus}
 
   #########
   ## audio equipment
@@ -169,9 +175,14 @@ dhcp_reservations:
   - {mac: 00:04:4b:48:e5:f1, ip: 10.42.1.101, hostname: shield-lounge}
   - {mac: cc:a1:2b:6e:18:d7, ip: 10.42.1.102, hostname: roku-kitchen-tv}
   - {mac: 9c:95:61:3b:4c:e5, ip: 10.42.1.103, hostname: roku-livingroom-tv}
-  - {mac: 74:40:be:ac:99:de, ip: 10.42.1.104, hostname: lgc9-bonus-tv}
   - {mac: ec:0b:ae:98:c8:2b, ip: 10.42.1.105, hostname: broadlink-remote-bonus}
   - {mac: 00:18:dd:06:8d:4c, ip: 10.42.1.106, hostname: hdhomerun}
+  - {mac: 00:09:b0:61:88:45, ip: 10.42.1.107, hostname: living-room-avr-onkyo}
+  - {mac: c0:95:6d:64:e8:ce, ip: 10.42.1.108, hostname: living-room-apple-tv}
+  - {mac: a4:cf:99:aa:85:b5, ip: 10.42.1.109, hostname: master-bathroom-homepod-mini}
+  #- {mac: c0:95:6d:64:e8:ce, ip: 10.42.1.110, hostname: kitchen-homepod}
+  - {mac: 74:40:be:ac:99:de, ip: 10.42.1.111, hostname: lgc9-bonus-tv-ethernet}
+  - {mac: 20:17:42:88:67:bb, ip: 10.42.1.112, hostname: lgc9-bonus-tv-wifi}
 
   #########
   ## cameras (Wyze, PoE)
@@ -298,11 +309,11 @@ dhcp_reservations:
 
   #########
   ## primary clients (desktop, servers, laptops, phones, tablets)
-  - {mac: f0:2f:4b:00:a3:d5, ip: 10.42.3.10, hostname: slartibartfast}
-  - {mac: C4:AC:AA:05:04:16, ip: 10.42.3.11, hostname: alex-iphone}
-  - {mac: 70:ea:5a:12:bb:70, ip: 10.42.3.12, hostname: alex-ipad}
-  - {mac: 48:01:c5:6e:f1:59, ip: 10.42.3.13, hostname: alex-oneplus7t}
-  - {mac: bc:d0:74:15:d5:d1, ip: 10.42.3.14, hostname: alex-laptop-work}
+  - {mac: f0:2f:4b:00:a3:d5, ip: 10.42.3.10, hostname: slartibartfast} # personal laptop
+  - {mac: 5c:e9:1e:7e:6e:0b, ip: 10.42.3.11, hostname: magrathea} # work laptop
+  - {mac: C4:AC:AA:05:04:16, ip: 10.42.3.12, hostname: alex-iphone}
+  - {mac: 70:ea:5a:12:bb:70, ip: 10.42.3.13, hostname: alex-ipad}
+  - {mac: 48:01:c5:6e:f1:59, ip: 10.42.3.14, hostname: alex-oneplus7t}
   - {mac: 2c:3b:70:d5:59:09, ip: 10.42.3.15, hostname: steam-deck}
 
   - {mac: 0c:e4:41:ef:49:59, ip: 10.42.3.40, hostname: cat-laptop} #m1 air
