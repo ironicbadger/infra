@@ -810,7 +810,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: fasten
-    active: true
+    active: false
     image: ghcr.io/fastenhealth/fasten-onprem:main
     labels:
       - traefik.enable=true
@@ -863,7 +863,33 @@ containers:
       - "{{ appdata_path }}/short/wallabag:/var/www/wallabag/data"
     include_global_env_vars: false
     restart: unless-stopped
-
+###
+  - service_name: shlink-app
+    active: true
+    image: shlinkio/shlink:stable
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.shlink.rule=Host(`shlink.m.{{ local_domain }}`)"
+    environment:
+      - "DEFAULT_DOMAIN=s.ktz.me"
+      - "IS_HTTPS_ENABLED=true"
+    # volumes:
+    #   - "{{ appdata_path }}/short/shlink:/var/www/wallabag/data"
+    include_global_env_vars: false
+    restart: unless-stopped
+  - service_name: shlink-web
+    active: true
+    image: shlinkio/shlink-web-client
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.shlinkapp.rule=Host(`s.ktz.me`)"
+    environment:
+      - "SHLINK_SERVER_URL=https://shlink.m.wd.ktz.me"
+      - "SHLINK_SERVER_API_KEY=07cf6f74-57c3-465c-bc58-f394349fd16a"
+    # volumes:
+    #   - "{{ appdata_path }}/short/shlink:/var/www/wallabag/data"
+    include_global_env_vars: false
+    restart: unless-stopped
 
   # template for docker-compose services
   #

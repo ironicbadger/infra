@@ -84,6 +84,7 @@ dns_overrides:
   - {ip: 10.42.1.99, custom_dns: "hass.ktz.me"}
   - {ip: 10.42.1.10, custom_dns: "nc.ktz.cloud"}
   - {ip: 10.42.1.10, custom_dns: "git.ktz.me"}
+  - {ip: 10.42.1.10, custom_dns: "s.ktz.me"}
   - {ip: 100.105.174.16, custom_dns: "gg.ktz.me"}
   - {ip: 10.42.0.250, custom_dns: "unifi"}
   - {ip: 10.42.0.250, custom_dns: "inform.unifi.wd.ktz.me"}
