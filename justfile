@@ -22,7 +22,7 @@ updatez:
 
 ## repo stuff
 # optionally use --force to force reinstall all requirements
-reqs FORCE:
+reqs *FORCE:
 	ansible-galaxy install -r requirements.yaml {{FORCE}}
 
 # just vault (encrypt/decrypt/edit)
