@@ -141,15 +141,16 @@ dhcp_reservations:
   ### primary switches
   - {mac: 60:22:32:59:ad:d5, ip: 10.42.0.120, hostname: unifi-usw-aggregation-bonus}
   - {mac: 60:22:32:59:ae:47, ip: 10.42.0.121, hostname: unifi-usw-aggregation-basement}
+  - {mac: f4:e2:c6:5b:d9:8d, ip: 10.42.0.122, hostname: unifi-usw-aggregation-bonus-desk}
   ### poe switches
-  - {mac: ac:8b:a9:a1:58:16, ip: 10.42.0.122, hostname: unifi-usw-24poe-bonus}
-  - {mac: ac:8b:a9:a1:59:d8, ip: 10.42.0.123, hostname: unifi-usw-24poe-basement}
-  - {mac: ac:8b:a9:68:63:2b, ip: 10.42.0.124, hostname: unifi-usw-lite-16-poe}
+  - {mac: ac:8b:a9:a1:58:16, ip: 10.42.0.123, hostname: unifi-usw-24poe-bonus}
+  - {mac: ac:8b:a9:a1:59:d8, ip: 10.42.0.124, hostname: unifi-usw-24poe-basement}
+  - {mac: ac:8b:a9:68:63:2b, ip: 10.42.0.125, hostname: unifi-usw-lite-16-poe}
   ### other switches
-  - {mac: 60:22:32:46:6f:c5, ip: 10.42.0.125, hostname: unifi-usw-flex-mini1-office}
-  - {mac: 60:22:32:46:7f:d4, ip: 10.42.0.126, hostname: unifi-usw-flex-mini3-basement}
-  - {mac: 60:22:32:46:6f:64, ip: 10.42.0.127, hostname: unifi-usw-flex-mini4-bonusdrums}
-  - {mac: d0:21:f9:bd:82:9e, ip: 10.42.0.128, hostname: unifi-usw-flex-mini5-bonustv}
+  - {mac: 60:22:32:46:6f:c5, ip: 10.42.0.126, hostname: unifi-usw-flex-mini1-office}
+  - {mac: 60:22:32:46:7f:d4, ip: 10.42.0.127, hostname: unifi-usw-flex-mini3-basement}
+  - {mac: 60:22:32:46:6f:64, ip: 10.42.0.128, hostname: unifi-usw-flex-mini4-bonusdrums}
+  - {mac: d0:21:f9:bd:82:9e, ip: 10.42.0.129, hostname: unifi-usw-flex-mini5-bonustv}
 
   ########
   ## video making equipment
@@ -258,6 +259,7 @@ dhcp_reservations:
 
   ### Local IoT Projects
   - {mac: a8:03:2a:e2:f7:58, ip: 10.42.5.100, hostname: flightdisplay_rdu}
+  - {mac: 64:b7:08:8a:21:c4, ip: 10.42.5.101, hostname: m5_devkit_bonus1}
 
 
   #########
