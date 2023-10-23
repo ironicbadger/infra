@@ -260,29 +260,29 @@ traefik_enable_dashboard: true #defaults to false
 traefik_insecure_transport: true #defaults to false
 traefik_exposed_by_default: true
 
-## ktz-authelia
-authelia_users:
-  - username: "{{ authelia_username }}"
-    displayname: "{{ authelia_displayname }}"
-    # docker run authelia/authelia:latest authelia hash-password 'yourpassword'
-    password: "{{ authelia_password }}"
-    email: "{{ gmail_address }}"
-    groups:
-      - admin
-      - dev
-authelia_rules:
-  - domain: "*.m.{{ local_domain }}"
-    policy: bypass
-    resources:
-      - '^/api.*$'
-  - domain: "*.m.{{ local_domain }}"
-    policy: one_factor
-  - domain: "plex.{{ domain_me }}"
-    policy: one_factor
-  - domain: "wiki.m.wd.{{ domain_me }}"
-    policy: one_factor
-  - domain: "nc.{{ domain_cloud }}"
-    policy: bypass
+# ## ktz-authelia
+# authelia_users:
+#   - username: "{{ authelia_username }}"
+#     displayname: "{{ authelia_displayname }}"
+#     # docker run authelia/authelia:latest authelia hash-password 'yourpassword'
+#     password: "{{ authelia_password }}"
+#     email: "{{ gmail_address }}"
+#     groups:
+#       - admin
+#       - dev
+# authelia_rules:
+#   - domain: "*.m.{{ local_domain }}"
+#     policy: bypass
+#     resources:
+#       - '^/api.*$'
+#   - domain: "*.m.{{ local_domain }}"
+#     policy: one_factor
+#   - domain: "plex.{{ domain_me }}"
+#     policy: one_factor
+#   - domain: "wiki.m.wd.{{ domain_me }}"
+#     policy: one_factor
+#   - domain: "nc.{{ domain_cloud }}"
+#     policy: bypass
 
 
 # ironicbadger.docker_compose_generator
@@ -292,6 +292,7 @@ storage_path: /mnt/storage
 local_domain: "wd.{{ domain_me }}"
 
 containers:
+  ### Administrative
   ###
   - service_name: tr
     active: true
@@ -309,25 +310,7 @@ containers:
       - "{{ appdata_path }}/short/traefik:/etc/traefik"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     restart: unless-stopped
-  ###
-  - service_name: authelia
-    active: false
-    image: authelia/authelia
-    labels:
-      - "traefik.http.routers.authelia.rule=Host(`login.m.{{ local_domain }}`)"
-      - traefik.http.routers.authelia.tls=true
-      - traefik.http.services.authelia.loadbalancer.server.port=9091
-      - "traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/verify?rd=https://login.m.{{ local_domain }}/"
-      - traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true
-      - traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email
-    volumes:
-      - "{{ appdata_path }}/short/authelia:/config"
-    expose:
-    restart: unless-stopped
-  - service_name: redis
-    active: true
-    image: redis
-    restart: unless-stopped
+  ### Media Servers
   ###
   - service_name: jellyfin
     active: true
@@ -363,31 +346,19 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   ###
-  - service_name: plexmeta
+  - service_name: abs
     active: true
-    image: meisnate12/plex-meta-manager
-    depends_on:
-      - plex
-    volumes:
-      - "{{ appdata_path }}/mediaservers/plexmeta/config:/config"
+    image: advplyr/audiobookshelf
     labels:
-      - traefik.enable=false
-    environment:
-      - TZ=America/New_York
-      - PMM_TIME=01:22
+      - "traefik.http.routers.audiobookshelf.rule=Host(`abs.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ morpheus_main_storage_path }}/audiobooks/library:/audiobooks:ro"
+      - "{{ morpheus_main_storage_path }}/audiobooks/library2:/audiobooks2:ro"
+      - "{{ morpheus_main_storage_path }}/audiobooks/podcasts:/podcasts"
+      - "{{ appdata_path }}/mediaservers/audiobookshelf/metadata:/metadata"
+      - "{{ appdata_path }}/mediaservers/audiobookshelf/config:/config"
     restart: unless-stopped
   ###
-  - service_name: plextraktsync
-    active: true
-    image: ghcr.io/taxel/plextraktsync
-    depends_on:
-      - plex
-    volumes:
-      - "{{ appdata_path }}/mediaservers/plextraktsync/config:/app/config"
-    labels:
-      - traefik.enable=false
-    restart: unless-stopped
-###
   - service_name: tautulli
     active: true
     image: lscr.io/linuxserver/tautulli
@@ -406,18 +377,26 @@ containers:
     image: lscr.io/linuxserver/prowlarr:develop
     labels:
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.m.{{ local_domain }}`)"
-      #- traefik.http.routers.prowlarr.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/arrmatey/prowlarr:/config"
     include_global_env_vars: true
     restart: unless-stopped
+  ###
+  - service_name: overseerr
+    active: true
+    image: sctx/overseerr:latest
+    labels:
+      - "traefik.http.routers.overseerr.rule=Host(`overseerr.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/arrmatey/overseerr:/app/config"
+    restart: unless-stopped
+  ### Media Acquisition
   ###
   - service_name: nzbget
     active: true
     image: lscr.io/linuxserver/nzbget
     labels:
       - "traefik.http.routers.nzbget.rule=Host(`nzbget.m.{{ local_domain }}`)"
-      #- traefik.http.routers.nzbget.middlewares=authelia@docker
       - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.m.{{ local_domain }}`)"
     volumes:
       - "{{ appdata_path }}/arrmatey/nzbget/config:/config"
@@ -432,7 +411,6 @@ containers:
       - nzbget
     labels:
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.m.{{ local_domain }}`)"
-      #- traefik.http.routers.sonarr.middlewares=authelia@docker
     volumes:
       - "{{ appdata_path }}/arrmatey/sonarr:/config"
       - "{{ download_path }}/complete/tv:/downloads/complete/tv"
@@ -449,7 +427,6 @@ containers:
       - /mnt/jbod/movies:/movies
     labels:
       - "traefik.http.routers.radarr.rule=Host(`radarr.m.{{ local_domain }}`)"
-      #- traefik.http.routers.radarr.middlewares=authelia@docker
     restart: unless-stopped
     include_global_env_vars: true
 ###
@@ -460,7 +437,7 @@ containers:
       - traefik.enable=true
       - "traefik.http.routers.readarr.rule=Host(`readarr.m.{{ local_domain }}`)"
     volumes:
-      - "{{ appdata_path }}/long/readarr:/config"
+      - "{{ appdata_path }}/arrmatey/readarr:/config"
       - "{{ download_path }}/complete/audiobook:/downloads/complete/audiobook"
       - /mnt/storage/audiobooks:/audiobooks
     ports:
@@ -478,9 +455,9 @@ containers:
       - /mnt/storage/flac/flac:/music
     labels:
       - "traefik.http.routers.lidarr.rule=Host(`lidarr.m.{{ local_domain }}`)"
-      #- traefik.http.routers.lidarr.middlewares=authelia@docker
     restart: unless-stopped
     include_global_env_vars: true
+  ### Data Services
   ###
   - service_name: nextcloud
     active: true
@@ -494,7 +471,6 @@ containers:
     volumes:
       - "{{ appdata_path }}/long/nextcloud:/var/www/html"
     restart: unless-stopped
-  ###
   - service_name: mysql
     active: true
     image: mariadb
@@ -507,18 +483,6 @@ containers:
       - MYSQL_USER=nextcloud
     volumes:
       - "{{ appdata_path }}/databases/mysql:/var/lib/mysql"
-    restart: unless-stopped
-  ###
-  - service_name: smokeping
-    active: true
-    image: lscr.io/linuxserver/smokeping
-    hostname: morpheus
-    volumes:
-      - "{{ appdata_path }}/databases/smokeping/config:/config"
-      - "{{ appdata_path }}/databases/smokeping/data:/data"
-    labels:
-      - "traefik.http.routers.smokeping.rule=Host(`smokeping.m.{{ local_domain }}`)"
-    include_global_env_vars: true
     restart: unless-stopped
   ###
   - service_name: gitea
@@ -558,44 +522,6 @@ containers:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     restart: unless-stopped
   ###
-  - service_name: drone
-    active: true
-    image: drone/drone:latest
-    volumes:
-      - "{{ appdata_path }}/short/drone:/data"
-    environment:
-      - "DRONE_GITEA_SERVER=https://git.{{ domain_me }}/"
-      - DRONE_GIT_ALWAYS_AUTH=true
-      - "DRONE_GITEA_CLIENT_ID={{ drone_gitea_client_id }}"
-      - "DRONE_GITEA_CLIENT_SECRET={{ drone_gitea_client_secret }}"
-      - "DRONE_SERVER_HOST=drone.m.{{ local_domain }}"
-      - DRONE_SERVER_PROTO=https
-      - "DRONE_RPC_SECRET={{ drone_gitea_webhook_secret }}"
-      - "DRONE_USER_CREATE=username:alexktz,admin:true"
-      - DRONE_LOGS_DEBUG=true
-      - TZ=America/New_York
-    labels:
-      - "traefik.http.routers.drone.rule=Host(`drone.m.{{ local_domain }}`)"
-    ports:
-      - "3001:80"
-    restart: unless-stopped
-  - service_name: drone-runner-docker
-    active: true
-    image: drone/drone-runner-docker:1
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - DRONE_RPC_PROTO=https
-      - "DRONE_RPC_HOST=drone.m.{{ local_domain }}"
-      - "DRONE_RPC_SECRET={{ drone_gitea_webhook_secret }}"
-      - DRONE_RUNNER_CAPACITY=2
-      - "DRONE_RUNNER_NAME={{ hostname_morpheus }}"
-    ports: 
-      - 3002:3000
-    depends_on:
-      - drone
-    restart: unless-stopped
-  ###
   - service_name: sync
     active: true
     image: lscr.io/linuxserver/resilio-sync
@@ -607,20 +533,6 @@ containers:
       - "traefik.http.routers.btsync.rule=Host(`sync.m.{{ local_domain }}`)"
     ports:
       - "55555:55555"
-    include_global_env_vars: true
-    restart: unless-stopped
-  ###
-  - service_name: librespeed
-    active: true
-    image: lscr.io/linuxserver/librespeed
-    ports:
-      - 8008:80
-    labels:
-      - "traefik.http.routers.librespeed.rule=Host(`speedtest.m.{{ local_domain }}`)"
-    environment:
-      - MODE=standalone
-      - TELEMETRY=true
-      - "PASSWORD={{ librespeed_password }}"
     include_global_env_vars: true
     restart: unless-stopped
   ###
@@ -657,7 +569,6 @@ containers:
       - "{{ appdata_path }}/long/invoiceninja/public/logo:/var/www/app/logo"
       - "{{ appdata_path }}/long/invoiceninja/public:/var/www/app/public"
     restart: unless-stopped
-  ###
   - service_name: invoiceninja
     active: true
     image: invoiceninja/invoiceninja:4.5.18
@@ -714,112 +625,6 @@ containers:
     volumes:
       - "{{ appdata_path }}/short/mealie:/app/data"
     restart: unless-stopped  
-  ###
-  - service_name: dozzle
-    active: true
-    image: amir20/dozzle
-    labels:
-      - "traefik.http.routers.dozzle.rule=Host(`dozzle.m.{{ local_domain }}`)"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
-  ###
-  - service_name: changedetect
-    active: true
-    image: dgtlmoon/changedetection.io
-    labels:
-      - "traefik.http.routers.change.rule=Host(`change.m.{{ local_domain }}`)"
-      - traefik.http.services.change.loadbalancer.server.port=5000
-    volumes:
-      - "{{ appdata_path }}/databases/changedetect:/datastore"
-    restart: unless-stopped
-  ###
-  - service_name: abs
-    active: true
-    image: advplyr/audiobookshelf
-    labels:
-      - "traefik.http.routers.audiobookshelf.rule=Host(`abs.m.{{ local_domain }}`)"
-    volumes:
-      - "{{ morpheus_main_storage_path }}/audiobooks/library:/audiobooks:ro"
-      - "{{ morpheus_main_storage_path }}/audiobooks/library2:/audiobooks2:ro"
-      - "{{ morpheus_main_storage_path }}/audiobooks/podcasts:/podcasts"
-      - "{{ appdata_path }}/mediaservers/audiobookshelf/metadata:/metadata"
-      - "{{ appdata_path }}/mediaservers/audiobookshelf/config:/config"
-    restart: unless-stopped
-  ###
-  - service_name: filebrowser
-    active: false
-    image: filebrowser/filebrowser:s6
-    labels:
-      - "traefik.http.routers.fb.rule=Host(`files.m.{{ local_domain }}`)"
-    volumes:
-      - "{{ morpheus_main_storage_path }}:/srv"
-      - "{{ appdata_path }}/short/filebrowser/db:/database.db"
-      - "{{ appdata_path }}/short/filebrowser/filebrowser.json:/.filebrowser.json"
-    include_global_env_vars: true
-    restart: unless-stopped
-  ###
-  - service_name: overseerr
-    active: true
-    image: sctx/overseerr:latest
-    labels:
-      - "traefik.http.routers.overseerr.rule=Host(`overseerr.m.{{ local_domain }}`)"
-    volumes:
-      - "{{ appdata_path }}/arrmatey/overseerr:/app/config"
-    restart: unless-stopped
-  ###
-  - service_name: tdarr
-    active: true
-    image: haveagitgat/tdarr
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.tdarr.rule=Host(`tdarr.m.{{ local_domain }}`)"
-    volumes:
-      - "{{ appdata_path }}/arrmatey/tdarr/transcode:/temp"
-      - "{{ appdata_path }}/arrmatey/tdarr/server:/app/server"
-      - "{{ appdata_path }}/arrmatey/tdarr/configs:/app/configs"
-      - "{{ appdata_path }}/arrmatey/tdarr/logs:/app/logs"
-      - "{{ morpheus_main_storage_path }}:/mnt/storage"
-    environment:
-      - "serverIP=192.168.1.10"
-      - "serverPort=8266"
-      - "webUIPort=8265"
-    ports:
-      - 8265:8265
-      - 8266:8266
-      - 8267:8267
-    include_global_env_vars: true
-    restart: unless-stopped
-  - service_name: tdarr-node
-    active: true
-    image: haveagitgat/tdarr_node
-    devices:
-      - /dev/dri:/dev/dri
-    network_mode: service:tdarr
-    volumes:
-      - "{{ appdata_path }}/arrmatey/tdarr/configs:/app/configs"
-      - "{{ appdata_path }}/arrmatey/tdarr/logs:/app/logs"
-      - "{{ morpheus_main_storage_path }}:/mnt/storage"
-    environment:
-      - "nodeID=morpheusQSV"
-      - "nodeIP=10.42.1.10"
-      - "nodePort=8267"
-      - "serverIP=10.42.1.10"
-      - "serverPort=8266"
-    include_global_env_vars: true
-    restart: unless-stopped
-###
-  - service_name: fasten
-    active: false
-    image: ghcr.io/fastenhealth/fasten-onprem:main
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.fasten.rule=Host(`fasten.m.{{ local_domain }}`)"
-    volumes:
-      - "{{ appdata_path }}/long/fasten/db:/opt/fasten/db"
-      - "{{ appdata_path }}/long/fasten/config:/opt/fasten/config"
-    include_global_env_vars: true
-    restart: unless-stopped
 ###
   - service_name: syncthing
     active: true
@@ -863,33 +668,44 @@ containers:
       - "{{ appdata_path }}/short/wallabag:/var/www/wallabag/data"
     include_global_env_vars: false
     restart: unless-stopped
-###
-  - service_name: shlink-app
+  ### Monitoring
+  ###
+  - service_name: smokeping
     active: true
-    image: shlinkio/shlink:stable
+    image: lscr.io/linuxserver/smokeping
+    hostname: morpheus
+    volumes:
+      - "{{ appdata_path }}/databases/smokeping/config:/config"
+      - "{{ appdata_path }}/databases/smokeping/data:/data"
     labels:
-      - traefik.enable=true
-      - "traefik.http.routers.shlink.rule=Host(`shlink.m.{{ local_domain }}`)"
-    environment:
-      - "DEFAULT_DOMAIN=s.ktz.me"
-      - "IS_HTTPS_ENABLED=true"
-    # volumes:
-    #   - "{{ appdata_path }}/short/shlink:/var/www/wallabag/data"
+      - "traefik.http.routers.smokeping.rule=Host(`smokeping.m.{{ local_domain }}`)"
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: prometheus-igpu
+    active: true
+    image: restreamio/intel-prometheus
+    ports:
+      - 9101:8080
+    devices:
+      - /dev/dri:/dev/dri
     include_global_env_vars: false
     restart: unless-stopped
-  - service_name: shlink-web
+  ###
+  - service_name: librespeed
     active: true
-    image: shlinkio/shlink-web-client
+    image: lscr.io/linuxserver/librespeed
+    ports:
+      - 8008:80
     labels:
-      - traefik.enable=true
-      - "traefik.http.routers.shlinkapp.rule=Host(`s.ktz.me`)"
+      - "traefik.http.routers.librespeed.rule=Host(`speedtest.m.{{ local_domain }}`)"
     environment:
-      - "SHLINK_SERVER_URL=https://shlink.m.wd.ktz.me"
-      - "SHLINK_SERVER_API_KEY=07cf6f74-57c3-465c-bc58-f394349fd16a"
-    # volumes:
-    #   - "{{ appdata_path }}/short/shlink:/var/www/wallabag/data"
-    include_global_env_vars: false
+      - MODE=standalone
+      - TELEMETRY=true
+      - "PASSWORD={{ librespeed_password }}"
+    include_global_env_vars: true
     restart: unless-stopped
+
 
   # template for docker-compose services
   #

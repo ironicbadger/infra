@@ -56,8 +56,8 @@
         tags: replication
       - role: ktz-morpheus
       - role: geerlingguy.nfs
-      - role: ktz-authelia
-        tags: compose
+      # - role: ktz-authelia
+      #   tags: compose
       - role: ironicbadger.docker_compose_generator
         tags: compose
       - role: ktz-traefik
