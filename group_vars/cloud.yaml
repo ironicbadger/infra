@@ -17,6 +17,12 @@ package_list:
   - name: wireguard
   - name: zfsutils-linux
 
+# ktz-sanoid
+sanoid_config_source: sanoid-cloud.conf
+syncoid_cron_jobs:
+  - { job: 'echo', name: 'placeholder', weekday: '*', hour: '10' }
+
+
 # geerlingguy.security
 security_ssh_port: "{{ cloud_ssh_port }}"
 security_sudoers_passwordless:
