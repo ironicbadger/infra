@@ -54,6 +54,12 @@ opnsense.{{ domain_wd_me }} {
   import cloudflare
 }
 
+# immich
+immich.wd.ktz.me {
+  reverse_proxy http://10.42.1.10:2283
+  import cloudflare
+}
+
 ## proxmox
 # px morpheus
 px.{{ domain_wd_me }} {
