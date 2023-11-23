@@ -143,7 +143,7 @@ syncoid_cron_jobs:
   - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_backups }}/start && {{ syncoid_binary_path }} -r --source-bwlimit=2M --no-sync-snap tank/backups p:z2/morpheus/tank/backups | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_backups }} --data-binary "@-"', name: 'morpheus to pennywise backups', weekday: '*', hour: '12' }
 
   ## morpheus local jobs
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --name plexmetamanager --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }} --data-binary "@-"', name: 'plexmeta', weekday: '*/1' }
+  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --name plexmetamanager --rm -v /mnt/nvme2tb/appdata/mediaservers/plexmeta/config:/config meisnate12/plex-meta-manager --run | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }} --data-binary "@-"', name: 'plexmeta', weekday: '*/1' }
   - { job: 'docker restart plextraktsync', name: 'plextraktsync', weekday: '*12' }
 
   ## morpheus to elrond jobs
