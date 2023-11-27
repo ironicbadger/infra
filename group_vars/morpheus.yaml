@@ -125,29 +125,29 @@ syncoid_cloud_dataset: "demo:tank/appdata"
 syncoid_hc_url: "curl -fsS -m 10 --retry 5 -o /dev/null https://hc.{{ domain_cloud }}/ping"
 syncoid_cron_jobs:
   ## cloud to morpheus
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }}/start && {{ syncoid_binary_path }} -r --skip-parent {{ syncoid_cloud_dataset }} tank/backups/cloud | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }} --data-binary "@-"', name: 'cloud_replication', weekday: '*', hour: '*/6' }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }}/start && {{ syncoid_binary_path }} -r --skip-parent {{ syncoid_cloud_dataset }} tank/backups/cloud | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_cloud }} --data-binary "@-"', name: 'cloud_replication', weekday: '*', hour: '*/6' }
 
   ## morpheus to pennywise data
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/audiobooks p:z2/morpheus/tank/fuse/audiobooks | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }} --data-binary "@-"', name: 'morpheus to pennywise audiobooks', weekday: '*', hour: '1' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/documents p:z2/morpheus/tank/fuse/documents | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }} --data-binary "@-"', name: 'morpheus to pennywise documents', weekday: '*', hour: '3' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/drone p:z2/morpheus/tank/fuse/drone | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }} --data-binary "@-"', name: 'morpheus to pennywise drone', weekday: '*', hour: '4',  }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/audiobooks p:z2/morpheus/tank/fuse/audiobooks | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_audiobooks }} --data-binary "@-"', name: 'morpheus to pennywise audiobooks', weekday: '*', hour: '1' }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/documents p:z2/morpheus/tank/fuse/documents | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_documents }} --data-binary "@-"', name: 'morpheus to pennywise documents', weekday: '*', hour: '3' }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/drone p:z2/morpheus/tank/fuse/drone | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_drone }} --data-binary "@-"', name: 'morpheus to pennywise drone', weekday: '*', hour: '4',  }
   #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/music p:z2/morpheus/tank/fuse/music | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_music }} --data-binary "@-"', name: 'morpheus to pennywise music', weekday: '*', hour: '5' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/photos p:z2/morpheus/tank/fuse/photos | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }} --data-binary "@-"', name: 'morpheus to pennywise photos', weekday: '*', hour: '6' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/podcast p:z2/morpheus/tank/fuse/podcast | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }} --data-binary "@-"', name: 'morpheus to pennywise podcast', weekday: '*', hour: '7' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/software p:z2/morpheus/tank/fuse/software | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }} --data-binary "@-"', name: 'morpheus to pennywise software', weekday: '*', hour: '8' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/sports p:z2/morpheus/tank/fuse/sports | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }} --data-binary "@-"', name: 'morpheus to pennywise sports', weekday: '*', hour: '9' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/videos p:z2/morpheus/tank/fuse/videos | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }} --data-binary "@-"', name: 'morpheus to pennywise videos', weekday: '*', hour: '10' }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/photos p:z2/morpheus/tank/fuse/photos | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_photos }} --data-binary "@-"', name: 'morpheus to pennywise photos', weekday: '*', hour: '6' }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/podcast p:z2/morpheus/tank/fuse/podcast | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_podcast }} --data-binary "@-"', name: 'morpheus to pennywise podcast', weekday: '*', hour: '7' }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/software p:z2/morpheus/tank/fuse/software | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_software }} --data-binary "@-"', name: 'morpheus to pennywise software', weekday: '*', hour: '8' }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/sports p:z2/morpheus/tank/fuse/sports | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_sports }} --data-binary "@-"', name: 'morpheus to pennywise sports', weekday: '*', hour: '9' }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }}/start && {{ syncoid_binary_path }} --source-bwlimit=1M tank/fuse/videos p:z2/morpheus/tank/fuse/videos | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_videos }} --data-binary "@-"', name: 'morpheus to pennywise videos', weekday: '*', hour: '10' }
 
   ## morpheus to pennywise docker appdata
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_appdata }}/start && {{ syncoid_binary_path }} -r --skip-parent --exclude influxdb --source-bwlimit=2M nvme2tb/appdata p:z2/morpheus/backups/appdata | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_appdata }} --data-binary "@-"', name: 'morpheus to pennywise appdata', weekday: '*', hour: '11' }
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_backups }}/start && {{ syncoid_binary_path }} -r --source-bwlimit=2M --no-sync-snap tank/backups p:z2/morpheus/tank/backups | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_backups }} --data-binary "@-"', name: 'morpheus to pennywise backups', weekday: '*', hour: '12' }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_appdata }}/start && {{ syncoid_binary_path }} -r --skip-parent --exclude influxdb --source-bwlimit=2M nvme2tb/appdata p:z2/morpheus/backups/appdata | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_appdata }} --data-binary "@-"', name: 'morpheus to pennywise appdata', weekday: '*', hour: '11' }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_backups }}/start && {{ syncoid_binary_path }} -r --source-bwlimit=2M --no-sync-snap tank/backups p:z2/morpheus/tank/backups | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_pen_backups }} --data-binary "@-"', name: 'morpheus to pennywise backups', weekday: '*', hour: '12' }
 
   ## morpheus local jobs
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --name plexmetamanager --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }} --data-binary "@-"', name: 'plexmeta', weekday: '*/1' }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }}/start && /usr/bin/docker run --name plexmetamanager --rm -v /mnt/nvme2tb/appdata/plexmeta/config:/config meisnate12/plex-meta-manager --run | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_plexmeta }} --data-binary "@-"', name: 'plexmeta', weekday: '*/1' }
   - { job: 'docker restart plextraktsync', name: 'plextraktsync', weekday: '*12' }
 
   ## morpheus to elrond jobs
-  - { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic }}/start && /usr/local/bin/autorestic backup -av -c /root/.autorestic.yml | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic  }} --data-binary "@-"', name: 'morpheus to elrond - autorestic', weekday: '*', hour: '13' }
+  #- { job: '{{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic }}/start && /usr/local/bin/autorestic backup -av -c /root/.autorestic.yml | {{ syncoid_hc_url }}/{{ syncoid_hc_uuid_mor_elr_autorestic  }} --data-binary "@-"', name: 'morpheus to elrond - autorestic', weekday: '*', hour: '13' }
 
 # geerlingguy.nfs
 nfs_exports: [ "/mnt/storage/proxmox    *(rw,sync,no_root_squash,fsid=25)"]
@@ -439,7 +439,7 @@ containers:
   ###
   - service_name: nextcloud
     active: true
-    image: nextcloud:26
+    image: nextcloud:27
     devices:
       - /dev/dri:/dev/dri
     depends_on:
