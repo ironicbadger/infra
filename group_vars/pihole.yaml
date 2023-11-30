@@ -72,6 +72,7 @@ dhcp_range_start: 10.42.7.100
 dhcp_range_end: 10.42.7.250
 dhcp_router: 10.42.0.254
 dhcp_active: "true"
+pxe_server_ip: 10.42.1.10
 
 dns_overrides:
   # try to use sparingly and must be FQDN

@@ -8,5 +8,20 @@ dhcp-option=option:router,{{ dhcp_router }}
 dhcp-leasefile=/etc/pihole/dhcp.leases
 #quiet-dhcp
 
+{% if pxe_server_ip is defined %}
+dhcp-match=set:bios,60,PXEClient:Arch:00000
+dhcp-boot=tag:bios,netboot.xyz.kpxe,,{{ pxe_server_ip }}
+dhcp-match=set:efi32,60,PXEClient:Arch:00002
+dhcp-boot=tag:efi32,netboot.xyz.efi,,{{ pxe_server_ip }}
+dhcp-match=set:efi32-1,60,PXEClient:Arch:00006
+dhcp-boot=tag:efi32-1,netboot.xyz.efi,,{{ pxe_server_ip }}
+dhcp-match=set:efi64,60,PXEClient:Arch:00007
+dhcp-boot=tag:efi64,netboot.xyz.efi,,{{ pxe_server_ip }}
+dhcp-match=set:efi64-1,60,PXEClient:Arch:00008
+dhcp-boot=tag:efi64-1,netboot.xyz.efi,,{{ pxe_server_ip }}
+dhcp-match=set:efi64-2,60,PXEClient:Arch:00009
+dhcp-boot=tag:efi64-2,netboot.xyz.efi,,{{ pxe_server_ip }}
+{% endif %}
+
 domain={{ default_domain }}
 local=/{{ default_domain }}/
