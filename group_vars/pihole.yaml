@@ -116,8 +116,6 @@ dhcp_reservations:
   ## morpheus - PRIMARY SERVER
   - {mac: D0:50:99:DC:4D:D5, ip: 10.42.1.10, hostname: morpheus, custom_dns: ["m"]} #eno1
   - {mac: D0:50:99:F2:D9:38, ip: 10.42.1.11, hostname: morpheus-ipmi}
-  ### morpheus services
-  - {mac: BA:F4:A4:1E:EF:C0, ip: 10.42.1.96, hostname: cat-calibre}
 
   ## anton - BACKUP SERVER
   - {mac: D0:50:99:DB:B2:2D, ip: 10.42.1.20, hostname: anton} #eno1
@@ -331,6 +329,7 @@ dhcp_reservations:
   - {mac: 70:ea:5a:12:bb:70, ip: 10.42.3.13, hostname: alex-ipad}
   - {mac: 48:01:c5:6e:f1:59, ip: 10.42.3.14, hostname: alex-oneplus7t}
   - {mac: 2c:3b:70:d5:59:09, ip: 10.42.3.15, hostname: steam-deck}
+  - {mac: bc:24:11:0d:b1:3e, ip: 10.42.3.16, hostname: win11-bambu}
 
   - {mac: 0c:e4:41:ef:49:59, ip: 10.42.3.40, hostname: cat-laptop} #m1 air
   - {mac: dc:b5:4f:ab:cf:65, ip: 10.42.3.41, hostname: cat-iphone}
