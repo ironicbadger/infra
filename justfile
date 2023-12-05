@@ -17,6 +17,9 @@ export JUST_LOG := log
 run HOST *TAGS:
   ansible-playbook -b run.yaml --limit {{HOST}} {{TAGS}}
 
+compose HOST:
+  ansible-playbook -b run.yaml --limit {{HOST}} --tags compose
+
 updatez:
   ansible-playbook -b playbooks/zoidberg-updates.yaml
 
