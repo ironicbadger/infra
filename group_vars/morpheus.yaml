@@ -425,7 +425,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: lidarr
-    active: false
+    active: true
     image: lscr.io/linuxserver/lidarr
     volumes:
       - "{{ appdata_path }}/arrmatey/lidarr:/config"
