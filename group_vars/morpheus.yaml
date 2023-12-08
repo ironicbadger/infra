@@ -325,6 +325,16 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   ###
+  - service_name: plexmetamanager
+    active: true
+    image: meisnate12/plex-meta-manager:develop
+    volumes:
+      - "{{ appdata_path }}/mediaservers/plexmeta/config:/config"
+    environment:
+      - "PMM_TIME=01:15,07:15,13:15,15:35,19:15"
+    include_global_env_vars: false
+    restart: unless-stopped
+  ###
   - service_name: abs
     active: true
     image: advplyr/audiobookshelf
