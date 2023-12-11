@@ -222,6 +222,7 @@ dhcp_reservations:
   ## local IoT
   - {mac: f0:45:da:39:fc:29, ip: 10.42.5.1, hostname: venstar_downstairs}
   - {mac: 74:e1:82:23:18:25, ip: 10.42.5.2, hostname: venstar_upstairs}
+  - {mac: 44:61:32:22:ee:7b, ip: 10.42.5.3, hostname: ecobee_bonus}
 
   - {mac: 2c:f4:32:a9:cf:56, ip: 10.42.5.10, hostname: sonoff_basic_kitchen_hob}
   - {mac: 2c:f4:32:a9:cc:c8, ip: 10.42.5.11, hostname: sonoff_basic_garage_nook_lights}
@@ -268,6 +269,7 @@ dhcp_reservations:
   ### WLED
   - {mac: 84:f3:eb:e3:71:3b, ip: 10.42.5.90, hostname: wled_kitchen_wetbar}
   - {mac: ec:fa:bc:c2:9f:04, ip: 10.42.5.91, hostname: wled_ella_dino_lamp}
+  - {mac: cc:50:e3:55:10:54, ip: 10.42.5.92, hostname: wled_x1c_riser}
 
   ### Local IoT Projects
   - {mac: a8:03:2a:e2:f7:58, ip: 10.42.5.100, hostname: flightdisplay_rdu}
@@ -346,6 +348,7 @@ dhcp_reservations:
   #- {mac: 38:ba:f8:59:fd:a3, ip: 10.42.13.111, hostname: t480s-wifi}
   #- {mac: 5c:c5:d4:db:65:1e, ip: 10.42.13.112, hostname: x240-ethernet}
   - {mac: 5c:c5:d4:db:65:1e, ip: 10.42.3.113, hostname: x240-wifi}
+  - {mac: b4:c2:6a:9a:1f:8c, ip: 10.42.3.114, hostname: garmin-catalyst}
 
 
 ## BLOCKED until identity confirmed
