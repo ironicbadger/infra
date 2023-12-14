@@ -60,6 +60,12 @@ immich.wd.ktz.me {
   import cloudflare
 }
 
+# immich
+abs.wd.ktz.me {
+  reverse_proxy http://10.42.1.10:2284
+  import cloudflare
+}
+
 ## proxmox
 # px morpheus
 px.{{ domain_wd_me }} {

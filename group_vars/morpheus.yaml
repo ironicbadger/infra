@@ -340,6 +340,8 @@ containers:
     image: advplyr/audiobookshelf
     labels:
       - "traefik.http.routers.audiobookshelf.rule=Host(`abs.m.{{ local_domain }}`)"
+    ports:
+      - 2284:80
     volumes:
       - "{{ morpheus_main_storage_path }}/audiobooks/library:/audiobooks:ro"
       - "{{ morpheus_main_storage_path }}/audiobooks/library2:/audiobooks2:ro"
