@@ -299,6 +299,8 @@ containers:
     labels:
       - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.m.{{ local_domain }}`)"
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
+    ports:
+      - 2285:8096
     volumes:
       - "{{ appdata_path }}/mediaservers/jellyfin:/config"
       - "{{ morpheus_main_storage_path }}:/data:ro"

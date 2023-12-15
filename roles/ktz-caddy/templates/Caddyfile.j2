@@ -59,10 +59,24 @@ immich.wd.ktz.me {
   reverse_proxy http://10.42.1.10:2283
   import cloudflare
 }
+immich.ktz.cloud {
+  reverse_proxy http://10.42.1.10:2283
+  import cloudflare
+}
 
-# immich
+# abs
 abs.wd.ktz.me {
   reverse_proxy http://10.42.1.10:2284
+  import cloudflare
+}
+abs.ktz.cloud {
+  reverse_proxy http://10.42.1.10:2284
+  import cloudflare
+}
+
+# jellyfin
+jellyfin.ktz.cloud {
+  reverse_proxy http://10.42.1.10:2285
   import cloudflare
 }
 
