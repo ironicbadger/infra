@@ -210,6 +210,7 @@ dhcp_reservations:
   #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.16, hostname: reolink-yard-lower}
   - {mac: ec:71:db:00:60:b3, ip: 10.42.2.17, hostname: reolink-deck}
   #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.18, hostname: reolink-deck-under}
+  - {mac: ec:71:db:b2:15:60, ip: 10.42.2.18, hostname: reolink-garage1}
 
   - {mac: 80:91:33:d1:90:f7, ip: 10.42.2.110, hostname: ezviz-doorbell}
   - {mac: d0:3f:27:4e:90:ca, ip: 10.42.2.111, hostname: wyze-bonus}
