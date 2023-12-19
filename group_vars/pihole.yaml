@@ -195,6 +195,7 @@ dhcp_reservations:
   #- {mac: c0:95:6d:64:e8:ce, ip: 10.42.1.110, hostname: kitchen-homepod}
   - {mac: 74:40:be:ac:99:de, ip: 10.42.1.111, hostname: lgc9-bonus-tv-ethernet}
   - {mac: 20:17:42:88:67:bb, ip: 10.42.1.112, hostname: lgc9-bonus-tv-wifi}
+  - {mac: ec:0b:ae:99:1d:13, ip: 10.42.1.113, hostname: broadlink-garage-minisplit}
 
   #########
   ## cameras (Wyze, PoE)
