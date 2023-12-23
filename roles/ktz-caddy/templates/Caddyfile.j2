@@ -76,7 +76,11 @@ abs.ktz.cloud {
 
 # jellyfin
 jellyfin.ktz.cloud {
-  reverse_proxy http://10.42.1.10:2285
+  reverse_proxy https://10.42.1.10:2285 {
+    transport http {
+      tls_insecure_skip_verify
+    }
+  }
   import cloudflare
 }
 
