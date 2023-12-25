@@ -661,6 +661,19 @@ containers:
       - "{{ appdata_path }}/apps/wallabag:/var/www/wallabag/data"
     include_global_env_vars: false
     restart: unless-stopped
+###
+  - service_name: stirlingpdf
+    active: true
+    image: frooodle/s-pdf:latest
+    labels:
+      - "traefik.http.routers.stirling.rule=Host(`pdf.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/apps/stirlingpdf/configs:/configs"
+      - "{{ appdata_path }}/apps/stirlingpdf/ocr-data:/usr/share/tesseract-ocr/5/tessdata"
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+    include_global_env_vars: false
+    restart: unless-stopped
   ### Monitoring
   ###
   - service_name: smokeping
