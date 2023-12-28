@@ -450,6 +450,45 @@ containers:
       - "traefik.http.routers.lidarr.rule=Host(`lidarr.m.{{ local_domain }}`)"
     restart: unless-stopped
     include_global_env_vars: true
+  ###  
+  - service_name: qbit
+    active: true
+    image: lscr.io/linuxserver/qbittorrent
+    network_mode: service:gluetun
+    volumes:
+      - "{{ appdata_path }}/arrmatey/qbit:/config"
+      - "/mnt/disk4/bt-dls:/downloads"
+    depends_on:
+      - gluetun
+    environment:
+      - WEBUI_PORT=8080
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: gluetun
+    active: true
+    image: qmcgaw/gluetun
+    labels:
+      - "traefik.http.routers.gluetun.rule=Host(`qbit.m.{{ local_domain }}`)"
+      - traefik.http.services.gluetun.loadbalancer.server.port=8080
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8080:8080
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+    volumes:
+      - "{{ appdata_path }}/arrmatey/gluetun:/gluetun"
+    environment:
+      - VPN_SERVICE_PROVIDER=privado
+      - VPN_TYPE=openvpn
+      - "OPENVPN_USER=twhfxdvycv"
+      - "OPENVPN_PASSWORD=MUBQr9DZXq@5"
+    include_global_env_vars: true
+    restart: unless-stopped
+
   ### Data Services
   ###
   - service_name: nextcloud
