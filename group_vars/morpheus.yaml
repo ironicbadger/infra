@@ -484,8 +484,8 @@ containers:
     environment:
       - VPN_SERVICE_PROVIDER=privado
       - VPN_TYPE=openvpn
-      - "OPENVPN_USER=twhfxdvycv"
-      - "OPENVPN_PASSWORD=MUBQr9DZXq@5"
+      - "OPENVPN_USER={{ gluetun_privado_username }}"
+      - "OPENVPN_PASSWORD={{ gluetun_privado_password }}"
     include_global_env_vars: true
     restart: unless-stopped
 
