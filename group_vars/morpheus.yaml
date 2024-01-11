@@ -310,6 +310,34 @@ containers:
       - "JELLYFIN_PublishedServerUrl=jellyfin.m.{{ local_domain }}"
     include_global_env_vars: true
     restart: unless-stopped
+
+  ### jellystat
+  - service_name: jellystat-db
+    active: true
+    image: postgres:15.2
+    ports:
+      - 3030:3030
+    volumes:
+      - "{{ appdata_path }}/databases/jellystatdb:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_DB={{ jellystat_db_name }}"
+      - "POSTGRES_USER={{ jellystat_db_user }}"
+      - "POSTGRES_PASSWORD={{ jellystat_db_pass }}"
+    restart: unless-stopped
+  - service_name: jellystat
+    active: true
+    image: cyfershepard/jellystat:latest
+    labels:
+      - "traefik.http.routers.jellystat.rule=Host(`jellystat.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/mediaservers/jellystat:/app/backend/backup-data "
+    environment:
+      - "POSTGRES_USER={{ jellystat_db_user }}"
+      - "POSTGRES_PASSWORD={{ jellystat_db_pass }}"
+      - POSTGRES_IP=jellystat-db
+      - "POSTGRES_PORT=5432"
+      - "JWT_SECRET={{ jellystat_jwt_secret }}"
+    restart: unless-stopped
   ###
   - service_name: plex
     active: true
