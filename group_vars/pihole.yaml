@@ -87,6 +87,7 @@ dns_overrides:
   - {ip: 10.42.1.10, custom_dns: "nc.ktz.cloud"}
   - {ip: 10.42.1.10, custom_dns: "git.ktz.me"}
   - {ip: 10.42.1.10, custom_dns: "s.ktz.me"}
+  - {ip: 10.42.1.42, custom_dns: "wiki.wd.ktz.me"}
   - {ip: 100.105.174.16, custom_dns: "gg.ktz.me"}
   - {ip: 10.42.0.250, custom_dns: "unifi"}
   - {ip: 10.42.0.250, custom_dns: "inform.unifi.wd.ktz.me"}
@@ -119,7 +120,7 @@ dhcp_reservations:
 
   ## anton - BACKUP SERVER
   - {mac: D0:50:99:DB:B2:2D, ip: 10.42.1.20, hostname: anton} #eno1
-  - {mac: D0:50:99:F2:8F:57, ip: 10.42.1.21, hostname: anton-ipmi} 
+  - {mac: D0:50:99:F2:8F:57, ip: 10.42.1.21, hostname: anton-ipmi}
 
   ## m1 - TEST SERVER
   - {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.30, hostname: m1}
@@ -134,7 +135,6 @@ dhcp_reservations:
   - {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.1.50, hostname: hl15-ipmi}
   - {mac: 3c:ec:ef:0e:d3:dd, ip: 10.42.1.51, hostname: hl15-10g1}
   #- {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.1.50, hostname: hl15-10g2}
-  
 
   #########
   ## networking equipment
