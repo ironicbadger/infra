@@ -190,3 +190,24 @@ containers:
       - "{{ appdata_path }}/bookstack/db:/config"
     include_global_env_vars: true
     restart: unless-stopped
+  ###
+  - service_name: jellyfin
+    active: true
+    image: jellyfin/jellyfin
+    devices:
+      - /dev/dri:/dev/dri
+    hostname: uk-norwich
+    labels:
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.{{ local_domain }}`)"
+      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
+    ports:
+      - 2285:8096
+    volumes:
+      - /home/alex/appdata/jellyfin:/config
+      - /z2tank/morpheus/tank/drone:/media/drone
+      # ram transcode
+      - /dev/shm:/transcode
+    environment:
+      - "JELLYFIN_PublishedServerUrl=jellyfin.{{ local_domain }}"
+    include_global_env_vars: true
+    restart: unless-stopped
