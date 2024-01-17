@@ -742,6 +742,16 @@ containers:
       - DOCKER_ENABLE_SECURITY=false
     include_global_env_vars: false
     restart: unless-stopped
+### actual-budget added 2024-01-12
+  - service_name: actualbudget
+    active: true
+    image: ghcr.io/actualbudget/actual-server
+    labels:
+      - "traefik.http.routers.actual.rule=Host(`budget.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/apps/actualbudget:/data"
+    include_global_env_vars: false
+    restart: unless-stopped
   ### Monitoring
   ###
   - service_name: smokeping
