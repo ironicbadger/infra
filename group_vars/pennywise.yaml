@@ -170,6 +170,18 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   ###
+  - service_name: abs
+    active: true
+    image: advplyr/audiobookshelf
+    labels:
+      - "traefik.http.routers.audiobookshelf.rule=Host(`abs.{{ local_domain }}`)"
+      - traefik.http.routers.audiobookshelf.tls.certresolver=cloudflare
+    volumes:
+      - "/z2tank/morpheus/tank/audiobooks/library:/audiobooks:ro"
+      - "{{ appdata_path }}/audiobookshelf/metadata:/metadata"
+      - "{{ appdata_path }}/audiobookshelf/config:/config"
+    restart: unless-stopped
+  ###
   - service_name: jellyfin
     active: true
     image: jellyfin/jellyfin
