@@ -311,6 +311,34 @@ containers:
       - "JELLYFIN_PublishedServerUrl=jellyfin.m.{{ local_domain }}"
     include_global_env_vars: true
     restart: unless-stopped
+
+  ### jellystat
+  - service_name: jellystat-db
+    active: true
+    image: postgres:15.2
+    ports:
+      - 3030:3030
+    volumes:
+      - "{{ appdata_path }}/databases/jellystatdb:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_DB={{ jellystat_db_name }}"
+      - "POSTGRES_USER={{ jellystat_db_user }}"
+      - "POSTGRES_PASSWORD={{ jellystat_db_pass }}"
+    restart: unless-stopped
+  - service_name: jellystat
+    active: true
+    image: cyfershepard/jellystat:latest
+    labels:
+      - "traefik.http.routers.jellystat.rule=Host(`jellystat.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/mediaservers/jellystat:/app/backend/backup-data "
+    environment:
+      - "POSTGRES_USER={{ jellystat_db_user }}"
+      - "POSTGRES_PASSWORD={{ jellystat_db_pass }}"
+      - POSTGRES_IP=jellystat-db
+      - "POSTGRES_PORT=5432"
+      - "JWT_SECRET={{ jellystat_jwt_secret }}"
+    restart: unless-stopped
   ###
   - service_name: plex
     active: true
@@ -451,6 +479,45 @@ containers:
       - "traefik.http.routers.lidarr.rule=Host(`lidarr.m.{{ local_domain }}`)"
     restart: unless-stopped
     include_global_env_vars: true
+  ###  
+  - service_name: qbit
+    active: true
+    image: lscr.io/linuxserver/qbittorrent
+    network_mode: service:gluetun
+    volumes:
+      - "{{ appdata_path }}/arrmatey/qbit:/config"
+      - "/mnt/disk4/bt-dls:/downloads"
+    depends_on:
+      - gluetun
+    environment:
+      - WEBUI_PORT=8080
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: gluetun
+    active: true
+    image: qmcgaw/gluetun
+    labels:
+      - "traefik.http.routers.gluetun.rule=Host(`qbit.m.{{ local_domain }}`)"
+      - traefik.http.services.gluetun.loadbalancer.server.port=8080
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8080:8080
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+    volumes:
+      - "{{ appdata_path }}/arrmatey/gluetun:/gluetun"
+    environment:
+      - VPN_SERVICE_PROVIDER=privado
+      - VPN_TYPE=openvpn
+      - "OPENVPN_USER={{ gluetun_privado_username }}"
+      - "OPENVPN_PASSWORD={{ gluetun_privado_password }}"
+    include_global_env_vars: true
+    restart: unless-stopped
+
   ### Data Services
   ###
   - service_name: nextcloud
@@ -660,6 +727,19 @@ containers:
       - "SYMFONY__ENV__DATABASE_DRIVER=pdo_sqlite"
     volumes:
       - "{{ appdata_path }}/apps/wallabag:/var/www/wallabag/data"
+    include_global_env_vars: false
+    restart: unless-stopped
+###
+  - service_name: stirlingpdf
+    active: true
+    image: frooodle/s-pdf:latest
+    labels:
+      - "traefik.http.routers.stirling.rule=Host(`pdf.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/apps/stirlingpdf/configs:/configs"
+      - "{{ appdata_path }}/apps/stirlingpdf/ocr-data:/usr/share/tesseract-ocr/5/tessdata"
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
     include_global_env_vars: false
     restart: unless-stopped
   ### Monitoring

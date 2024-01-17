@@ -87,6 +87,7 @@ dns_overrides:
   - {ip: 10.42.1.10, custom_dns: "nc.ktz.cloud"}
   - {ip: 10.42.1.10, custom_dns: "git.ktz.me"}
   - {ip: 10.42.1.10, custom_dns: "s.ktz.me"}
+  - {ip: 10.42.1.42, custom_dns: "wiki.wd.ktz.me"}
   - {ip: 100.105.174.16, custom_dns: "gg.ktz.me"}
   - {ip: 10.42.0.250, custom_dns: "unifi"}
   - {ip: 10.42.0.250, custom_dns: "inform.unifi.wd.ktz.me"}
@@ -119,7 +120,7 @@ dhcp_reservations:
 
   ## anton - BACKUP SERVER
   - {mac: D0:50:99:DB:B2:2D, ip: 10.42.1.20, hostname: anton} #eno1
-  - {mac: D0:50:99:F2:8F:57, ip: 10.42.1.21, hostname: anton-ipmi} 
+  - {mac: D0:50:99:F2:8F:57, ip: 10.42.1.21, hostname: anton-ipmi}
 
   ## m1 - TEST SERVER
   - {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.30, hostname: m1}
@@ -134,7 +135,6 @@ dhcp_reservations:
   - {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.1.50, hostname: hl15-ipmi}
   - {mac: 3c:ec:ef:0e:d3:dd, ip: 10.42.1.51, hostname: hl15-10g1}
   #- {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.1.50, hostname: hl15-10g2}
-  
 
   #########
   ## networking equipment
@@ -195,6 +195,7 @@ dhcp_reservations:
   #- {mac: c0:95:6d:64:e8:ce, ip: 10.42.1.110, hostname: kitchen-homepod}
   - {mac: 74:40:be:ac:99:de, ip: 10.42.1.111, hostname: lgc9-bonus-tv-ethernet}
   - {mac: 20:17:42:88:67:bb, ip: 10.42.1.112, hostname: lgc9-bonus-tv-wifi}
+  - {mac: ec:0b:ae:99:1d:13, ip: 10.42.1.113, hostname: broadlink-garage-minisplit}
 
   #########
   ## cameras (Wyze, PoE)
@@ -209,8 +210,10 @@ dhcp_reservations:
   - {mac: ec:71:db:b1:f4:48, ip: 10.42.2.15, hostname: reolink-yard-upper}
   #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.16, hostname: reolink-yard-lower}
   - {mac: ec:71:db:00:60:b3, ip: 10.42.2.17, hostname: reolink-deck}
-  #- {mac: ec:71:db:00:60:b3, ip: 10.42.2.18, hostname: reolink-deck-under}
   - {mac: ec:71:db:b2:15:60, ip: 10.42.2.18, hostname: reolink-garage1}
+  - {mac: ec:71:db:82:fb:5b, ip: 10.42.2.19, hostname: reolink-nursery}
+
+
 
   - {mac: 80:91:33:d1:90:f7, ip: 10.42.2.110, hostname: ezviz-doorbell}
   - {mac: d0:3f:27:4e:90:ca, ip: 10.42.2.111, hostname: wyze-bonus}
