@@ -294,6 +294,7 @@ containers:
   - service_name: jellyfin
     active: true
     image: jellyfin/jellyfin
+    hostname: us-rdu
     devices:
       - /dev/dri:/dev/dri
     labels:
