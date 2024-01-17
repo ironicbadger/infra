@@ -21,7 +21,7 @@ containers:
       - 443:443
       - 8080:8080
     command:
-      - --log.level=debug
+      - --log.level=info
       - --accesslog=false
       - --api.insecure=true
       - --providers.docker=true
