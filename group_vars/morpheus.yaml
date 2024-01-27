@@ -385,8 +385,6 @@ containers:
     active: true
     image: steefdebruijn/docker-roonserver:latest
     network_mode: host
-    labels:
-      - "traefik.http.routers.roon.rule=Host(`roon.m.{{ local_domain }}`)"
     volumes:
       - "{{ appdata_path }}/mediaservers/roon/app:/app"
       - "{{ appdata_path }}/mediaservers/roon/backup:/backup"
