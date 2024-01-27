@@ -357,7 +357,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plexmetamanager
-    active: true
+    active: false
     image: meisnate12/plex-meta-manager:develop
     volumes:
       - "{{ appdata_path }}/mediaservers/plexmeta/config:/config"
@@ -379,6 +379,19 @@ containers:
       - "{{ morpheus_main_storage_path }}/audiobooks/podcasts:/podcasts"
       - "{{ appdata_path }}/mediaservers/audiobookshelf/metadata:/metadata"
       - "{{ appdata_path }}/mediaservers/audiobookshelf/config:/config"
+    restart: unless-stopped
+  ###
+  - service_name: roon
+    active: true
+    image: steefdebruijn/docker-roonserver:latest
+    network_mode: host
+    labels:
+      - "traefik.http.routers.roon.rule=Host(`roon.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/mediaservers/roon/app:/app"
+      - "{{ appdata_path }}/mediaservers/roon/backup:/backup"
+      - "{{ appdata_path }}/mediaservers/roon/data:/data"
+      - "{{ morpheus_main_storage_path }}/flac:/music:ro"
     restart: unless-stopped
   ###
   - service_name: tautulli
@@ -479,7 +492,7 @@ containers:
       - "traefik.http.routers.lidarr.rule=Host(`lidarr.m.{{ local_domain }}`)"
     restart: unless-stopped
     include_global_env_vars: true
-  ###  
+  ###
   - service_name: qbit
     active: true
     image: lscr.io/linuxserver/qbittorrent
