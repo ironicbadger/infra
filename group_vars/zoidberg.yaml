@@ -149,3 +149,13 @@ containers:
       - "{{ appdata_path }}/bookstack/db:/config"
     include_global_env_vars: true
     restart: unless-stopped
+  ###
+  - service_name: tclip
+    active: true
+    image: ghcr.io/tailscale-dev/tclip
+    environment:
+      - DATA_DIR=/data
+      - "TS_AUTHKEY={{ zoidberg_tclip_authkey }}"
+    volumes:
+      - "{{ appdata_path }}/tclip:/data"
+    restart: unless-stopped
