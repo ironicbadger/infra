@@ -272,7 +272,8 @@ dhcp_reservations:
 
   ### WLED
   - {mac: 84:f3:eb:e3:71:3b, ip: 10.42.5.90, hostname: wled_kitchen_wetbar}
-  - {mac: ec:fa:bc:c2:9f:04, ip: 10.42.5.91, hostname: wled_ella_dino_lamp}
+  #- {mac: ec:fa:bc:c2:9f:04, ip: 10.42.5.91, hostname: wled_ella_dino_lamp.old}
+  - {mac: 98:f4:ab:da:60:18, ip: 10.42.5.91, hostname: wled_ella_dino_lamp}
   - {mac: cc:50:e3:55:10:54, ip: 10.42.5.92, hostname: wled_x1c_riser}
 
   ### Local IoT Projects
