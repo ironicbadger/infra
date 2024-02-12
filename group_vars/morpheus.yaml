@@ -465,7 +465,7 @@ containers:
 ###
   - service_name: readarr
     active: true
-    image: cr.hotio.dev/hotio/readarr
+    image: lscr.io/linuxserver/readarr:develop
     labels:
       - traefik.enable=true
       - "traefik.http.routers.readarr.rule=Host(`readarr.m.{{ local_domain }}`)"
