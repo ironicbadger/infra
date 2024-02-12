@@ -382,7 +382,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: roon
-    active: true
+    active: false
     image: steefdebruijn/docker-roonserver:latest
     network_mode: host
     volumes:
@@ -538,7 +538,7 @@ containers:
       - /dev/dri:/dev/dri
     depends_on:
       - mysql
-      - redis
+      - redisnc
     environment:
       - REDIS_HOST=redisnc
     labels:
