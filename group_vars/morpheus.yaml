@@ -533,11 +533,14 @@ containers:
   ###
   - service_name: nextcloud
     active: true
-    image: nextcloud:27
+    image: nextcloud:28
     devices:
       - /dev/dri:/dev/dri
     depends_on:
       - mysql
+      - redis
+    environment:
+      - REDIS_HOST=redisnc
     labels:
       - "traefik.http.routers.nc.rule=Host(`nc.{{ domain_cloud }}`)"
     volumes:
@@ -555,6 +558,10 @@ containers:
       - MYSQL_USER=nextcloud
     volumes:
       - "{{ appdata_path }}/databases/mysql:/var/lib/mysql"
+    restart: unless-stopped
+  - service_name: redisnc
+    active: true
+    image: redis:alpine
     restart: unless-stopped
   ###
   - service_name: gitea
