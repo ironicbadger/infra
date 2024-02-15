@@ -139,16 +139,17 @@ dhcp_reservations:
   #########
   ## networking equipment
   ### wifi
-  - {mac: ac:8b:a9:57:82:61, ip: 10.42.0.110, hostname: unifi-u6-pro-bonus}  
-  - {mac: ac:8b:a9:1c:ad:09, ip: 10.42.0.111, hostname: unifi-u6-pro-hallway}  
-  - {mac: e0:63:da:33:2a:fd, ip: 10.42.0.112, hostname: unifi-uap-ac-iw-kitchen}  
+  - {mac: ac:8b:a9:57:82:61, ip: 10.42.0.110, hostname: unifi-u6-pro-bonus}
+  - {mac: ac:8b:a9:1c:ad:09, ip: 10.42.0.111, hostname: unifi-u6-pro-hallway}
+  - {mac: e0:63:da:33:2a:fd, ip: 10.42.0.112, hostname: unifi-uap-ac-iw-kitchen}
   - {mac: e0:63:da:67:f3:8c, ip: 10.42.0.113, hostname: unifi-uap-ac-m-deck}
-  #- {mac: 80:2a:a8:90:4c:9d, ip: 10.42.1.41, hostname: unifi-uap-ac-pro-hallway}  
+  #- {mac: 80:2a:a8:90:4c:9d, ip: 10.42.1.41, hostname: unifi-uap-ac-pro-hallway}
 
   ### fibre switches - 10gig sfp+
   - {mac: 60:22:32:59:ad:d5, ip: 10.42.0.120, hostname: unifi-usw-aggregation-bonus}
   - {mac: 60:22:32:59:ae:47, ip: 10.42.0.121, hostname: unifi-usw-aggregation-basement}
   - {mac: f4:e2:c6:5b:d9:8d, ip: 10.42.0.122, hostname: unifi-usw-aggregation-bonus-desk}
+  - {mac: f4:e2:c6:e5:4c:5d, ip: 10.42.0.130, hostname: unifi-usw-backoffice-pro8poe}
   ### poe switches
   - {mac: ac:8b:a9:a1:58:16, ip: 10.42.0.123, hostname: unifi-usw-24poe-bonus}
   - {mac: ac:8b:a9:a1:59:d8, ip: 10.42.0.124, hostname: unifi-usw-24poe-basement}
@@ -161,7 +162,7 @@ dhcp_reservations:
 
   ### home automation controllers
   - {mac: 40:22:d8:15:24:3b, ip: 10.42.0.140, hostname: tubeszb-zigbee}
-  
+
   ########
   ## video making equipment
   - {mac: 7c:2e:0d:1a:29:69, ip: 10.42.0.150, hostname: atem-mini-pro-iso}
