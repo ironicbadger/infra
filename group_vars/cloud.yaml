@@ -152,16 +152,48 @@ containers:
     volumes:
       - "{{ appdata_path_zfs }}/ktz-blog-mum:/var/lib/ghost/content"
     restart: unless-stopped
+###
+  - service_name: ktz-blog-cat
+    active: true
+    image: ghost:5
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.purrfectprose.rule=Host(`purrfectprose.com`)"
+      - traefik.http.routers.purrfectprose.entrypoints=websecure
+      - traefik.http.routers.purrfectprose.tls.certresolver=cloudflare
+      - "traefik.http.routers.purrfectprose-rss.rule=Host(`purrfectprose.com`) && PathPrefix(`/rss`)"
+      - traefik.http.routers.purrfectprose-rss.entrypoints=websecure
+      - traefik.http.routers.purrfectprose-rss.tls.certresolver=cloudflare
+      - traefik.http.routers.purrfectprose-rss.middlewares=rss-cache-control
+      - traefik.http.middlewares.rss-cache-control.headers.customresponseheaders.Cache-Control=public, max-age=600
+    environment:
+      - NODE_ENV=production
+      - "url=https://purrfectprose.com"
+      - database__client=mysql
+      - database__connection__host=ktz-blog-cat-db
+      - "database__connection__user={{ purrfect_db_user }}"
+      - "database__connection__password={{ purrfect_db_pass }}"
+      - database__connection__database=ghost
+    volumes:
+      - "{{ appdata_path_zfs }}/ktz-blog-cat/content:/var/lib/ghost/content"
+    restart: unless-stopped
+  - service_name: ktz-blog-cat-db
+    active: true
+    image: mysql:8.0
+    volumes:
+      - "{{ appdata_path_zfs }}/ktz-blog-cat/db:/var/lib/mysql"
+    environment:
+      - "MYSQL_ROOT_PASSWORD={{ purrfect_db_pass }}"
   ###
   - service_name: ktz-pastebin
     active: true
     image: mkaczanowski/pastebin
-    command: 
-      - --address 
-      - 0.0.0.0 
-      - --db 
-      - /var/lib/pastebin/ 
-      - --uri 
+    command:
+      - --address
+      - 0.0.0.0
+      - --db
+      - /var/lib/pastebin/
+      - --uri
       - "https://paste.{{ domain_cloud }}"
     labels:
       - traefik.enable=true
@@ -199,7 +231,7 @@ containers:
     active: true
     image: mariadb:10.5.5-focal
     volumes:
-      - "{{ appdata_path_zfs }}/ktz-lychee/db:/var/lib/mysql" 
+      - "{{ appdata_path_zfs }}/ktz-lychee/db:/var/lib/mysql"
     environment:
       - "MYSQL_ROOT_PASSWORD={{ mysql_root_password }}"
       - "MYSQL_PASSWORD={{ mysql_password_lychee }}"
@@ -230,7 +262,7 @@ containers:
       - traefik.http.routers.pmswikidemo.entrypoints=websecure
       - traefik.http.routers.pmswikidemo.tls.certresolver=cloudflare
     volumes:
-      - "{{ appdata_path_zfs }}/pms-wiki-demo/site:/usr/share/nginx/html:ro" 
+      - "{{ appdata_path_zfs }}/pms-wiki-demo/site:/usr/share/nginx/html:ro"
       - "{{ appdata_path_zfs }}/pms-wiki/nginx:/etc/nginx/conf.d/:ro"
     restart: unless-stopped
 ###
@@ -260,7 +292,7 @@ containers:
       - traefik.http.routers.ktzsystems.entrypoints=websecure
       - traefik.http.routers.ktzsystems.tls.certresolver=cloudflare
     volumes:
-      - "{{ appdata_path_zfs }}/ktzsystems/public:/usr/share/nginx/html:ro" 
+      - "{{ appdata_path_zfs }}/ktzsystems/public:/usr/share/nginx/html:ro"
     restart: unless-stopped
 ###
   - service_name: ktz-simplelinks
@@ -275,7 +307,7 @@ containers:
     volumes:
       - "{{ appdata_path_zfs }}/ktzme/config/config.yml:/usr/src/app/config.yml:ro"
       - "{{ appdata_path_zfs }}/ktzme/config/public:/usr/src/app/public:rw"
-    restart: unless-stopped 
+    restart: unless-stopped
 ###
   - service_name: alleycat
     active: true
@@ -286,5 +318,5 @@ containers:
       - traefik.http.routers.alleycat.entrypoints=websecure
       - traefik.http.routers.alleycat.tls.certresolver=cloudflare
     volumes:
-      - "{{ appdata_path_zfs }}/alleycat:/usr/share/nginx/html:ro" 
+      - "{{ appdata_path_zfs }}/alleycat:/usr/share/nginx/html:ro"
     restart: unless-stopped
