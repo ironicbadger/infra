@@ -260,6 +260,7 @@ dhcp_reservations:
   - {mac: dc:4f:22:67:c3:80, ip: 10.42.5.66, hostname: cfsp_musicroom_piano_lamp}
   - {mac: 4c:eb:d6:0f:61:fa, ip: 10.42.5.67, hostname: mjsp_bonus_uplighter}
   - {mac: 4c:eb:d6:81:bf:ab, ip: 10.42.5.68, hostname: mjsp_xmas_tree}
+  - {mac: 4c:eb:d6:0f:ae:67, ip: 10.42.5.69, hostname: mjsp_backoffice_amaran_keylight}
 
   - {mac: 24:62:ab:f9:26:9c, ip: 10.42.5.80, hostname: esp32_energy_monitor}
   - {mac: 8c:aa:b5:8c:6c:14, ip: 10.42.5.81, hostname: esp32_xiths_upstairs_bonus}
