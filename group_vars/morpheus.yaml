@@ -294,6 +294,7 @@ containers:
   - service_name: jellyfin
     active: true
     image: jellyfin/jellyfin
+    hostname: us-rdu
     devices:
       - /dev/dri:/dev/dri
     labels:
@@ -309,6 +310,34 @@ containers:
     environment:
       - "JELLYFIN_PublishedServerUrl=jellyfin.m.{{ local_domain }}"
     include_global_env_vars: true
+    restart: unless-stopped
+
+  ### jellystat
+  - service_name: jellystat-db
+    active: true
+    image: postgres:15.2
+    ports:
+      - 3030:3030
+    volumes:
+      - "{{ appdata_path }}/databases/jellystatdb:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_DB={{ jellystat_db_name }}"
+      - "POSTGRES_USER={{ jellystat_db_user }}"
+      - "POSTGRES_PASSWORD={{ jellystat_db_pass }}"
+    restart: unless-stopped
+  - service_name: jellystat
+    active: true
+    image: cyfershepard/jellystat:latest
+    labels:
+      - "traefik.http.routers.jellystat.rule=Host(`jellystat.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/mediaservers/jellystat:/app/backend/backup-data "
+    environment:
+      - "POSTGRES_USER={{ jellystat_db_user }}"
+      - "POSTGRES_PASSWORD={{ jellystat_db_pass }}"
+      - POSTGRES_IP=jellystat-db
+      - "POSTGRES_PORT=5432"
+      - "JWT_SECRET={{ jellystat_jwt_secret }}"
     restart: unless-stopped
   ###
   - service_name: plex
@@ -328,7 +357,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plexmetamanager
-    active: true
+    active: false
     image: meisnate12/plex-meta-manager:develop
     volumes:
       - "{{ appdata_path }}/mediaservers/plexmeta/config:/config"
@@ -350,6 +379,17 @@ containers:
       - "{{ morpheus_main_storage_path }}/audiobooks/podcasts:/podcasts"
       - "{{ appdata_path }}/mediaservers/audiobookshelf/metadata:/metadata"
       - "{{ appdata_path }}/mediaservers/audiobookshelf/config:/config"
+    restart: unless-stopped
+  ###
+  - service_name: roon
+    active: false
+    image: steefdebruijn/docker-roonserver:latest
+    network_mode: host
+    volumes:
+      - "{{ appdata_path }}/mediaservers/roon/app:/app"
+      - "{{ appdata_path }}/mediaservers/roon/backup:/backup"
+      - "{{ appdata_path }}/mediaservers/roon/data:/data"
+      - "{{ morpheus_main_storage_path }}/flac:/music:ro"
     restart: unless-stopped
   ###
   - service_name: tautulli
@@ -425,7 +465,7 @@ containers:
 ###
   - service_name: readarr
     active: true
-    image: cr.hotio.dev/hotio/readarr
+    image: lscr.io/linuxserver/readarr:develop
     labels:
       - traefik.enable=true
       - "traefik.http.routers.readarr.rule=Host(`readarr.m.{{ local_domain }}`)"
@@ -450,15 +490,57 @@ containers:
       - "traefik.http.routers.lidarr.rule=Host(`lidarr.m.{{ local_domain }}`)"
     restart: unless-stopped
     include_global_env_vars: true
+  ###
+  - service_name: qbit
+    active: true
+    image: lscr.io/linuxserver/qbittorrent
+    network_mode: service:gluetun
+    volumes:
+      - "{{ appdata_path }}/arrmatey/qbit:/config"
+      - "/mnt/disk4/bt-dls:/downloads"
+    depends_on:
+      - gluetun
+    environment:
+      - WEBUI_PORT=8080
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: gluetun
+    active: true
+    image: qmcgaw/gluetun
+    labels:
+      - "traefik.http.routers.gluetun.rule=Host(`qbit.m.{{ local_domain }}`)"
+      - traefik.http.services.gluetun.loadbalancer.server.port=8080
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8080:8080
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+    volumes:
+      - "{{ appdata_path }}/arrmatey/gluetun:/gluetun"
+    environment:
+      - VPN_SERVICE_PROVIDER=privado
+      - VPN_TYPE=openvpn
+      - "OPENVPN_USER={{ gluetun_privado_username }}"
+      - "OPENVPN_PASSWORD={{ gluetun_privado_password }}"
+    include_global_env_vars: true
+    restart: unless-stopped
+
   ### Data Services
   ###
   - service_name: nextcloud
     active: true
-    image: nextcloud:27
+    image: nextcloud:28
     devices:
       - /dev/dri:/dev/dri
     depends_on:
       - mysql
+      - redisnc
+    environment:
+      - REDIS_HOST=redisnc
     labels:
       - "traefik.http.routers.nc.rule=Host(`nc.{{ domain_cloud }}`)"
     volumes:
@@ -476,6 +558,10 @@ containers:
       - MYSQL_USER=nextcloud
     volumes:
       - "{{ appdata_path }}/databases/mysql:/var/lib/mysql"
+    restart: unless-stopped
+  - service_name: redisnc
+    active: true
+    image: redis:alpine
     restart: unless-stopped
   ###
   - service_name: gitea
@@ -672,6 +758,16 @@ containers:
       - "{{ appdata_path }}/apps/stirlingpdf/ocr-data:/usr/share/tesseract-ocr/5/tessdata"
     environment:
       - DOCKER_ENABLE_SECURITY=false
+    include_global_env_vars: false
+    restart: unless-stopped
+### actual-budget added 2024-01-12
+  - service_name: actualbudget
+    active: true
+    image: ghcr.io/actualbudget/actual-server
+    labels:
+      - "traefik.http.routers.actual.rule=Host(`budget.m.{{ local_domain }}`)"
+    volumes:
+      - "{{ appdata_path }}/apps/actualbudget:/data"
     include_global_env_vars: false
     restart: unless-stopped
   ### Monitoring

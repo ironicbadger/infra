@@ -77,25 +77,41 @@ syncoid_cron_jobs: []
 traefik_file_provider: false
 
 # ironicbadger.docker_compose_generator
-appdata_path: /mnt/z2/pennywise/appdata
+appdata_path: /z2tank/pennywise/appdata
 local_domain: "p.nr.{{ domain_me }}"
 containers:
   ###
   - service_name: tr
     active: true
     image: traefik
+    labels:
+      - traefik.enable=false
     ports:
       - 80:80
       - 443:443
       - 8080:8080
-    extra_hosts:
-      - host.docker.internal:172.17.0.1
+    command:
+      - --log.level=info
+      - --accesslog=false
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=true
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls.certresolver=cloudflare
+      - --certificatesresolvers.cloudflare.acme.dnschallenge=true
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      - "--certificatesresolvers.cloudflare.acme.email={{ cloudflare_account_email }}"
+      - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
+      - --serversTransport.insecureSkipVerify=true
+    volumes:
+      - "{{ appdata_path }}/traefik/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:
       - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
       - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
-    volumes:
-      - "{{ appdata_path }}/traefik:/etc/traefik"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     restart: unless-stopped
   ###
   - service_name: homer
@@ -117,7 +133,6 @@ containers:
     devices:
       - /dev/dri:/dev/dri
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.plex.rule=Host(`plex.{{ local_domain }}`)"
       - traefik.http.routers.plex.tls.certresolver=cloudflare
       - traefik.http.services.plex.loadbalancer.server.port=32400
@@ -133,7 +148,6 @@ containers:
     ports:
       - 8008:80
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.librespeed.rule=Host(`speedtest.{{ local_domain }}`)"
       - traefik.http.routers.librespeed.tls.certresolver=cloudflare
     environment:
@@ -150,43 +164,41 @@ containers:
       - "{{ appdata_path }}/smokeping/config:/config"
       - "{{ appdata_path }}/smokeping/data:/data"
     labels:
-      - traefik.enable=true
       - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ local_domain }}`)"
       - traefik.http.routers.smokeping.tls.certresolver=cloudflare
       - traefik.http.services.smokeping.loadbalancer.server.port=80
     include_global_env_vars: true
     restart: unless-stopped
   ###
-  - service_name: bookstack
+  - service_name: abs
     active: true
-    image: linuxserver/bookstack
-    depends_on:
-      - bookstack_db
+    image: advplyr/audiobookshelf
     labels:
-      - traefik.enable=true
-      - "traefik.http.routers.bookstack.rule=Host(`wiki.{{ local_domain }}`)"
-      - traefik.http.routers.bookstack.tls.certresolver=cloudflare
-    ports:
-      - 6875:80
-    environment:
-      - "APP_URL=https://wiki.{{ local_domain }}"
-      - DB_HOST=bookstack_db
-      - DB_USER=bookstack
-      - "DB_PASS={{ container_mysql_root_password }}"
-      - DB_DATABASE=bookstackapp
+      - "traefik.http.routers.audiobookshelf.rule=Host(`abs.{{ local_domain }}`)"
+      - traefik.http.routers.audiobookshelf.tls.certresolver=cloudflare
     volumes:
-      - "{{ appdata_path }}/bookstack/config:/config"
-    include_global_env_vars: true
+      - "/z2tank/morpheus/tank/audiobooks/library:/audiobooks:ro"
+      - "{{ appdata_path }}/audiobookshelf/metadata:/metadata"
+      - "{{ appdata_path }}/audiobookshelf/config:/config"
     restart: unless-stopped
-  - service_name: bookstack_db
+  ###
+  - service_name: jellyfin
     active: true
-    image: linuxserver/mariadb
-    environment:
-      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
-      - MYSQL_DATABASE=bookstackapp
-      - MYSQL_USER=bookstack
-      - "MYSQL_PASSWORD={{ container_mysql_root_password }}"
+    image: jellyfin/jellyfin
+    devices:
+      - /dev/dri:/dev/dri
+    hostname: uk-norwich
+    labels:
+      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.{{ local_domain }}`)"
+      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
+    ports:
+      - 8096:8096
     volumes:
-      - "{{ appdata_path }}/bookstack/db:/config"
+      - "{{ appdata_path }}/jellyfin:/config"
+      - /z2tank/morpheus/tank/drone:/media/drone
+      # ram transcode
+      - /dev/shm:/transcode
+    environment:
+      - "JELLYFIN_PublishedServerUrl=jellyfin.{{ local_domain }}"
     include_global_env_vars: true
     restart: unless-stopped

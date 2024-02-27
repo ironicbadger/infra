@@ -87,6 +87,7 @@ dns_overrides:
   - {ip: 10.42.1.10, custom_dns: "nc.ktz.cloud"}
   - {ip: 10.42.1.10, custom_dns: "git.ktz.me"}
   - {ip: 10.42.1.10, custom_dns: "s.ktz.me"}
+  - {ip: 10.42.1.42, custom_dns: "wiki.wd.ktz.me"}
   - {ip: 100.105.174.16, custom_dns: "gg.ktz.me"}
   - {ip: 10.42.0.250, custom_dns: "unifi"}
   - {ip: 10.42.0.250, custom_dns: "inform.unifi.wd.ktz.me"}
@@ -152,6 +153,7 @@ dhcp_reservations:
   - {mac: 60:22:32:59:ad:d5, ip: 10.42.0.120, hostname: unifi-usw-aggregation-bonus}
   - {mac: 60:22:32:59:ae:47, ip: 10.42.0.121, hostname: unifi-usw-aggregation-basement}
   - {mac: f4:e2:c6:5b:d9:8d, ip: 10.42.0.122, hostname: unifi-usw-aggregation-bonus-desk}
+  - {mac: f4:e2:c6:e5:4c:5d, ip: 10.42.0.130, hostname: unifi-usw-backoffice-pro8poe}
   ### poe switches
   - {mac: ac:8b:a9:a1:58:16, ip: 10.42.0.123, hostname: unifi-usw-24poe-bonus}
   - {mac: ac:8b:a9:a1:59:d8, ip: 10.42.0.124, hostname: unifi-usw-24poe-basement}
@@ -261,6 +263,7 @@ dhcp_reservations:
   - {mac: dc:4f:22:67:c3:80, ip: 10.42.5.66, hostname: cfsp_musicroom_piano_lamp}
   - {mac: 4c:eb:d6:0f:61:fa, ip: 10.42.5.67, hostname: mjsp_bonus_uplighter}
   - {mac: 4c:eb:d6:81:bf:ab, ip: 10.42.5.68, hostname: mjsp_xmas_tree}
+  - {mac: 4c:eb:d6:0f:ae:67, ip: 10.42.5.69, hostname: mjsp_backoffice_amaran_keylight}
 
   - {mac: 24:62:ab:f9:26:9c, ip: 10.42.5.80, hostname: esp32_energy_monitor}
   - {mac: 8c:aa:b5:8c:6c:14, ip: 10.42.5.81, hostname: esp32_xiths_upstairs_bonus}
@@ -274,7 +277,8 @@ dhcp_reservations:
 
   ### WLED
   - {mac: 84:f3:eb:e3:71:3b, ip: 10.42.5.90, hostname: wled_kitchen_wetbar}
-  - {mac: ec:fa:bc:c2:9f:04, ip: 10.42.5.91, hostname: wled_ella_dino_lamp}
+  #- {mac: ec:fa:bc:c2:9f:04, ip: 10.42.5.91, hostname: wled_ella_dino_lamp.old}
+  - {mac: 98:f4:ab:da:60:18, ip: 10.42.5.91, hostname: wled_ella_dino_lamp}
   - {mac: cc:50:e3:55:10:54, ip: 10.42.5.92, hostname: wled_x1c_riser}
 
   ### Local IoT Projects
