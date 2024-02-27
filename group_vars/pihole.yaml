@@ -119,7 +119,7 @@ dhcp_reservations:
 
   ## anton - BACKUP SERVER
   - {mac: D0:50:99:DB:B2:2D, ip: 10.42.1.20, hostname: anton} #eno1
-  - {mac: D0:50:99:F2:8F:57, ip: 10.42.1.21, hostname: anton-ipmi} 
+  - {mac: D0:50:99:F2:8F:57, ip: 10.42.1.21, hostname: anton-ipmi}
 
   ## m1 - TEST SERVER
   - {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.30, hostname: m1}
@@ -127,23 +127,26 @@ dhcp_reservations:
   ## bender - dell 7050-1
   #- {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.41, hostname: dell7050-1}
 
-  ## zoidberg - dell 7050-2
-  - {mac: E4:B9:7A:FB:3E:53, ip: 10.42.1.42, hostname: zoidberg, custom_dns: ["z"]}
+  ## zoidberg
+  - {mac: 6C:2B:59:DC:F8:08, ip: 10.42.0.42, hostname: zoidberg, custom_dns: ["z"]}
+
+
+  ## zoidbergOG - dell 7050-2
+  - {mac: E4:B9:7A:FB:3E:53, ip: 10.42.1.42, hostname: zoidbergog, custom_dns: ["zog"]}
 
   ## 45HL
   - {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.1.50, hostname: hl15-ipmi}
   - {mac: 3c:ec:ef:0e:d3:dd, ip: 10.42.1.51, hostname: hl15-10g1}
   #- {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.1.50, hostname: hl15-10g2}
-  
 
   #########
   ## networking equipment
   ### wifi
-  - {mac: ac:8b:a9:57:82:61, ip: 10.42.0.110, hostname: unifi-u6-pro-bonus}  
-  - {mac: ac:8b:a9:1c:ad:09, ip: 10.42.0.111, hostname: unifi-u6-pro-hallway}  
-  - {mac: e0:63:da:33:2a:fd, ip: 10.42.0.112, hostname: unifi-uap-ac-iw-kitchen}  
+  - {mac: ac:8b:a9:57:82:61, ip: 10.42.0.110, hostname: unifi-u6-pro-bonus}
+  - {mac: ac:8b:a9:1c:ad:09, ip: 10.42.0.111, hostname: unifi-u6-pro-hallway}
+  - {mac: e0:63:da:33:2a:fd, ip: 10.42.0.112, hostname: unifi-uap-ac-iw-kitchen}
   - {mac: e0:63:da:67:f3:8c, ip: 10.42.0.113, hostname: unifi-uap-ac-m-deck}
-  #- {mac: 80:2a:a8:90:4c:9d, ip: 10.42.1.41, hostname: unifi-uap-ac-pro-hallway}  
+  #- {mac: 80:2a:a8:90:4c:9d, ip: 10.42.1.41, hostname: unifi-uap-ac-pro-hallway}
 
   ### fibre switches - 10gig sfp+
   - {mac: 60:22:32:59:ad:d5, ip: 10.42.0.120, hostname: unifi-usw-aggregation-bonus}
@@ -161,18 +164,17 @@ dhcp_reservations:
 
   ### home automation controllers
   - {mac: 40:22:d8:15:24:3b, ip: 10.42.0.140, hostname: tubeszb-zigbee}
-  
+
   ########
-  ## video making equipment
+  ## video equipment
   - {mac: 7c:2e:0d:1a:29:69, ip: 10.42.0.150, hostname: atem-mini-pro-iso}
-  
 
   #########
   ## misc servers
   - {mac: e4:5f:01:08:89:ca, ip: 10.42.1.80, hostname: octopi-bricktop} #pi4 4gb
   #- {mac: e4:5f:01:08:be:cb, ip: 10.42.0.100, hostname: pi4-2gb} #pi4 2gb
   - {mac: b8:27:eb:2f:ee:4f, ip: 10.42.1.83, hostname: basement-nut-pi3} #pi3
-  - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.84, hostname: gavinbelson} #wallpc  
+  - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.84, hostname: gavinbelson} #wallpc
   - {mac: dc:a6:32:b1:16:27, ip: 10.42.0.100, hostname: pi8} #pi4 8gb pikvm
   - {mac: b8:27:eb:4a:f1:82, ip: 10.42.1.85, hostname: inkycal-bonus}
 
