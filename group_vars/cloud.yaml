@@ -161,11 +161,11 @@ containers:
       - "traefik.http.routers.purrfectprose.rule=Host(`purrfectprose.com`)"
       - traefik.http.routers.purrfectprose.entrypoints=websecure
       - traefik.http.routers.purrfectprose.tls.certresolver=cloudflare
-      - "traefik.http.routers.purrfectprose-rss.rule=Host(`purrfectprose.com`) && PathPrefix(`/rss`)"
-      - traefik.http.routers.purrfectprose-rss.entrypoints=websecure
-      - traefik.http.routers.purrfectprose-rss.tls.certresolver=cloudflare
-      - traefik.http.routers.purrfectprose-rss.middlewares=rss-cache-control
-      - traefik.http.middlewares.rss-cache-control.headers.customresponseheaders.Cache-Control=public, max-age=600
+      # - "traefik.http.routers.purrfectprose-rss.rule=Host(`purrfectprose.com`) && PathPrefix(`/rss`)"
+      # - traefik.http.routers.purrfectprose-rss.entrypoints=websecure
+      # - traefik.http.routers.purrfectprose-rss.tls.certresolver=cloudflare
+      # - traefik.http.routers.purrfectprose-rss.middlewares=rss-cache-control
+      # - traefik.http.middlewares.rss-cache-control.headers.customresponseheaders.Cache-Control=public, max-age=600
     environment:
       - NODE_ENV=production
       - "url=https://purrfectprose.com"
@@ -176,6 +176,8 @@ containers:
       - database__connection__database=ghost
     volumes:
       - "{{ appdata_path_zfs }}/ktz-blog-cat/content:/var/lib/ghost/content"
+    depends_on:
+      - ktz-blog-cat-db
     restart: unless-stopped
   - service_name: ktz-blog-cat-db
     active: true
@@ -184,6 +186,7 @@ containers:
       - "{{ appdata_path_zfs }}/ktz-blog-cat/db:/var/lib/mysql"
     environment:
       - "MYSQL_ROOT_PASSWORD={{ purrfect_db_pass }}"
+    restart: unless-stopped
   ###
   - service_name: ktz-pastebin
     active: true
