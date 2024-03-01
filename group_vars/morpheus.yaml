@@ -274,7 +274,7 @@ containers:
   ### Administrative
   ###
   - service_name: tr
-    active: true
+    active: false
     image: traefik
     ports:
       - 80:80
@@ -292,7 +292,7 @@ containers:
   ### Media Servers
   ###
   - service_name: jellyfin
-    active: true
+    active: false
     image: jellyfin/jellyfin
     hostname: us-rdu
     devices:
@@ -314,7 +314,7 @@ containers:
 
   ### jellystat
   - service_name: jellystat-db
-    active: true
+    active: false
     image: postgres:15.2
     ports:
       - 3030:3030
@@ -326,7 +326,7 @@ containers:
       - "POSTGRES_PASSWORD={{ jellystat_db_pass }}"
     restart: unless-stopped
   - service_name: jellystat
-    active: true
+    active: false
     image: cyfershepard/jellystat:latest
     labels:
       - "traefik.http.routers.jellystat.rule=Host(`jellystat.m.{{ local_domain }}`)"
@@ -341,7 +341,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: plex
-    active: true
+    active: false
     image: plexinc/pms-docker
     network_mode: host
     devices:
@@ -367,7 +367,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: abs
-    active: true
+    active: false
     image: advplyr/audiobookshelf
     labels:
       - "traefik.http.routers.audiobookshelf.rule=Host(`abs.m.{{ local_domain }}`)"
@@ -393,7 +393,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: tautulli
-    active: true
+    active: false
     image: lscr.io/linuxserver/tautulli
     depends_on:
       - plex
@@ -406,7 +406,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: prowlarr
-    active: true
+    active: false
     image: lscr.io/linuxserver/prowlarr:develop
     labels:
       - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.m.{{ local_domain }}`)"
@@ -416,7 +416,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: overseerr
-    active: true
+    active: false
     image: sctx/overseerr:latest
     labels:
       - "traefik.http.routers.overseerr.rule=Host(`overseerr.m.{{ local_domain }}`)"
@@ -426,7 +426,7 @@ containers:
   ### Media Acquisition
   ###
   - service_name: nzbget
-    active: true
+    active: false
     image: lscr.io/linuxserver/nzbget
     labels:
       - "traefik.http.routers.nzbget.rule=Host(`nzbget.m.{{ local_domain }}`)"
@@ -438,7 +438,7 @@ containers:
     include_global_env_vars: true
   ###
   - service_name: sonarr
-    active: true
+    active: false
     image: lscr.io/linuxserver/sonarr
     depends_on:
       - nzbget
@@ -452,7 +452,7 @@ containers:
     include_global_env_vars: true
   ###
   - service_name: radarr
-    active: true
+    active: false
     image: lscr.io/linuxserver/radarr
     volumes:
       - "{{ appdata_path }}/arrmatey/radarr:/config"
@@ -464,7 +464,7 @@ containers:
     include_global_env_vars: true
 ###
   - service_name: readarr
-    active: true
+    active: false
     image: lscr.io/linuxserver/readarr:develop
     labels:
       - traefik.enable=true
@@ -479,7 +479,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: lidarr
-    active: true
+    active: false
     image: lscr.io/linuxserver/lidarr
     volumes:
       - "{{ appdata_path }}/arrmatey/lidarr:/config"
@@ -492,7 +492,7 @@ containers:
     include_global_env_vars: true
   ###
   - service_name: qbit
-    active: true
+    active: false
     image: lscr.io/linuxserver/qbittorrent
     network_mode: service:gluetun
     volumes:
@@ -505,7 +505,7 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   - service_name: gluetun
-    active: true
+    active: false
     image: qmcgaw/gluetun
     labels:
       - "traefik.http.routers.gluetun.rule=Host(`qbit.m.{{ local_domain }}`)"
@@ -532,7 +532,7 @@ containers:
   ### Data Services
   ###
   - service_name: nextcloud
-    active: true
+    active: false
     image: nextcloud:28
     devices:
       - /dev/dri:/dev/dri
@@ -547,7 +547,7 @@ containers:
       - "{{ appdata_path }}/apps/nextcloud:/var/www/html"
     restart: unless-stopped
   - service_name: mysql
-    active: true
+    active: false
     image: mariadb
     ports:
       - 3306:3306
@@ -560,12 +560,12 @@ containers:
       - "{{ appdata_path }}/databases/mysql:/var/lib/mysql"
     restart: unless-stopped
   - service_name: redisnc
-    active: true
+    active: false
     image: redis:alpine
     restart: unless-stopped
   ###
   - service_name: gitea
-    active: true
+    active: false
     image: gitea/gitea
     depends_on:
       - mysql
@@ -589,7 +589,7 @@ containers:
       - '"2222:2222"'
     restart: unless-stopped
   - service_name: gitea-runner
-    active: true
+    active: false
     image: gitea/act_runner:nightly
     depends_on:
       - gitea
@@ -602,7 +602,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: sync
-    active: true
+    active: false
     image: lscr.io/linuxserver/resilio-sync
     hostname: "{{ hostname_morpheus }}"
     volumes:
@@ -616,7 +616,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: lychee
-    active: true
+    active: false
     image: lycheeorg/lychee
     labels:
       - "traefik.http.routers.lychee.rule=Host(`gallery.m.{{ local_domain }}`)"
@@ -638,7 +638,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: ninja_nginx
-    active: true
+    active: false
     image: nginx:mainline-alpine
     labels:
       - "traefik.http.routers.ninja.rule=Host(`ninja.m.{{ local_domain }}`)"
@@ -649,7 +649,7 @@ containers:
       - "{{ appdata_path }}/apps/invoiceninja/public:/var/www/app/public"
     restart: unless-stopped
   - service_name: invoiceninja
-    active: true
+    active: false
     image: invoiceninja/invoiceninja:4.5.18
     depends_on:
       - mysql
@@ -679,7 +679,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: paperless
-    active: true
+    active: false
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
     labels:
       - "traefik.http.routers.paperless.rule=Host(`paperless.m.{{ local_domain }}`)"
@@ -695,7 +695,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: mealie
-    active: true
+    active: false
     image: hkotel/mealie:v0.5.1
     labels:
       - traefik.http.routers.mealie.rule=Host(`mealie.m.{{ local_domain }}`)
@@ -703,10 +703,10 @@ containers:
       - DB_TYPE=sqlite
     volumes:
       - "{{ appdata_path }}/apps/mealie:/app/data"
-    restart: unless-stopped  
+    restart: unless-stopped
 ###
   - service_name: syncthing
-    active: true
+    active: false
     image: lscr.io/linuxserver/syncthing:latest
     hostname: morpheus
     labels:
@@ -724,7 +724,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: freshrss
-    active: true
+    active: false
     image: lscr.io/linuxserver/freshrss:latest
     labels:
       - traefik.enable=true
@@ -735,7 +735,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: wallabag
-    active: true
+    active: false
     image: wallabag/wallabag
     labels:
       - traefik.enable=true
@@ -749,7 +749,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: stirlingpdf
-    active: true
+    active: false
     image: frooodle/s-pdf:latest
     labels:
       - "traefik.http.routers.stirling.rule=Host(`pdf.m.{{ local_domain }}`)"
@@ -762,7 +762,7 @@ containers:
     restart: unless-stopped
 ### actual-budget added 2024-01-12
   - service_name: actualbudget
-    active: true
+    active: false
     image: ghcr.io/actualbudget/actual-server
     labels:
       - "traefik.http.routers.actual.rule=Host(`budget.m.{{ local_domain }}`)"
@@ -773,7 +773,7 @@ containers:
   ### Monitoring
   ###
   - service_name: smokeping
-    active: true
+    active: false
     image: lscr.io/linuxserver/smokeping
     hostname: morpheus
     volumes:
@@ -785,7 +785,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: prometheus-igpu
-    active: true
+    active: false
     image: restreamio/intel-prometheus
     ports:
       - 9101:8080
@@ -795,7 +795,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: librespeed
-    active: true
+    active: false
     image: lscr.io/linuxserver/librespeed
     ports:
       - 8008:80
@@ -809,7 +809,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: netboot
-    active: true
+    active: false
     image: lscr.io/linuxserver/netbootxyz
     volumes:
       - /mnt/disk3/proxmox/template/iso:/assets
