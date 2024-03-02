@@ -1,0 +1,14 @@
+---
+
+- name: ensure target dir exists
+  ansible.builtin.file:
+    path: "/usr/local/bin"
+    state: directory
+
+- name: install htoprc in ansible run user home dir
+  ansible.builtin.copy:
+    src: hddtemp-lt
+    dest: "/usr/local/bin/hddtemp"
+    owner: root
+    group: root
+    mode: 0744

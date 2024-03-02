@@ -1,0 +1,246 @@
+# https://raw.githubusercontent.com/slowpeek/hddtemp/master/hddtemp-lt
+
+#!/usr/bin/env bash
+
+# MIT license (c) 2022-2024 https://github.com/slowpeek
+# Homepage: https://github.com/slowpeek/hddtemp
+# About: smartctl-based alternative to hddtemp
+
+set -eu
+shopt -s nullglob
+
+SCRIPT_VERSION=0.2.3+git
+SCRIPT_SELF=${BASH_SOURCE[0]##*/}
+
+if [[ -t 2 ]]; then
+    t_red=$'\e[31m'
+    t_yellow=$'\e[33m'
+    t_reset=$'\e(B\e[m'
+else
+    t_red=
+    t_yellow=
+    t_reset=
+fi
+
+verb=2
+
+_log() {
+    (( verb >= $1 )) || return 0
+    echo "$2" "${@:3}" >&2
+}
+
+log_warn() { _log 2 "${t_yellow}warning:${t_reset}" "$@"; }
+log_err() { _log 1 "${t_red}error:${t_reset}" "$@"; }
+
+bye() {
+    log_err "$@"
+    exit 1
+}
+
+version() {
+    echo "${SCRIPT_SELF} ${SCRIPT_VERSION}"
+    exit
+}
+
+usage() {
+    cat <<EOF
+Usage: ${SCRIPT_SELF} [options] [disk1 ..]
+
+Without any disk arguments, show temperature for all sd and nvme disks.
+
+Options:
+  --classic                  Replicate output format of the original hddtemp
+  -h, --help                 Show usage
+  -q                         Suppress warnings
+  -u, --units C|F            Use Celsius (default) or Fahrenheit scale
+  -V, --version              Show version
+
+Homepage https://github.com/slowpeek/hddtemp
+EOF
+
+    exit
+}
+
+temp_ata() {
+    local line u=(0 0 0)
+
+    # Here we use logic from the drivetemp linux driver
+    # https://github.com/torvalds/linux/blob/v6.7/drivers/hwmon/drivetemp.c#L89-L95
+    #
+    # - SCT probe is the primary source
+    # - otherwise, use SMART attr 194
+    # - otherwise, use SMART attr 190
+    #
+    # 194/190 outliers gonna outlie.
+
+    for line; do
+        case $line in
+            '190 '*)
+                # attr 190
+                read -r _ _ _ _ _ _ _ _ _ 'u[2]' <<< "$line" ;;
+
+            '194 '*)
+                # attr 194
+                read -r _ _ _ _ _ _ _ _ _ 'u[1]' <<< "$line" ;;
+
+            'Current Temperature:'*)
+                # sct
+                read -r _ _ 'u[0]' _ <<< "$line" ;;
+        esac
+    done
+
+    local t
+    for t in "${u[@]}"; do
+        if [[ $t == [1-9]* ]]; then
+            # https://github.com/smartmontools/smartmontools/blob/RELEASE_7_4/smartmontools/atacmds.cpp#L2096-L2109
+            # https://github.com/smartmontools/smartmontools/blob/RELEASE_7_4/smartmontools/atacmds.cpp#L2115
+            temp=${t%%[^0-9]*}
+
+            return
+        fi
+    done
+}
+
+temp_nvme() {
+    local line
+
+    for line; do
+        if [[ $line == 'Temperature:'* ]]; then
+            read -r _ temp _ <<< "$line"
+            break
+        fi
+    done
+}
+
+temp_scsi() {
+    local line
+
+    for line; do
+        if [[ $line == 'Current Drive Temperature:'* ]]; then
+            read -r _ _ _ temp _ <<< "$line"
+            break
+        fi
+    done
+}
+
+fah_temp() {
+    local r
+
+    (( temp = temp*18 + 320,
+       r = temp % 10,
+       temp /= 10,
+       r < 5 || temp++ ))
+}
+
+main() {
+    local opts
+
+    # jetopt .classic hhelp q uunits: Vversion
+    opts=$(getopt -o hqu:V -l classic,help,units:,version -- "$@") || exit
+    eval set -- "$opts"
+
+    local units=C classic=n scale=
+
+    while (( $# )); do
+        case $1 in
+            -h|--help)
+                usage ;;
+            -V|--version)
+                version ;;
+
+            --classic)
+                classic=y
+                shift ;;
+
+            -u|--units)
+                [[ $2 == [CF] ]] ||
+                    bye "The only valid values for $1 are 'C' and 'F'"
+
+                units=$2
+                shift 2 ;;
+
+            -q)
+                (( --verb )) || verb=1
+                shift ;;
+            --)
+                shift
+                break ;;
+        esac
+    done
+
+    if [[ $classic == y ]]; then
+        # The degree symbol in the current locale.
+        scale=$(iconv -f utf-8 <<< $'\xc2\xb0')
+
+        # °C / °F
+        scale+=$units
+    fi
+
+    type -P smartctl &>/dev/null || bye 'smartctl is not available'
+    (( ! EUID )) || bye 'smartctl requires root permissions, run with sudo'
+
+    # Check smartctl version for NVMe support.
+    local ver
+    read -r _ ver _ < <(smartctl -V)
+
+    [[ ! $ver == @([0-5].*|6.[0-4]*) ]] ||
+        log_warn "startctl supports NVMe devices since v6.5 (yours is v${ver})"
+
+    # If no args supplied, assume all sd and nvme disks.
+    (( $# )) || set -- /dev/sd? /dev/sd?[a-z] /dev/nvme?n?
+
+    local items=() l_disk=0 l_name=1
+    local disk name temp lines line parser
+    for disk; do
+        [[ $disk == /dev/* ]] || continue
+
+        # Collect disk field's width
+        (( ${#disk} <= l_disk )) || l_disk=${#disk}
+
+        readarray -t lines < <(smartctl -i -A -l scttempsts "$disk" 2>&1)
+
+        # There are three printers in smartctl overall: ataprint, nvmeprint,
+        # scsiprint. Leverage the output formats peculiarities.
+
+        name=
+        for line in "${lines[@]}"; do
+            case $line in
+                'Device Model:'*)
+                    read -r _ _ name <<< "$line"
+                    parser=ata
+                    break ;;
+                'Model Number:'*)
+                    read -r _ _ name <<< "$line"
+                    parser=nvme
+                    break ;;
+                'Product:'*)
+                    read -r _ name <<< "$line"
+                    parser=scsi
+                    break ;;
+            esac
+        done
+
+        temp=
+        if [[ -n $name ]]; then
+            # Collect name field's width
+            (( ${#name} <= l_name )) || l_name=${#name}
+
+            temp_"$parser" "${lines[@]}"
+
+            if [[ -n $temp ]]; then
+                # Convert to Fahrenheit if asked.
+                [[ $units == C ]] || fah_temp
+            fi
+        fi
+
+        items+=("${disk}:" "${name:-?}" "${temp:-?}" "${temp:+$scale}")
+    done
+
+    if [[ $classic = n ]]; then
+        printf "%-$((l_disk+1))s  %-${l_name}s  %s%s\n" "${items[@]}"
+    else
+        printf "%s %s: %s%s\n" "${items[@]}"
+    fi
+}
+
+[[ ! ${BASH_SOURCE[0]} == "$0" ]] || main "$@"

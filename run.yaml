@@ -37,6 +37,22 @@
       - role: ironicbadger.docker_compose_generator
         tags: compose
 
+  - hosts: deepthought
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ironicbadger.proxmox_nag_removal
+      - role: grog.package
+      - role: ktz-hddtemp
+      - role: ironicbadger.bash_aliases
+      - role: ironicbadger.figurine
+      - role: geerlingguy.nfs
+      - role: geerlingguy.docker
+      - role: ironicbadger.docker_compose_generator
+        tags: compose
+      - role: ktz-traefik
+        tags: compose
+
   - hosts: morpheus
     vars_files:
       - 'vars/vault.yaml'

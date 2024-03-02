@@ -164,7 +164,7 @@ simple_autorestic_decrypt: true
 autorestic_locations:
   - name: audiobooks
     from: /mnt/tank/fuse/audiobooks
-    to: 
+    to:
       - morpheus-audiobooks
 autorestic_backends:
   - name: "{{ elrond_minio_bucket_audiobooks | selectattr('name', 'defined') | map(attribute='name') }}"
@@ -238,7 +238,7 @@ zfs_disks:
   # replaced WDC_WD100EMAZ-00WJTA0_2YJ7E2VD with WDC_WUH721414ALE604_Z2GJ4V4T ## dec 12th 2022
   # replaced ST10000NE0008-2JM101_ZPW0N45T with WD140EFGX-68B0GN0_9LJSSYVG ## dec 4th 2022
   # replaced WDC_WD140EFGX-68B0GN0_9LJSSYVG with ata-ST16000NT001-3LV101_ZRS09BS4 ## oct 30th 2023
-  
+
   # ata-ST10000DM0004-2GR11L_ZJV5CF96 ## failed june 2021
   # ata-ST10000NE0008-2JM101_ZPW0N45T ## installed june 2021
   # ata-WDC_WD100EMAZ-00WJTA0_2YJ7E2VD
@@ -251,8 +251,8 @@ zfs_disks:
 
 
 fstab_mergerfs:
-  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "/mnt/storage", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=epmfs,dropcacheonclose=true,minfreespace=250G,fsname=mergerfs" }  
-  - { source: "/mnt/disk*", mountpoint: "/mnt/jbod", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=mspmfs,dropcacheonclose=true,minfreespace=250G,fsname=jbod" }  
+  - { source: "/mnt/disk*:/mnt/tank/fuse", mountpoint: "/mnt/storage", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=epmfs,dropcacheonclose=true,minfreespace=250G,fsname=mergerfs" }
+  - { source: "/mnt/disk*", mountpoint: "/mnt/jbod", fs: fuse.mergerfs, opts: "defaults,nonempty,allow_other,use_ino,moveonenospc=true,category.create=mspmfs,dropcacheonclose=true,minfreespace=250G,fsname=jbod" }
 
 snapraid_runner_email_address: "{{ gmail_address }}"
 snapraid_runner_gmail_pass: "{{ snapraid_email_password }}"
@@ -265,8 +265,8 @@ traefik_insecure_transport: true #defaults to false
 traefik_exposed_by_default: true
 
 # ironicbadger.docker_compose_generator
-appdata_path: /mnt/nvme2tb/appdata
-download_path: /mnt/ssd1tb/downloads
+appdata_path: /mnt/appdata
+download_path: /mnt/downloads
 storage_path: /mnt/storage
 local_domain: "wd.{{ domain_me }}"
 
@@ -434,8 +434,8 @@ containers:
     volumes:
       - "{{ appdata_path }}/arrmatey/nzbget/config:/config"
       - "{{ download_path }}:/downloads"
-    restart: unless-stopped
     include_global_env_vars: true
+    restart: unless-stopped
   ###
   - service_name: sonarr
     active: false
@@ -448,8 +448,8 @@ containers:
       - "{{ appdata_path }}/arrmatey/sonarr:/config"
       - "{{ download_path }}/complete/tv:/downloads/complete/tv"
       - /mnt/jbod/tv:/tv
-    restart: unless-stopped
     include_global_env_vars: true
+    restart: unless-stopped
   ###
   - service_name: radarr
     active: false
@@ -460,8 +460,8 @@ containers:
       - /mnt/jbod/movies:/movies
     labels:
       - "traefik.http.routers.radarr.rule=Host(`radarr.m.{{ local_domain }}`)"
-    restart: unless-stopped
     include_global_env_vars: true
+    restart: unless-stopped
 ###
   - service_name: readarr
     active: false
