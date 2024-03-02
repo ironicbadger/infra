@@ -112,7 +112,11 @@ dhcp_reservations:
   - {mac: 7E:23:21:86:2C:43, ip: 10.42.0.252, hostname: caddy}
   - {mac: FE:31:84:32:25:A3, ip: 10.42.0.253, hostname: pihole}
   - {mac: b8:85:84:b5:84:55, ip: 10.42.1.99, hostname: ha} #dell7050
-  #- {mac: 64:51:06:5e:d4:67, ip: 10.42.1.99, hostname: ha} #prodesk600g1
+
+  ## Deep Thought
+  - {mac: ec:0d:9a:b2:5a:00, ip: 10.42.0.40, hostname: deepthought-ipmi}
+  - {mac: 7c:c2:55:e0:08:12, ip: 10.42.0.41, hostname: deepthought-nic1}
+  - {mac: be:3a:f2:b6:05:9f, ip: 10.42.0.42, hostname: deepthought, custom_dns: ["dt"]} #10g sfp+
 
   ## morpheus - PRIMARY SERVER
   - {mac: D0:50:99:DC:4D:D5, ip: 10.42.1.10, hostname: morpheus, custom_dns: ["m"]} #eno1
@@ -129,11 +133,11 @@ dhcp_reservations:
   #- {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.41, hostname: dell7050-1}
 
   ## zoidberg
-  - {mac: 6C:2B:59:DC:F8:08, ip: 10.42.0.42, hostname: zoidberg, custom_dns: ["z"]}
+  #- {mac: 6C:2B:59:DC:F8:08, ip: 10.42.0.42, hostname: zoidberg, custom_dns: ["z"]}
 
 
   ## zoidbergOG - dell 7050-2
-  - {mac: E4:B9:7A:FB:3E:53, ip: 10.42.1.42, hostname: zoidbergog, custom_dns: ["zog"]}
+  - {mac: E4:B9:7A:FB:3E:53, ip: 10.42.1.42, hostname: zoidberg, custom_dns: ["z"]}
 
   ## 45HL
   - {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.1.50, hostname: hl15-ipmi}
