@@ -84,8 +84,8 @@ dns_overrides:
   #- {ip: 10.42.0.251, custom_dns: "ipmi.m.wd.ktz.me"}
   #- {ip: 10.42.0.251, custom_dns: "ipmi.anton.wd.ktz.me"}
   - {ip: 10.42.1.99, custom_dns: "hass.ktz.me"}
-  - {ip: 10.42.1.10, custom_dns: "nc.ktz.cloud"}
-  - {ip: 10.42.1.10, custom_dns: "git.ktz.me"}
+  - {ip: 10.42.0.42, custom_dns: "nc.ktz.cloud"}
+  - {ip: 10.42.0.42, custom_dns: "git.ktz.me"}
   - {ip: 10.42.1.10, custom_dns: "s.ktz.me"}
   - {ip: 10.42.1.42, custom_dns: "wiki.wd.ktz.me"}
   - {ip: 100.105.174.16, custom_dns: "gg.ktz.me"}
@@ -129,7 +129,7 @@ dhcp_reservations:
   #- {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.41, hostname: dell7050-1}
 
   ## zoidberg
-  - {mac: 6C:2B:59:DC:F8:08, ip: 10.42.0.42, hostname: zoidberg, custom_dns: ["z"]}
+  #- {mac: 6C:2B:59:DC:F8:08, ip: 10.42.0.42, hostname: zoidberg, custom_dns: ["z"]}
 
 
   ## zoidbergOG - dell 7050-2
