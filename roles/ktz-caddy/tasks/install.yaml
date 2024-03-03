@@ -1,8 +1,8 @@
 ---
 
 - name: download latest release
-  get_url:                                                           
-    url: "{{ caddy_amd64_linux_cloudflare_binary_url }}"                       
+  get_url:
+    url: "{{ caddy_amd64_linux_cloudflare_binary_url }}"
     dest: /usr/local/bin/caddy
     owner: root
     group: root

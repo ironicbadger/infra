@@ -27,6 +27,3 @@
     enabled: yes
     state: reloaded
     daemon_reload: yes
-
-
--
