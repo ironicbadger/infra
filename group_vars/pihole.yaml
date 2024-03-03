@@ -81,11 +81,11 @@ dns_overrides:
   - {ip: 10.42.0.252, custom_dns: "dns.wd.ktz.me"}
   - {ip: 10.42.0.252, custom_dns: "zoidberg.wd.ktz.me"}
   - {ip: 10.42.0.252, custom_dns: "immich.wd.ktz.me"}
-  #- {ip: 10.42.0.251, custom_dns: "ipmi.m.wd.ktz.me"}
-  #- {ip: 10.42.0.251, custom_dns: "ipmi.anton.wd.ktz.me"}
   - {ip: 10.42.1.99, custom_dns: "hass.ktz.me"}
+  - {ip: 10.42.0.40, custom_dns: "ipmi.dt.wd.ktz.me"}
   - {ip: 10.42.0.42, custom_dns: "nc.ktz.cloud"}
   - {ip: 10.42.0.42, custom_dns: "git.ktz.me"}
+  - {ip: 10.42.0.43, custom_dns: "px.dt.ktz.me"}
   - {ip: 10.42.1.10, custom_dns: "s.ktz.me"}
   - {ip: 10.42.1.42, custom_dns: "wiki.wd.ktz.me"}
   - {ip: 100.105.174.16, custom_dns: "gg.ktz.me"}
@@ -116,7 +116,7 @@ dhcp_reservations:
   ## Deep Thought
   - {mac: ec:0d:9a:b2:5a:00, ip: 10.42.0.40, hostname: deepthought-ipmi}
   - {mac: 7c:c2:55:e0:08:12, ip: 10.42.0.41, hostname: deepthought-nic1}
-  - {mac: be:3a:f2:b6:05:9f, ip: 10.42.0.42, hostname: deepthought, custom_dns: ["dt"]} #10g sfp+
+  - {mac: be:3a:f2:b6:05:9f, ip: 10.42.0.42, hostname: deepthought, custom_dns: ["dt", "jf"]} #10g sfp+
 
   ## morpheus - PRIMARY SERVER
   - {mac: D0:50:99:DC:4D:D5, ip: 10.42.1.10, hostname: morpheus, custom_dns: ["m"]} #eno1
@@ -209,7 +209,7 @@ dhcp_reservations:
   ## cameras (Wyze, PoE)
   #- {mac: 00:8e:25:73:02:1e, ip: 10.42.2.1, hostname: blueiris}
   - {mac: f4:39:09:44:1d:d5, ip: 10.42.2.1, hostname: blueiris}
-  
+
   - {mac: 9c:8e:cd:22:2b:ff, ip: 10.42.2.10, hostname: amcrest-driveway-left}
   - {mac: ec:71:db:ba:75:13, ip: 10.42.2.11, hostname: reolink-driveway-right}
   #- {mac: ec:71:db:ba:75:13, ip: 10.42.2.12, hostname: reolink-?}
