@@ -21,14 +21,14 @@
 ## core
 
 # c137
-c137.{{ domain_wd_me }} {
-  reverse_proxy https://10.42.0.1:8006 {
-    transport http {
-      tls_insecure_skip_verify
-    }
-  }
-  import cloudflare
-}
+# c137.{{ domain_wd_me }} {
+#   reverse_proxy https://10.42.0.1:8006 {
+#     transport http {
+#       tls_insecure_skip_verify
+#     }
+#   }
+#   import cloudflare
+# }
 
 # pihole
 dns.{{ domain_wd_me }} {
@@ -37,12 +37,12 @@ dns.{{ domain_wd_me }} {
   import cloudflare
 }
 
-# dhcp
-dhcp.{{ domain_wd_me }} {
-  redir / /dhcp.leases
-  reverse_proxy http://10.42.0.253:81
-  import cloudflare
-}
+# # dhcp
+# dhcp.{{ domain_wd_me }} {
+#   redir / /dhcp.leases
+#   reverse_proxy http://10.42.0.253:81
+#   import cloudflare
+# }
 
 #opnsense
 opnsense.{{ domain_wd_me }} {
@@ -59,31 +59,17 @@ immich.wd.ktz.me {
   reverse_proxy http://10.42.0.42:2283
   import cloudflare
 }
-immich.ktz.cloud {
-  reverse_proxy http://10.42.0.42:2283
-  import cloudflare
-}
 
 # abs
 abs.wd.ktz.me {
   reverse_proxy http://10.42.0.42:2284
   import cloudflare
 }
-abs.ts.ktz.me {
-  reverse_proxy http://10.42.0.42:2284
-  import cloudflare
-}
-
-# jellyfin
-jellyfin.ts.ktz.me {
-  reverse_proxy http://10.42.0.42:2285
-  import cloudflare
-}
 
 ## proxmox
-# px morpheus
+# px wd
 px.{{ domain_wd_me }} {
-  reverse_proxy https://10.42.1.10:8006 {
+  reverse_proxy https://10.42.0.42:8006 {
     transport http {
       tls_insecure_skip_verify
     }
@@ -91,9 +77,9 @@ px.{{ domain_wd_me }} {
   import cloudflare
 }
 
-# px morpheus
-px.m.{{ domain_wd_me }} {
-  reverse_proxy https://10.42.1.10:8006 {
+# px dt
+px.dt.{{ domain_wd_me }} {
+  reverse_proxy https://10.42.0.42:8006 {
     transport http {
       tls_insecure_skip_verify
     }
@@ -112,7 +98,7 @@ px.anton.{{ domain_wd_me }} {
 }
 
 # zoidberg
-zoidberg.{{ domain_wd_me }} {
+px.z.{{ domain_wd_me }} {
   reverse_proxy https://10.42.1.42:8006 {
     transport http {
       tls_insecure_skip_verify
