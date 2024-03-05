@@ -30,7 +30,7 @@ containers:
       - "{{ dnsmasq_config_dir }}:/etc/dnsmasq.d"
     cap_add:
       - NET_ADMIN
-    restart: unless-stopped    
+    restart: unless-stopped
 ###
   - service_name: unifi
     active: true
