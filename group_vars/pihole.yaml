@@ -112,10 +112,10 @@ dhcp_reservations:
   ## Deep Thought
   - {mac: 7c:c2:55:e0:09:15, ip: 10.42.0.40, hostname: deepthought-ipmi}
   - {mac: 7c:c2:55:e0:08:12, ip: 10.42.0.41, hostname: deepthought-nic1}
-  - {mac: be:3a:f2:b6:05:9f, ip: 10.42.0.42, hostname: deepthought, custom_dns: ["dt", "jf"]} #10g sfp+
+  - {mac: be:3a:f2:b6:05:9f, ip: 10.42.0.42, hostname: deepthought, custom_dns: ["dt"]} #10g sfp+
 
   ## morpheus - PRIMARY SERVER
-  - {mac: D0:50:99:DC:4D:D5, ip: 10.42.1.10, hostname: morpheus, custom_dns: ["m"]} #eno1
+  - {mac: D0:50:99:DC:4D:D5, ip: 10.42.1.10, hostname: morpheus, custom_dns: ["m", "jf"]} #eno1
   - {mac: D0:50:99:F2:D9:38, ip: 10.42.1.11, hostname: morpheus-ipmi}
 
   ## anton - BACKUP SERVER
