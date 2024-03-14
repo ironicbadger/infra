@@ -57,8 +57,13 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      - role: ironicbadger.docker_compose_generator
-        tags: compose
+      - role: ktz-htop
+      - role: grog.package
+      - role: geerlingguy.docker
+      - role: ironicbadger.bash_aliases
+      - role: ironicbadger.figurine
+      # - role: ironicbadger.docker_compose_generator
+      #   tags: compose
 
   # - hosts: morpheus
   #   vars_files:

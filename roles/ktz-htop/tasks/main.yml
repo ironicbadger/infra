@@ -12,5 +12,5 @@
 
 - name: install htoprc in ansible run user home dir
   ansible.builtin.copy:
-    src: htoprc
+    src: "{{ htoprc_filename }}"
     dest: "~/.config/htop/htoprc"
