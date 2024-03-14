@@ -10,7 +10,7 @@ bash_aliases:
   - { alias: "dtail", command: "docker logs -tf --tail='50' "}
   - { alias: "dstop", command: "docker stop `docker ps -aq`"}
   - { alias: "drm", command: "docker rm `docker ps -aq`"}
-  - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml "}
+  - { alias: "dcp", command: "docker compose -f ~/docker-compose.yml "}
   - { alias: "dcporph", command: "docker-compose -f ~/docker-compose.yml --remove-orphans "}
   - { alias: "dprune", command: "docker image prune"}
   - { alias: "dprunesys", command: "docker system prune --all"}
