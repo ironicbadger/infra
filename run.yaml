@@ -62,8 +62,8 @@
       - role: geerlingguy.docker
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
-      # - role: ironicbadger.docker_compose_generator
-      #   tags: compose
+      - role: ironicbadger.docker_compose_generator
+        tags: compose
 
   # - hosts: morpheus
   #   vars_files:
