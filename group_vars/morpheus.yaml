@@ -15,7 +15,7 @@ storage_path: /mnt/jbod
 local_domain: "wd.{{ domain_me }}"
 
 docker_compose_generator_uid: "1000"
-docker_compose_generator_gid: "100"
+docker_compose_generator_gid: "1000"
 global_env_vars:
   - "PUID={{ docker_compose_generator_uid }}"
   - "PGID={{ docker_compose_generator_gid }}"
@@ -38,7 +38,7 @@ containers:
       - --accesslog=false
       - --api.insecure=true
       - --providers.docker=true
-      - --providers.docker.exposedbydefault=true
+      - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
@@ -65,6 +65,7 @@ containers:
     devices:
       - /dev/dri:/dev/dri
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.jellyfin.rule=Host(`jf.{{ local_domain }}`)"
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
     ports:
@@ -83,6 +84,8 @@ containers:
     active: true
     image: plexinc/pms-docker
     network_mode: host
+    labels:
+      - traefik.enable=false
     devices:
       - /dev/dri:/dev/dri
     volumes:
@@ -96,6 +99,7 @@ containers:
     active: true
     image: advplyr/audiobookshelf
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.audiobookshelf.rule=Host(`abs.{{ local_domain }}`)"
     # ports:
     #   - 2284:80
@@ -110,12 +114,13 @@ containers:
   ### Media Apps
   ###
   - service_name: sabnzbd
-    active: true
+    active: false
     image: lscr.io/linuxserver/sabnzbd
     volumes:
       - "{{ appdata_path }}/arrmatey/sabnzbd:/config"
       - "{{ download_path }}:/downloads"
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.{{ local_domain }}`)"
     include_global_env_vars: true
     restart: unless-stopped
@@ -130,13 +135,16 @@ containers:
       - "{{ appdata_path }}/apps/smokeping/config:/config"
       - "{{ appdata_path }}/apps/smokeping/data:/data"
     labels:
-      - "traefik.http.routers.smokeping.rule=Host(`smokeping.m.{{ local_domain }}`)"
+      - traefik.enable=true
+      - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ local_domain }}`)"
     include_global_env_vars: true
     restart: unless-stopped
   ###
   - service_name: librespeed
     active: true
     image: lscr.io/linuxserver/librespeed
+    labels:
+      - traefik.enable=false
     ports:
       - 8008:80
     environment:
