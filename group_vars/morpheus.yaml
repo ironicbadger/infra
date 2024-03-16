@@ -12,7 +12,8 @@ htoprc_filename: htoprc-morpheus
 appdata_path: /mnt/appdata
 download_path: /mnt/downloads
 storage_path: /mnt/jbod
-local_domain: "wd.{{ domain_me }}"
+wd_domain_me: "wd.{{ domain_me }}"
+m_wd_domain_me: "m.{{ wd_domain_me }}"
 
 docker_compose_generator_uid: "1000"
 docker_compose_generator_gid: "1000"
@@ -66,7 +67,7 @@ containers:
       - /dev/dri:/dev/dri
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.jellyfin.rule=Host(`jf.{{ local_domain }}`)"
+      - "traefik.http.routers.jellyfin.rule=Host(`jf.{{ wd_domain_me }}`)"
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
     ports:
       - 2285:8096
@@ -76,7 +77,7 @@ containers:
       # ram transcode
       - /dev/shm:/transcode
     environment:
-      - "JELLYFIN_PublishedServerUrl=jf.{{ local_domain }}"
+      - "JELLYFIN_PublishedServerUrl=jf.{{ wd_domain_me }}"
     include_global_env_vars: true
     restart: unless-stopped
   ###
@@ -100,9 +101,9 @@ containers:
     image: advplyr/audiobookshelf
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.audiobookshelf.rule=Host(`abs.{{ local_domain }}`)"
-    # ports:
-    #   - 2284:80
+      - "traefik.http.routers.audiobookshelf.rule=Host(`abs.{{ wd_domain_me }}`)"
+    ports: # shared via caddy and tailscale
+      - 2284:80
     volumes:
       - "{{ storage_path }}/audiobooks/library:/audiobooks:ro"
       - "{{ storage_path }}/audiobooks/library2:/audiobooks2:ro"
@@ -113,15 +114,58 @@ containers:
 
   ### Media Apps
   ###
+  ###
+  - service_name: prowlarr
+    active: true
+    image: lscr.io/linuxserver/prowlarr:develop
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.{{ m_wd_domain_me }}`)"
+    volumes:
+      - "{{ appdata_path }}/arrmatey/prowlarr:/config"
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
   - service_name: sabnzbd
-    active: false
+    active: true
     image: lscr.io/linuxserver/sabnzbd
     volumes:
       - "{{ appdata_path }}/arrmatey/sabnzbd:/config"
       - "{{ download_path }}:/downloads"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.{{ local_domain }}`)"
+      - "traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.{{ m_wd_domain_me }}`)"
+    depends_on:
+      - prowlarr
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: sonarr
+    active: true
+    image: lscr.io/linuxserver/sonarr
+    depends_on:
+      - sabnzbd
+      - prowlarr
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.{{ m_wd_domain_me }}`)"
+    volumes:
+      - "{{ appdata_path }}/arrmatey/sonarr:/config"
+      - "{{ download_path }}/complete/tv:/downloads/complete/tv"
+      - /mnt/jbod/tv:/tv
+    include_global_env_vars: true
+    restart: unless-stopped
+  ###
+  - service_name: radarr
+    active: true
+    image: lscr.io/linuxserver/radarr
+    volumes:
+      - "{{ appdata_path }}/arrmatey/radarr:/config"
+      - "{{ download_path }}/complete/movies:/downloads/complete/movies"
+      - /mnt/jbod/movies:/movies
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.radarr.rule=Host(`radarr.{{ m_wd_domain_me }}`)"
     include_global_env_vars: true
     restart: unless-stopped
 
@@ -136,7 +180,7 @@ containers:
       - "{{ appdata_path }}/apps/smokeping/data:/data"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ local_domain }}`)"
+      - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ m_wd_domain_me }}`)"
     include_global_env_vars: true
     restart: unless-stopped
   ###
