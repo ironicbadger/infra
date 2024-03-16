@@ -12,6 +12,7 @@ htoprc_filename: htoprc-morpheus
 appdata_path: /mnt/appdata
 download_path: /mnt/downloads
 storage_path: /mnt/jbod
+bigrust18_path: /mnt/bigrust18
 wd_domain_me: "wd.{{ domain_me }}"
 m_wd_domain_me: "m.{{ wd_domain_me }}"
 
@@ -74,6 +75,7 @@ containers:
     volumes:
       - "{{ appdata_path }}/mediaservers/jellyfin:/config"
       - "{{ storage_path }}:/data:ro"
+      - "{{ bigrust18_path }}/media:/bigrust18/media:ro"
       # ram transcode
       - /dev/shm:/transcode
     environment:
@@ -91,8 +93,10 @@ containers:
       - /dev/dri:/dev/dri
     volumes:
       - "{{ appdata_path }}/mediaservers/plex/config:/config"
-      - "{{ appdata_path }}/mediaservers/plex/transcode:/transcode"
       - "{{ storage_path }}:/data:ro"
+      - "{{ bigrust18_path }}/media:/bigrust18/media:ro"
+      # ram transcode
+      - /dev/shm:/transcode"
     include_global_env_vars: true
     restart: unless-stopped
   ###
@@ -105,9 +109,9 @@ containers:
     ports: # shared via caddy and tailscale
       - 2284:80
     volumes:
-      - "{{ storage_path }}/audiobooks/library:/audiobooks:ro"
-      - "{{ storage_path }}/audiobooks/library2:/audiobooks2:ro"
-      - "{{ storage_path }}/audiobooks/podcasts:/podcasts"
+      - "{{ bigrust18_path }}/media/audiobooks/library:/audiobooks:ro"
+      - "{{ bigrust18_path }}/media/audiobooks/library2:/audiobooks2:ro"
+      - "{{ bigrust18_path }}/media/audiobooks/podcasts:/podcasts"
       - "{{ appdata_path }}/mediaservers/audiobookshelf/metadata:/metadata"
       - "{{ appdata_path }}/mediaservers/audiobookshelf/config:/config"
     restart: unless-stopped
