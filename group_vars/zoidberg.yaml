@@ -159,3 +159,15 @@ containers:
     volumes:
       - "{{ appdata_path }}/tclip:/data"
     restart: unless-stopped
+  ###
+  - service_name: netboot
+    active: true
+    image: lscr.io/linuxserver/netbootxyz
+    volumes:
+      - /mnt/data/share/iso/template/iso:/assets
+    ports:
+      - 3000:3000
+      - 69:69/udp
+      - 3001:80
+    include_global_env_vars: true
+    restart: unless-stopped
