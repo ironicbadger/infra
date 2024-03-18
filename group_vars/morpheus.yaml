@@ -172,6 +172,17 @@ containers:
       - "traefik.http.routers.radarr.rule=Host(`radarr.{{ m_wd_domain_me }}`)"
     include_global_env_vars: true
     restart: unless-stopped
+  ###
+  - service_name: jellyseerr
+    active: true
+    image: fallenbagel/jellyseerr:latest
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.jellyseerr.rule=Host(`jellyseerr.{{ m_wd_domain_me }}`)"
+      #- traefik.http.services.jellyseerr.loadbalancer.server.port=5055
+    volumes:
+      - "{{ appdata_path }}/arrmatey/jellyseerr:/app/config"
+    restart: unless-stopped
 
   ### Monitoring and Tools
   ###
