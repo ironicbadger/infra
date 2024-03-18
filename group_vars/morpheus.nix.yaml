@@ -3,7 +3,7 @@
 # the only configuration that should be present here is the
 # docker-compose role generator container definitions
 
-ntp_timzone: "America/New_York"
+ntp_timezone: "America/New_York"
 
 # ironicbadger.docker_compose_generator
 appdata_path: /mnt/appdata
