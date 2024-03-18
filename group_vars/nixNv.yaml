@@ -1,0 +1,83 @@
+---
+# morpheus is now running on nixOS
+# the only configuration that should be present here is the
+# docker-compose role generator container definitions
+
+ntp_timezone: "America/New_York"
+
+# ironicbadger.docker_compose_generator
+wd_domain_me: "wd.{{ domain_me }}"
+nv_wd_domain_me: "nv.{{ wd_domain_me }}"
+
+appdata_path: /home/alex/appdata
+docker_compose_generator_uid: "1000"
+docker_compose_generator_gid: "100"
+global_env_vars:
+  - "PUID={{ docker_compose_generator_uid }}"
+  - "PGID={{ docker_compose_generator_gid }}"
+  - "TZ={{ ntp_timezone }}"
+
+containers:
+  ### Administrative
+  ###
+  - service_name: tr
+    active: true
+    image: traefik
+    container_name: tr
+    labels:
+      - traefik.enable=false
+    ports:
+      - 80:80
+      - 443:443
+    command:
+      - --log.level=info
+      - --accesslog=false
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls.certresolver=cloudflare
+      - --certificatesresolvers.cloudflare.acme.dnschallenge=true
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      - "--certificatesresolvers.cloudflare.acme.email={{ cloudflare_account_email }}"
+      - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
+      - --serversTransport.insecureSkipVerify=true
+    volumes:
+      - "{{ appdata_path }}/apps/traefik/letsencrypt:/letsencrypt"
+      - /run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
+      - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
+    restart: unless-stopped
+
+### AI and Machine Learning
+  - service_name: ollama
+    active: true
+    image: ollama/ollama
+    ports:
+      - 11434:11434
+    volumes:
+      - "{{ appdata_path }}/apps/ollama:/root/.ollama"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+    restart: unless-stopped
+  - service_name: openwebui
+    active: true
+    image: ghcr.io/open-webui/open-webui:main
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ollamawebui.rule=Host(`ollama.{{ nv_wd_domain_me }}`)"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    ports:
+      - 8080:8080
+    volumes:
+      - "{{ appdata_path }}/apps/open-webui:/app/backend/data"
+    restart: unless-stopped

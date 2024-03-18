@@ -360,6 +360,8 @@ dhcp_reservations:
   - {mac: 5c:c5:d4:db:65:1e, ip: 10.42.3.113, hostname: x240-wifi}
   - {mac: b4:c2:6a:9a:1f:8c, ip: 10.42.3.114, hostname: garmin-catalyst}
 
+## VMs etc
+  - {mac: BC:24:11:CE:06:DE, ip: 10.42.6.100, hostname: nixNv, custom_dns: ["nv"]}
 
 ## BLOCKED until identity confirmed
 

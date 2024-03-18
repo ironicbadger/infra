@@ -65,6 +65,13 @@
       - role: ironicbadger.docker_compose_generator
         tags: compose
 
+  - hosts: nixNv
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ironicbadger.docker_compose_generator
+        tags: compose
+
   # - hosts: morpheus
   #   vars_files:
   #     - 'vars/vault.yaml'
