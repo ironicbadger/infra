@@ -39,31 +39,12 @@ package_list:
   - name: xfsprogs
   - name: zfsutils-linux
 
-# ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
-bash_aliases:
-  - { alias: "dtail", command: "docker logs -tf --tail='50' " }
-  - { alias: "dstop", command: "docker stop `docker ps -aq`" }
-  - { alias: "drm", command: "docker rm `docker ps -aq`" }
-  - { alias: "dcp", command: "docker compose -f ~/docker-compose.yml "}
-  - { alias: "dcporph", command: "docker compose -f ~/docker-compose.yml up -d --remove-orphans" }
-  - { alias: "dprune", command: "docker image prune" }
-  - { alias: "dprunesys", command: "docker system prune --all" }
-  - { alias: "dtop", command: "docker run --name ctop  -it --rm -v /var/run/docker.sock:/var/run/docker.sock quay.io/vektorlab/ctop" }
-  - { alias: "appdata", command: "cd /mnt/nvme2tb/appdata" }
-  - { alias: "zspace", command: "zfs list -o space" }
-  - { alias: "zsnap", command: "zfs list -o space | sort -k4 --human-numeric-sort" }
-  - { alias: "dfclean", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 | sort -k 6" }
-  - { alias: "dffull", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs" }
-  - { alias: "hdtemp", command: "sudo hddtemp -q /dev/sd[a,b,c,d,e,f,g,h,i,j,k,l,m,n]" }
-  - { alias: "nvmetemp", command: "for i in {0..5}; do nvme smart-log /dev/nvme'$i'n1 | grep temperature; done;" }
-  - { alias: "itop", command: "sudo intel_gpu_top" }
-
 # ironicbadger.docker_compose_generator
 appdata_path: /mnt/appdata
 download_path: /mnt/downloads
 storage_path: /mnt/storage
-wd_domain: "wd.{{ domain_me }}"
-dt_domain: "dt.{{ wd_domain }}"
+wd_domain_me: "wd.{{ domain_me }}"
+dt_domain_me: "dt.{{ wd_domain_me }}"
 
 containers:
   ### Administrative
@@ -71,151 +52,34 @@ containers:
   - service_name: tr
     active: true
     image: traefik
+    container_name: tr
+    labels:
+      - traefik.enable=false
     ports:
       - 80:80
       - 443:443
-    extra_hosts:
-      - host.docker.internal:172.17.0.1
+    command:
+      - --log.level=info
+      - --accesslog=false
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls.certresolver=cloudflare
+      - --certificatesresolvers.cloudflare.acme.dnschallenge=true
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      - "--certificatesresolvers.cloudflare.acme.email={{ cloudflare_account_email }}"
+      - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
+      - --serversTransport.insecureSkipVerify=true
+    volumes:
+      - "{{ appdata_path }}/apps/traefik/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
     environment:
       - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
       - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
-    volumes:
-      - "{{ appdata_path }}/apps/traefik:/etc/traefik"
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    restart: unless-stopped
-  ### Media Servers
-  ###
-  - service_name: jellyfin
-    active: true
-    image: jellyfin/jellyfin
-    hostname: us-rdu
-    devices:
-      - /dev/dri:/dev/dri
-    labels:
-      - "traefik.http.routers.jellyfin.rule=Host(`jf.{{ wd_domain }}`)"
-      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
-    ports:
-      - 2285:8096
-    volumes:
-      - "{{ appdata_path }}/mediaservers/jellyfin:/config"
-      - "{{ storage_path }}:/data:ro"
-      # ram transcode
-      - /dev/shm:/transcode
-    environment:
-      - "JELLYFIN_PublishedServerUrl=jf.{{ wd_domain }}"
-    include_global_env_vars: true
-    restart: unless-stopped
-
-  ### jellystat
-  - service_name: jellystat-db
-    active: false
-    image: postgres:15.2
-    ports:
-      - 3030:3030
-    volumes:
-      - "{{ appdata_path }}/databases/jellystatdb:/var/lib/postgresql/data"
-    environment:
-      - "POSTGRES_DB={{ jellystat_db_name }}"
-      - "POSTGRES_USER={{ jellystat_db_user }}"
-      - "POSTGRES_PASSWORD={{ jellystat_db_pass }}"
-    restart: unless-stopped
-  - service_name: jellystat
-    active: false
-    image: cyfershepard/jellystat:latest
-    labels:
-      - "traefik.http.routers.jellystat.rule=Host(`jellystat.{{ dt_domain }}`)"
-    volumes:
-      - "{{ appdata_path }}/mediaservers/jellystat:/app/backend/backup-data "
-    environment:
-      - "POSTGRES_USER={{ jellystat_db_user }}"
-      - "POSTGRES_PASSWORD={{ jellystat_db_pass }}"
-      - POSTGRES_IP=jellystat-db
-      - "POSTGRES_PORT=5432"
-      - "JWT_SECRET={{ jellystat_jwt_secret }}"
-    restart: unless-stopped
-  ###
-  - service_name: plex
-    active: true
-    image: plexinc/pms-docker
-    network_mode: host
-    devices:
-      - /dev/dri:/dev/dri
-    labels:
-      - "traefik.http.routers.plex.rule=Host(`plex.{{ dt_domain }}`)"
-      - traefik.http.services.plex.loadbalancer.server.port=32400
-    volumes:
-      - "{{ appdata_path }}/mediaservers/plex/config:/config"
-      - "{{ storage_path }}:/data:ro"
-    include_global_env_vars: true
-    restart: unless-stopped
-  ###
-  - service_name: abs
-    active: true
-    image: advplyr/audiobookshelf
-    labels:
-      - "traefik.http.routers.audiobookshelf.rule=Host(`abs.{{ dt_domain }}`)"
-      - traefik.http.services.audiobookshelf.loadbalancer.server.port=80
-    ports:
-      - 2284:80
-    volumes:
-      - "{{ storage_path }}/audiobooks/library:/audiobooks:ro"
-      - "{{ storage_path }}/audiobooks/library2:/audiobooks2:ro"
-      - "{{ storage_path }}/audiobooks/podcasts:/podcasts"
-      - "{{ appdata_path }}/mediaservers/audiobookshelf/metadata:/metadata"
-      - "{{ appdata_path }}/mediaservers/audiobookshelf/config:/config"
-    restart: unless-stopped
-  ### Media Acquisition
-  ###
-  - service_name: nzbget
-    active: true
-    image: lscr.io/linuxserver/nzbget
-    labels:
-      - "traefik.http.routers.nzbget.rule=Host(`nzbget.{{ dt_domain }}`)"
-      - "traefik.http.routers.nzbgetapi.rule=Host(`nzbgetapi.{{ dt_domain }}`)"
-    volumes:
-      - "{{ appdata_path }}/arrmatey/nzbget/config:/config"
-      - "{{ download_path }}:/downloads"
-    include_global_env_vars: true
-    restart: unless-stopped
-  ###
-  - service_name: prowlarr
-    active: true
-    image: lscr.io/linuxserver/prowlarr:develop
-    labels:
-      - "traefik.http.routers.prowlarr.rule=Host(`prowlarr.{{ dt_domain }}`)"
-    volumes:
-      - "{{ appdata_path }}/arrmatey/prowlarr:/config"
-    include_global_env_vars: true
-    restart: unless-stopped
-  ###
-  - service_name: sonarr
-    active: true
-    image: lscr.io/linuxserver/sonarr
-    depends_on:
-      - nzbget
-      - prowlarr
-    labels:
-      - "traefik.http.routers.sonarr.rule=Host(`sonarr.{{ dt_domain }}`)"
-    volumes:
-      - "{{ appdata_path }}/arrmatey/sonarr:/config"
-      - "{{ download_path }}/complete/tv:/downloads/complete/tv"
-      - /mnt/jbod/tv:/tv
-    include_global_env_vars: true
-    restart: unless-stopped
-  ###
-  - service_name: radarr
-    active: true
-    image: lscr.io/linuxserver/radarr
-    depends_on:
-      - nzbget
-      - prowlarr
-    volumes:
-      - "{{ appdata_path }}/arrmatey/radarr:/config"
-      - "{{ download_path }}/complete/movies:/downloads/complete/movies"
-      - /mnt/jbod/movies:/movies
-    labels:
-      - "traefik.http.routers.radarr.rule=Host(`radarr.{{ dt_domain }}`)"
-    include_global_env_vars: true
     restart: unless-stopped
 
   ### Data Services
@@ -231,6 +95,7 @@ containers:
     environment:
       - REDIS_HOST=redisnc
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.nc.rule=Host(`nc.{{ domain_cloud }}`)"
     volumes:
       - "{{ appdata_path }}/apps/nextcloud:/var/www/html"
@@ -254,7 +119,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: gitea
-    active: true
+    active: false
     image: gitea/gitea
     depends_on:
       - mysql
@@ -278,7 +143,7 @@ containers:
       - '"2222:2222"'
     restart: unless-stopped
   - service_name: gitea-runner
-    active: true
+    active: false
     image: gitea/act_runner:nightly
     depends_on:
       - gitea
@@ -291,10 +156,10 @@ containers:
     restart: unless-stopped
   ###
   - service_name: ninja_nginx
-    active: true
+    active: false
     image: nginx
     labels:
-      - "traefik.http.routers.ninja.rule=Host(`ninja.{{ dt_domain }}`)"
+      - "traefik.http.routers.ninja.rule=Host(`ninja.{{ dt_domain_me }}`)"
     volumes:
       - "{{ appdata_path }}/apps/invoiceninja/ninja.conf:/etc/nginx/conf.d/default.conf:ro"
       - "{{ appdata_path }}/apps/invoiceninja/storage:/var/www/app/storage"
@@ -302,7 +167,7 @@ containers:
       - "{{ appdata_path }}/apps/invoiceninja/public:/var/www/app/public"
     restart: unless-stopped
   - service_name: invoiceninja
-    active: true
+    active: false
     image: invoiceninja/invoiceninja:4.5.18
     depends_on:
       - mysql
@@ -333,10 +198,10 @@ containers:
     restart: unless-stopped
 ###
   - service_name: mealie
-    active: true
+    active: false
     image: hkotel/mealie:v0.5.1
     labels:
-      - traefik.http.routers.mealie.rule=Host(`mealie.{{ dt_domain }}`)
+      - traefik.http.routers.mealie.rule=Host(`mealie.{{ dt_domain_me }}`)
     environment:
       - DB_TYPE=sqlite
     volumes:
@@ -344,23 +209,23 @@ containers:
     restart: unless-stopped
 ###
   - service_name: freshrss
-    active: true
+    active: false
     image: lscr.io/linuxserver/freshrss:latest
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.freshrss.rule=Host(`freshrss.{{ dt_domain }}`)"
+      - "traefik.http.routers.freshrss.rule=Host(`freshrss.{{ dt_domain_me }}`)"
     volumes:
       - "{{ appdata_path }}/apps/freshrss:/config"
     include_global_env_vars: true
     restart: unless-stopped
 ###
   - service_name: wallabag
-    active: true
+    active: false
     image: wallabag/wallabag
     labels:
-      - "traefik.http.routers.wallabag.rule=Host(`wallabag.{{ dt_domain }}`)"
+      - "traefik.http.routers.wallabag.rule=Host(`wallabag.{{ dt_domain_me }}`)"
     environment:
-      - "SYMFONY__ENV__DOMAIN_NAME=https://wallabag.{{ dt_domain }}"
+      - "SYMFONY__ENV__DOMAIN_NAME=https://wallabag.{{ dt_domain_me }}"
       - "SYMFONY__ENV__DATABASE_DRIVER=pdo_sqlite"
     volumes:
       - "{{ appdata_path }}/apps/wallabag:/var/www/wallabag/data"
@@ -368,10 +233,10 @@ containers:
     restart: unless-stopped
 ###
   - service_name: stirlingpdf
-    active: true
+    active: false
     image: frooodle/s-pdf:latest
     labels:
-      - "traefik.http.routers.stirling.rule=Host(`pdf.{{ dt_domain }}`)"
+      - "traefik.http.routers.stirling.rule=Host(`pdf.{{ dt_domain_me }}`)"
     volumes:
       - "{{ appdata_path }}/apps/stirlingpdf/configs:/configs"
       - "{{ appdata_path }}/apps/stirlingpdf/ocr-data:/usr/share/tesseract-ocr/5/tessdata"
@@ -390,12 +255,12 @@ containers:
       - "{{ appdata_path }}/databases/smokeping/config:/config"
       - "{{ appdata_path }}/databases/smokeping/data:/data"
     labels:
-      - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ dt_domain }}`)"
+      - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ dt_domain_me }}`)"
     include_global_env_vars: true
     restart: unless-stopped
   ###
   - service_name: prometheus-igpu
-    active: true
+    active: false
     image: restreamio/intel-prometheus
     ports:
       - 9101:8080
@@ -413,17 +278,5 @@ containers:
       - MODE=standalone
       - TELEMETRY=true
       - "PASSWORD={{ librespeed_password }}"
-    include_global_env_vars: true
-    restart: unless-stopped
-  ###
-  - service_name: netboot
-    active: true
-    image: lscr.io/linuxserver/netbootxyz
-    volumes:
-      - /mnt/disk3/proxmox/template/iso:/assets
-    ports:
-      - 3000:3000
-      - 69:69/udp
-      - 3001:80
     include_global_env_vars: true
     restart: unless-stopped
