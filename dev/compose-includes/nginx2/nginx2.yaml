@@ -1,0 +1,7 @@
+---
+services:
+  nginx2:
+    image: nginx
+    container_name: nginx2
+    ports:
+      - 8877:80

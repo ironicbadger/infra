@@ -1,0 +1,5 @@
+---
+
+include:
+  - nginx1/nginx1.yaml
+  - nginx2/nginx2.yaml
