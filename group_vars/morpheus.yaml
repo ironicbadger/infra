@@ -5,9 +5,6 @@
 
 ntp_timezone: "America/New_York"
 
-# ktz.htop
-htoprc_filename: htoprc-morpheus
-
 # ironicbadger.docker_compose_generator
 appdata_path: /mnt/appdata
 download_path: /mnt/downloads
