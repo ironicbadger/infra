@@ -60,12 +60,15 @@
       - role: ktz-htop
       - role: ironicbadger.docker_compose_generator
         tags: compose
-      # - role: grog.package
-      # - role: geerlingguy.docker
-      # - role: ironicbadger.bash_aliases
-      # - role: ironicbadger.figurine
 
-  - hosts: nixNv
+  - hosts: nix-app
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ironicbadger.docker_compose_generator
+        tags: compose
+
+  - hosts: nix-nvllama
     vars_files:
       - 'vars/vault.yaml'
     roles:
