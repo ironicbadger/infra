@@ -367,8 +367,9 @@ dhcp_reservations:
   - {mac: b4:c2:6a:9a:1f:8c, ip: 10.42.3.114, hostname: garmin-catalyst}
 
 ## VMs etc
-  - {mac: BC:24:11:CE:06:DE, ip: 10.42.6.100, hostname: nix-nvllama, custom_dns: ["nv"]}
-  - {mac: BC:24:11:71:71:BB, ip: 10.42.6.101, hostname: nix-dev}
+  - {mac: BC:24:11:71:71:BB, ip: 10.42.6.100, hostname: nix-dev}
+  - {mac: BC:24:11:AF:13:6E, ip: 10.42.6.101, hostname: nix-app}
+  - {mac: BC:24:11:CE:06:DE, ip: 10.42.6.102, hostname: nix-nvllama, custom_dns: ["nv"]}
 
 ## BLOCKED until identity confirmed
 
