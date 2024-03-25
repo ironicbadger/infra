@@ -255,6 +255,7 @@ containers:
       - "{{ appdata_path }}/databases/smokeping/config:/config"
       - "{{ appdata_path }}/databases/smokeping/data:/data"
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ dt_domain_me }}`)"
     include_global_env_vars: true
     restart: unless-stopped
