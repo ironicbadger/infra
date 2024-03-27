@@ -53,11 +53,10 @@
       - role: ktz-traefik
         tags: compose
 
-  - hosts: morpheus
+  - hosts: morphnix
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      - role: ktz-htop
       - role: ironicbadger.docker_compose_generator
         tags: compose
 

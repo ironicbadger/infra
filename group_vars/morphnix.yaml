@@ -160,6 +160,8 @@ containers:
   - service_name: radarr
     active: true
     image: lscr.io/linuxserver/radarr
+    depends_on:
+      - sabnzbd
     volumes:
       - "{{ appdata_path }}/arrmatey/radarr:/config"
       - "{{ download_path }}/complete/movies:/downloads/complete/movies"
@@ -169,6 +171,22 @@ containers:
       - "traefik.http.routers.radarr.rule=Host(`radarr.{{ m_wd_domain_me }}`)"
     include_global_env_vars: true
     restart: unless-stopped
+  ###
+  - service_name: lidarr
+    active: true
+    image: lscr.io/linuxserver/lidarr
+    depends_on:
+      - sabnzbd
+    volumes:
+      - "{{ appdata_path }}/arrmatey/lidarr:/config"
+      - "{{ download_path }}/complete/music:/downloads/complete/music"
+      - "{{ download_path }}/intermediate/music:/downloads-amd"
+      - /mnt/bigrust18/media/music/flac:/music
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.lidarr.rule=Host(`lidarr.{{ m_wd_domain_me }}`)"
+    restart: unless-stopped
+    include_global_env_vars: true
   ###
   - service_name: jellyseerr
     active: true
