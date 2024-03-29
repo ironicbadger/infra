@@ -76,47 +76,67 @@ pxe_server_ip: 10.42.1.42 #zoidberg
 
 dns_overrides:
   # try to use sparingly and must be FQDN
-  - {ip: 10.42.0.252, custom_dns: "wd.ktz.me"}
-  - {ip: 10.42.0.252, custom_dns: "opnsense.wd.ktz.me"}
-  - {ip: 10.42.0.252, custom_dns: "dns.wd.ktz.me"}
-  - {ip: 10.42.0.252, custom_dns: "zoidberg.wd.ktz.me"}
-  - {ip: 10.42.0.252, custom_dns: "immich.wd.ktz.me"}
-  - {ip: 10.42.1.99, custom_dns: "hass.ktz.me"}
-  - {ip: 10.42.0.42, custom_dns: "nc.ktz.cloud"}
-  - {ip: 10.42.0.42, custom_dns: "git.ktz.me"}
-  - {ip: 10.42.0.43, custom_dns: "px.dt.ktz.me"}
-  - {ip: 10.42.1.42, custom_dns: "wiki.wd.ktz.me"}
-  - {ip: 100.105.174.16, custom_dns: "gg.ktz.me"}
-  - {ip: 10.42.0.250, custom_dns: "unifi"}
+  - {ip: 10.42.0.252, custom_dns: "wd.ktz.me"} # catch-all for caddy
+  - {ip: 10.42.0.252, custom_dns: "opnsense.wd.ktz.me"} # overrides named node
+  - {ip: 10.42.0.252, custom_dns: "zoidberg.wd.ktz.me"} # overrides named node
+  #- {ip: 10.42.0.252, custom_dns: "dns.wd.ktz.me"}
+  #- {ip: 10.42.0.252, custom_dns: "immich.wd.ktz.me"}
+  - {ip: 10.42.1.99, custom_dns: "hass.ktz.me"} # for mqtt
+  - {ip: 10.42.1.42, custom_dns: "nc.ktz.cloud"}
+  - {ip: 10.42.1.42, custom_dns: "git.ktz.me"}
+  - {ip: 10.42.0.250, custom_dns: "unifi"} # overrides fqdn of named node
   - {ip: 10.42.0.250, custom_dns: "inform.unifi.wd.ktz.me"}
-  - {ip: 192.168.44.254, custom_dns: "gg.ktz.me"}
-
-  #- {ip: 192.168.16.254, custom_dns: "nr.ktz.me"}
+  #- {ip: 192.168.44.254, custom_dns: "gg.ktz.me"}
 
 dhcp_reservations:
+  ########################################
   # CORE INFRA
   ## FIREWALL
   - {mac: 70:54:d2:45:9d:86, ip: 10.42.0.254, hostname: opnsense, custom_dns: ["opnsense.firewall"]}
+
+  ## zoidbergOG - dell 7050-2
+  - {mac: E4:B9:7A:FB:3E:53, ip: 10.42.0.42, hostname: zoidberg, custom_dns: ["z"]}
+  ### zoidberg services
+  - {mac: FA:4C:95:A5:72:39, ip: 10.42.0.250, hostname: unifi}
+  - {mac: CE:87:AE:C2:BB:AE, ip: 10.42.0.251, hostname: nginx}
+  - {mac: 7E:23:21:86:2C:43, ip: 10.42.0.252, hostname: caddy}
+  - {mac: FE:31:84:32:25:A3, ip: 10.42.0.253, hostname: pihole}
+
+  # pikvm
+  - {mac: dc:a6:32:b1:16:27, ip: 10.42.0.100, hostname: pi8} #pi4 8gb pikvm
+  - {mac: 38:3b:26:7f:21:cd, ip: 10.42.0.77, hostname: tesmart-8port-hdmi-switch}
+
+  ########################################
+  # PSEUDO-PROD
+  ## morpheus - PRIMARY MEDIA SERVER
+  - {mac: D0:50:99:DC:4D:D5, ip: 10.42.1.10, hostname: morpheus, custom_dns: ["m", "jf"]} #eno1
+  - {mac: D0:50:99:F2:D9:38, ip: 10.42.1.11, hostname: morpheus-ipmi}
+
+  ## Deep Thought - PRIMARY HOMELAB SERVER
+  - {mac: 7c:c2:55:e0:09:15, ip: 10.42.1.40, hostname: deepthought-ipmi}
+  - {mac: 7c:c2:55:e0:08:12, ip: 10.42.1.41, hostname: deepthought-nic1}
+  - {mac: be:3a:f2:b6:05:9f, ip: 10.42.1.42, hostname: deepthought, custom_dns: ["dt"]} #10g sfp+
+
+  ## 45HL
+  - {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.1.50, hostname: hl15-ipmi}
+  - {mac: 3c:ec:ef:0e:d3:dd, ip: 10.42.1.51, hostname: hl15-10g1}
+  #- {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.0.52, hostname: hl15-10g2}
+
+  ## Home Assistant
+  - {mac: b8:85:84:b5:84:55, ip: 10.42.1.99, hostname: ha} #dell7050
+
+  ## Important VMs etc
+  - {mac: BC:24:11:70:3C:05, ip: 10.42.1.13, hostname: nix-app}
+  - {mac: BC:24:11:71:71:BB, ip: 10.42.1.100, hostname: nix-dev}
+  - {mac: BC:24:11:CE:06:DE, ip: 10.42.1.101, hostname: nix-nvllama, custom_dns: ["nv"]}
+
+  ########################################
+  ## RETIRED / TESTING ONLY
   ## c137
   - {mac: 7C:2B:E1:13:84:D7, ip: 10.42.0.1, hostname: c137}
   #- {mac: 7C:2B:E1:13:84:D8, ip: 10.42.0.1, hostname: c137}
   #- {mac: 7C:2B:E1:13:84:D9, ip: WAN, hostname: opnsenseWAN} # WAN DHCP - passed through
   #- {mac: 7C:2B:E1:13:84:DA, ip: 10.42.0.254, hostname: opnsense, custom_dns: ["opnsense.c137"]} # LAN - passed through
-  ### c137 services
-  - {mac: FA:4C:95:A5:72:39, ip: 10.42.0.250, hostname: unifi}
-  - {mac: CE:87:AE:C2:BB:AE, ip: 10.42.0.251, hostname: nginx}
-  - {mac: 7E:23:21:86:2C:43, ip: 10.42.0.252, hostname: caddy}
-  - {mac: FE:31:84:32:25:A3, ip: 10.42.0.253, hostname: pihole}
-  - {mac: b8:85:84:b5:84:55, ip: 10.42.1.99, hostname: ha} #dell7050
-
-  ## Deep Thought
-  - {mac: 7c:c2:55:e0:09:15, ip: 10.42.0.40, hostname: deepthought-ipmi}
-  - {mac: 7c:c2:55:e0:08:12, ip: 10.42.0.41, hostname: deepthought-nic1}
-  - {mac: be:3a:f2:b6:05:9f, ip: 10.42.0.42, hostname: deepthought, custom_dns: ["dt"]} #10g sfp+
-
-  ## morpheus - PRIMARY SERVER
-  - {mac: D0:50:99:DC:4D:D5, ip: 10.42.1.10, hostname: morpheus, custom_dns: ["m", "jf"]} #eno1
-  - {mac: D0:50:99:F2:D9:38, ip: 10.42.1.11, hostname: morpheus-ipmi}
 
   ## anton - BACKUP SERVER
   - {mac: D0:50:99:DB:B2:2D, ip: 10.42.1.20, hostname: anton} #eno1
@@ -125,22 +145,10 @@ dhcp_reservations:
   ## m1 - TEST SERVER
   - {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.30, hostname: m1}
 
-  ## bender - dell 7050-1
-  #- {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.41, hostname: dell7050-1}
+  ## zoidbergNG
+  #- {mac: 6C:2B:59:DC:F8:08, ip: 10.42.0.42, hostname: zoidberg, custom_dns: ["z"]} #i5 8500t
 
-  ## zoidberg
-  #- {mac: 6C:2B:59:DC:F8:08, ip: 10.42.0.42, hostname: zoidberg, custom_dns: ["z"]}
-
-
-  ## zoidbergOG - dell 7050-2
-  - {mac: E4:B9:7A:FB:3E:53, ip: 10.42.1.42, hostname: zoidberg, custom_dns: ["z"]}
-
-  ## 45HL
-  - {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.1.50, hostname: hl15-ipmi}
-  - {mac: 3c:ec:ef:0e:d3:dd, ip: 10.42.1.51, hostname: hl15-10g1}
-  #- {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.1.50, hostname: hl15-10g2}
-
-  #########
+  ########################################
   ## networking equipment
   ### wifi
   - {mac: ac:8b:a9:57:82:61, ip: 10.42.0.110, hostname: unifi-u6-pro-bonus}
@@ -169,21 +177,17 @@ dhcp_reservations:
   ### home automation controllers
   - {mac: 40:22:d8:15:24:3b, ip: 10.42.0.140, hostname: tubeszb-zigbee}
 
-  ########
+  ########################################
   ## video equipment
   - {mac: 7c:2e:0d:1a:29:69, ip: 10.42.0.150, hostname: atem-mini-pro-iso}
 
-  #########
-  ## misc servers
+  ########################################
+  ## misc
   - {mac: e4:5f:01:08:89:ca, ip: 10.42.1.80, hostname: octopi-bricktop} #pi4 4gb
   #- {mac: e4:5f:01:08:be:cb, ip: 10.42.0.100, hostname: pi4-2gb} #pi4 2gb
   - {mac: b8:27:eb:2f:ee:4f, ip: 10.42.1.83, hostname: basement-nut-pi3} #pi3
   - {mac: 38:60:77:0d:ee:6d, ip: 10.42.1.84, hostname: gavinbelson} #wallpc
   - {mac: b8:27:eb:4a:f1:82, ip: 10.42.1.85, hostname: inkycal-bonus}
-
-  # pikvm
-  - {mac: dc:a6:32:b1:16:27, ip: 10.42.0.100, hostname: pi8} #pi4 8gb pikvm
-  - {mac: 38:3b:26:7f:21:cd, ip: 10.42.0.77, hostname: tesmart-8port-hdmi-switch}
 
   #########
   ## audio equipment
@@ -192,19 +196,19 @@ dhcp_reservations:
 
   #########
   ## media players and TVs
-  - {mac: 48:b0:2d:05:2b:61, ip: 10.42.1.100, hostname: shield-bonus}
-  - {mac: 00:04:4b:48:e5:f1, ip: 10.42.1.101, hostname: shield-lounge}
-  - {mac: cc:a1:2b:6e:18:d7, ip: 10.42.1.102, hostname: roku-kitchen-tv}
-  - {mac: 9c:95:61:3b:4c:e5, ip: 10.42.1.103, hostname: roku-livingroom-tv}
-  - {mac: ec:0b:ae:98:c8:2b, ip: 10.42.1.105, hostname: broadlink-remote-bonus}
-  - {mac: 00:18:dd:06:8d:4c, ip: 10.42.1.106, hostname: hdhomerun}
-  - {mac: 00:09:b0:61:88:45, ip: 10.42.1.107, hostname: living-room-avr-onkyo}
-  - {mac: c0:95:6d:64:e8:ce, ip: 10.42.1.108, hostname: living-room-apple-tv}
-  - {mac: a4:cf:99:aa:85:b5, ip: 10.42.1.109, hostname: master-bathroom-homepod-mini}
-  #- {mac: c0:95:6d:64:e8:ce, ip: 10.42.1.110, hostname: kitchen-homepod}
-  - {mac: 74:40:be:ac:99:de, ip: 10.42.1.111, hostname: lgc9-bonus-tv-ethernet}
-  - {mac: 20:17:42:88:67:bb, ip: 10.42.1.112, hostname: lgc9-bonus-tv-wifi}
-  - {mac: ec:0b:ae:99:1d:13, ip: 10.42.1.113, hostname: broadlink-garage-minisplit}
+  - {mac: 48:b0:2d:05:2b:61, ip: 10.42.1.150, hostname: shield-bonus}
+  - {mac: 00:04:4b:48:e5:f1, ip: 10.42.1.151, hostname: shield-lounge}
+  - {mac: cc:a1:2b:6e:18:d7, ip: 10.42.1.152, hostname: roku-kitchen-tv}
+  - {mac: 9c:95:61:3b:4c:e5, ip: 10.42.1.153, hostname: roku-livingroom-tv}
+  - {mac: ec:0b:ae:98:c8:2b, ip: 10.42.1.155, hostname: broadlink-remote-bonus}
+  - {mac: 00:18:dd:06:8d:4c, ip: 10.42.1.156, hostname: hdhomerun}
+  - {mac: 00:09:b0:61:88:45, ip: 10.42.1.157, hostname: living-room-avr-onkyo}
+  - {mac: c0:95:6d:64:e8:ce, ip: 10.42.1.158, hostname: living-room-apple-tv}
+  - {mac: a4:cf:99:aa:85:b5, ip: 10.42.1.159, hostname: master-bathroom-homepod-mini}
+  #- {mac: c0:95:6d:64:e8:ce, ip: 10.42.1.160, hostname: kitchen-homepod}
+  - {mac: 74:40:be:ac:99:de, ip: 10.42.1.161, hostname: lgc9-bonus-tv-ethernet}
+  - {mac: 20:17:42:88:67:bb, ip: 10.42.1.162, hostname: lgc9-bonus-tv-wifi}
+  - {mac: ec:0b:ae:99:1d:13, ip: 10.42.1.163, hostname: broadlink-garage-minisplit}
 
   #########
   ## cameras (Wyze, PoE)
@@ -364,10 +368,7 @@ dhcp_reservations:
   - {mac: 5c:c5:d4:db:65:1e, ip: 10.42.3.113, hostname: x240-wifi}
   - {mac: b4:c2:6a:9a:1f:8c, ip: 10.42.3.114, hostname: garmin-catalyst}
 
-## VMs etc
-  - {mac: BC:24:11:71:71:BB, ip: 10.42.6.100, hostname: nix-dev}
-  - {mac: BC:24:11:70:3C:05, ip: 10.42.6.101, hostname: nix-app}
-  - {mac: BC:24:11:CE:06:DE, ip: 10.42.6.102, hostname: nix-nvllama, custom_dns: ["nv"]}
+
 
 ## BLOCKED until identity confirmed
 
