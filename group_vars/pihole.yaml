@@ -33,7 +33,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: unifi
-    active: true
+    active: false
     image: linuxserver/unifi-controller
     ports:
       - 8443:8443
@@ -54,7 +54,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: smokeping
-    active: true
+    active: false
     image: linuxserver/smokeping
     hostname: pi8
     ports:
@@ -222,8 +222,6 @@ dhcp_reservations:
   - {mac: ec:71:db:b2:15:60, ip: 10.42.2.18, hostname: reolink-garage1}
   - {mac: ec:71:db:82:fb:5b, ip: 10.42.2.19, hostname: reolink-nursery}
 
-
-
   - {mac: 80:91:33:d1:90:f7, ip: 10.42.2.110, hostname: ezviz-doorbell}
   - {mac: d0:3f:27:4e:90:ca, ip: 10.42.2.111, hostname: wyze-bonus}
   - {mac: 2c:aa:8e:fa:36:53, ip: 10.42.2.112, hostname: wyze-nursery}
@@ -300,7 +298,7 @@ dhcp_reservations:
   - {mac: 50:ec:50:10:ac:fe, ip: 10.42.5.173, hostname: robovac_downstairs}
   - {mac: 50:ec:50:18:ae:7a, ip: 10.42.5.174, hostname: robovac_upstairs}
   - {mac: b4:e6:2d:4e:47:01, ip: 10.42.5.175, hostname: eufy-vac}
-  
+
   ## Voice assistant boxes
   - {mac: 50:f5:da:03:38:94, ip: 10.42.5.180, hostname: amazon-echo-garage}
   - {mac: 20:1f:3b:89:da:6a, ip: 10.42.5.181, hostname: google-privacy-invasion-device1}
@@ -310,7 +308,7 @@ dhcp_reservations:
   - {mac: 1c:f2:9a:6b:9c:b8, ip: 10.42.5.185, hostname: google-display-bedroom}
   # - {mac: 50:f5:da:03:38:94, ip: 10.42.5.186, hostname: google-privacy-invasion-device6}
   - {mac: ac:bc:b5:c9:fc:3b, ip: 10.42.5.187, hostname: homepod-kitchen}
-  
+
 
   ## LG Appliances
   - {mac: 74:40:be:c4:79:cf, ip: 10.42.5.197, hostname: lg-washer}
@@ -324,9 +322,9 @@ dhcp_reservations:
   - {mac: 5c:e5:0c:e1:77:b7, ip: 10.42.5.203, hostname: yeelink_bonus_tv_corner} #TODO: where?
   - {mac: 7c:49:eb:19:93:53, ip: 10.42.5.204, hostname: yeelink_bonus_drum_rgb}
 
-  ## Elgato 
+  ## Elgato
   - {mac: 3c:6a:9d:19:06:d5, ip: 10.42.5.205, hostname: elgato_keylight_left} #d9fe
-  #- {mac: 7c:49:eb:19:93:53, ip: 10.42.5.206, hostname: elgato_keylight_right} 
+  #- {mac: 7c:49:eb:19:93:53, ip: 10.42.5.206, hostname: elgato_keylight_right}
 
   ## Govee
   - {mac: d4:ad:fc:22:e7:02, ip: 10.42.5.210, hostname: govee-ledstick-bonus-corner}
@@ -368,7 +366,7 @@ dhcp_reservations:
 
 ## VMs etc
   - {mac: BC:24:11:71:71:BB, ip: 10.42.6.100, hostname: nix-dev}
-  - {mac: BC:24:11:AF:13:6E, ip: 10.42.6.101, hostname: nix-app}
+  - {mac: BC:24:11:70:3C:05, ip: 10.42.6.101, hostname: nix-app}
   - {mac: BC:24:11:CE:06:DE, ip: 10.42.6.102, hostname: nix-nvllama, custom_dns: ["nv"]}
 
 ## BLOCKED until identity confirmed
