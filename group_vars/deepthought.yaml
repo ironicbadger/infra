@@ -156,9 +156,10 @@ containers:
     restart: unless-stopped
   ###
   - service_name: ninja_nginx
-    active: false
+    active: true
     image: nginx
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.ninja.rule=Host(`ninja.{{ dt_domain_me }}`)"
     volumes:
       - "{{ appdata_path }}/apps/invoiceninja/ninja.conf:/etc/nginx/conf.d/default.conf:ro"
@@ -167,7 +168,7 @@ containers:
       - "{{ appdata_path }}/apps/invoiceninja/public:/var/www/app/public"
     restart: unless-stopped
   - service_name: invoiceninja
-    active: false
+    active: true
     image: invoiceninja/invoiceninja:4.5.18
     depends_on:
       - mysql
@@ -196,6 +197,10 @@ containers:
       - REQUIRE_HTTPS=true
       - "TRUSTED_PROXIES='*'"
     restart: unless-stopped
+###
+
+
+
 ###
   - service_name: mealie
     active: false
