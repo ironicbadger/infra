@@ -102,6 +102,10 @@ dhcp_reservations:
   - {mac: 7E:23:21:86:2C:43, ip: 10.42.0.252, hostname: caddy}
   - {mac: FE:31:84:32:25:A3, ip: 10.42.0.253, hostname: pihole}
 
+  ## Home Assistant
+  #- {mac: b8:85:84:b5:84:55, ip: 10.42.1.99, hostname: ha} #dell7050
+  - {mac: 02:1D:38:2D:95:55, ip: 10.42.1.99, hostname: ha} # vm on zoidberg
+
   # pikvm
   - {mac: dc:a6:32:b1:16:27, ip: 10.42.0.100, hostname: pi8} #pi4 8gb pikvm
   - {mac: 38:3b:26:7f:21:cd, ip: 10.42.0.77, hostname: tesmart-8port-hdmi-switch}
@@ -121,9 +125,6 @@ dhcp_reservations:
   - {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.1.50, hostname: hl15-ipmi}
   - {mac: 3c:ec:ef:0e:d3:dd, ip: 10.42.1.51, hostname: hl15-10g1}
   #- {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.0.52, hostname: hl15-10g2}
-
-  ## Home Assistant
-  - {mac: b8:85:84:b5:84:55, ip: 10.42.1.99, hostname: ha} #dell7050
 
   ## Important VMs etc
   - {mac: BC:24:11:70:3C:05, ip: 10.42.1.13, hostname: nix-app}
