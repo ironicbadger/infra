@@ -72,7 +72,7 @@ dhcp_range_start: 10.42.7.100
 dhcp_range_end: 10.42.7.250
 dhcp_router: 10.42.0.254
 dhcp_active: "true"
-pxe_server_ip: 10.42.1.42 #zoidberg
+pxe_server_ip: 10.42.0.42 #zoidberg
 
 dns_overrides:
   # try to use sparingly and must be FQDN
@@ -116,6 +116,11 @@ dhcp_reservations:
   - {mac: D0:50:99:DC:4D:D5, ip: 10.42.1.10, hostname: morpheus, custom_dns: ["m", "jf"]} #eno1
   - {mac: D0:50:99:F2:D9:38, ip: 10.42.1.11, hostname: morpheus-ipmi}
 
+  ## meeseeks - PRIMARY MEDIA SERVER
+  - {mac: 3c:ec:ef:36:a8:83, ip: 10.42.1.20, hostname: meeseeks-ipmi}
+  #- {mac: D0:50:99:F2:D9:38, ip: 10.42.1.21, hostname: meeseeks-nic1}
+  #- {mac: D0:50:99:F2:D9:38, ip: 10.42.1.22, hostname: meeseeks-10g}
+
   ## Deep Thought - PRIMARY HOMELAB SERVER
   - {mac: 7c:c2:55:e0:09:15, ip: 10.42.1.40, hostname: deepthought-ipmi}
   - {mac: 7c:c2:55:e0:08:12, ip: 10.42.1.41, hostname: deepthought-nic1}
@@ -140,11 +145,11 @@ dhcp_reservations:
   #- {mac: 7C:2B:E1:13:84:DA, ip: 10.42.0.254, hostname: opnsense, custom_dns: ["opnsense.c137"]} # LAN - passed through
 
   ## anton - BACKUP SERVER
-  - {mac: D0:50:99:DB:B2:2D, ip: 10.42.1.20, hostname: anton} #eno1
-  - {mac: D0:50:99:F2:8F:57, ip: 10.42.1.21, hostname: anton-ipmi}
+  - {mac: D0:50:99:DB:B2:2D, ip: 10.42.1.60, hostname: anton} #eno1
+  - {mac: D0:50:99:F2:8F:57, ip: 10.42.1.61, hostname: anton-ipmi}
 
   ## m1 - TEST SERVER
-  - {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.30, hostname: m1}
+  - {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.70, hostname: m1}
 
   ## zoidbergNG
   #- {mac: 6C:2B:59:DC:F8:08, ip: 10.42.0.42, hostname: zoidberg, custom_dns: ["z"]} #i5 8500t
