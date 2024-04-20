@@ -206,6 +206,7 @@ containers:
       - immich
     volumes:
       - "/mnt/bigrust20/photos/alex/immich/uploads:/usr/src/app/upload"
+      - /mnt/bigrust20/photos/alex/images:/mnt/bigrust20/photos/alex/images:ro
       - "/etc/localtime:/etc/localtime:ro"
     ports:
       - 2283:3001
@@ -225,11 +226,14 @@ containers:
   - service_name: immich-microservices
     active: true
     image: "ghcr.io/immich-app/immich-server:{{ immich_version }}"
+    devices:
+      - /dev/dri:/dev/dri
     command:
       - start.sh
       - microservices
     volumes:
       - "/mnt/bigrust20/photos/alex/immich/uploads:/usr/src/app/upload"
+      - /mnt/bigrust20/photos/alex/images:/mnt/bigrust20/photos/alex/images:ro
       - "/etc/localtime:/etc/localtime:ro"
     environment:
       - "DB_PASSWORD={{ immich_db_password }}"
