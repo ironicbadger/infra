@@ -197,9 +197,70 @@ containers:
       - REQUIRE_HTTPS=true
       - "TRUSTED_PROXIES='*'"
     restart: unless-stopped
-###
-
-
+  ###
+  - service_name: immich-server
+    active: true
+    image: "ghcr.io/immich-app/immich-server:{{ immich_version }}"
+    command:
+      - start.sh
+      - immich
+    volumes:
+      - "/mnt/bigrust20/photos/alex/immich/uploads:/usr/src/app/upload"
+      - "/etc/localtime:/etc/localtime:ro"
+    ports:
+      - 2283:3001
+    environment:
+      - "IMMICH_VERSION={{ immich_version }}"
+      - "UPLOAD_LOCATION={{ immich_upload_location }}"
+      - "DB_PASSWORD={{ immich_db_password }}"
+      - "DB_USERNAME={{ immich_db_username }}"
+      - "DB_DATABASE_NAME={{ immich_db_name }}"
+      - "DB_DATA_LOCATION={{ immich_db_location }}"
+      - "REDIS_HOSTNAME={{ immich_redis_hostname}}"
+      - "DB_HOSTNAME={{ immich_db_hostname}}"
+    depends_on:
+      - immich-redis
+      - immich-database
+    restart: unless-stopped
+  - service_name: immich-microservices
+    active: true
+    image: "ghcr.io/immich-app/immich-server:{{ immich_version }}"
+    command:
+      - start.sh
+      - microservices
+    volumes:
+      - "/mnt/bigrust20/photos/alex/immich/uploads:/usr/src/app/upload"
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      - "DB_PASSWORD={{ immich_db_password }}"
+      - "DB_USERNAME={{ immich_db_username }}"
+      - "DB_DATABASE_NAME={{ immich_db_name }}"
+      - "REDIS_HOSTNAME={{ immich_redis_hostname}}"
+      - "DB_HOSTNAME={{ immich_db_hostname}}"
+    depends_on:
+      - immich-redis
+      - immich-database
+    restart: unless-stopped
+  - service_name: immich-machine-learning
+    active: true
+    image: "ghcr.io/immich-app/immich-machine-learning:{{ immich_version }}"
+    volumes:
+      - "{{ appdata_path }}/databases/immich/model-cache:/cache"
+    restart: unless-stopped
+  - service_name: immich-redis
+    active: true
+    image: registry.hub.docker.com/library/redis:6.2-alpine@sha256:84882e87b54734154586e5f8abd4dce69fe7311315e2fc6d67c29614c8de2672
+    restart: unless-stopped
+  - service_name: immich-database
+    active: true
+    image: registry.hub.docker.com/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
+    environment:
+      - "POSTGRES_PASSWORD={{ immich_db_password }}"
+      - "POSTGRES_USER={{ immich_db_username }}"
+      - "POSTGRES_DB={{ immich_db_name }}"
+    volumes:
+      - "{{ appdata_path }}/databases/immich/db:/var/lib/postgresql/data"
+    restart: unless-stopped
 
 ###
   - service_name: mealie
