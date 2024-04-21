@@ -198,9 +198,29 @@ containers:
       - "TRUSTED_PROXIES='*'"
     restart: unless-stopped
   ###
+  - service_name: immich-ts
+    active: true
+    image: tailscale/tailscale
+    hostname: immich
+    environment:
+      - "TS_AUTHKEY={{ tailscale_immich_authkey }}?ephemeral=false"
+      - "TS_EXTRA_ARGS=--advertise-tags=tag:container --reset"
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    ports:
+      - 2283:3001
+    volumes:
+      - "{{ appdata_path }}/apps/immich/tailscale/state:/var/lib/tailscale"
+      - "{{ appdata_path }}/apps/immich/tailscale/config:/config"
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
   - service_name: immich-server
     active: true
     image: "ghcr.io/immich-app/immich-server:{{ immich_version }}"
+    network_mode: service:immich-ts
     command:
       - start.sh
       - immich
@@ -208,8 +228,6 @@ containers:
       - "/mnt/bigrust20/photos/alex/immich/uploads:/usr/src/app/upload"
       - /mnt/bigrust20/photos/alex/images:/mnt/bigrust20/photos/alex/images:ro
       - "/etc/localtime:/etc/localtime:ro"
-    ports:
-      - 2283:3001
     environment:
       - "IMMICH_VERSION={{ immich_version }}"
       - "UPLOAD_LOCATION={{ immich_upload_location }}"
@@ -246,7 +264,7 @@ containers:
       - immich-database
     restart: unless-stopped
   - service_name: immich-machine-learning
-    active: true
+    active: false
     image: "ghcr.io/immich-app/immich-machine-learning:{{ immich_version }}"
     volumes:
       - "{{ appdata_path }}/databases/immich/model-cache:/cache"

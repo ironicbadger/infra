@@ -134,7 +134,7 @@ dhcp_reservations:
   ## Important VMs etc
   - {mac: BC:24:11:70:3C:05, ip: 10.42.1.13, hostname: nix-app}
   - {mac: BC:24:11:71:71:BB, ip: 10.42.1.100, hostname: nix-dev}
-  - {mac: BC:24:11:CE:06:DE, ip: 10.42.1.101, hostname: nix-nvllama, custom_dns: ["nv"]}
+  - {mac: BC:24:11:65:D7:CD, ip: 10.42.1.101, hostname: nix-nvllama, custom_dns: ["nv"]}
 
   ########################################
   ## RETIRED / TESTING ONLY
