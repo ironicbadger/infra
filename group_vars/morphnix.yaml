@@ -198,6 +198,18 @@ containers:
     volumes:
       - "{{ appdata_path }}/arrmatey/jellyseerr:/app/config"
     restart: unless-stopped
+  ###
+  - service_name: ersatztv
+    active: true
+    image: jasongdove/ersatztv:latest-vaapi
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ersatz.rule=Host(`ersatz.{{ m_wd_domain_me }}`)"
+    volumes:
+      - "{{ appdata_path }}/mediaservers/ersatztv:/root/.local/share/ersatztv"
+      - "/mnt/jbod:/mnt/jbod:ro"
+    include_global_env_vars: true
+    restart: unless-stopped
 
   ### Monitoring and Tools
   ###
