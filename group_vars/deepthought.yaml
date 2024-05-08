@@ -74,6 +74,7 @@ containers:
       - "--certificatesresolvers.cloudflare.acme.email={{ cloudflare_account_email }}"
       - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
       - --serversTransport.insecureSkipVerify=true
+      - --core.defaultRuleSyntax=v2
     volumes:
       - "{{ appdata_path }}/apps/traefik/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -286,10 +287,11 @@ containers:
 
 ###
   - service_name: mealie
-    active: false
+    active: true
     image: hkotel/mealie:v0.5.1
     labels:
-      - traefik.http.routers.mealie.rule=Host(`mealie.{{ dt_domain_me }}`)
+      - traefik.enable=true
+      - traefik.http.routers.mealie.rule=Host(`mealie.{{ wd_domain_me }}`)
     environment:
       - DB_TYPE=sqlite
     volumes:
@@ -297,7 +299,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: freshrss
-    active: false
+    active: true
     image: lscr.io/linuxserver/freshrss:latest
     labels:
       - traefik.enable=true
@@ -308,9 +310,10 @@ containers:
     restart: unless-stopped
 ###
   - service_name: wallabag
-    active: false
+    active: true
     image: wallabag/wallabag
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.wallabag.rule=Host(`wallabag.{{ dt_domain_me }}`)"
     environment:
       - "SYMFONY__ENV__DOMAIN_NAME=https://wallabag.{{ dt_domain_me }}"
@@ -321,10 +324,11 @@ containers:
     restart: unless-stopped
 ###
   - service_name: stirlingpdf
-    active: false
+    active: true
     image: frooodle/s-pdf:latest
     labels:
-      - "traefik.http.routers.stirling.rule=Host(`pdf.{{ dt_domain_me }}`)"
+      - traefik.enable=true
+      - "traefik.http.routers.stirling.rule=Host(`pdf.{{ wd_domain_me }}`)"
     volumes:
       - "{{ appdata_path }}/apps/stirlingpdf/configs:/configs"
       - "{{ appdata_path }}/apps/stirlingpdf/ocr-data:/usr/share/tesseract-ocr/5/tessdata"
