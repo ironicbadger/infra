@@ -107,6 +107,11 @@ px.z.{{ domain_wd_me }} {
   import cloudflare
 }
 
+ha.wd.ktz.me {
+  reverse_proxy http://10.42.1.99:8123
+  import cloudflare
+}
+
 # blue iris
 bi.{{ domain_wd_me }} {
   reverse_proxy http://10.42.2.1:83
