@@ -120,7 +120,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: gitea
-    active: false
+    active: true
     image: gitea/gitea
     depends_on:
       - mysql
@@ -138,13 +138,14 @@ containers:
     volumes:
       - "{{ appdata_path }}/apps/gitea:/data"
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.git.rule=Host(`git.{{ domain_me }}`)"
       - traefik.http.services.git.loadbalancer.server.port=3000
     ports:
       - '"2222:2222"'
     restart: unless-stopped
   - service_name: gitea-runner
-    active: false
+    active: true
     image: gitea/act_runner:nightly
     depends_on:
       - gitea
