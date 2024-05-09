@@ -201,7 +201,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: immich-ts
-    active: true
+    active: false
     image: tailscale/tailscale
     hostname: immich
     environment:
@@ -222,7 +222,9 @@ containers:
   - service_name: immich-server
     active: true
     image: "ghcr.io/immich-app/immich-server:{{ immich_version }}"
-    network_mode: service:immich-ts
+    #network_mode: service:immich-ts
+    ports:
+      - 2283:3001
     command:
       - start.sh
       - immich
