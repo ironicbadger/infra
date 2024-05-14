@@ -98,7 +98,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: ktz-unifi
-    active: true
+    active: false
     image: lscr.io/linuxserver/unifi-controller
     labels:
       - traefik.enable=true
