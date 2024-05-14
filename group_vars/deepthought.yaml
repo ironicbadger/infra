@@ -51,7 +51,7 @@ containers:
   ###
   - service_name: tr
     active: true
-    image: traefik
+    image: traefik:2.11
     container_name: tr
     labels:
       - traefik.enable=false
@@ -74,7 +74,7 @@ containers:
       - "--certificatesresolvers.cloudflare.acme.email={{ cloudflare_account_email }}"
       - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
       - --serversTransport.insecureSkipVerify=true
-      - --core.defaultRuleSyntax=v2
+      #- --core.defaultRuleSyntax=v2
     volumes:
       - "{{ appdata_path }}/apps/traefik/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
