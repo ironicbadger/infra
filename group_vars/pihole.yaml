@@ -169,12 +169,13 @@ dhcp_reservations:
   ### fibre switches - 10gig sfp+
   - {mac: 60:22:32:59:ad:d5, ip: 10.42.0.120, hostname: unifi-usw-aggregation-bonus}
   - {mac: 60:22:32:59:ae:47, ip: 10.42.0.121, hostname: unifi-usw-aggregation-basement}
-  - {mac: f4:e2:c6:5b:d9:8d, ip: 10.42.0.122, hostname: unifi-usw-aggregation-bonus-desk}
+  - {mac: f4:e2:c6:5b:d9:8d, ip: 10.42.0.122, hostname: unifi-usw-aggregation-bonusrack}
   - {mac: f4:e2:c6:e5:4c:5d, ip: 10.42.0.130, hostname: unifi-usw-backoffice-pro8poe}
   ### poe switches
   - {mac: ac:8b:a9:a1:58:16, ip: 10.42.0.123, hostname: unifi-usw-24poe-bonus}
   - {mac: ac:8b:a9:a1:59:d8, ip: 10.42.0.124, hostname: unifi-usw-24poe-basement}
   - {mac: ac:8b:a9:68:63:2b, ip: 10.42.0.125, hostname: unifi-usw-lite-16poe-bonusdesk}
+  - {mac: f4:e2:c6:ae:4d:d0, ip: 10.42.0.132, hostname: unifi-usw-pro-max-16poe-bonusrack}
   ### other switches
   - {mac: 60:22:32:46:6f:c5, ip: 10.42.0.126, hostname: unifi-usw-flex-mini1-office}
   - {mac: 60:22:32:46:7f:d4, ip: 10.42.0.127, hostname: unifi-usw-flex-mini3-basement}
