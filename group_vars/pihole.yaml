@@ -272,7 +272,7 @@ dhcp_reservations:
   - {mac: 50:02:91:ec:a9:df, ip: 10.42.5.60, hostname: cfsp_bonus_sun}
   - {mac: 50:02:91:ec:a9:de, ip: 10.42.5.61, hostname: cfsp_driveway_wall_lights}
   - {mac: a8:48:fa:e3:57:03, ip: 10.42.5.62, hostname: cfsp_tinkerspace_uplights}
-  - {mac: 98:cd:ac:25:b5:01, ip: 10.42.5.63, hostname: cfsp_bricktop}
+  - {mac: 98:cd:ac:25:b5:01, ip: 10.42.5.63, hostname: cfsp_bonustv_ups}
   - {mac: 98:cd:ac:25:7b:35, ip: 10.42.5.64, hostname: cfsp_bonusdesk_testing}
   - {mac: e8:db:84:c9:40:00, ip: 10.42.5.65, hostname: cfsp_musicroom_dresser_lamp}
   - {mac: dc:4f:22:67:c3:80, ip: 10.42.5.66, hostname: cfsp_musicroom_piano_lamp}
