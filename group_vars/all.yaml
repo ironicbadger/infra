@@ -66,6 +66,8 @@ security_sudoers_passwordless:
 docker_compose_version: 1.29.2
 
 # ironicbadger.docker_compose_generator
+wd_domain_me: "wd.{{ domain_me }}"
+
 appdata_path: /opt/appdata
 global_env_vars:
   - "PUID={{ main_uid }}"

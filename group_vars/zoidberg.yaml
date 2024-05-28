@@ -12,7 +12,7 @@ containers:
 ###
   - service_name: traefik
     active: true
-    image: traefik
+    image: traefik:2.11
     container_name: tr
     labels:
       - traefik.enable=false
@@ -42,6 +42,21 @@ containers:
     environment:
       - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
       - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
+    restart: unless-stopped
+  ###
+  - service_name: dashy
+    active: true
+    image: lissy93/dashy
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.dashy.rule=Host(`home.{{ wd_domain_me }}`)"
+      - traefik.http.services.dashy.loadbalancer.server.port=8080
+      - traefik.http.routers.dashy.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/dashy/conf.yml:/app/user-data/conf.yml"
+    environment:
+      - NODE_ENV=production
+    include_global_env_vars: false
     restart: unless-stopped
   ###
   - service_name: influx
@@ -114,7 +129,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: bookstack
-    active: true
+    active: false
     image: linuxserver/bookstack
     depends_on:
       - bookstack_db
