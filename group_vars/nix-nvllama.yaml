@@ -53,6 +53,40 @@ containers:
       - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
     restart: unless-stopped
 
+### immich ML
+  - service_name: immich-machine-learning
+    active: true
+    image: ghcr.io/immich-app/immich-machine-learning:release-cuda
+    network_mode: service:immich-machine-learning-ts
+    volumes:
+      - "{{ appdata_path }}/apps/immich/cache:/cache"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+    restart: unless-stopped
+  - service_name: immich-machine-learning-ts
+    active: true
+    image: tailscale/tailscale
+    hostname: immich-machine-learning
+    environment:
+      - "TS_AUTHKEY={{ tailscale_immich_authkey }}?ephemeral=false"
+      - "TS_EXTRA_ARGS=--advertise-tags=tag:container --reset"
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    ports:
+      - 3003:3003
+    volumes:
+      - "{{ appdata_path }}/apps/immich/tailscale/state:/var/lib/tailscale"
+      - "{{ appdata_path }}/apps/immich/tailscale/config:/config"
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+
 ### AI and Machine Learning
   - service_name: ollama
     active: true

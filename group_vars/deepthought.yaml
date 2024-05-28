@@ -51,7 +51,7 @@ containers:
   ###
   - service_name: tr
     active: true
-    image: traefik
+    image: traefik:2.11
     container_name: tr
     labels:
       - traefik.enable=false
@@ -74,6 +74,7 @@ containers:
       - "--certificatesresolvers.cloudflare.acme.email={{ cloudflare_account_email }}"
       - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
       - --serversTransport.insecureSkipVerify=true
+      #- --core.defaultRuleSyntax=v2
     volumes:
       - "{{ appdata_path }}/apps/traefik/letsencrypt:/letsencrypt"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -119,7 +120,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: gitea
-    active: false
+    active: true
     image: gitea/gitea
     depends_on:
       - mysql
@@ -137,13 +138,14 @@ containers:
     volumes:
       - "{{ appdata_path }}/apps/gitea:/data"
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.git.rule=Host(`git.{{ domain_me }}`)"
       - traefik.http.services.git.loadbalancer.server.port=3000
     ports:
       - '"2222:2222"'
     restart: unless-stopped
   - service_name: gitea-runner
-    active: false
+    active: true
     image: gitea/act_runner:nightly
     depends_on:
       - gitea
@@ -197,16 +199,102 @@ containers:
       - REQUIRE_HTTPS=true
       - "TRUSTED_PROXIES='*'"
     restart: unless-stopped
-###
-
-
+  ###
+  - service_name: immich-ts
+    active: false
+    image: tailscale/tailscale
+    hostname: immich
+    environment:
+      - "TS_AUTHKEY={{ tailscale_immich_authkey }}?ephemeral=false"
+      - "TS_EXTRA_ARGS=--advertise-tags=tag:container --reset"
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    ports:
+      - 2283:3001
+    volumes:
+      - "{{ appdata_path }}/apps/immich/tailscale/state:/var/lib/tailscale"
+      - "{{ appdata_path }}/apps/immich/tailscale/config:/config"
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+  - service_name: immich-server
+    active: true
+    image: "ghcr.io/immich-app/immich-server:{{ immich_version }}"
+    #network_mode: service:immich-ts
+    ports:
+      - 2283:3001
+    command:
+      - start.sh
+      - immich
+    volumes:
+      - "/mnt/bigrust20/photos/alex/immich/uploads:/usr/src/app/upload"
+      - /mnt/bigrust20/photos/alex/images:/mnt/bigrust20/photos/alex/images:ro
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      - "IMMICH_VERSION={{ immich_version }}"
+      - "UPLOAD_LOCATION={{ immich_upload_location }}"
+      - "DB_PASSWORD={{ immich_db_password }}"
+      - "DB_USERNAME={{ immich_db_username }}"
+      - "DB_DATABASE_NAME={{ immich_db_name }}"
+      - "DB_DATA_LOCATION={{ immich_db_location }}"
+      - "REDIS_HOSTNAME={{ immich_redis_hostname}}"
+      - "DB_HOSTNAME={{ immich_db_hostname}}"
+    depends_on:
+      - immich-redis
+      - immich-database
+    restart: unless-stopped
+  - service_name: immich-microservices
+    active: true
+    image: "ghcr.io/immich-app/immich-server:{{ immich_version }}"
+    devices:
+      - /dev/dri:/dev/dri
+    command:
+      - start.sh
+      - microservices
+    volumes:
+      - "/mnt/bigrust20/photos/alex/immich/uploads:/usr/src/app/upload"
+      - /mnt/bigrust20/photos/alex/images:/mnt/bigrust20/photos/alex/images:ro
+      - "/etc/localtime:/etc/localtime:ro"
+    environment:
+      - "DB_PASSWORD={{ immich_db_password }}"
+      - "DB_USERNAME={{ immich_db_username }}"
+      - "DB_DATABASE_NAME={{ immich_db_name }}"
+      - "REDIS_HOSTNAME={{ immich_redis_hostname}}"
+      - "DB_HOSTNAME={{ immich_db_hostname}}"
+    depends_on:
+      - immich-redis
+      - immich-database
+    restart: unless-stopped
+  - service_name: immich-machine-learning
+    active: false
+    image: "ghcr.io/immich-app/immich-machine-learning:{{ immich_version }}"
+    volumes:
+      - "{{ appdata_path }}/databases/immich/model-cache:/cache"
+    restart: unless-stopped
+  - service_name: immich-redis
+    active: true
+    image: registry.hub.docker.com/library/redis:6.2-alpine@sha256:84882e87b54734154586e5f8abd4dce69fe7311315e2fc6d67c29614c8de2672
+    restart: unless-stopped
+  - service_name: immich-database
+    active: true
+    image: registry.hub.docker.com/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
+    environment:
+      - "POSTGRES_PASSWORD={{ immich_db_password }}"
+      - "POSTGRES_USER={{ immich_db_username }}"
+      - "POSTGRES_DB={{ immich_db_name }}"
+    volumes:
+      - "{{ appdata_path }}/databases/immich/db:/var/lib/postgresql/data"
+    restart: unless-stopped
 
 ###
   - service_name: mealie
-    active: false
+    active: true
     image: hkotel/mealie:v0.5.1
     labels:
-      - traefik.http.routers.mealie.rule=Host(`mealie.{{ dt_domain_me }}`)
+      - traefik.enable=true
+      - traefik.http.routers.mealie.rule=Host(`mealie.{{ wd_domain_me }}`)
     environment:
       - DB_TYPE=sqlite
     volumes:
@@ -214,7 +302,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: freshrss
-    active: false
+    active: true
     image: lscr.io/linuxserver/freshrss:latest
     labels:
       - traefik.enable=true
@@ -225,9 +313,10 @@ containers:
     restart: unless-stopped
 ###
   - service_name: wallabag
-    active: false
+    active: true
     image: wallabag/wallabag
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.wallabag.rule=Host(`wallabag.{{ dt_domain_me }}`)"
     environment:
       - "SYMFONY__ENV__DOMAIN_NAME=https://wallabag.{{ dt_domain_me }}"
@@ -238,10 +327,11 @@ containers:
     restart: unless-stopped
 ###
   - service_name: stirlingpdf
-    active: false
+    active: true
     image: frooodle/s-pdf:latest
     labels:
-      - "traefik.http.routers.stirling.rule=Host(`pdf.{{ dt_domain_me }}`)"
+      - traefik.enable=true
+      - "traefik.http.routers.stirling.rule=Host(`pdf.{{ wd_domain_me }}`)"
     volumes:
       - "{{ appdata_path }}/apps/stirlingpdf/configs:/configs"
       - "{{ appdata_path }}/apps/stirlingpdf/ocr-data:/usr/share/tesseract-ocr/5/tessdata"

@@ -102,6 +102,10 @@ dhcp_reservations:
   - {mac: 7E:23:21:86:2C:43, ip: 10.42.0.252, hostname: caddy}
   - {mac: FE:31:84:32:25:A3, ip: 10.42.0.253, hostname: pihole}
 
+  ## Home Assistant
+  #- {mac: b8:85:84:b5:84:55, ip: 10.42.1.99, hostname: ha} #dell7050
+  - {mac: 02:1D:38:2D:95:55, ip: 10.42.1.99, hostname: ha} # vm on zoidberg
+
   # pikvm
   - {mac: dc:a6:32:b1:16:27, ip: 10.42.0.100, hostname: pi8} #pi4 8gb pikvm
   - {mac: 38:3b:26:7f:21:cd, ip: 10.42.0.77, hostname: tesmart-8port-hdmi-switch}
@@ -112,23 +116,26 @@ dhcp_reservations:
   - {mac: D0:50:99:DC:4D:D5, ip: 10.42.1.10, hostname: morpheus, custom_dns: ["m", "jf"]} #eno1
   - {mac: D0:50:99:F2:D9:38, ip: 10.42.1.11, hostname: morpheus-ipmi}
 
+  ## meeseeks - PRIMARY MEDIA SERVER
+  - {mac: 3c:ec:ef:36:a8:83, ip: 10.42.1.20, hostname: meeseeks-ipmi}
+  #- {mac: D0:50:99:F2:D9:38, ip: 10.42.1.21, hostname: meeseeks-nic1}
+  #- {mac: D0:50:99:F2:D9:38, ip: 10.42.1.22, hostname: meeseeks-10g}
+
   ## Deep Thought - PRIMARY HOMELAB SERVER
   - {mac: 7c:c2:55:e0:09:15, ip: 10.42.1.40, hostname: deepthought-ipmi}
   - {mac: 7c:c2:55:e0:08:12, ip: 10.42.1.41, hostname: deepthought-nic1}
-  - {mac: be:3a:f2:b6:05:9f, ip: 10.42.1.42, hostname: deepthought, custom_dns: ["dt"]} #10g sfp+
+  - {mac: be:3a:f2:b6:05:9f, ip: 10.42.1.42, hostname: deepthought,
+      custom_dns: ["dt", "mealie", "pdf"]} #10g sfp+
 
   ## 45HL
   - {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.1.50, hostname: hl15-ipmi}
   - {mac: 3c:ec:ef:0e:d3:dd, ip: 10.42.1.51, hostname: hl15-10g1}
   #- {mac: 3c:ec:ef:e7:4f:03, ip: 10.42.0.52, hostname: hl15-10g2}
 
-  ## Home Assistant
-  - {mac: b8:85:84:b5:84:55, ip: 10.42.1.99, hostname: ha} #dell7050
-
   ## Important VMs etc
   - {mac: BC:24:11:70:3C:05, ip: 10.42.1.13, hostname: nix-app}
   - {mac: BC:24:11:71:71:BB, ip: 10.42.1.100, hostname: nix-dev}
-  - {mac: BC:24:11:CE:06:DE, ip: 10.42.1.101, hostname: nix-nvllama, custom_dns: ["nv"]}
+  - {mac: BC:24:11:65:D7:CD, ip: 10.42.1.101, hostname: nix-nvllama, custom_dns: ["nv"]}
 
   ########################################
   ## RETIRED / TESTING ONLY
@@ -139,11 +146,11 @@ dhcp_reservations:
   #- {mac: 7C:2B:E1:13:84:DA, ip: 10.42.0.254, hostname: opnsense, custom_dns: ["opnsense.c137"]} # LAN - passed through
 
   ## anton - BACKUP SERVER
-  - {mac: D0:50:99:DB:B2:2D, ip: 10.42.1.20, hostname: anton} #eno1
-  - {mac: D0:50:99:F2:8F:57, ip: 10.42.1.21, hostname: anton-ipmi}
+  - {mac: D0:50:99:DB:B2:2D, ip: 10.42.1.60, hostname: anton} #eno1
+  - {mac: D0:50:99:F2:8F:57, ip: 10.42.1.61, hostname: anton-ipmi}
 
   ## m1 - TEST SERVER
-  - {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.30, hostname: m1}
+  - {mac: E0:D5:5E:2D:FE:61, ip: 10.42.1.70, hostname: m1}
 
   ## zoidbergNG
   #- {mac: 6C:2B:59:DC:F8:08, ip: 10.42.0.42, hostname: zoidberg, custom_dns: ["z"]} #i5 8500t
@@ -162,12 +169,13 @@ dhcp_reservations:
   ### fibre switches - 10gig sfp+
   - {mac: 60:22:32:59:ad:d5, ip: 10.42.0.120, hostname: unifi-usw-aggregation-bonus}
   - {mac: 60:22:32:59:ae:47, ip: 10.42.0.121, hostname: unifi-usw-aggregation-basement}
-  - {mac: f4:e2:c6:5b:d9:8d, ip: 10.42.0.122, hostname: unifi-usw-aggregation-bonus-desk}
+  - {mac: f4:e2:c6:5b:d9:8d, ip: 10.42.0.122, hostname: unifi-usw-aggregation-bonusrack}
   - {mac: f4:e2:c6:e5:4c:5d, ip: 10.42.0.130, hostname: unifi-usw-backoffice-pro8poe}
   ### poe switches
   - {mac: ac:8b:a9:a1:58:16, ip: 10.42.0.123, hostname: unifi-usw-24poe-bonus}
   - {mac: ac:8b:a9:a1:59:d8, ip: 10.42.0.124, hostname: unifi-usw-24poe-basement}
   - {mac: ac:8b:a9:68:63:2b, ip: 10.42.0.125, hostname: unifi-usw-lite-16poe-bonusdesk}
+  - {mac: f4:e2:c6:ae:4d:d0, ip: 10.42.0.132, hostname: unifi-usw-pro-max-16poe-bonusrack}
   ### other switches
   - {mac: 60:22:32:46:6f:c5, ip: 10.42.0.126, hostname: unifi-usw-flex-mini1-office}
   - {mac: 60:22:32:46:7f:d4, ip: 10.42.0.127, hostname: unifi-usw-flex-mini3-basement}
@@ -264,7 +272,7 @@ dhcp_reservations:
   - {mac: 50:02:91:ec:a9:df, ip: 10.42.5.60, hostname: cfsp_bonus_sun}
   - {mac: 50:02:91:ec:a9:de, ip: 10.42.5.61, hostname: cfsp_driveway_wall_lights}
   - {mac: a8:48:fa:e3:57:03, ip: 10.42.5.62, hostname: cfsp_tinkerspace_uplights}
-  - {mac: 98:cd:ac:25:b5:01, ip: 10.42.5.63, hostname: cfsp_bricktop}
+  - {mac: 98:cd:ac:25:b5:01, ip: 10.42.5.63, hostname: cfsp_bonustv_ups}
   - {mac: 98:cd:ac:25:7b:35, ip: 10.42.5.64, hostname: cfsp_bonusdesk_testing}
   - {mac: e8:db:84:c9:40:00, ip: 10.42.5.65, hostname: cfsp_musicroom_dresser_lamp}
   - {mac: dc:4f:22:67:c3:80, ip: 10.42.5.66, hostname: cfsp_musicroom_piano_lamp}
@@ -288,6 +296,7 @@ dhcp_reservations:
   #- {mac: ec:fa:bc:c2:9f:04, ip: 10.42.5.91, hostname: wled_ella_dino_lamp.old}
   - {mac: 98:f4:ab:da:60:18, ip: 10.42.5.91, hostname: wled_ella_dino_lamp}
   - {mac: cc:50:e3:55:10:54, ip: 10.42.5.92, hostname: wled_x1c_riser}
+  - {mac: 84:f3:eb:e3:76:27, ip: 10.42.5.93, hostname: wled_teaching_sign}
 
   ### Local IoT Projects
   - {mac: a8:03:2a:e2:f7:58, ip: 10.42.5.100, hostname: flightdisplay_rdu}

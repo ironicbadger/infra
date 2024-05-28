@@ -25,7 +25,7 @@ containers:
       - --accesslog=false
       - --api.insecure=true
       - --providers.docker=true
-      - --providers.docker.exposedbydefault=true
+      - --providers.docker.exposedbydefault=false
       - --entrypoints.web.address=:80
       - --entrypoints.web.http.redirections.entryPoint.to=websecure
       - --entrypoints.web.http.redirections.entryPoint.scheme=https
@@ -47,8 +47,6 @@ containers:
   - service_name: influx
     active: true
     image: influxdb:2.6
-    labels:
-      - "traefik.http.routers.influx.rule=Host(`influx.{{ local_domain }}`)"
     ports:
       - "8086:8086"
     volumes:
@@ -60,6 +58,7 @@ containers:
     active: true
     image: grafana/grafana
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.grafana.rule=Host(`grafana.{{ local_domain }}`)"
       - traefik.http.services.grafana.loadbalancer.server.port=3000
       - traefik.http.routers.grafana.tls.certresolver=cloudflare
@@ -74,6 +73,7 @@ containers:
     active: true
     image: prom/prometheus:v2.42.0
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.prom.rule=Host(`prometheus.{{ local_domain }}`)"
       - traefik.http.routers.prom.tls.certresolver=cloudflare
     ports:
@@ -89,6 +89,7 @@ containers:
     image: lscr.io/linuxserver/smokeping
     hostname: zoidberg
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ local_domain }}`)"
       - traefik.http.routers.smokeping.tls.certresolver=cloudflare
     volumes:
@@ -97,20 +98,13 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   ###
-  - service_name: nginx
-    active: true
-    image: nginx
-    labels:
-      - "traefik.http.routers.nginx.rule=Host(`nginx.{{ local_domain }}`)"
-      - traefik.http.routers.nginx.tls.certresolver=cloudflare
-    restart: unless-stopped
-  ###
   - service_name: librespeed
     active: true
     image: lscr.io/linuxserver/librespeed
     ports:
       - 8008:80
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.librespeed.rule=Host(`speedtest.{{ local_domain }}`)"
     environment:
       - MODE=standalone
@@ -125,6 +119,7 @@ containers:
     depends_on:
       - bookstack_db
     labels:
+      - traefik.enable=true
       - "traefik.http.routers.bookstack.rule=Host(`wiki.wd.{{ domain_me }}`)"
       #- traefik.http.routers.bookstack.tls.certresolver=cloudflare
     environment:
@@ -148,16 +143,6 @@ containers:
     volumes:
       - "{{ appdata_path }}/bookstack/db:/config"
     include_global_env_vars: true
-    restart: unless-stopped
-  ###
-  - service_name: tclip
-    active: true
-    image: ghcr.io/tailscale-dev/tclip
-    environment:
-      - DATA_DIR=/data
-      - "TS_AUTHKEY={{ zoidberg_tclip_authkey }}"
-    volumes:
-      - "{{ appdata_path }}/tclip:/data"
     restart: unless-stopped
   ###
   - service_name: netboot
