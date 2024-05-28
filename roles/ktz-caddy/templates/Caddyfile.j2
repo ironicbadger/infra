@@ -159,3 +159,15 @@ dsm.{{ domain_wd_me }} {
   }
   import cloudflare
 }
+
+## nr
+
+# pennywise
+px.p.{{ domain_wd_me }} {
+  reverse_proxy https://100.88.250.125:8006 {
+    transport http {
+      tls_insecure_skip_verify
+    }
+  }
+  import cloudflare
+}
