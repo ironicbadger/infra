@@ -142,3 +142,15 @@ bricktop.{{ domain_wd_me }} {
   }
   import cloudflare
 }
+
+## gg
+
+# octonas
+dsm.{{ domain_wd_me }} {
+  reverse_proxy https://100.99.254.122:5001 {
+    transport http {
+      tls_insecure_skip_verify
+    }
+  }
+  import cloudflare
+}
