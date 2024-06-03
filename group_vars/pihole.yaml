@@ -109,6 +109,7 @@ dhcp_reservations:
 
   # pikvm
   - {mac: dc:a6:32:b1:16:27, ip: 10.42.0.100, hostname: pi8} #pi4 8gb pikvm
+  - {mac: e4:5f:01:e9:ec:9f, ip: 10.42.0.101, hostname: pikvm-v4plus} #genuine pikvm v4
   - {mac: 38:3b:26:7f:21:cd, ip: 10.42.0.77, hostname: tesmart-8port-hdmi-switch}
 
   ########################################
