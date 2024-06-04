@@ -210,6 +210,50 @@ containers:
       - "/mnt/jbod:/mnt/jbod:ro"
     include_global_env_vars: true
     restart: unless-stopped
+  ###
+  - service_name: tubearchivist
+    active: true
+    image: bbilly1/tubearchivist
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.tubearchivist.rule=Host(`tube.{{ m_wd_domain_me }}`)"
+    volumes:
+      - /mnt/jbod/tv/youtube-dl:/youtube
+      - /mnt/ssd4tb/yt-cache:/cache
+    environment:
+      - ES_URL=http://tubearchivist-elastic:9200
+      - REDIS_HOST=tubearchivist-redis
+      - "TA_HOST=tube.{{ m_wd_domain_me }}"
+      - "TA_USERNAME={{ tubearchivist_user }}"
+      - "TA_PASSWORD={{ tubearchivist_password }}"
+      - "ELASTIC_PASSWORD={{ tubearchivist_elastic_password }}"
+    include_global_env_vars: true
+    depends_on:
+      - tubearchivist-elastic
+      - tubearchivist-redis
+    restart: unless-stopped
+  - service_name: tubearchivist-redis
+    active: true
+    image: redis/redis-stack-server
+    volumes:
+      - "{{ appdata_path }}/apps/tubearchivist/redis:/data"
+    restart: unless-stopped
+  - service_name: tubearchivist-elastic
+    active: true
+    image: bbilly1/tubearchivist-es
+    environment:
+      - "ELASTIC_PASSWORD={{ tubearchivist_elastic_password }}"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "xpack.security.enabled=true"
+      - "discovery.type=single-node"
+      - "path.repo=/usr/share/elasticsearch/data/snapshot"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - "{{ appdata_path }}/apps/tubearchivist/elastic:/usr/share/elasticsearch/data"
+    restart: unless-stopped
 
   ### Monitoring and Tools
   ###
