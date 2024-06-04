@@ -87,34 +87,30 @@ containers:
   ###
   - service_name: nextcloud
     active: true
-    image: nextcloud:28
-    devices:
-      - /dev/dri:/dev/dri
-    depends_on:
-      - mysql
-      - redisnc
+    image: nextcloud:29
     environment:
-      - REDIS_HOST=redisnc
+      - "NEXTCLOUD_TRUSTED_DOMAINS=nc.{{ domain_cloud }}"
+      - REDIS_HOST=nextcloud-redis
+    depends_on:
+      - nextcloud-db
+      - nextcloud-redis
     labels:
       - traefik.enable=true
       - "traefik.http.routers.nc.rule=Host(`nc.{{ domain_cloud }}`)"
     volumes:
-      - "{{ appdata_path }}/apps/nextcloud:/var/www/html"
+      - "{{ appdata_path }}/apps/nextcloud/data:/var/www/html"
     restart: unless-stopped
-  - service_name: mysql
+  - service_name: nextcloud-db
     active: true
-    image: mariadb
-    ports:
-      - 3306:3306
+    image: postgres:16
     environment:
-      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
-      - "MYSQL_PASSWORD={{ container_mysql_password }}"
-      - MYSQL_DATABASE=nextcloud
-      - MYSQL_USER=nextcloud
+      - "POSTGRES_USER={{ nextcloud_db_user }}"
+      - "POSTGRES_PASSWORD={{ nextcloud_db_password }}"
+      - "POSTGRES_DB={{ nextcloud_db_name }}"
     volumes:
-      - "{{ appdata_path }}/databases/mysql:/var/lib/mysql"
+      - "{{ appdata_path }}/apps/nextcloud/db:/var/lib/postgresql/data"
     restart: unless-stopped
-  - service_name: redisnc
+  - service_name: nextcloud-redis
     active: true
     image: redis:alpine
     restart: unless-stopped
@@ -143,6 +139,17 @@ containers:
       - traefik.http.services.git.loadbalancer.server.port=3000
     ports:
       - '"2222:2222"'
+    restart: unless-stopped
+  - service_name: mysql
+    active: true
+    image: mariadb
+    environment:
+      - "MYSQL_ROOT_PASSWORD={{ container_mysql_root_password }}"
+      - "MYSQL_PASSWORD={{ container_mysql_password }}"
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+    volumes:
+      - "{{ appdata_path }}/databases/mysql:/var/lib/mysql"
     restart: unless-stopped
   - service_name: gitea-runner
     active: true
