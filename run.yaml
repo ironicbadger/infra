@@ -206,14 +206,9 @@
         tags: replication
       - role: ironicbadger.docker_compose_generator
         tags: compose
-  
-  - hosts: rhauth
-    roles:
-      - role: ktz-rh-pinauth
 
-  - hosts: proxmox
+  - hosts: nr-opnsense
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      - role: ironicbadger.proxmox_nag_removal
-      - role: ktz-htop
+      - role: ktz-opnsense-caddy

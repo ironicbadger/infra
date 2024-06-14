@@ -1,0 +1,18 @@
+---
+
+domain_nr: "nr.{{ domain_me }}"
+caddy_hosts:
+  ## firewall
+  - match_domain: "opnsense.{{ domain_nr }}"
+    reverse_proxy: "https://192.168.16.254:8443"
+    tls_selfsigned: true
+  - match_domain: "dns.{{ domain_nr }}"
+    reverse_proxy: "http://192.168.16.254:8080"
+  ## proxmox
+  - match_domain: "ipmi.{{ domain_nr }}"
+    reverse_proxy: "https://192.168.16.11:443"
+    ipmi_headers: true
+    tls_selfsigned: true
+  - match_domain: "px.{{ domain_nr }}"
+    reverse_proxy: "https://192.168.16.10:8006"
+    tls_selfsigned: true

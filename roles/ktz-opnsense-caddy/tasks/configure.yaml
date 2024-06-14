@@ -1,5 +1,10 @@
 ---
 
+- name: ensure destination for compose file exists
+  file:
+    path: "{{ caddy_opnsense_caddyfile_path }}"
+    state: directory
+
 - name: template and install Caddyfile
   template:
     src: templates/Caddyfile.j2
