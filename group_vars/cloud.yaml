@@ -86,10 +86,24 @@ containers:
       - "{{ appdata_path }}/smokeping/data:/data"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ domain_cloud }}`)"
+      - "traefik.http.routers.smokeping.rule=Host(`smokeping.new.{{ domain_cloud }}`)"
       - traefik.http.routers.smokeping.entrypoints=websecure
       - traefik.http.routers.smokeping.tls.certresolver=cloudflare
     include_global_env_vars: true
+    restart: unless-stopped
+###
+  - service_name: ktz-simplelinks
+    active: true
+    image: fascinated/simple-links:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ktzme.rule=Host(`alex.ktz.me`)
+      - traefik.http.routers.ktzme.entrypoints=websecure
+      - traefik.http.routers.ktzme.tls.certresolver=cloudflare
+      - traefik.http.services.ktzme.loadbalancer.server.port=3000
+    volumes:
+      - "{{ appdata_path }}/ktzme/config/config.yml:/usr/src/app/config.yml:ro"
+      - "{{ appdata_path }}/ktzme/config/public:/usr/src/app/public:rw"
     restart: unless-stopped
   ###
   - service_name: pms-wiki
@@ -101,37 +115,9 @@ containers:
       - traefik.http.routers.pmswiki.entrypoints=websecure
       - traefik.http.routers.pmswiki.tls.certresolver=cloudflare
     restart: unless-stopped
-
-
-
-
-
-
-####################
-###
-  - service_name: ktz-unifi
-    active: false
-    image: lscr.io/linuxserver/unifi-controller
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.ubiq.rule=Host(`{{ cloud_url_ubiq }}`)"
-      - traefik.http.routers.ubiq.entrypoints=websecure
-      - traefik.http.routers.ubiq.tls=true
-      - traefik.http.routers.ubiq.tls.certresolver=cloudflare
-      - traefik.http.services.ubiq.loadbalancer.server.scheme=https
-      - traefik.http.services.ubiq.loadbalancer.server.port=8443
-    ports:
-      - "{{ cloud_unifi_port_advertise }}:{{ cloud_unifi_port_advertise_int }}"
-      - 8080:8080
-      - 3478:3478/udp
-    mem_limit: 1g
-    volumes:
-      - "{{ appdata_path }}/ktz-unifi:/config"
-    include_global_env_vars: true
-    restart: unless-stopped
 ###
   - service_name: ktz-blog
-    active: false
+    active: true
     image: ghost:4-alpine
     labels:
       - traefik.enable=true
@@ -151,7 +137,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: ktz-blog-mum
-    active: false
+    active: true
     image: ghost:4-alpine
     labels:
       - traefik.enable=true
@@ -166,7 +152,7 @@ containers:
     restart: unless-stopped
 ###
   - service_name: ktz-blog-cat
-    active: false
+    active: true
     image: ghost:5
     labels:
       - traefik.enable=true
@@ -192,7 +178,7 @@ containers:
       - ktz-blog-cat-db
     restart: unless-stopped
   - service_name: ktz-blog-cat-db
-    active: false
+    active: true
     image: mysql:8.0
     volumes:
       - "{{ appdata_path }}/ktz-blog-cat/db:/var/lib/mysql"
@@ -200,28 +186,8 @@ containers:
       - "MYSQL_ROOT_PASSWORD={{ purrfect_db_pass }}"
     restart: unless-stopped
   ###
-  - service_name: ktz-pastebin
-    active: false
-    image: mkaczanowski/pastebin
-    command:
-      - --address
-      - 0.0.0.0
-      - --db
-      - /var/lib/pastebin/
-      - --uri
-      - "https://paste.{{ domain_cloud }}"
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.ktzpaste.rule=Host(`paste.{{ domain_cloud }}`)"
-      - traefik.http.routers.ktzpaste.entrypoints=websecure
-      - traefik.http.routers.ktzpaste.tls.certresolver=cloudflare
-      - traefik.http.services.ktzpaste.loadbalancer.server.port=8000
-    volumes:
-      - "{{ appdata_path }}/ktz-pastebin:/var/lib/pastebin"
-    restart: unless-stopped
-  ###
   - service_name: ktz-lychee
-    active: false
+    active: true
     image: lycheeorg/lychee:v4.3.0
     volumes:
       - "{{ appdata_path }}/ktz-lychee/app/config:/config"
@@ -243,7 +209,7 @@ containers:
       - ktz-lychee-db
     restart: unless-stopped
   - service_name: ktz-lychee-db
-    active: false
+    active: true
     image: mariadb:10.5.5-focal
     volumes:
       - "{{ appdata_path }}/ktz-lychee/db:/var/lib/mysql"
@@ -256,9 +222,10 @@ containers:
     restart: unless-stopped
 
 
-###
+  ##########
+  ###
   - service_name: ktz-systems
-    active: false
+    active: true
     image: nginx
     labels:
       - traefik.enable=true
@@ -268,23 +235,9 @@ containers:
     volumes:
       - "{{ appdata_path }}/ktzsystems/public:/usr/share/nginx/html:ro"
     restart: unless-stopped
-###
-  - service_name: ktz-simplelinks
-    active: false
-    image: fascinated/simple-links:latest
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.ktzme.rule=Host(`alex.ktz.me`)
-      - traefik.http.routers.ktzme.entrypoints=websecure
-      - traefik.http.routers.ktzme.tls.certresolver=cloudflare
-      - traefik.http.services.ktzme.loadbalancer.server.port=3000
-    volumes:
-      - "{{ appdata_path }}/ktzme/config/config.yml:/usr/src/app/config.yml:ro"
-      - "{{ appdata_path }}/ktzme/config/public:/usr/src/app/public:rw"
-    restart: unless-stopped
-###
+  ###
   - service_name: alleycat
-    active: false
+    active: true
     image: nginx
     labels:
       - traefik.enable=true
@@ -292,5 +245,57 @@ containers:
       - traefik.http.routers.alleycat.entrypoints=websecure
       - traefik.http.routers.alleycat.tls.certresolver=cloudflare
     volumes:
-      - "{{ appdata_path }}/alleycat:/usr/share/nginx/html:ro"
+      - "{{ appdata_path }}/website-alleycat:/usr/share/nginx/html:ro"
     restart: unless-stopped
+
+  ###
+  - service_name: ktz-pastebin
+    active: true
+    image: mkaczanowski/pastebin
+    command:
+      - --address
+      - 0.0.0.0
+      - --db
+      - /var/lib/pastebin/
+      - --uri
+      - "https://paste.{{ domain_cloud }}"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ktzpaste.rule=Host(`paste.{{ domain_cloud }}`)"
+      - traefik.http.routers.ktzpaste.entrypoints=websecure
+      - traefik.http.routers.ktzpaste.tls.certresolver=cloudflare
+      - traefik.http.services.ktzpaste.loadbalancer.server.port=8000
+    volumes:
+      - "{{ appdata_path }}/ktz-pastebin:/var/lib/pastebin"
+    restart: unless-stopped
+
+####################
+###
+  - service_name: ktz-unifi
+    active: false
+    image: lscr.io/linuxserver/unifi-controller
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ubiq.rule=Host(`{{ cloud_url_ubiq }}`)"
+      - traefik.http.routers.ubiq.entrypoints=websecure
+      - traefik.http.routers.ubiq.tls=true
+      - traefik.http.routers.ubiq.tls.certresolver=cloudflare
+      - traefik.http.services.ubiq.loadbalancer.server.scheme=https
+      - traefik.http.services.ubiq.loadbalancer.server.port=8443
+    ports:
+      - "{{ cloud_unifi_port_advertise }}:{{ cloud_unifi_port_advertise_int }}"
+      - 8080:8080
+      - 3478:3478/udp
+    mem_limit: 1g
+    volumes:
+      - "{{ appdata_path }}/ktz-unifi:/config"
+    include_global_env_vars: true
+    restart: unless-stopped
+
+
+
+
+
+
+
+
