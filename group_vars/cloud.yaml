@@ -77,21 +77,6 @@ containers:
       - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
     restart: unless-stopped
   ###
-  - service_name: smokeping
-    active: true
-    image: lscr.io/linuxserver/smokeping
-    hostname: ktz-cloud
-    volumes:
-      - "{{ appdata_path }}/smokeping/config:/config"
-      - "{{ appdata_path }}/smokeping/data:/data"
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.smokeping.rule=Host(`smokeping.new.{{ domain_cloud }}`)"
-      - traefik.http.routers.smokeping.entrypoints=websecure
-      - traefik.http.routers.smokeping.tls.certresolver=cloudflare
-    include_global_env_vars: true
-    restart: unless-stopped
-###
   - service_name: ktz-simplelinks
     active: true
     image: fascinated/simple-links:latest
@@ -115,7 +100,7 @@ containers:
       - traefik.http.routers.pmswiki.entrypoints=websecure
       - traefik.http.routers.pmswiki.tls.certresolver=cloudflare
     restart: unless-stopped
-###
+  ###
   - service_name: ktz-blog
     active: true
     image: ghost:4-alpine
@@ -135,7 +120,7 @@ containers:
     volumes:
       - "{{ appdata_path }}/ktz-blog:/var/lib/ghost/content"
     restart: unless-stopped
-###
+  ###
   - service_name: ktz-blog-mum
     active: true
     image: ghost:4-alpine
@@ -150,7 +135,7 @@ containers:
     volumes:
       - "{{ appdata_path }}/ktz-blog-mum:/var/lib/ghost/content"
     restart: unless-stopped
-###
+  ###
   - service_name: ktz-blog-cat
     active: true
     image: ghost:5
@@ -159,11 +144,6 @@ containers:
       - "traefik.http.routers.purrfectprose.rule=Host(`purrfectprose.com`)"
       - traefik.http.routers.purrfectprose.entrypoints=websecure
       - traefik.http.routers.purrfectprose.tls.certresolver=cloudflare
-      # - "traefik.http.routers.purrfectprose-rss.rule=Host(`purrfectprose.com`) && PathPrefix(`/rss`)"
-      # - traefik.http.routers.purrfectprose-rss.entrypoints=websecure
-      # - traefik.http.routers.purrfectprose-rss.tls.certresolver=cloudflare
-      # - traefik.http.routers.purrfectprose-rss.middlewares=rss-cache-control
-      # - traefik.http.middlewares.rss-cache-control.headers.customresponseheaders.Cache-Control=public, max-age=600
     environment:
       - NODE_ENV=production
       - "url=https://purrfectprose.com"
@@ -220,9 +200,6 @@ containers:
       - "MYSQL_USER={{ mysql_user_lychee }}"
     include_global_env_vars: false
     restart: unless-stopped
-
-
-  ##########
   ###
   - service_name: ktz-systems
     active: true
@@ -247,7 +224,6 @@ containers:
     volumes:
       - "{{ appdata_path }}/website-alleycat:/usr/share/nginx/html:ro"
     restart: unless-stopped
-
   ###
   - service_name: ktz-pastebin
     active: true
@@ -267,6 +243,21 @@ containers:
       - traefik.http.services.ktzpaste.loadbalancer.server.port=8000
     volumes:
       - "{{ appdata_path }}/ktz-pastebin:/var/lib/pastebin"
+    restart: unless-stopped
+  ###
+  - service_name: smokeping
+    active: true
+    image: lscr.io/linuxserver/smokeping
+    hostname: ktz-cloud
+    volumes:
+      - "{{ appdata_path }}/smokeping/config:/config"
+      - "{{ appdata_path }}/smokeping/data:/data"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.smokeping.rule=Host(`smokeping.het.{{ domain_cloud }}`)"
+      - traefik.http.routers.smokeping.entrypoints=websecure
+      - traefik.http.routers.smokeping.tls.certresolver=cloudflare
+    include_global_env_vars: true
     restart: unless-stopped
 
 ####################
@@ -291,11 +282,3 @@ containers:
       - "{{ appdata_path }}/ktz-unifi:/config"
     include_global_env_vars: true
     restart: unless-stopped
-
-
-
-
-
-
-
-
