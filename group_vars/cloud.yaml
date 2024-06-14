@@ -86,11 +86,28 @@ containers:
       - "{{ appdata_path }}/smokeping/data:/data"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.smokeping.rule=Host(`smokeping.new.{{ domain_cloud }}`)"
+      - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ domain_cloud }}`)"
       - traefik.http.routers.smokeping.entrypoints=websecure
       - traefik.http.routers.smokeping.tls.certresolver=cloudflare
     include_global_env_vars: true
     restart: unless-stopped
+  ###
+  - service_name: pms-wiki
+    active: true
+    image: ghcr.io/ironicbadger/pms-wiki:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pmswiki.rule=Host(`perfectmediaserver.com`)
+      - traefik.http.routers.pmswiki.entrypoints=websecure
+      - traefik.http.routers.pmswiki.tls.certresolver=cloudflare
+    restart: unless-stopped
+
+
+
+
+
+
+####################
 ###
   - service_name: ktz-unifi
     active: false
@@ -237,29 +254,8 @@ containers:
       - "MYSQL_USER={{ mysql_user_lychee }}"
     include_global_env_vars: false
     restart: unless-stopped
-###
-  - service_name: ktz-nginx-pmswiki
-    active: false
-    image: nginx
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.pmswiki.rule=Host(`perfectmediaserver.com`)
-      - traefik.http.routers.pmswiki.entrypoints=websecure
-      - traefik.http.routers.pmswiki.tls.certresolver=cloudflare
-    volumes:
-      - "{{ appdata_path }}/pms-wiki/site:/usr/share/nginx/html:ro"
-      - "{{ appdata_path }}/pms-wiki/nginx:/etc/nginx/conf.d/:ro"
-    restart: unless-stopped
-###
-  - service_name: pms-wiki
-    active: true
-    image: ghcr.io/ironicbadger/pms-wiki:latest
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.pmswiki.rule=Host(`pmswiki.new.{{ domain_cloud }}`)
-      - traefik.http.routers.pmswiki.entrypoints=websecure
-      - traefik.http.routers.pmswiki.tls.certresolver=cloudflare
-    restart: unless-stopped
+
+
 ###
   - service_name: ktz-systems
     active: false
