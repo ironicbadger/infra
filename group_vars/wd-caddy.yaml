@@ -1,0 +1,10 @@
+---
+
+domain_wd: "wd.{{ domain_me }}"
+caddy_hosts:
+  ## firewall
+  - match_domain: "dns.{{ domain_wd }}"
+    redir:
+      matcher: "/"
+      to: "/admin"
+    reverse_proxy: "http://10.42.0.253"
