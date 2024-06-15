@@ -1,71 +1,9 @@
 ---
-# geerlingguy.docker
-docker_compose_version: v2.16.0
-
 # ktz-dhcp-dns (pihole)
 dnsmasq_config_dir: /etc/dnsmasq.d
 pihole_config_dir: /etc/pihole
 running_as_container: false
 
-## ironicbadger.docker_compose_generator
-docker_compose_generator_output_path: /root/
-containers:
-# caddy?
-###
-  - service_name: pihole
-    active: false
-    image: pihole/pihole
-    network_mode: host
-    # For DHCP it is recommended to remove these ports and instead add: network_mode: "host"
-    # ports:
-    #   - "53:53/tcp"
-    #   - "53:53/udp"
-    #   - "67:67/udp" # Only required if you are using Pi-hole as your DHCP server
-    #   - "80:80/tcp"
-    environment:
-      TZ: 'America/New_York'
-      WEBPASSWORD: "{{ main_pass_lower }}"
-    volumes:
-      - "{{ pihole_config_dir }}:/etc/pihole"
-      - "{{ dnsmasq_config_dir }}:/etc/dnsmasq.d"
-    cap_add:
-      - NET_ADMIN
-    restart: unless-stopped
-###
-  - service_name: unifi
-    active: false
-    image: linuxserver/unifi-controller
-    ports:
-      - 8443:8443
-      - 8080:8080
-      - 3478:3478/udp
-    volumes:
-      - "/opt/appdata/unifi:/config"
-    include_global_env_vars: true
-    restart: unless-stopped
-###
-  - service_name: leases
-    active: false
-    image: nginx
-    volumes:
-      - "{{ pihole_config_dir }}:/usr/share/nginx/html:ro"
-    ports:
-      - 81:80
-    restart: unless-stopped
-###
-  - service_name: smokeping
-    active: false
-    image: linuxserver/smokeping
-    hostname: pi8
-    ports:
-      - 8009:80
-    volumes:
-      - "/opt/appdata/smokeping/config:/config"
-      - "/opt/appdata/smokeping/data:/data"
-    include_global_env_vars: true
-    restart: unless-stopped
-
-# ktz-dhcpdns
 default_domain: "wd.ktz.me"
 network_cidr: 10.42.0.0/21
 dhcp_range_start: 10.42.7.100
