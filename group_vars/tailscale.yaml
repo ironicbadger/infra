@@ -1,9 +1,0 @@
----
-
-# for an unpriv LXC add the following to lxc conf
-# https://tailscale.com/kb/1130/lxc-unprivileged/
-# 
-# lxc.cgroup.devices.allow: c 10:200 rwm
-# lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
-
-tailscale_args: "--advertise-exit-node --advertise-routes=10.42.0.0/20 --accept-routes"

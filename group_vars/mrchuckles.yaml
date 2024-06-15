@@ -77,8 +77,8 @@ syncoid_cron_jobs: []
 traefik_file_provider: false
 
 # ironicbadger.docker_compose_generator
-appdata_path: /z2tank/pennywise/appdata
-local_domain: "p.nr.{{ domain_me }}"
+appdata_path: /z2tank/mrchuckles/appdata
+local_domain: "mrc.nr.{{ domain_me }}"
 containers:
   ###
   - service_name: tr
@@ -114,28 +114,12 @@ containers:
       - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
     restart: unless-stopped
   ###
-  - service_name: homer
-    active: true
-    image: b4bz/homer
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.homer.rule=Host(`home.{{ local_domain }}`)"
-      - traefik.http.routers.homer.tls.certresolver=cloudflare
-      #- traefik.http.services.homer.loadbalancer.server.port=80
-    volumes:
-      - "{{ appdata_path }}/homer:/www/assets"
-    restart: unless-stopped
-  ###
   - service_name: plex
     active: true
     image: plexinc/pms-docker
     network_mode: host
     devices:
       - /dev/dri:/dev/dri
-    labels:
-      - "traefik.http.routers.plex.rule=Host(`plex.{{ local_domain }}`)"
-      - traefik.http.routers.plex.tls.certresolver=cloudflare
-      - traefik.http.services.plex.loadbalancer.server.port=32400
     volumes:
       - "{{ appdata_path }}/plex/config:/config"
       - /mnt/z2/tv/recordings:/data
@@ -180,25 +164,4 @@ containers:
       - "/z2tank/morpheus/tank/audiobooks/library:/audiobooks:ro"
       - "{{ appdata_path }}/audiobookshelf/metadata:/metadata"
       - "{{ appdata_path }}/audiobookshelf/config:/config"
-    restart: unless-stopped
-  ###
-  - service_name: jellyfin
-    active: true
-    image: jellyfin/jellyfin
-    devices:
-      - /dev/dri:/dev/dri
-    hostname: uk-norwich
-    labels:
-      - "traefik.http.routers.jellyfin.rule=Host(`jellyfin.{{ local_domain }}`)"
-      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
-    ports:
-      - 8096:8096
-    volumes:
-      - "{{ appdata_path }}/jellyfin:/config"
-      - /z2tank/morpheus/tank/drone:/media/drone
-      # ram transcode
-      - /dev/shm:/transcode
-    environment:
-      - "JELLYFIN_PublishedServerUrl=jellyfin.{{ local_domain }}"
-    include_global_env_vars: true
     restart: unless-stopped
