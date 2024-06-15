@@ -260,11 +260,23 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
 
-####################
 ###
   - service_name: ktz-unifi
-    active: false
-    image: lscr.io/linuxserver/unifi-controller
+    active: true
+    image: lscr.io/linuxserver/unifi-network-application
+    ports:
+      - "{{ cloud_unifi_port_advertise }}:{{ cloud_unifi_port_advertise_int }}"
+      - 8080:8080
+      - 3478:3478/udp
+    mem_limit: 2g
+    environment:
+      - "MONGO_USER={{ unifi_mongo_db_user }}"
+      - "MONGO_PASS={{ unifi_mongo_db_password }}"
+      - "MONGO_DBNAME={{ unifi_mongo_db_name }}"
+      - MONGO_HOST=ktz-unifi-db
+      - MONGO_PORT=27017
+    volumes:
+      - "/opt/appdata/ktz-unifi-netapp/config:/config"
     labels:
       - traefik.enable=true
       - "traefik.http.routers.ubiq.rule=Host(`{{ cloud_url_ubiq }}`)"
@@ -273,6 +285,30 @@ containers:
       - traefik.http.routers.ubiq.tls.certresolver=cloudflare
       - traefik.http.services.ubiq.loadbalancer.server.scheme=https
       - traefik.http.services.ubiq.loadbalancer.server.port=8443
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: ktz-unifi-db
+    active: true
+    image: docker.io/mongo:7.0
+    volumes:
+      - /opt/appdata/ktz-unifi-netapp/db:/data/db
+    include_global_env_vars: false
+    restart: unless-stopped
+
+
+####################
+###
+  - service_name: ktz-unifi-old
+    active: false
+    image: lscr.io/linuxserver/unifi-controller
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ubiq2.rule=Host(`unifi.het.ktz.cloud`)"
+      - traefik.http.routers.ubiq2.entrypoints=websecure
+      - traefik.http.routers.ubiq2.tls=true
+      - traefik.http.routers.ubiq2.tls.certresolver=cloudflare
+      - traefik.http.services.ubiq2.loadbalancer.server.scheme=https
+      - traefik.http.services.ubiq2.loadbalancer.server.port=8443
     ports:
       - "{{ cloud_unifi_port_advertise }}:{{ cloud_unifi_port_advertise_int }}"
       - 8080:8080
