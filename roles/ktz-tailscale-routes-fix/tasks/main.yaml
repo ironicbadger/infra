@@ -1,0 +1,14 @@
+---
+
+- name: install systemd unit file for tailscale-routes-fix
+  ansible.builtin.template:
+    src: tailscale-routes-fix.service.j2
+    dest: /etc/systemd/system/tailscale-routes-fix.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: start and enable tailscale routes fix service
+
+- name: Reload systemd to recognize the new service
+  command: systemctl daemon-reload
+  notify: start and enable tailscale routes fix service

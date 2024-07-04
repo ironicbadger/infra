@@ -47,7 +47,8 @@
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
       - role: geerlingguy.nfs
-      - role: geerlingguy.docker
+      #- role: geerlingguy.docker
+      - role: ktz-tailscale-routes-fix
       - role: ironicbadger.docker_compose_generator
         tags: compose
       - role: ktz-traefik

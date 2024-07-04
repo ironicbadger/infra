@@ -39,6 +39,9 @@ package_list:
   - name: xfsprogs
   - name: zfsutils-linux
 
+# ktz-tailscale-routes-fix
+tailscale_routes_subnet: 10.42.0.0/20
+
 # ironicbadger.docker_compose_generator
 appdata_path: /mnt/appdata
 download_path: /mnt/downloads
