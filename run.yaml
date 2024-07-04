@@ -1,22 +1,4 @@
 ---
-  - hosts: c137
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: grog.package
-      - role: ironicbadger.proxmox_nag_removal
-      - role: ironicbadger.bash_aliases
-      - role: ironicbadger.figurine
-
-  - hosts: pihole
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      #- role: geerlingguy.ntp
-      - role: ironicbadger.figurine
-      - role: ktz-dhcp-dns
-        tags: pihole, dns, dhcp
-
   - hosts: caddy
     vars_files:
       - 'vars/vault.yaml'
@@ -83,13 +65,11 @@
   #     - role: ktz-htop
   #     #- role: geerlingguy.docker
   #     - role: grog.package
-  #     - role: ironicbadger.hddtemp
   #     #- role: rossmcdonald.telegraf
   #     # - role: prometheus.prometheus.node_exporter
   #     #   tags: prom
   #     - role: ironicbadger.bash_aliases
   #     - role: ironicbadger.figurine
-  #     # - role: ironicbadger.apprise_boot_notification
   #     - role: ktz-sanoid
   #       tags: replication
   #     - role: ktz-morpheus
@@ -111,11 +91,9 @@
       - role: ironicbadger.proxmox_nag_removal
       - role: geerlingguy.docker
       - role: grog.package
-      - role: ironicbadger.hddtemp
       - role: ktz-htop
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
-      - role: ironicbadger.apprise_boot_notification
       - role: ktz-sanoid
       - role: ktz-traefik
       - role: ironicbadger.docker_compose_generator
@@ -130,10 +108,8 @@
       #- role: artis3n.tailscale
       - role: grog.package
       - role: ktz-htop
-      - role: ironicbadger.hddtemp
       - role: ironicbadger.bash_aliases
       - role: ironicbadger.figurine
-      #- role: ironicbadger.apprise_boot_notification
       - role: ktz-sanoid
 
   - hosts: m1
@@ -176,23 +152,6 @@
       - role: geerlingguy.ntp
       - role: ktz-opnsense-caddy
 
-  - hosts: pi8
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: grog.package
-        tags: packages
-      - role: geerlingguy.ntp
-      - role: geerlingguy.docker
-      - role: ironicbadger.figurine
-        tags: figurine
-      - role: ironicbadger.bash_aliases
-        tags: bash
-      - role: ironicbadger.docker_compose_generator
-        tags: compose
-      - role: ktz-dhcp-dns
-        tags: pihole, dns, dhcp
-
   - hosts: zoidberg
     vars_files:
       - 'vars/vault.yaml'
@@ -207,14 +166,3 @@
         tags: replication
       - role: ironicbadger.docker_compose_generator
         tags: compose
-  
-  - hosts: rhauth
-    roles:
-      - role: ktz-rh-pinauth
-
-  - hosts: proxmox
-    vars_files:
-      - 'vars/vault.yaml'
-    roles:
-      - role: ironicbadger.proxmox_nag_removal
-      - role: ktz-htop
