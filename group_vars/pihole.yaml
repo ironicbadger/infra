@@ -230,6 +230,7 @@ dhcp_reservations:
   - {mac: ec:fa:bc:c2:b6:a3, ip: 10.42.5.86, hostname: sensor-outdoor-temp}
   - {mac: 84:0d:8e:b1:12:05, ip: 10.42.5.87, hostname: sensor-bonus-closet-temp}
   - {mac: 84:f3:eb:e3:da:41, ip: 10.42.5.88, hostname: sensor-bonus-temp}
+  - {mac: B2:8B:A9:57:82:62, ip: 10.42.5.89, hostname: esp32-garage-heatpump}
 
   ### WLED
   - {mac: 84:f3:eb:e3:71:3b, ip: 10.42.5.90, hostname: wled_kitchen_wetbar}
