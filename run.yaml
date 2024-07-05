@@ -19,6 +19,18 @@
       - role: ironicbadger.docker_compose_generator
         tags: compose
 
+  - hosts: neo
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: grog.package
+      - role: ironicbadger.figurine
+      #- role: ktz-tailscale-routes-fix
+      # - role: ironicbadger.docker_compose_generator
+      #   tags: compose
+      # - role: ktz-traefik
+      #   tags: compose
+
   - hosts: deepthought
     vars_files:
       - 'vars/vault.yaml'
@@ -56,33 +68,6 @@
     roles:
       - role: ironicbadger.docker_compose_generator
         tags: compose
-
-  # - hosts: morpheus
-  #   vars_files:
-  #     - 'vars/vault.yaml'
-  #   roles:
-  #     - role: ironicbadger.proxmox_nag_removal
-  #     - role: ktz-htop
-  #     #- role: geerlingguy.docker
-  #     - role: grog.package
-  #     #- role: rossmcdonald.telegraf
-  #     # - role: prometheus.prometheus.node_exporter
-  #     #   tags: prom
-  #     - role: ironicbadger.bash_aliases
-  #     - role: ironicbadger.figurine
-  #     - role: ktz-sanoid
-  #       tags: replication
-  #     - role: ktz-morpheus
-  #     - role: geerlingguy.nfs
-  #     - role: ironicbadger.docker_compose_generator
-  #       tags: compose
-  #     - role: ktz-traefik
-  #       tags: compose
-  #     - role: ironicbadger.snapraid
-  #     - role: ktz-plexmetamanager
-  #       tags: compose
-  #     - role: ktz-autorestic
-  #       tags: replication
 
   - hosts: pennywise
     vars_files:

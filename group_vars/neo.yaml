@@ -1,0 +1,35 @@
+---
+# ironicbadger.figurine
+figurine_name: neo
+
+# grog.package
+package_list:
+  - name: bash-completion
+  - name: curl
+  - name: dnsutils
+  - name: git
+  - name: htop
+  - name: iftop
+  - name: intel-gpu-tools
+  - name: iotop
+  - name: ipmitool
+  - name: lm-sensors
+  - name: mc
+  - name: molly-guard
+  - name: ncdu
+  - name: net-tools
+  - name: nfs-kernel-server
+  - name: nmap
+  - name: nvme-cli
+  - name: python3
+  - name: python3-setuptools
+  - name: sanoid
+  - name: sudo
+  - name: tmux
+  - name: tree
+  - name: wget
+  - name: xfsprogs
+  - name: zfsutils-linux
+
+# ktz-tailscale-routes-fix
+#tailscale_routes_subnet: 10.42.0.0/20
