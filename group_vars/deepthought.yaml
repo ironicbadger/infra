@@ -386,3 +386,37 @@ containers:
       - "PASSWORD={{ librespeed_password }}"
     include_global_env_vars: true
     restart: unless-stopped
+  ###
+  - service_name: docmost
+    active: true
+    image: docmost/docmost:latest
+    depends_on:
+      - docmost-db
+      - docmost-redis
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.docmost.rule=Host(`docmost.{{ dt_domain_me }}`)"
+    environment:
+      - "APP_URL=https://docmost.{{ dt_domain_me }}"
+      - APP_SECRET=ouhweDAIheuh2eefyg27y127t3iygtfaoyerhgweik
+      - DATABASE_URL=postgresql://docmost:F838qFvBvRMdcg@docmost-db:5432/docmost?schema=public
+      - REDIS_URL=redis://docmost-redis:6379
+    volumes:
+      - "{{ appdata_path }}/apps/docmost/storage:/app/data/storage"
+    restart: unless-stopped
+  - service_name: docmost-db
+    active: true
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=docmost
+      - POSTGRES_USER=docmost
+      - POSTGRES_PASSWORD=F838qFvBvRMdcg
+    volumes:
+      - "{{ appdata_path }}/apps/docmost/db:/var/lib/postgresql/data"
+    restart: unless-stopped
+  - service_name: docmost-redis
+    active: true
+    image: redis:alpine
+    volumes:
+      - "{{ appdata_path }}/apps/docmost/redis:/data"
+    restart: unless-stopped
