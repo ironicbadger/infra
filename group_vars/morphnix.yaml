@@ -73,6 +73,7 @@ containers:
       - "{{ appdata_path }}/mediaservers/jellyfin:/config"
       - "{{ storage_path }}:/data:ro"
       - "{{ bigrust18_path }}/media:/bigrust18/media:ro"
+      - "/mnt/downloads:/downloads:ro"
       # ram transcode
       - /dev/shm:/transcode
     environment:
@@ -92,6 +93,7 @@ containers:
       - "{{ appdata_path }}/mediaservers/plex/config:/config"
       - "{{ storage_path }}:/data:ro"
       - "{{ bigrust18_path }}/media:/bigrust18/media:ro"
+      - "/mnt/downloads:/downloads:ro"
       # ram transcode
       - /dev/shm:/transcode"
     include_global_env_vars: true
