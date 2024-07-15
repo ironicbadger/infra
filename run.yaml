@@ -43,6 +43,7 @@
       - role: geerlingguy.nfs
       #- role: geerlingguy.docker
       - role: ktz-tailscale-routes-fix
+      - role: ktz-sanoid
       - role: ironicbadger.docker_compose_generator
         tags: compose
       - role: ktz-traefik

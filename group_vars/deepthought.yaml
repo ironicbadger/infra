@@ -3,6 +3,10 @@
 # ironicbadger.figurine
 figurine_name: deep-thought
 
+# ktz-sanoid
+sanoid_config_source: sanoid-deepthought.conf
+syncoid_cron_jobs: []
+
 # grog.package
 package_list:
   - name: bash-completion
