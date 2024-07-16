@@ -16,7 +16,7 @@
     dest: "{{ pihole_config_dir }}/setupVars.conf"
     owner: root
     group: root
-  
+
 - name: write dns file
   template:
     src: ../templates/dns-overrides.conf.j2

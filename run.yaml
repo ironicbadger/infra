@@ -19,6 +19,21 @@
       - role: ironicbadger.docker_compose_generator
         tags: compose
 
+  - hosts: pxe-netboot
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ironicbadger.docker_compose_generator
+        tags: compose
+
+  - hosts: pihole
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: ironicbadger.figurine
+      - role: ktz-dhcp-dns
+        tags: pihole, dns, dhcp
+
   - hosts: neo
     vars_files:
       - 'vars/vault.yaml'
