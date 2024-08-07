@@ -424,3 +424,38 @@ containers:
     volumes:
       - "{{ appdata_path }}/apps/docmost/redis:/data"
     restart: unless-stopped
+  ###
+  - service_name: manyfold
+    active: true
+    image: ghcr.io/manyfold3d/manyfold:latest
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.manyfold.rule=Host(`manyfold.{{ dt_domain_me }}`)"
+    volumes:
+      - "{{ appdata_path }}/apps/manyfold/libraries:/libraries"
+    environment:
+      - DATABASE_ADAPTER=postgresql
+      - DATABASE_HOST=manyfold-db
+      - DATABASE_NAME=manyfold
+      - "DATABASE_USER={{ manyfold_db_username }}"
+      - "DATABASE_PASSWORD={{ manyfold_db_password }}"
+      - "SECRET_KEY_BASE={{ manyfold_secret_key }}"
+      - "REDIS_URL=redis://manyfold-redis:6379/1"
+    include_global_env_vars: true
+    depends_on:
+      - manyfold-db
+      - manyfold-redis
+    restart: unless-stopped
+  - service_name: manyfold-db
+    active: true
+    image: postgres:15
+    volumes:
+      - "{{ appdata_path }}/apps/manyfold/db:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_USER={{ manyfold_db_username }}"
+      - "POSTGRES_PASSWORD={{ manyfold_db_password }}"
+    restart: unless-stopped
+  - service_name: manyfold-redis
+    active: true
+    image: redis:7
+    restart: unless-stopped
