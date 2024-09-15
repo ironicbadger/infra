@@ -25,6 +25,7 @@ dns_overrides:
   - {ip: 10.42.1.42, custom_dns: "git.ktz.me"}
   - {ip: 10.42.0.250, custom_dns: "unifi"} # overrides fqdn of named node
   - {ip: 10.42.0.250, custom_dns: "inform.unifi.wd.ktz.me"}
+  - {ip: 10.42.1.51, custom_dns: "px.ont.moosehonk.com"}
   #- {ip: 192.168.44.254, custom_dns: "gg.ktz.me"}
 
 dhcp_reservations:
