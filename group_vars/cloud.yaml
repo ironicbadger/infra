@@ -294,6 +294,17 @@ containers:
       - /opt/appdata/ktz-unifi-netapp/db:/data/db
     include_global_env_vars: false
     restart: unless-stopped
+  ###
+  - service_name: librespeed
+    active: true
+    image: lscr.io/linuxserver/librespeed
+    ports:
+      - 8008:80
+    environment:
+      - MODE=standalone
+      - TELEMETRY=true
+    include_global_env_vars: true
+    restart: unless-stopped
 
 
 ####################
