@@ -41,10 +41,8 @@
       - role: grog.package
       - role: ironicbadger.figurine
       #- role: ktz-tailscale-routes-fix
-      # - role: ironicbadger.docker_compose_generator
-      #   tags: compose
-      # - role: ktz-traefik
-      #   tags: compose
+      - role: ironicbadger.docker_compose_generator
+        tags: compose
 
   - hosts: deepthought
     vars_files:

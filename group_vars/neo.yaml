@@ -33,3 +33,17 @@ package_list:
 
 # ktz-tailscale-routes-fix
 #tailscale_routes_subnet: 10.42.0.0/20
+
+# ironicbadger.docker_compose_generator
+docker_compose_generator_output_path: /root/
+containers:
+  ###
+  - service_name: librespeed
+    active: true
+    image: lscr.io/linuxserver/librespeed
+    ports:
+      - 8008:80
+    environment:
+      - MODE=standalone
+    include_global_env_vars: true
+    restart: unless-stopped
