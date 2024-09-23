@@ -14,7 +14,7 @@ wd_domain_me: "wd.{{ domain_me }}"
 m_wd_domain_me: "m.{{ wd_domain_me }}"
 
 docker_compose_generator_uid: "1000"
-docker_compose_generator_gid: "1000"
+docker_compose_generator_gid: "100"
 global_env_vars:
   - "PUID={{ docker_compose_generator_uid }}"
   - "PGID={{ docker_compose_generator_gid }}"
@@ -214,7 +214,7 @@ containers:
     restart: unless-stopped
   ###
   - service_name: tubearchivist
-    active: true
+    active: false
     image: bbilly1/tubearchivist
     labels:
       - traefik.enable=true
@@ -235,13 +235,13 @@ containers:
       - tubearchivist-redis
     restart: unless-stopped
   - service_name: tubearchivist-redis
-    active: true
+    active: false
     image: redis/redis-stack-server
     volumes:
       - "{{ appdata_path }}/apps/tubearchivist/redis:/data"
     restart: unless-stopped
   - service_name: tubearchivist-elastic
-    active: true
+    active: false
     image: bbilly1/tubearchivist-es
     environment:
       - "ELASTIC_PASSWORD={{ tubearchivist_elastic_password }}"
@@ -255,6 +255,45 @@ containers:
         hard: -1
     volumes:
       - "{{ appdata_path }}/apps/tubearchivist/elastic:/usr/share/elasticsearch/data"
+    restart: unless-stopped
+  ###
+  - service_name: qbit
+    active: true
+    image: lscr.io/linuxserver/qbittorrent
+    network_mode: service:gluetun
+    volumes:
+      - "{{ appdata_path }}/arrmatey/qbit:/config"
+      - "/mnt/disk4/bt-dls:/downloads"
+    depends_on:
+      - gluetun
+    environment:
+      - WEBUI_PORT=8080
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: gluetun
+    active: true
+    image: qmcgaw/gluetun
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.gluetun.rule=Host(`qbit.{{ m_wd_domain_me }}`)"
+      - traefik.http.services.gluetun.loadbalancer.server.port=8080
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8080:8080
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+    volumes:
+      - "{{ appdata_path }}/arrmatey/gluetun:/gluetun"
+    environment:
+      - VPN_SERVICE_PROVIDER=privado
+      - VPN_TYPE=openvpn
+      - "OPENVPN_USER={{ gluetun_privado_username }}"
+      - "OPENVPN_PASSWORD={{ gluetun_privado_password }}"
+    include_global_env_vars: true
     restart: unless-stopped
 
   ### Monitoring and Tools
