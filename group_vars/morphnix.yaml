@@ -263,7 +263,7 @@ containers:
     network_mode: service:gluetun
     volumes:
       - "{{ appdata_path }}/arrmatey/qbit:/config"
-      - "/mnt/disk4/bt-dls:/downloads"
+      - "/mnt/disks/disk4/bt-dls:/downloads"
     depends_on:
       - gluetun
     environment:
