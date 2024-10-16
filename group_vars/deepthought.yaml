@@ -94,7 +94,7 @@ containers:
   ###
   - service_name: nextcloud
     active: true
-    image: nextcloud:29
+    image: nextcloud:30
     environment:
       - "NEXTCLOUD_TRUSTED_DOMAINS=nc.{{ domain_cloud }}"
       - REDIS_HOST=nextcloud-redis
