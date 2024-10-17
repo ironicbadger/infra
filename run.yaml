@@ -135,6 +135,20 @@
       - role: ironicbadger.docker_compose_generator
         tags: compose
 
+
+  - hosts: cloud-new
+    vars_files:
+      - 'vars/vault.yaml'
+    roles:
+      - role: geerlingguy.docker
+      - role: grog.package
+      - role: ironicbadger.bash_aliases
+      - role: ironicbadger.figurine
+      #- role: ktz-sanoid
+      # - role: ktz-traefik
+      # - role: ironicbadger.docker_compose_generator
+      #   tags: compose
+
   - hosts: elrond
     vars_files:
       - 'vars/vault.yaml'

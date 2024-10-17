@@ -1,0 +1,328 @@
+---
+main_username: ironicbadger
+main_uid: 1000
+main_gid: 1000
+
+# grog.package
+package_list:
+  - name: bash-completion
+  - name: curl
+  - name: htop
+  - name: ncdu
+  - name: net-tools
+  - name: sanoid
+  - name: sudo
+  - name: tmux
+  - name: tree
+  - name: zfsutils-linux
+
+# ktz-sanoid
+sanoid_config_source: sanoid-cloud.conf
+syncoid_cron_jobs:
+  - { job: 'echo', name: 'placeholder', weekday: '*', hour: '10' }
+
+# geerlingguy.ntp
+ntp_timezone: "America/New_York"
+
+# ironicbadger.bash-aliases (formerly ferrarimarco.bash-aliases)
+bash_aliases:
+  - { alias: "dtail", command: "docker logs -tf --tail='50' " }
+  - { alias: "dstop", command: "docker stop `docker ps -aq`" }
+  - { alias: "dcp", command: "docker-compose -f ~/docker-compose.yml " }
+  - { alias: "dprunesys", command: "docker system prune --all" }
+  - { alias: "appdata", command: "cd /opt/appdata" }
+  - { alias: "dfclean", command: "df -h -x tmpfs -t fuse.mergerfs -t xfs -t ext4 -t zfs | sort -k 6"}
+
+# ironicbadger.docker_compose_generator
+global_env_vars:
+  - "PUID={{ main_uid }}"
+  - "PGID={{ main_gid }}"
+  - "TZ={{ ntp_timezone }}"
+
+appdata_path: "/mnt/ktz-cloud/appdata"
+
+docker_compose_generator_output_path: "/home/{{ main_username }}"
+containers:
+  - service_name: traefik
+    active: true
+    image: traefik
+    container_name: tr
+    ports:
+      - 80:80
+      - 443:443
+      #- 8080:8080
+    command:
+      - --log.level=info
+      - --accesslog=false
+      - --api.insecure=false
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --certificatesresolvers.cloudflare.acme.dnschallenge=true
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      - "--certificatesresolvers.cloudflare.acme.email={{ cloudflare_account_email }}"
+      - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
+      - --serversTransport.insecureSkipVerify=true
+    volumes:
+      - "{{ appdata_path }}/traefik/letsencrypt:/letsencrypt"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    environment:
+      - "CLOUDFLARE_EMAIL={{ cloudflare_account_email }}"
+      - "CLOUDFLARE_API_KEY={{ cloudflare_api_key }}"
+    restart: unless-stopped
+  ###
+  - service_name: ktz-simplelinks
+    active: true
+    image: fascinated/simple-links:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ktzme.rule=Host(`alex.ktz.me`)
+      - traefik.http.routers.ktzme.entrypoints=websecure
+      - traefik.http.routers.ktzme.tls.certresolver=cloudflare
+      - traefik.http.services.ktzme.loadbalancer.server.port=3000
+    volumes:
+      - "{{ appdata_path }}/ktzme/config/config.yml:/usr/src/app/config.yml:ro"
+      - "{{ appdata_path }}/ktzme/config/public:/usr/src/app/public:rw"
+    restart: unless-stopped
+  ###
+  - service_name: pms-wiki
+    active: true
+    image: ghcr.io/ironicbadger/pms-wiki:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pmswiki.rule=Host(`perfectmediaserver.com`)
+      - traefik.http.routers.pmswiki.entrypoints=websecure
+      - traefik.http.routers.pmswiki.tls.certresolver=cloudflare
+    restart: unless-stopped
+  ###
+  - service_name: ktz-blog
+    active: true
+    image: ghost:4-alpine
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ktzblog.rule=Host(`{{ cloud_url_ktz_blog }}`)"
+      - traefik.http.routers.ktzblog.entrypoints=websecure
+      - traefik.http.routers.ktzblog.tls.certresolver=cloudflare
+      - "traefik.http.routers.ktzblog-rss.rule=Host(`{{ cloud_url_ktz_blog }}`) && PathPrefix(`/rss`)"
+      - traefik.http.routers.ktzblog-rss.entrypoints=websecure
+      - traefik.http.routers.ktzblog-rss.tls.certresolver=cloudflare
+      - traefik.http.routers.ktzblog-rss.middlewares=rss-cache-control
+      - traefik.http.middlewares.rss-cache-control.headers.customresponseheaders.Cache-Control=public, max-age=600
+    environment:
+      - NODE_ENV=production
+      - "url=https://{{ cloud_url_ktz_blog }}"
+    volumes:
+      - "{{ appdata_path }}/ktz-blog:/var/lib/ghost/content"
+    restart: unless-stopped
+  ###
+  - service_name: ktz-blog-mum
+    active: true
+    image: ghost:4-alpine
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.mumblog.rule=Host(`{{ cloud_url_mum_blog }}`)"
+      - traefik.http.routers.mumblog.entrypoints=websecure
+      - traefik.http.routers.mumblog.tls.certresolver=cloudflare
+    environment:
+      - NODE_ENV=production
+      - "url=https://{{ cloud_url_mum_blog }}"
+    volumes:
+      - "{{ appdata_path }}/ktz-blog-mum:/var/lib/ghost/content"
+    restart: unless-stopped
+  ###
+  - service_name: ktz-blog-cat
+    active: true
+    image: ghost:5
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.purrfectprose.rule=Host(`purrfectprose.com`)"
+      - traefik.http.routers.purrfectprose.entrypoints=websecure
+      - traefik.http.routers.purrfectprose.tls.certresolver=cloudflare
+    environment:
+      - NODE_ENV=production
+      - "url=https://purrfectprose.com"
+      - database__client=mysql
+      - database__connection__host=ktz-blog-cat-db
+      - "database__connection__user={{ purrfect_db_user }}"
+      - "database__connection__password={{ purrfect_db_pass }}"
+      - database__connection__database=ghost
+    volumes:
+      - "{{ appdata_path }}/ktz-blog-cat/content:/var/lib/ghost/content"
+    depends_on:
+      - ktz-blog-cat-db
+    restart: unless-stopped
+  - service_name: ktz-blog-cat-db
+    active: true
+    image: mysql:8.0
+    volumes:
+      - "{{ appdata_path }}/ktz-blog-cat/db:/var/lib/mysql"
+    environment:
+      - "MYSQL_ROOT_PASSWORD={{ purrfect_db_pass }}"
+    restart: unless-stopped
+  ###
+  - service_name: ktz-lychee
+    active: true
+    image: lycheeorg/lychee:v4.3.0
+    volumes:
+      - "{{ appdata_path }}/ktz-lychee/app/config:/config"
+      - "{{ appdata_path }}/ktz-lychee/app/uploads:/uploads"
+      - "{{ appdata_path }}/ktz-lychee/app/sym:/sym"
+    environment:
+      - PHP_TZ=America/New_York
+      - DB_CONNECTION=mysql
+      - DB_HOST=ktz-lychee-db
+      - DB_PORT=3306
+      - "DB_USERNAME={{ mysql_user_lychee }}"
+      - "DB_DATABASE={{ mysql_database_lychee }}"
+      - "DB_PASSWORD={{ mysql_password_lychee }}"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ktzlychee.rule=Host(`gallery.{{ domain_cloud }}`)"
+      - traefik.http.routers.ktzlychee.tls.certresolver=cloudflare
+    depends_on:
+      - ktz-lychee-db
+    restart: unless-stopped
+  - service_name: ktz-lychee-db
+    active: true
+    image: mariadb:10.5.5-focal
+    volumes:
+      - "{{ appdata_path }}/ktz-lychee/db:/var/lib/mysql"
+    environment:
+      - "MYSQL_ROOT_PASSWORD={{ mysql_root_password }}"
+      - "MYSQL_PASSWORD={{ mysql_password_lychee }}"
+      - "MYSQL_DATABASE={{ mysql_database_lychee }}"
+      - "MYSQL_USER={{ mysql_user_lychee }}"
+    include_global_env_vars: false
+    restart: unless-stopped
+  ###
+  - service_name: ktz-systems
+    active: true
+    image: nginx
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ktzsystems.rule=Host(`ktzsystems.com`)
+      - traefik.http.routers.ktzsystems.entrypoints=websecure
+      - traefik.http.routers.ktzsystems.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/ktzsystems/public:/usr/share/nginx/html:ro"
+    restart: unless-stopped
+  ###
+  - service_name: alleycat
+    active: true
+    image: nginx
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.alleycat.rule=Host(`alleycatmusictuition.com`)
+      - traefik.http.routers.alleycat.entrypoints=websecure
+      - traefik.http.routers.alleycat.tls.certresolver=cloudflare
+    volumes:
+      - "{{ appdata_path }}/website-alleycat:/usr/share/nginx/html:ro"
+    restart: unless-stopped
+  ###
+  - service_name: ktz-pastebin
+    active: true
+    image: mkaczanowski/pastebin
+    command:
+      - --address
+      - 0.0.0.0
+      - --db
+      - /var/lib/pastebin/
+      - --uri
+      - "https://paste.{{ domain_cloud }}"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ktzpaste.rule=Host(`paste.{{ domain_cloud }}`)"
+      - traefik.http.routers.ktzpaste.entrypoints=websecure
+      - traefik.http.routers.ktzpaste.tls.certresolver=cloudflare
+      - traefik.http.services.ktzpaste.loadbalancer.server.port=8000
+    volumes:
+      - "{{ appdata_path }}/ktz-pastebin:/var/lib/pastebin"
+    restart: unless-stopped
+  ###
+  - service_name: smokeping
+    active: true
+    image: lscr.io/linuxserver/smokeping
+    hostname: ktz-cloud
+    volumes:
+      - "{{ appdata_path }}/smokeping/config:/config"
+      - "{{ appdata_path }}/smokeping/data:/data"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.smokeping.rule=Host(`smokeping.het.{{ domain_cloud }}`)"
+      - traefik.http.routers.smokeping.entrypoints=websecure
+      - traefik.http.routers.smokeping.tls.certresolver=cloudflare
+    include_global_env_vars: true
+    restart: unless-stopped
+
+###
+  - service_name: ktz-unifi
+    active: true
+    image: lscr.io/linuxserver/unifi-network-application
+    ports:
+      - "{{ cloud_unifi_port_advertise }}:{{ cloud_unifi_port_advertise_int }}"
+      - 8080:8080
+      - 3478:3478/udp
+    mem_limit: 2g
+    environment:
+      - "MONGO_USER={{ unifi_mongo_db_user }}"
+      - "MONGO_PASS={{ unifi_mongo_db_password }}"
+      - "MONGO_DBNAME={{ unifi_mongo_db_name }}"
+      - MONGO_HOST=ktz-unifi-db
+      - MONGO_PORT=27017
+    volumes:
+      - "/opt/appdata/ktz-unifi-netapp/config:/config"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ubiq.rule=Host(`{{ cloud_url_ubiq }}`)"
+      - traefik.http.routers.ubiq.entrypoints=websecure
+      - traefik.http.routers.ubiq.tls=true
+      - traefik.http.routers.ubiq.tls.certresolver=cloudflare
+      - traefik.http.services.ubiq.loadbalancer.server.scheme=https
+      - traefik.http.services.ubiq.loadbalancer.server.port=8443
+    include_global_env_vars: true
+    restart: unless-stopped
+  - service_name: ktz-unifi-db
+    active: true
+    image: docker.io/mongo:7.0
+    volumes:
+      - /opt/appdata/ktz-unifi-netapp/db:/data/db
+    include_global_env_vars: false
+    restart: unless-stopped
+  ###
+  - service_name: librespeed
+    active: true
+    image: lscr.io/linuxserver/librespeed
+    ports:
+      - 8008:80
+    environment:
+      - MODE=standalone
+      - TELEMETRY=true
+    include_global_env_vars: true
+    restart: unless-stopped
+
+
+####################
+###
+  - service_name: ktz-unifi-old
+    active: false
+    image: lscr.io/linuxserver/unifi-controller
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ubiq2.rule=Host(`unifi.het.ktz.cloud`)"
+      - traefik.http.routers.ubiq2.entrypoints=websecure
+      - traefik.http.routers.ubiq2.tls=true
+      - traefik.http.routers.ubiq2.tls.certresolver=cloudflare
+      - traefik.http.services.ubiq2.loadbalancer.server.scheme=https
+      - traefik.http.services.ubiq2.loadbalancer.server.port=8443
+    ports:
+      - "{{ cloud_unifi_port_advertise }}:{{ cloud_unifi_port_advertise_int }}"
+      - 8080:8080
+      - 3478:3478/udp
+    mem_limit: 1g
+    volumes:
+      - "{{ appdata_path }}/ktz-unifi:/config"
+    include_global_env_vars: true
+    restart: unless-stopped
