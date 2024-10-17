@@ -83,7 +83,7 @@
       - role: ironicbadger.docker_compose_generator
         tags: compose
 
-  - hosts: pennywise
+  - hosts: snowball
     vars_files:
       - 'vars/vault.yaml'
     roles:
