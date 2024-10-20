@@ -78,7 +78,7 @@ traefik_file_provider: false
 
 # ironicbadger.docker_compose_generator
 appdata_path: /z2tank/mrchuckles/appdata
-local_domain: "mrc.nr.{{ domain_me }}"
+local_domain: "snowball.nr.{{ domain_me }}"
 containers:
   ###
   - service_name: tr

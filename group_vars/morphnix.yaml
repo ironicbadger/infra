@@ -213,48 +213,19 @@ containers:
     include_global_env_vars: true
     restart: unless-stopped
   ###
-  - service_name: tubearchivist
-    active: false
-    image: bbilly1/tubearchivist
+  - service_name: pinchflat
+    active: true
+    image: ghcr.io/kieraneglin/pinchflat:latest
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.tubearchivist.rule=Host(`tube.{{ m_wd_domain_me }}`)"
+      - "traefik.http.routers.pinchflat.rule=Host(`pinchflat.{{ m_wd_domain_me }}`)"
+      - traefik.http.services.pinchflat.loadbalancer.server.port=8945
+    ports:
+      - 8945:8945
     volumes:
-      - /mnt/jbod/tv/youtube-dl:/youtube
-      - /mnt/ssd4tb/yt-cache:/cache
-    environment:
-      - ES_URL=http://tubearchivist-elastic:9200
-      - REDIS_HOST=tubearchivist-redis
-      - "TA_HOST=tube.{{ m_wd_domain_me }}"
-      - "TA_USERNAME={{ tubearchivist_user }}"
-      - "TA_PASSWORD={{ tubearchivist_password }}"
-      - "ELASTIC_PASSWORD={{ tubearchivist_elastic_password }}"
+      - /mnt/jbod/tv/youtube-dl:/downloads
+      - "{{ appdata_path }}/mediaservers/pinchflat:/config"
     include_global_env_vars: true
-    depends_on:
-      - tubearchivist-elastic
-      - tubearchivist-redis
-    restart: unless-stopped
-  - service_name: tubearchivist-redis
-    active: false
-    image: redis/redis-stack-server
-    volumes:
-      - "{{ appdata_path }}/apps/tubearchivist/redis:/data"
-    restart: unless-stopped
-  - service_name: tubearchivist-elastic
-    active: false
-    image: bbilly1/tubearchivist-es
-    environment:
-      - "ELASTIC_PASSWORD={{ tubearchivist_elastic_password }}"
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - "xpack.security.enabled=true"
-      - "discovery.type=single-node"
-      - "path.repo=/usr/share/elasticsearch/data/snapshot"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - "{{ appdata_path }}/apps/tubearchivist/elastic:/usr/share/elasticsearch/data"
     restart: unless-stopped
   ###
   - service_name: qbit
