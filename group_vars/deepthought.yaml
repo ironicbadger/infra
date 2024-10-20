@@ -58,7 +58,7 @@ containers:
   ###
   - service_name: tr
     active: true
-    image: traefik:2.11
+    image: traefik:3
     container_name: tr
     labels:
       - traefik.enable=false
@@ -94,7 +94,7 @@ containers:
   ###
   - service_name: nextcloud
     active: true
-    image: nextcloud:29
+    image: nextcloud:30
     environment:
       - "NEXTCLOUD_TRUSTED_DOMAINS=nc.{{ domain_cloud }}"
       - REDIS_HOST=nextcloud-redis
@@ -238,10 +238,7 @@ containers:
     image: "ghcr.io/immich-app/immich-server:{{ immich_version }}"
     #network_mode: service:immich-ts
     ports:
-      - 2283:3001
-    command:
-      - start.sh
-      - immich
+      - 2283:2283
     volumes:
       - "/mnt/bigrust20/photos/alex/immich/uploads:/usr/src/app/upload"
       - /mnt/bigrust20/photos/alex/images:/mnt/bigrust20/photos/alex/images:ro
@@ -253,28 +250,6 @@ containers:
       - "DB_USERNAME={{ immich_db_username }}"
       - "DB_DATABASE_NAME={{ immich_db_name }}"
       - "DB_DATA_LOCATION={{ immich_db_location }}"
-      - "REDIS_HOSTNAME={{ immich_redis_hostname}}"
-      - "DB_HOSTNAME={{ immich_db_hostname}}"
-    depends_on:
-      - immich-redis
-      - immich-database
-    restart: unless-stopped
-  - service_name: immich-microservices
-    active: true
-    image: "ghcr.io/immich-app/immich-server:{{ immich_version }}"
-    devices:
-      - /dev/dri:/dev/dri
-    command:
-      - start.sh
-      - microservices
-    volumes:
-      - "/mnt/bigrust20/photos/alex/immich/uploads:/usr/src/app/upload"
-      - /mnt/bigrust20/photos/alex/images:/mnt/bigrust20/photos/alex/images:ro
-      - "/etc/localtime:/etc/localtime:ro"
-    environment:
-      - "DB_PASSWORD={{ immich_db_password }}"
-      - "DB_USERNAME={{ immich_db_username }}"
-      - "DB_DATABASE_NAME={{ immich_db_name }}"
       - "REDIS_HOSTNAME={{ immich_redis_hostname}}"
       - "DB_HOSTNAME={{ immich_db_hostname}}"
     depends_on:
