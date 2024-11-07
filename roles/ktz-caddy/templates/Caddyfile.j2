@@ -4,64 +4,21 @@
   }
 }
 
-(headers) {
-  header {
-    Permissions-Policy interest-cohort=()
-    Strict-Transport-Security "max-age=31536000; includeSubdomains"
-    X-XSS-Protection "1; mode=block"
-    X-Content-Type-Options "nosniff"
-    X-Robots-Tag noindex, nofollow
-    Referrer-Policy "same-origin"
-    Content-Security-Policy "frame-ancestors {{ domain_me }} *.{{ domain_wd_me }}"
-    -Server
-    Permissions-Policy "geolocation=(self {{ domain_me }} *.{{ domain_wd_me }}), microphone=()"
-  }
-}
-
-## core
-
-# c137
-# c137.{{ domain_wd_me }} {
-#   reverse_proxy https://10.42.0.1:8006 {
-#     transport http {
-#       tls_insecure_skip_verify
-#     }
-#   }
-#   import cloudflare
-# }
-
 # pihole
 dns.{{ domain_wd_me }} {
-  redir / /admin
+  #redir / /admin
   reverse_proxy http://10.42.0.253
   import cloudflare
 }
 
-# # dhcp
-# dhcp.{{ domain_wd_me }} {
-#   redir / /dhcp.leases
-#   reverse_proxy http://10.42.0.253:81
-#   import cloudflare
-# }
-
-#opnsense
-opnsense.{{ domain_wd_me }} {
-  reverse_proxy https://10.42.0.254:443 {
-    transport http {
-      tls_insecure_skip_verify
-    }
-  }
-  import cloudflare
-}
-
 # immich
-immich.wd.ktz.me {
+immich.{{ domain_wd_me }}  {
   reverse_proxy http://10.42.1.42:2283
   import cloudflare
 }
 
 # abs
-abs.wd.ktz.me {
+abs.{{ domain_wd_me }}  {
   reverse_proxy http://10.42.1.10:2284
   import cloudflare
 }
@@ -74,41 +31,6 @@ px.{{ domain_wd_me }} {
       tls_insecure_skip_verify
     }
   }
-  import cloudflare
-}
-
-# px dt
-px.dt.{{ domain_wd_me }} {
-  reverse_proxy https://10.42.0.42:8006 {
-    transport http {
-      tls_insecure_skip_verify
-    }
-  }
-  import cloudflare
-}
-
-# anton
-px.anton.{{ domain_wd_me }} {
-  reverse_proxy https://10.42.1.20:8006 {
-    transport http {
-      tls_insecure_skip_verify
-    }
-  }
-  import cloudflare
-}
-
-# zoidberg
-px.z.{{ domain_wd_me }} {
-  reverse_proxy https://10.42.1.42:8006 {
-    transport http {
-      tls_insecure_skip_verify
-    }
-  }
-  import cloudflare
-}
-
-ha.wd.ktz.me {
-  reverse_proxy http://10.42.1.99:8123
   import cloudflare
 }
 
@@ -140,17 +62,7 @@ megadesk.kvm.{{ domain_wd_me }} {
 
 # unifi local
 unifi.{{ domain_wd_me }} {
-  reverse_proxy https://10.42.0.250:8443 {
-    transport http {
-      tls_insecure_skip_verify
-    }
-  }
-  import cloudflare
-}
-
-# octoprint
-bricktop.{{ domain_wd_me }} {
-  reverse_proxy https://10.42.1.80:443 {
+  reverse_proxy https://10.42.0.254:443 {
     transport http {
       tls_insecure_skip_verify
     }
@@ -160,20 +72,20 @@ bricktop.{{ domain_wd_me }} {
 
 ## gg
 
-# octonas
-dsm.{{ domain_wd_me }} {
-  reverse_proxy https://100.99.254.122:5001 {
-    transport http {
-      tls_insecure_skip_verify
-    }
-  }
-  import cloudflare
-}
+# # octonas
+# dsm.{{ domain_wd_me }} {
+#   reverse_proxy https://100.99.254.122:5001 {
+#     transport http {
+#       tls_insecure_skip_verify
+#     }
+#   }
+#   import cloudflare
+# }
 
 ## nr
 
 # pennywise
-px.p.{{ domain_wd_me }} {
+snowball.{{ domain_wd_me }} {
   reverse_proxy https://100.88.250.125:8006 {
     transport http {
       tls_insecure_skip_verify

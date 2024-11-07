@@ -5,6 +5,7 @@
     roles:
       - role: geerlingguy.ntp
       - role: ironicbadger.figurine
+      - role: ktz-tailscale-routes-fix
       - role: ktz-caddy
         tags: caddy
 

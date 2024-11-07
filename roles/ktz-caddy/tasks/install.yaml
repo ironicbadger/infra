@@ -9,6 +9,10 @@
     mode: a+x
   ignore_errors: true
 
+- name: add the caddy group
+  ansible.builtin.group:
+    name: caddy
+
 - name: Add the caddy user
   ansible.builtin.user:
     name: caddy
