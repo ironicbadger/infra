@@ -4,6 +4,20 @@
   }
 }
 
+# *.{{ domain_wd_me }} {
+#   @search host search.{{ domain_wd_me }}
+#   handle @search {
+#     reverse_proxy http://10.42.0.248:8080
+#     import cloudflare
+#   }
+
+#   @dns host dns.{{ domain_wd_me }}
+#   handle @dns {
+#     reverse_proxy http://10.42.0.253
+#     import cloudflare
+#   }
+# }
+
 # pihole
 dns.{{ domain_wd_me }} {
   #redir / /admin
@@ -20,6 +34,12 @@ immich.{{ domain_wd_me }}  {
 # abs
 abs.{{ domain_wd_me }}  {
   reverse_proxy http://10.42.1.10:2284
+  import cloudflare
+}
+
+# search
+search.{{ domain_wd_me }} {
+  reverse_proxy http://10.42.0.248:8080
   import cloudflare
 }
 
