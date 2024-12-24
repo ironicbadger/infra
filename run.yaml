@@ -1,7 +1,7 @@
 ---
   - hosts: caddy
     vars_files:
-      - 'vars/vault.yaml'
+      - 'vars/secrets.yaml'
     roles:
       #- role: ironicbadger.figurine
       #- role: ktz-tailscale-routes-fix
