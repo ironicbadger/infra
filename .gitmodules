@@ -1,3 +1,6 @@
 [submodule "roles/ansible-role-caddy"]
 	path = roles/ansible-role-caddy
 	url = https://github.com/ironicbadger/ansible-role-caddy.git
+[submodule "roles/ironicbadger.caddy"]
+	path = roles/ironicbadger.caddy
+	url = https://github.com/ironicbadger/ansible-role-caddy.git
