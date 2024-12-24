@@ -7,10 +7,63 @@ caddy_tls_providers:
     resolver_ip: 1.1.1.1
 
 caddy_endpoints:
+  ## USA - WD
   - friendly_name: wildcard for *.wd.ktz.me
     fqdn: '*.wd.ktz.me'
     tls_provider: cloudflare
     wildcard_endpoints:
+      ## Network Core services
+      - friendly_name: unifi
+        fqdn: unifi.wd.ktz.me
+        upstream: https://10.42.0.254:443
+        tls_insecure: true
+      - friendly_name: dns
+        fqdn: dns.wd.ktz.me
+        upstream: http://10.42.0.253
+      ## Core Apps
+      - friendly_name: search
+        fqdn: search.wd.ktz.me
+        upstream: http://10.42.0.248:8080
       - friendly_name: blueiris
-        fqdn: blah.wd.ktz.me
-        upstream: 10.42.2.1:83
+        fqdn: bi.wd.ktz.me
+        upstream: http://10.42.2.1:83
+      ## Proxmox-opedes
+      - friendly_name: pxneo
+        fqdn: px.wd.ktz.me
+        upstream: https://10.42.0.1:8006
+        tls_insecure: true
+      ## PiKVMs
+      - friendly_name: basementpikvm
+        fqdn: basement.kvm.wd.ktz.me
+        upstream: https://10.42.0.100:443
+        tls_insecure: true
+      - friendly_name: megadeskkvm
+        fqdn: megadesk.kvm.wd.ktz.me
+        upstream: https://10.42.0.101:443
+        tls_insecure: true
+  ## CA - ONT
+  - friendly_name: wildcard for *.ont.ktz.me
+    fqdn: '*.ont.ktz.me'
+    tls_provider: cloudflare
+    wildcard_endpoints:
+      - friendly_name: moose
+        fqdn: moose.ont.ktz.me
+        upstream: https://192.168.13.10:8006
+        tls_insecure: true
+  ## UK - NR
+  - friendly_name: wildcard for *.nr.ktz.me
+    fqdn: '*.nr.ktz.me'
+    tls_provider: cloudflare
+    wildcard_endpoints:
+      - friendly_name: snowball
+        fqdn: snowball.nr.ktz.me
+        upstream: https://100.88.250.125:8006
+        tls_insecure: true
+  ## UK - GG
+  # - friendly_name: wildcard for *.gg.ktz.me
+  #   fqdn: '*.gg.ktz.me'
+  #   tls_provider: cloudflare
+  #   wildcard_endpoints:
+  #     - friendly_name: elrond
+  #       fqdn: dsm.gg.ktz.me
+  #       upstream: https://100.99.
