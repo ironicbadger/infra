@@ -19,9 +19,16 @@ add-submodule URL *NAME:
         # Extract repo name from URL if no name provided
         basename=$(basename "{{URL}}" .git)
         git submodule add {{URL}} "roles/${basename}"
+        git submodule update --init --recursive
+        git add .gitmodules "roles/${basename}"
+        git commit -m "Adds ${basename} as a submodule"
     else
         git submodule add {{URL}} "roles/{{NAME}}"
+        git submodule update --init --recursive
+        git add .gitmodules "roles/{{NAME}}"
+        git commit -m "Adds {{NAME}} as a submodule"
     fi
+
 
 gitinit:
   sh scripts/git-init.sh
