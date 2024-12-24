@@ -1,11 +1,13 @@
 ---
+# ironicbadger.figurine
+figurine_name: us-wd-caddy
 
+# ironicbadger.caddy
 caddy_tls_providers:
   - provider: cloudflare
     challenge_type: dns
     provider_api_token: "{{ cloudflare_token_wd_caddy }}"
     resolver_ip: 1.1.1.1
-
 caddy_endpoints:
   ## USA - WD
   - friendly_name: wildcard for *.wd.ktz.me
