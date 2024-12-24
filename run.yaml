@@ -3,7 +3,7 @@
     vars_files:
       - 'vars/vault.yaml'
     roles:
-      - role: ironicbadger.figurine
-      - role: ktz-tailscale-routes-fix
-      - role: ktz-caddy
+      #- role: ironicbadger.figurine
+      #- role: ktz-tailscale-routes-fix
+      - role: ansible-role-caddy
         tags: caddy
