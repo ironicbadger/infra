@@ -7,3 +7,6 @@
 [submodule "roles/ironicbadger.docker-compose-generator"]
 	path = roles/ironicbadger.docker-compose-generator
 	url = git@github.com:ironicbadger/ansible-role-docker-compose-generator.git
+[submodule "roles/ironicbadger.figurine"]
+	path = roles/ironicbadger.figurine
+	url = git@github.com:ironicbadger/ansible-role-figurine.git
