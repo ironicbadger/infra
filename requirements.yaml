@@ -1,18 +1,11 @@
 roles:
-#- src: ironicbadger.docker_compose_generator
 #- src: ironicbadger.bash_aliases
 #- src: ironicbadger.figurine
-
-# submodules
-  # - src: git+https://github.com/ironicbadger/ansible-role-caddy.git
-  #   version: main
 
 collections: []
 
 
 ## submodules
-### most 3rd party roles that are written by me should be imported as
+### Most 3rd party roles that are written by me should be imported as
 ### submodules to make testing easier when modifying those roles.
-
-## commands to add a submodule
-### git submodule add https://github.com/ironicbadger/ansible-role-caddy.git roles/ironicbadger.caddy
+### There is a helper function in the justfile to make this easier.
