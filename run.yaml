@@ -3,7 +3,7 @@
     vars_files:
       - 'vars/secrets.yaml'
     roles:
-      #- role: ironicbadger.figurine
+      - role: ironicbadger.figurine
       #- role: ktz-tailscale-routes-fix
       - role: ironicbadger.caddy
         tags: caddy
