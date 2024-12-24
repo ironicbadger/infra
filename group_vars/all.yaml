@@ -1,0 +1,5 @@
+---
+
+# ironicbadger.tailscale-routes-fix
+tailscale_routes_fix_lan_subnet: 10.42.0.0/21
+tailscale_routes_table: main
