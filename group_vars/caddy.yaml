@@ -50,7 +50,7 @@ caddy_endpoints:
     wildcard_endpoints:
       - friendly_name: moose
         fqdn: moose.ont.ktz.me
-        upstream: https://192.168.13.10:8006
+        upstream: https://100.123.207.53:8006
         tls_insecure: true
   ## UK - NR
   - friendly_name: wildcard for *.nr.ktz.me
