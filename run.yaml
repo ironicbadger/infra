@@ -5,5 +5,5 @@
     roles:
       #- role: ironicbadger.figurine
       #- role: ktz-tailscale-routes-fix
-      - role: ansible-role-caddy
+      - role: ironicbadger.caddy
         tags: caddy
