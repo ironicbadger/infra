@@ -1,24 +1,9 @@
 roles:
-- src: ironicbadger.docker_compose_generator
-- src: ironicbadger.bash_aliases
-- src: ironicbadger.figurine
-- src: ironicbadger.snapraid
-- src: ironicbadger.proxmox_nag_removal
+#- src: ironicbadger.docker_compose_generator
+#- src: ironicbadger.bash_aliases
+#- src: ironicbadger.figurine
 
-- src: geerlingguy.docker
-- src: geerlingguy.docker_arm
-- src: geerlingguy.security
-- src: geerlingguy.nfs
-- src: geerlingguy.ntp
-- src: geerlingguy.github-users
 
-- src: artis3n.tailscale
-- src: grog.package
-- src: rossmcdonald.telegraf
-- src: weareinteractive.environment
-
-collections:
-- prometheus.prometheus
 
 # submodules
 ## https://github.com/ironicbadger/ansible-role-caddy

@@ -1,7 +1,0 @@
-autorestic_generator_output_path: "~"
-autorestic_generator_generator_uid: "1000"
-autorestic_generator_generator_gid: "1000"
-
-# temp variable whilst i get the templating worked out
-# this just copies and decrypts a file
-simple_autorestic_decrypt: false

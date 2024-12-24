@@ -1,6 +1,0 @@
----
-
-traefik_file_provider: false
-traefik_enable_dashboard: false
-traefik_insecure_transport: false
-traefik_exposed_by_default: false

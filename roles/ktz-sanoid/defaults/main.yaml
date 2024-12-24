@@ -1,7 +1,0 @@
----
-
-sanoid_build_from_source: false
-sanoid_apt_package_name: sanoid
-syncoid_binary_path: /usr/sbin/syncoid
-syncoid_cron: true
-syncoid_configure: true

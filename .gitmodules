@@ -1,6 +1,0 @@
-[submodule "submodules/ktz-rh-pinauth"]
-	path = submodules/ktz-rh-pinauth
-	url = ssh://git@git.ktz.me:2222/alexktz/ktz-rh-pinauth.git
-# [submodule "submodules/ansible-role-docker-compose-generator"]
-# 	path = submodules/ansible-role-docker-compose-generator
-# 	url = ssh://git@github.com:ironicbadger/ansible-role-docker-compose-generator.git

@@ -1,9 +1,0 @@
----
-
-- name: template and install Caddyfile
-  template:
-    src: templates/Caddyfile.j2
-    dest: "{{ caddy_opnsense_caddyfile_path }}/Caddyfile"
-    owner: root
-    group: wheel
-  notify: restart caddy

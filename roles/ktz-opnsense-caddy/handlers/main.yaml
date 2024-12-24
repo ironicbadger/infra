@@ -1,6 +1,0 @@
----
-
-- name: restart caddy
-  service:
-    name: caddy
-    state: restarted

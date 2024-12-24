@@ -1,5 +1,0 @@
-caddy_opnsense_cloudflare_binary_url: "https://caddyserver.com/api/download?os=freebsd&arch=amd64&p=github.com%2Fcaddy-dns%2Fcloudflare"
-caddy_opnsense_caddyfile_path: /usr/local/etc/caddy/
-
-caddy_amd64_linux_cloudflare_binary_url: "https://caddyserver.com/api/download?os=linux&arch=amd64&p=github.com%2Fcaddy-dns%2Fcloudflare"
-caddy_linux_caddyfile_path: /etc/caddy

@@ -1,7 +1,0 @@
----
-services:
-  nginx1:
-    image: nginx
-    container_name: nginx1
-    ports:
-      - 8876:80
