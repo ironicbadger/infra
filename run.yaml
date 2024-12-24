@@ -1,9 +1,19 @@
 ---
+  - hosts: neo
+    roles:
+      - role: ironicbadger.figurine
+      - role: ironicbadger.tailscale-routes-fix
+
   - hosts: caddy
-    vars_files:
-      - 'vars/secrets.yaml'
     roles:
       - role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
       - role: ironicbadger.caddy
+        vars_files:
+        - 'vars/secrets.yaml'
         tags: caddy
+
+  - hosts: wd-ts-sr
+    roles:
+      - role: ironicbadger.figurine
+      - role: ironicbadger.tailscale-routes-fix
