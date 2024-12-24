@@ -7,6 +7,9 @@ compose HOST:
   ansible-playbook run.yaml --limit {{HOST}} --tags compose
 
 ## repo stuff
+gitinit:
+  sh scripts/git-init.sh
+
 # optionally use --force to force reinstall all requirements
 reqs *FORCE:
 	ansible-galaxy install -r requirements.yaml {{FORCE}}
