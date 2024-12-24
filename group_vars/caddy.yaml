@@ -2,6 +2,10 @@
 # ironicbadger.figurine
 figurine_name: us-wd-caddy
 
+# ironicbadger.tailscale-routes-fix
+tailscale_routes_fix_lan_subnet: 10.42.0.0/21
+tailscale_routes_table: local
+
 # ironicbadger.caddy
 caddy_tls_providers:
   - provider: cloudflare

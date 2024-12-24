@@ -4,6 +4,6 @@
       - 'vars/secrets.yaml'
     roles:
       - role: ironicbadger.figurine
-      #- role: ktz-tailscale-routes-fix
+      - role: ironicbadger.tailscale-routes-fix
       - role: ironicbadger.caddy
         tags: caddy
