@@ -12,8 +12,12 @@ compose HOST:
 ##########
 ## repo stuff
 
+# updates submodules
+sub-update:
+  git submodule update --init --recursive
+
 # git submodule - repo URL + optional local folder name
-add-submodule URL *NAME:
+sub-add URL *NAME:
     #!/usr/bin/env sh
     if [ -z "{{NAME}}" ]; then
         # Extract repo name from URL if no name provided
