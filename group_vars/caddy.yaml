@@ -4,13 +4,13 @@ caddy_tls_providers:
   - provider: cloudflare
     challenge_type: dns
     provider_api_token: "{{ cloudflare_token_wd_caddy }}"
-    resolver: 1.1.1.1
+    resolver_ip: 1.1.1.1
 
-# caddy_endpoints:
-#   - friendly_name: wildcard for *.wd.ktz.me
-#     fqdn: '*.wd.ktz.me'
-#     tls_provider: cloudflare
-#     wildcard_endpoints:
-#       - friendly_name: blueiris
-#         fqdn: bi.wd.ktz.me
-#         upstream: 10.42.2.1:83
+caddy_endpoints:
+  - friendly_name: wildcard for *.wd.ktz.me
+    fqdn: '*.wd.ktz.me'
+    tls_provider: cloudflare
+    wildcard_endpoints:
+      - friendly_name: blueiris
+        fqdn: blah.wd.ktz.me
+        upstream: 10.42.2.1:83
