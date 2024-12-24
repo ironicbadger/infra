@@ -10,3 +10,6 @@
 [submodule "roles/ironicbadger.figurine"]
 	path = roles/ironicbadger.figurine
 	url = git@github.com:ironicbadger/ansible-role-figurine.git
+[submodule "roles/ironicbadger.tailscale-routes-fix"]
+	path = roles/ironicbadger.tailscale-routes-fix
+	url = git@github.com:ironicbadger/tailscale-routes-fix.git
