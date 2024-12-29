@@ -1,0 +1,14 @@
+---
+services:
+  librespeed:
+    image: lscr.io/linuxserver/librespeed
+    container_name: librespeed
+    ports:
+      - 8008:80
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=America/New_York
+      - MODE=standalone
+      - TELEMETRY=true
+    restart: unless-stopped
