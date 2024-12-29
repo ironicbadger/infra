@@ -18,7 +18,7 @@
     path: "{{ item.mount_point }}"
     src: "{{ item.share }}"
     fstype: cifs
-    opts: "username={{ item.username }},password={{ item.password }},rw,uid=1000,gid=1000,nobrl"
+    opts: "username={{ item.username }},password={{ item.password }},rw,uid={{ item.uid }},gid={{ item.gid }},nobrl"
     state: mounted
   loop: "{{ samba_mounts }}"
   when: samba_mounts is defined

@@ -8,7 +8,7 @@
     vars_files:
     - 'vars/secrets.yaml'
     roles:
-      - role: ironicbadger.figurine
+      #- role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
       - role: local-neo-yeet
 

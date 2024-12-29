@@ -2,5 +2,8 @@
 
 - name: Add the user
   ansible.builtin.user:
-    name: alex
-    shell: /bin/bash
+    name: "{{ primary_user.name }}"
+    uid: "{{ primary_user.uid }}"
+    groups: "{{ primary_user.groups }}"
+    shell: "{{ primary_user.shell }}"
+    append: true
