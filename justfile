@@ -33,10 +33,6 @@ sub-add URL *NAME:
         git commit -m "Adds {{NAME}} as a submodule"
     fi
 
-
-gitinit:
-  sh scripts/git-init.sh
-
 # optionally use --force to force reinstall all requirements
 reqs *FORCE:
 	ansible-galaxy install -r requirements.yaml {{FORCE}}
