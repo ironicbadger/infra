@@ -6,7 +6,7 @@
 
   - hosts: neo-yeet
     vars_files:
-    - 'vars/secrets.yaml'
+    - 'group_vars/secrets.yaml'
     roles:
       #- role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
@@ -14,7 +14,7 @@
 
   - hosts: caddy
     vars_files:
-    - 'vars/secrets.yaml'
+    - 'group_vars/secrets.yaml'
     roles:
       - role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
