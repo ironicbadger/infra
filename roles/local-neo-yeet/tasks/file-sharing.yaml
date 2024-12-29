@@ -1,0 +1,25 @@
+---
+
+- name: ensure cifs packages are present
+  ansible.builtin.package:
+    name: cifs-utils
+    state: present
+
+- name: ensure mount point exists for samba shares
+  ansible.builtin.file:
+    path: "{{ item.mount_point }}"
+    state: directory
+  loop: "{{ samba_mounts }}"
+  when: samba_mounts is defined
+  no_log: true
+
+- name: mount samba shares
+  ansible.builtin.mount:
+    path: "{{ item.mount_point }}"
+    src: "{{ item.share }}"
+    fstype: cifs
+    opts: "username={{ item.username }},password={{ item.password }},rw,uid=1000,gid=1000,nobrl"
+    state: mounted
+  loop: "{{ samba_mounts }}"
+  when: samba_mounts is defined
+  no_log: true

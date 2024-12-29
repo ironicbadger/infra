@@ -1,0 +1,7 @@
+---
+
+- name: import user tasks
+  import_tasks: users.yaml
+
+- name: import file sharing tasks
+  import_tasks: file-sharing.yaml

@@ -1,0 +1,5 @@
+---
+
+figurine_name: neo-yeet
+
+samba_mounts: "{{ vault_neo_yeet_samba_mounts }}"
