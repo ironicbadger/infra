@@ -20,7 +20,7 @@ services:
       - manyfold-redis
     restart: unless-stopped
   manyfold-db:
-    image: postgres:15
+    image: postgres:17
     container_name: manyfold-db
     volumes:
       - /mnt/appdata/apps/manyfold/db:/var/lib/postgresql/data
