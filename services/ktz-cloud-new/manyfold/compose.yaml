@@ -1,6 +1,6 @@
 services:
   manyfold:
-    image: ghcr.io/manyfold3d/manyfold:latest
+    image: ghcr.io/manyfold3d/manyfold:0.91.3
     container_name: manyfold
     volumes:
       - /mnt/appdata/apps/manyfold/libraries:/libraries
