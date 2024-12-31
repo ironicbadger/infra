@@ -3,6 +3,7 @@
  "extends": [
    "config:recommended"
  ],
- "baseBranches": ["2025-refresh"]
- "enabled": true
+ "baseBranches": ["2025-refresh"],
+ "enabled": true,
+ "onboarding": true
 }
