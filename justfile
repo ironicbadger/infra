@@ -6,8 +6,8 @@ run HOST *TAGS:
   ansible-playbook -b run.yaml --limit {{HOST}} {{TAGS}}
 
 # docker compose against remote host via Ansible
-compose HOST:
-  ansible-playbook run.yaml --limit {{HOST}} --tags compose
+compose HOST *V:
+  ansible-playbook run.yaml --limit {{HOST}} --tags compose {{V}}
 
 ##########
 ## repo stuff
