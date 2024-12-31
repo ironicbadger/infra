@@ -25,3 +25,8 @@
     roles:
       - role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
+
+  - hosts: ktz-cloud-new
+    roles:
+      - role: ironicbadger.docker-compose-generator
+        tags: compose
