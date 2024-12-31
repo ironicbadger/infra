@@ -1,0 +1,48 @@
+services:
+## media servers
+  plex:
+    image: plexinc/pms-docker
+    container_name: plex
+    network_mode: host
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - /mnt/appdata/mediaservers/plex/config:/config
+      - /mnt/jbod:/data:ro
+      - /mnt/bigrust18/media:/bigrust18/media:ro
+      - /mnt/downloads:/downloads:ro
+      - /dev/shm:/transcode"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.plex.rule=Host(`plex.m.wd.ktz.me`)
+      - traefik.http.services.plex.loadbalancer.server.port=32400
+    environment:
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
+    restart: unless-stopped
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - "{{ appdata_path }}/mediaservers/jellyfin:/config"
+      - "{{ storage_path }}:/data:ro"
+      - "{{ bigrust18_path }}/media:/bigrust18/media:ro"
+      - /mnt/downloads:/downloads:ro
+      # ram transcode
+      - /dev/shm:/transcode
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.jellyfin.rule=Host(`jf.{{ wd_domain_me }}`)"
+      - traefik.http.services.jellyfin.loadbalancer.server.port=8096
+    ports:
+      - 2285:8096
+    environment:
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
+      - "JELLYFIN_PublishedServerUrl=jf.{{ wd_domain_me }}"
+    hostname: us-rdu
+    restart: unless-stopped

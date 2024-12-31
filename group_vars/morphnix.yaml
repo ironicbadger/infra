@@ -1,0 +1,16 @@
+---
+
+# ironicbadger.docker-compose-generator
+host_timezone: "America/New_York"
+
+appdata_path: /mnt/appdata
+download_path: /mnt/downloads
+storage_path: /mnt/jbod
+bigrust18_path: /mnt/bigrust18
+wd_domain_me: "wd.{{ domain_me }}"
+m_wd_domain_me: "m.{{ wd_domain_me }}"
+
+docker_compose_generator_uid: "1000"
+docker_compose_generator_gid: "100"
+
+disabled_compose_files: []
