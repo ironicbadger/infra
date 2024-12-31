@@ -1,6 +1,6 @@
 services:
   librespeed:
-    image: lscr.io/linuxserver/librespeed
+    image: lscr.io/linuxserver/librespeed:5.3.3
     container_name: librespeed
     ports:
       - 8008:80
