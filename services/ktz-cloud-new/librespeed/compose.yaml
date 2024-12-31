@@ -11,4 +11,5 @@ services:
       - TZ=America/New_York
       - MODE=standalone
       - TELEMETRY=true
+      - "PASSWORD={{ testpass }}"
     restart: unless-stopped
