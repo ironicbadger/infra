@@ -1,4 +1,3 @@
----
 services:
   uptime-kuma:
     image: louislam/uptime-kuma:1

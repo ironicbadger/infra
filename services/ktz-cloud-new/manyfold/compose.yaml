@@ -1,4 +1,3 @@
----
 services:
   manyfold:
     image: ghcr.io/manyfold3d/manyfold:latest
