@@ -1,0 +1,54 @@
+services:
+  # other apps
+  ktz-pastebin:
+    image: mkaczanowski/pastebin
+    container_name: ktz-pastebin
+    volumes:
+      - {{ appdata_path }}/ktz-pastebin:/var/lib/pastebin
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ktzpaste.rule=Host(`paste.{{ domain_cloud }}`)
+      - traefik.http.routers.ktzpaste.entrypoints=websecure
+      - traefik.http.routers.ktzpaste.tls.certresolver=cloudflare
+      - traefik.http.services.ktzpaste.loadbalancer.server.port=8000
+    command:
+      - --address
+      - 0.0.0.0
+      - --db
+      - /var/lib/pastebin/
+      - --uri
+      - https://paste.{{ domain_cloud }}
+    restart: unless-stopped
+  ktz-lychee:
+    image: lycheeorg/lychee:v4.3.0
+    container_name: ktz-lychee
+    volumes:
+      - {{ appdata_path }}/ktz-lychee/app/config:/config
+      - {{ appdata_path }}/ktz-lychee/app/uploads:/uploads
+      - {{ appdata_path }}/ktz-lychee/app/sym:/sym
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ktzlychee.rule=Host(`gallery.ktz.cloud`)
+      - traefik.http.routers.ktzlychee.tls.certresolver=cloudflare
+    environment:
+      - PHP_TZ={{ host_timezone }}
+      - DB_CONNECTION=mysql
+      - DB_HOST=ktz-lychee-db
+      - DB_PORT=3306
+      - DB_USERNAME={{ lychee_mysql_user }}
+      - DB_DATABASE={{ lychee_mysql_database }}
+      - DB_PASSWORD={{ lychee_mysql_password }}
+    depends_on:
+      - ktz-lychee-db
+    restart: unless-stopped
+  ktz-lychee-db:
+    image: mariadb:10.5.5-focal
+    container_name: ktz-lychee-db
+    volumes:
+      - {{ appdata_path }}/ktz-lychee/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD={{ lychee_mysql_root_password }}
+      - MYSQL_PASSWORD={{ lychee_mysql_password }}
+      - MYSQL_DATABASE={{ lychee_mysql_database }}
+      - MYSQL_USER={{ lychee_mysql_user }}
+    restart: unless-stopped

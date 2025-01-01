@@ -56,3 +56,10 @@
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
+  - hosts: ktz-cloud
+    vars_files:
+    - 'host_vars/secrets.yaml'
+    roles:
+      - role: ironicbadger.docker-compose-generator
+        tags: compose
+

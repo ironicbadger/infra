@@ -1,0 +1,5 @@
+---
+
+# ironicbadger.docker-compose-generator
+host_timezone: "America/New_York"
+appdata_path: "/opt/appdata"

@@ -1,0 +1,61 @@
+services:
+  # static sites
+  pms-wiki:
+    image: ghcr.io/ironicbadger/pms-wiki:latest
+    container_name: pms-wiki
+    labels:
+    - traefik.enable=true
+    - traefik.http.routers.pmswiki.rule=Host(`perfectmediaserver.com`)
+    - traefik.http.routers.pmswiki.entrypoints=websecure
+    - traefik.http.routers.pmswiki.tls.certresolver=cloudflare
+    restart: unless-stopped
+  ktz-simplelinks:
+    image: fascinated/simple-links:latest
+    container_name: ktz-simplelinks
+    volumes:
+      - {{ appdata_path }}/ktzme/config/config.yml:/usr/src/app/config.yml:ro
+      - {{ appdata_path }}/ktzme/config/public:/usr/src/app/public:rw
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ktzme.rule=Host(`alex.ktz.me`)
+      - traefik.http.routers.ktzme.entrypoints=websecure
+      - traefik.http.routers.ktzme.tls.certresolver=cloudflare
+      - traefik.http.services.ktzme.loadbalancer.server.port=3000
+    restart: unless-stopped
+  ktz-systems:
+    image: nginx
+    container_name: ktz-systems
+    volumes:
+      - {{ appdata_path }}/ktzsystems/public:/usr/share/nginx/html:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.ktzsystems.rule=Host(`ktzsystems.com`)
+      - traefik.http.routers.ktzsystems.entrypoints=websecure
+      - traefik.http.routers.ktzsystems.tls.certresolver=cloudflare
+    restart: unless-stopped
+  alleycat:
+    image: nginx
+    container_name: alleycat
+    volumes:
+      - {{ appdata_path }}/website-alleycat:/usr/share/nginx/html:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.alleycat.rule=Host(`alleycatmusictuition.com`)
+      - traefik.http.routers.alleycat.entrypoints=websecure
+      - traefik.http.routers.alleycat.tls.certresolver=cloudflare
+    restart: unless-stopped
+  ktz-sh:
+    image: nginx
+    container_name: ktz-sh
+    volumes:
+      - {{ appdata_path }}/ktz-sh/data:/usr/share/nginx/html:ro
+      - {{ appdata_path }}/ktz-sh/config/nginx.conf:/etc/nginx/nginx.conf
+      - {{ appdata_path }}/ktz-sh/config/mime.types:/etc/nginx/mime.types
+      - {{ appdata_path }}/ktz-sh/config/default.conf:/etc/nginx/conf.d/default.conf
+        #- {{ appdata_path }}/ktz-sh/config/conf.d/index.conf:/etc/nginx/conf.d/index.conf
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sh.rule=Host(`sh.ktz.me`)
+      - traefik.http.routers.sh.entrypoints=websecure
+      - traefik.http.routers.sh.tls.certresolver=cloudflare
+    restart: unless-stopped
