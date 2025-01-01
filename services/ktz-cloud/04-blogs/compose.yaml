@@ -61,7 +61,7 @@ services:
       - "MYSQL_ROOT_PASSWORD={{ purrfect_db_pass }}"
     restart: unless-stopped
   ktz-blog-mum:
-    image: ghost:4-alpine
+    image: ghost:5-alpine
     container_name: ktz-blog-mum
     volumes:
       - "{{ appdata_path }}/ktz-blog-mum:/var/lib/ghost/content"
