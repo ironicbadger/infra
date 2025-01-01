@@ -1,0 +1,153 @@
+services:
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr
+    container_name: prowlarr
+    volumes:
+      - {{ appdata_path }}/arrmatey/prowlarr:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.{{ m_wd_domain_me }}`)
+    environment:
+      - PUID={{ docker_compose_generator_uid }}
+      - PGID={{ docker_compose_generator_gid }}
+      - TZ={{ host_timezone }}
+    restart: unless-stopped
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd
+    container_name: sabnzbd
+    volumes:
+      - {{ appdata_path }}/arrmatey/sabnzbd:/config
+      - {{ download_path }}:/downloads
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sabnzbd.rule=Host(`sabnzbd.{{ m_wd_domain_me }}`)
+    environment:
+      - PUID={{ docker_compose_generator_uid }}
+      - PGID={{ docker_compose_generator_gid }}
+      - TZ={{ host_timezone }}
+    depends_on:
+      - prowlarr
+    restart: unless-stopped
+  sonarr:
+    image: lscr.io/linuxserver/sonarr
+    container_name: sonarr
+    volumes:
+      - {{ appdata_path }}/arrmatey/sonarr:/config
+      - {{ download_path }}/complete/tv:/downloads/complete/tv
+      - {{ storage_path }}/tv:/tv
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sonarr.rule=Host(`sonarr.{{ m_wd_domain_me }}`)
+    environment:
+      - PUID={{ docker_compose_generator_uid }}
+      - PGID={{ docker_compose_generator_gid }}
+      - TZ={{ host_timezone }}
+    depends_on:
+      - prowlarr
+      - sabnzbd
+    restart: unless-stopped
+  radarr:
+    image: lscr.io/linuxserver/radarr
+    container_name: radarr
+    volumes:
+      - {{ appdata_path }}/arrmatey/radarr:/config
+      - {{ download_path }}/complete/movies:/downloads/complete/movies
+      - /mnt/jbod/movies:/movies
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.radarr.rule=Host(`radarr.{{ m_wd_domain_me }}`)
+    environment:
+      - PUID={{ docker_compose_generator_uid }}
+      - PGID={{ docker_compose_generator_gid }}
+      - TZ={{ host_timezone }}
+    depends_on:
+      - prowlarr
+      - sabnzbd
+    restart: unless-stopped
+  lidarr:
+    image: lscr.io/linuxserver/lidarr
+    container_name: lidarr
+    volumes:
+      - {{ appdata_path }}/arrmatey/lidarr:/config
+      - {{ download_path }}/complete/music:/downloads/complete/music
+      - {{ download_path }}/intermediate/music:/downloads-amd
+      - /mnt/bigrust18/media/music/flac:/music
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.lidarr.rule=Host(`lidarr.{{ m_wd_domain_me }}`)
+    environment:
+      - PUID={{ docker_compose_generator_uid }}
+      - PGID={{ docker_compose_generator_gid }}
+      - TZ={{ host_timezone }}
+    depends_on:
+      - prowlarr
+      - sabnzbd
+    restart: unless-stopped
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    volumes:
+      - {{ appdata_path }}/arrmatey/jellyseerr:/app/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.jellyseerr.rule=Host(`jellyseerr.{{ m_wd_domain_me }}`)
+    restart: unless-stopped
+  pinchflat:
+    image: ghcr.io/kieraneglin/pinchflat:latest
+    container_name: pinchflat
+    volumes:
+      - {{ storage_path }}/tv/youtube-dl:/downloads
+      - {{ appdata_path }}/mediaservers/pinchflat:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.pinchflat.rule=Host(`pinchflat.{{ m_wd_domain_me }}`)
+      - traefik.http.services.pinchflat.loadbalancer.server.port=8945
+    ports:
+      - 8945:8945
+    environment:
+      - PUID={{ docker_compose_generator_uid }}
+      - PGID={{ docker_compose_generator_gid }}
+      - TZ={{ host_timezone }}
+    restart: unless-stopped
+  qbit:
+    image: lscr.io/linuxserver/qbittorrent
+    container_name: qbit
+    network_mode: service:gluetun
+    volumes:
+      - {{ appdata_path }}/arrmatey/qbit:/config
+      - /mnt/disks/disk4/bt-dls:/downloads
+    environment:
+      - PUID={{ docker_compose_generator_uid }}
+      - PGID={{ docker_compose_generator_gid }}
+      - TZ={{ host_timezone }}
+      - WEBUI_PORT=8080
+    depends_on:
+      - gluetun
+    restart: unless-stopped
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    volumes:
+      - {{ appdata_path }}/arrmatey/gluetun:/gluetun
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.gluetun.rule=Host(`qbit.{{ m_wd_domain_me }}`)
+      - traefik.http.services.gluetun.loadbalancer.server.port=8080
+    ports:
+      - 8080:8080
+      - 8888:8888/tcp
+      - 8388:8388/tcp
+      - 8388:8388/udp
+    environment:
+      - PUID={{ docker_compose_generator_uid }}
+      - PGID={{ docker_compose_generator_gid }}
+      - TZ={{ host_timezone }}
+      - VPN_SERVICE_PROVIDER=privado
+      - VPN_TYPE=openvpn
+      - OPENVPN_USER={{ gluetun_privado_username }}
+      - OPENVPN_PASSWORD={{ gluetun_privado_password }}
+    restart: unless-stopped
