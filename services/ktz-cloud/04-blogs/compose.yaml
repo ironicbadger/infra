@@ -41,7 +41,7 @@ services:
       - ktz-blog-cat-db
     restart: unless-stopped
   ktz-blog-cat-db:
-    image: mysql:8.0
+    image: mysql:8.4
     container_name: ktz-blog-cat-db
     volumes:
       - {{ appdata_path }}/ktz-blog-cat/db:/var/lib/mysql
