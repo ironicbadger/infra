@@ -39,3 +39,10 @@
     roles:
       - role: ironicbadger.docker-compose-generator
         tags: compose
+
+  - hosts: nix-nvllama
+    vars_files:
+    - 'group_vars/secrets.yaml'
+    roles:
+      - role: ironicbadger.docker-compose-generator
+        tags: compose

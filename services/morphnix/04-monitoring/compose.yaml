@@ -1,4 +1,5 @@
 services:
+  # monitoring
   smokeping:
     image: lscr.io/linuxserver/smokeping
     container_name: smokeping

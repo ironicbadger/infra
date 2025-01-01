@@ -1,0 +1,14 @@
+---
+
+
+# ironicbadger.docker-compose-generator
+host_timezone: "America/New_York"
+appdata_path: /home/alex/appdata
+
+wd_domain_me: "wd.{{ domain_me }}"
+nv_wd_domain_me: "nv.{{ wd_domain_me }}"
+
+docker_compose_generator_uid: "1000"
+docker_compose_generator_gid: "100"
+
+disabled_compose_files: []
