@@ -4,31 +4,31 @@ services:
     image: ghost:5.8.3 # do not upgrade past this as migrations are borked
     container_name: ktz-blog
     volumes:
-      - {{ appdata_path }}/ktz-blog:/var/lib/ghost/content
+      - "{{ appdata_path }}/ktz-blog:/var/lib/ghost/content"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.ktzblog.rule=Host(`{{ cloud_url_ktz_blog }}`)
+      - "traefik.http.routers.ktzblog.rule=Host(`{{ cloud_url_ktz_blog }}`)"
       - traefik.http.routers.ktzblog.entrypoints=websecure
       - traefik.http.routers.ktzblog.tls.certresolver=cloudflare
-      - traefik.http.routers.ktzblog-rss.rule=Host(`{{ cloud_url_ktz_blog }}`) && PathPrefix(`/rss`)
+      - "traefik.http.routers.ktzblog-rss.rule=Host(`{{ cloud_url_ktz_blog }}`) && PathPrefix(`/rss`)"
       - traefik.http.routers.ktzblog-rss.entrypoints=websecure
       - traefik.http.routers.ktzblog-rss.tls.certresolver=cloudflare
       - traefik.http.routers.ktzblog-rss.middlewares=rss-cache-control
       - traefik.http.middlewares.rss-cache-control.headers.customresponseheaders.Cache-Control=public, max-age=600
     environment:
       - NODE_ENV=production
-      - url=https://{{ cloud_url_ktz_blog }}
+      - "url=https://{{ cloud_url_ktz_blog }}"
       - database__client=mysql
       - database__connection__host=ktz-blog-db
-      - database__connection__user={{ ktzblog_db_user }}
-      - database__connection__password={{ ktzblog_db_pass }}
+      - "database__connection__user={{ ktzblog_db_user }}"
+      - "database__connection__password={{ ktzblog_db_pass }}"
       - database__connection__database=ghost
     restart: unless-stopped
   ktz-blog-db:
     image: mysql:8.4
     container_name: ktz-blog-db
     volumes:
-      - {{ appdata_path }}/ktz-blog/db:/var/lib/mysql
+      - "{{ appdata_path }}/ktz-blog/db:/var/lib/mysql"
     environment:
       - MYSQL_ROOT_PASSWORD={{ ktzblog_db_pass }}
     restart: unless-stopped
@@ -36,7 +36,7 @@ services:
     image: ghost:5
     container_name: ktz-blog-cat
     volumes:
-      - {{ appdata_path }}/ktz-blog-cat/content:/var/lib/ghost/content
+      - "{{ appdata_path }}/ktz-blog-cat/content:/var/lib/ghost/content"
     labels:
       - traefik.enable=true
       - traefik.http.routers.purrfectprose.rule=Host(`purrfectprose.com`)
@@ -47,8 +47,8 @@ services:
       - url=https://purrfectprose.com
       - database__client=mysql
       - database__connection__host=ktz-blog-cat-db
-      - database__connection__user={{ purrfect_db_user }}
-      - database__connection__password={{ purrfect_db_pass }}
+      - "database__connection__user={{ purrfect_db_user }}"
+      - "database__connection__password={{ purrfect_db_pass }}"
       - database__connection__database=ghost
     depends_on:
       - ktz-blog-cat-db
@@ -57,15 +57,15 @@ services:
     image: mysql:8.4
     container_name: ktz-blog-cat-db
     volumes:
-      - {{ appdata_path }}/ktz-blog-cat/db:/var/lib/mysql
+      - "{{ appdata_path }}/ktz-blog-cat/db:/var/lib/mysql"
     environment:
-      - MYSQL_ROOT_PASSWORD={{ purrfect_db_pass }}
+      - "MYSQL_ROOT_PASSWORD={{ purrfect_db_pass }}"
     restart: unless-stopped
   ktz-blog-mum:
     image: ghost:4-alpine
     container_name: ktz-blog-mum
     volumes:
-      - {{ appdata_path }}/ktz-blog-mum:/var/lib/ghost/content
+      - "{{ appdata_path }}/ktz-blog-mum:/var/lib/ghost/content"
     labels:
       - traefik.enable=true
       - traefik.http.routers.mumblog.rule=Host(`{{ cloud_url_mum_blog }}`)
@@ -73,5 +73,5 @@ services:
       - traefik.http.routers.mumblog.tls.certresolver=cloudflare
     environment:
       - NODE_ENV=production
-      - url=https://{{ cloud_url_mum_blog }}
+      - "url=https://{{ cloud_url_mum_blog }}"
     restart: unless-stopped

@@ -1,9 +1,0 @@
-{
-    "files.associations": {
-        "**/services/**/*.yaml": "jinja-yaml",
-        "**/services/**/*.yml": "jinja-yaml"
-    },
-    "[jinja-yaml]": {
-        "editor.defaultFormatter": null
-    }
-}

@@ -4,15 +4,15 @@ services:
     image: lscr.io/linuxserver/smokeping
     container_name: smokeping
     volumes:
-      - {{ appdata_path }}/smokeping/config:/config
-      - {{ appdata_path }}/smokeping/data:/data
+      - "{{ appdata_path }}/smokeping/config:/config"
+      - "{{ appdata_path }}/smokeping/data:/data"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.smokeping.rule=Host(`smokeping.hetz.{{ domain_cloud }}`)
+      - "traefik.http.routers.smokeping.rule=Host(`smokeping.hetz.{{ domain_cloud }}`)"
     environment:
-      - PUID={{ docker_compose_generator_uid }}
-      - PGID={{ docker_compose_generator_gid }}
-      - TZ={{ host_timezone }}
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
     hostname: ktz-cloud
     restart: unless-stopped
   librespeed:
@@ -21,9 +21,9 @@ services:
     ports:
       - 8008:80
     environment:
-      - PUID={{ docker_compose_generator_uid }}
-      - PGID={{ docker_compose_generator_gid }}
-      - TZ={{ host_timezone }}
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
       - MODE=standalone
       - TELEMETRY=false
     restart: unless-stopped
