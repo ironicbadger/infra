@@ -47,8 +47,8 @@ Temporary Items
 *.box
 
 ### VisualStudioCode ###
-.vscode/*
-!.vscode/settings.json
+#.vscode/*
+#!.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
@@ -77,7 +77,7 @@ $RECYCLE.BIN/
 
 
 # End of https://www.gitignore.io/api/macos,linux,vagrant,windows,visualstudiocode
-.vscode/settings.json
+#.vscode/settings.json
 
 
 # Created by https://www.gitignore.io/api/terraform
