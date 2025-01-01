@@ -1,6 +1,8 @@
 ---
 
 # ironicbadger.docker_compose_generator
+host_timezone: "America/New_York"
+
 appdata_path: /mnt/appdata
 download_path: /mnt/downloads
 storage_path: /mnt/storage
