@@ -1,6 +1,5 @@
 #!/usr/bin/env -S just --justfile
 
-
 # Ansible playbook against specific host
 run HOST *TAGS:
   ansible-playbook -b run.yaml --limit {{HOST}} {{TAGS}}
@@ -39,4 +38,4 @@ reqs *FORCE:
 
 # just vault (encrypt/decrypt/edit)
 vault ACTION:
-    EDITOR='code --wait' ansible-vault {{ACTION}} group_vars/secrets.yaml
+    EDITOR='code --wait' ansible-vault {{ACTION}} host_vars/secrets.yaml

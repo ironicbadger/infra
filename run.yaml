@@ -6,7 +6,7 @@
 
   - hosts: neo-yeet
     vars_files:
-    - 'group_vars/secrets.yaml'
+    - 'host_vars/secrets.yaml'
     roles:
       #- role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
@@ -14,7 +14,7 @@
 
   - hosts: caddy
     vars_files:
-    - 'group_vars/secrets.yaml'
+    - 'host_vars/secrets.yaml'
     roles:
       - role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
@@ -28,21 +28,31 @@
 
   - hosts: ktz-cloud-new
     vars_files:
-    - 'group_vars/secrets.yaml'
+    - 'host_vars/secrets.yaml'
     roles:
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
   - hosts: morphnix
     vars_files:
-    - 'group_vars/secrets.yaml'
+    - 'host_vars/secrets.yaml'
     roles:
+      - role: ironicbadger.docker-compose-generator
+        tags: compose
+
+  - hosts: deepthought
+    vars_files:
+    - 'host_vars/secrets.yaml'
+    roles:
+      - role: ironicbadger.figurine
+      - role: ironicbadger.tailscale-routes-fix
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
   - hosts: nix-nvllama
     vars_files:
-    - 'group_vars/secrets.yaml'
+    - 'host_vars/secrets.yaml'
     roles:
       - role: ironicbadger.docker-compose-generator
         tags: compose
+

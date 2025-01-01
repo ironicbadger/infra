@@ -1,0 +1,8 @@
+---
+
+# ironicbadger.docker_compose_generator
+appdata_path: /mnt/appdata
+download_path: /mnt/downloads
+storage_path: /mnt/storage
+wd_domain_me: "wd.{{ domain_me }}"
+dt_domain_me: "dt.{{ wd_domain_me }}"
