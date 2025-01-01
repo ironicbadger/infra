@@ -1,7 +1,7 @@
 services:
   # blogs
   ktz-blog:
-    image: ghost:4-alpine
+    image: ghost:5.8.3 # do not upgrade past this as migrations are borked
     container_name: ktz-blog
     volumes:
       - {{ appdata_path }}/ktz-blog:/var/lib/ghost/content
@@ -18,6 +18,19 @@ services:
     environment:
       - NODE_ENV=production
       - url=https://{{ cloud_url_ktz_blog }}
+      - database__client=mysql
+      - database__connection__host=ktz-blog-db
+      - database__connection__user={{ ktzblog_db_user }}
+      - database__connection__password={{ ktzblog_db_pass }}
+      - database__connection__database=ghost
+    restart: unless-stopped
+  ktz-blog-db:
+    image: mysql:8.4
+    container_name: ktz-blog-db
+    volumes:
+      - {{ appdata_path }}/ktz-blog/db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD={{ ktzblog_db_pass }}
     restart: unless-stopped
   ktz-blog-cat:
     image: ghost:5
