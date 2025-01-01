@@ -32,7 +32,7 @@ services:
     restart: unless-stopped
   ebook2audiobookxtts:
     image: athomasson2/ebook2audiobookxtts:huggingface
-    platform: linux/amd64
+    container_name: ebook2audiobookxtts
     tty: true
     stdin_open: true
     ports:
