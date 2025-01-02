@@ -20,18 +20,21 @@ services:
       - https://paste.{{ domain_cloud }}
     restart: unless-stopped
   ktz-lychee:
-    image: lycheeorg/lychee:v4.13.0
+    image: lycheeorg/lychee:v6.2.0
     container_name: ktz-lychee
     volumes:
-      - "{{ appdata_path }}/ktz-lychee/app/config:/config"
+      - "{{ appdata_path }}/ktz-lychee/app/config:/conf"
       - "{{ appdata_path }}/ktz-lychee/app/uploads:/uploads"
       - "{{ appdata_path }}/ktz-lychee/app/sym:/sym"
+      - "{{ appdata_path }}/ktz-lychee/app/logs:/logs"
+      - "{{ appdata_path }}/ktz-lychee/app/tmp:/lychee-tmp"
     labels:
       - traefik.enable=true
       - traefik.http.routers.ktzlychee.rule=Host(`gallery.ktz.cloud`)
       - traefik.http.routers.ktzlychee.tls.certresolver=cloudflare
     environment:
       - "PHP_TZ={{ host_timezone }}"
+      - "APP_URL=https://gallery.ktz.cloud"
       - DB_CONNECTION=mysql
       - DB_HOST=ktz-lychee-db
       - DB_PORT=3306
