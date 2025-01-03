@@ -45,7 +45,7 @@ services:
       - ktz-lychee-db
     restart: unless-stopped
   ktz-lychee-db:
-    image: mariadb:10.5.5-focal
+    image: mariadb:10.8.2-focal
     container_name: ktz-lychee-db
     volumes:
       - "{{ appdata_path }}/ktz-lychee/db:/var/lib/mysql"
