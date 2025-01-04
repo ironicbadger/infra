@@ -7,18 +7,18 @@ services:
     devices:
       - /dev/dri:/dev/dri
     volumes:
-      - {{ appdata_path }}/mediaservers/plex/config:/config
-      - {{ storage_path }}:/data:ro
-      - {{ bigrust18_path }}/media:/bigrust18/media:ro
+      - "{{ appdata_path }}/mediaservers/plex/config:/config"
+      - "{{ storage_path }}:/data:ro"
+      - "{{ bigrust18_path }}/media:/bigrust18/media:ro"
       - /mnt/downloads:/downloads:ro
       # ram transcode
       - /dev/shm:/transcode
     labels:
       - traefik.enable=false
     environment:
-      - PUID={{ docker_compose_generator_uid }}
-      - PGID={{ docker_compose_generator_gid }}
-      - TZ={{ host_timezone }}
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
     restart: unless-stopped
   jellyfin:
     image: jellyfin/jellyfin
@@ -26,37 +26,37 @@ services:
     devices:
       - /dev/dri:/dev/dri
     volumes:
-      - {{ appdata_path }}/mediaservers/jellyfin:/config
-      - {{ storage_path }}:/data:ro
-      - {{ bigrust18_path }}/media:/bigrust18/media:ro
+      - "{{ appdata_path }}/mediaservers/jellyfin:/config"
+      - "{{ storage_path }}:/data:ro"
+      - "{{ bigrust18_path }}/media:/bigrust18/media:ro"
       - /mnt/downloads:/downloads:ro
       # ram transcode
       - /dev/shm:/transcode
     labels:
       - traefik.enable=true
-      - traefik.http.routers.jellyfin.rule=Host(`jf.{{ wd_domain_me }}`)
+      - "traefik.http.routers.jellyfin.rule=Host(`jf.{{ wd_domain_me }}`)"
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
     ports:
       - 2285:8096
     environment:
-      - PUID={{ docker_compose_generator_uid }}
-      - PGID={{ docker_compose_generator_gid }}
-      - TZ={{ host_timezone }}
-      - JELLYFIN_PublishedServerUrl=jf.{{ wd_domain_me }}
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
+      - "JELLYFIN_PublishedServerUrl=jf.{{ wd_domain_me }}"
     hostname: us-rdu
     restart: unless-stopped
   abs:
     image: advplyr/audiobookshelf
     container_name: abs
     volumes:
-      - {{ bigrust18_path }}/media/audiobooks/library:/audiobooks:ro
-      - {{ bigrust18_path }}/media/audiobooks/library2:/audiobooks2:ro
-      - {{ bigrust18_path }}/media/audiobooks/podcasts:/podcasts
-      - {{ appdata_path }}/mediaservers/audiobookshelf/metadata:/metadata
-      - {{ appdata_path }}/mediaservers/audiobookshelf/config:/config
+      - "{{ bigrust18_path }}/media/audiobooks/library:/audiobooks:ro"
+      - "{{ bigrust18_path }}/media/audiobooks/library2:/audiobooks2:ro"
+      - "{{ bigrust18_path }}/media/audiobooks/podcasts:/podcasts"
+      - "{{ appdata_path }}/mediaservers/audiobookshelf/metadata:/metadata"
+      - "{{ appdata_path }}/mediaservers/audiobookshelf/config:/config"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.audiobookshelf.rule=Host(`abs.{{ wd_domain_me }}`)
+      - "traefik.http.routers.audiobookshelf.rule=Host(`abs.{{ wd_domain_me }}`)"
     ports:
       - 2284:80
     restart: unless-stopped
@@ -64,13 +64,13 @@ services:
     image: jasongdove/ersatztv:latest-vaapi
     container_name: ersatztv
     volumes:
-      - {{ appdata_path }}/mediaservers/ersatztv:/root/.local/share/ersatztv
-      - {{ storage_path }}:/mnt/jbod:ro
+      - "{{ appdata_path }}/mediaservers/ersatztv:/root/.local/share/ersatztv"
+      - "{{ storage_path }}:/mnt/jbod:ro"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.ersatz.rule=Host(`ersatz.{{ m_wd_domain_me }}`)
+      - "traefik.http.routers.ersatz.rule=Host(`ersatz.{{ m_wd_domain_me }}`)"
     environment:
-      - PUID={{ docker_compose_generator_uid }}
-      - PGID={{ docker_compose_generator_gid }}
-      - TZ={{ host_timezone }}
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
     restart: unless-stopped
