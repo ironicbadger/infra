@@ -1,0 +1,50 @@
+services:
+  # apps
+  mealie:
+    image: hkotel/mealie:v0.5.1
+    container_name: mealie
+    volumes:
+      - "{{ appdata_path }}/apps/mealie:/app/data"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.mealie.rule=Host(`mealie.{{ wd_domain_me }}`)"
+    environment:
+      - DB_TYPE=sqlite
+    restart: unless-stopped
+  freshrss:
+    image: lscr.io/linuxserver/freshrss:latest
+    container_name: freshrss
+    volumes:
+      - "{{ appdata_path }}/apps/freshrss:/config"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.freshrss.rule=Host(`rss.apps.wd.{{ domain_me }}`)"
+    environment:
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
+    restart: unless-stopped
+  wallabag:
+    image: wallabag/wallabag:latest
+    container_name: wallabag
+    volumes:
+      - "{{ appdata_path }}/apps/wallabag:/var/www/wallabag/data"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.wallabag.rule=Host(`wallabag.apps.wd.{{ domain_me }}`)"
+    environment:
+      - "SYMFONY__ENV__DOMAIN_NAME=https://wallabag.apps.wd.{{ domain_me }}"
+      - SYMFONY__ENV__DATABASE_DRIVER=pdo_sqlite
+    restart: unless-stopped
+  stirlingpdf:
+    image: frooodle/s-pdf:latest
+    container_name: stirlingpdf
+    volumes:
+      - "{{ appdata_path }}/apps/stirlingpdf/configs:/configs"
+      - "{{ appdata_path }}/apps/stirlingpdf/ocr-data:/usr/share/tesseract-ocr/5/tessdata"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.stirling.rule=Host(`pdf.apps.wd.{{ domain_me }}`)"
+    environment:
+      - DOCKER_ENABLE_SECURITY=false
+    restart: unless-stopped

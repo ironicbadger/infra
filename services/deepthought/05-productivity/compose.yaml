@@ -61,11 +61,11 @@ services:
       - DB_HOST=mysql
       - DB_DATABASE=ninja
       - MAIL_HOST=smtp.gmail.com
-      - "MAIL_USERNAME={{ gmail_address }}"
+      - "MAIL_USERNAME={{ invoice_ninja_gmail_address }}"
       - "MAIL_PASSWORD={{ invoice_ninja_gmail_app_password }}"
       - MAIL_DRIVER=smtp
-      - MAIL_FROM_NAME="Alex K"
-      - MAIL_FROM_ADDRESS={{ gmail_address }}
+      - "MAIL_FROM_NAME={{ invoice_ninja_mailfrom_name }}"
+      - "MAIL_FROM_ADDRESS={{ invoice_ninja_gmail_address }}"
       - REQUIRE_HTTPS=true
       - TRUSTED_PROXIES='*'
     depends_on:

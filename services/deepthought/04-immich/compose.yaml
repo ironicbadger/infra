@@ -1,0 +1,38 @@
+services:
+  ## immich
+  immich-server:
+    image: ghcr.io/immich-app/immich-server:release
+    container_name: immich-server
+    volumes:
+      - /mnt/bigrust20/photos/alex/immich/uploads:/usr/src/app/upload
+      - /mnt/bigrust20/photos/alex/images:/mnt/bigrust20/photos/alex/images:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 2283:2283
+    environment:
+      - IMMICH_VERSION=release
+      - UPLOAD_LOCATION=./library
+      - "DB_PASSWORD={{ immich_db_password }}"
+      - "DB_USERNAME={{ immich_db_username }}"
+      - "DB_DATABASE_NAME={{ immich_db_name }}"
+      - "DB_DATA_LOCATION={{ immich_db_location }}"
+      - "DB_HOSTNAME={{ immich_db_hostname}}"
+      - REDIS_HOSTNAME=immich-redis
+    depends_on:
+      - immich-redis
+      - immich-database
+    restart: unless-stopped
+  immich-redis:
+    image: registry.hub.docker.com/library/redis:6.2-alpine@sha256:84882e87b54734154586e5f8abd4dce69fe7311315e2fc6d67c29614c8de2672
+    container_name: immich-redis
+    restart: unless-stopped
+  immich-database:
+    image: registry.hub.docker.com/tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
+    container_name: immich-database
+    volumes:
+      - "{{ appdata_path }}/databases/immich/db:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_PASSWORD={{ immich_db_password }}"
+      - "POSTGRES_USER={{ immich_db_username }}"
+      - "POSTGRES_DB={{ immich_db_name }}"
+    restart: unless-stopped
