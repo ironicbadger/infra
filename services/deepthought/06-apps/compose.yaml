@@ -49,7 +49,7 @@ services:
       - DOCKER_ENABLE_SECURITY=false
     restart: unless-stopped
   hoarder-web:
-    image: ghcr.io/hoarder-app/hoarder:0.20.0
+    image: ghcr.io/hoarder-app/hoarder:0.21.0
     container_name: hoarder-web
     labels:
       - traefik.enable=true
