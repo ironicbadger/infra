@@ -71,7 +71,7 @@ services:
       - "INFERENCE_IMAGE_MODEL=llama3.2"
     restart: unless-stopped
   hoarder-chrome:
-    image: gcr.io/zenika-hub/alpine-chrome:123
+    image: gcr.io/zenika-hub/alpine-chrome:124
     container_name: hoarder-chrome
     command:
       - --no-sandbox
