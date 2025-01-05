@@ -48,3 +48,51 @@ services:
     environment:
       - DOCKER_ENABLE_SECURITY=false
     restart: unless-stopped
+  hoarder-web:
+    image: ghcr.io/hoarder-app/hoarder:0.20.0
+    container_name: hoarder-web
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.hoarder.rule=Host(`hoarder.apps.wd.{{ domain_me }}`)"
+    volumes:
+      - "{{ appdata_path }}/apps/hoarder/data:/data"
+    ports:
+      - 3030:3000
+    environment:
+      - MEILI_ADDR=http://hoarder-meilisearch:7700
+      - "MEILI_MASTER_KEY={{ hoarder_nextauth_masterkey }}"
+      - BROWSER_WEB_URL=http://hoarder-chrome:9222
+      - NEXTAUTH_URL=http://localhost:3030
+      - "NEXTAUTH_SECRET={{ hoarder_nextauth_secret }}"
+      - DATA_DIR=/data
+      # OPENAI_API_KEY: ...
+      - "OLLAMA_BASE_URL=http://10.42.1.12:11434"
+      - "INFERENCE_TEXT_MODEL=mistral"
+      - "INFERENCE_IMAGE_MODEL=llama3.2"
+    restart: unless-stopped
+  hoarder-chrome:
+    image: gcr.io/zenika-hub/alpine-chrome:123
+    container_name: hoarder-chrome
+    command:
+      - --no-sandbox
+      - --disable-gpu
+      - --disable-dev-shm-usage
+      - --remote-debugging-address=0.0.0.0
+      - --remote-debugging-port=9222
+      - --hide-scrollbars
+    restart: unless-stopped
+  hoarder-meilisearch:
+    image: getmeili/meilisearch:v1.11.1
+    container_name: hoarder-meilisearch
+    volumes:
+      - "{{ appdata_path }}/apps/hoarder/meilisearch:/meili_data"
+    environment:
+      - "MEILI_NO_ANALYTICS=true"
+      - NEXTAUTH_URL=http://hoarder-web:3030
+      - "NEXTAUTH_SECRET={{ hoarder_nextauth_secret }}"
+      - MEILI_ADDR=http://127.0.0.1:7700
+      - "MEILI_MASTER_KEY={{ hoarder_nextauth_masterkey }}"
+    restart: unless-stopped
+
+
+
