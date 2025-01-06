@@ -65,10 +65,15 @@ services:
       - NEXTAUTH_URL=http://localhost:3030
       - "NEXTAUTH_SECRET={{ hoarder_nextauth_secret }}"
       - DATA_DIR=/data
-      # OPENAI_API_KEY: ...
-      - "OLLAMA_BASE_URL=http://10.42.1.12:11434"
-      - "INFERENCE_TEXT_MODEL=mistral"
-      - "INFERENCE_IMAGE_MODEL=llama3.2"
+      - "OPENAI_API_KEY={{ hoarder_openai_key }}"
+      # - "OLLAMA_BASE_URL=http://10.42.1.12:11434"
+      - "INFERENCE_TEXT_MODEL=gpt-4o-mini"
+      - "INFERENCE_IMAGE_MODEL=gpt-4o-mini"
+      ## archival-settings
+      - CRAWLER_FULL_PAGE_SCREENSHOT=true
+      - CRAWLER_FULL_PAGE_ARCHIVE=true
+      - CRAWLER_JOB_TIMEOUT_SEC=120
+      - CRAWLER_VIDEO_DOWNLOAD=true
     restart: unless-stopped
   hoarder-chrome:
     image: gcr.io/zenika-hub/alpine-chrome:123
