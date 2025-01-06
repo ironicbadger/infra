@@ -38,4 +38,4 @@ reqs *FORCE:
 
 # just vault (encrypt/decrypt/edit)
 vault ACTION:
-    EDITOR='code --wait' ansible-vault {{ACTION}} host_vars/secrets.yaml
+    EDITOR='code --wait' ansible-vault {{ACTION}} group_vars/secrets.yaml

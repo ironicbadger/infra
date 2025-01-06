@@ -29,7 +29,10 @@ caddy_endpoints:
       - friendly_name: blueiris
         fqdn: bi.wd.ktz.me
         upstream: http://10.42.2.1:83
-      ## Proxmox-opedes
+      - friendly_name: beszel
+        fqdn: beszel.wd.ktz.me
+        upstream: http://10.42.0.1:8090
+      ## Proxmoxes
       - friendly_name: pxneo
         fqdn: px.wd.ktz.me
         upstream: https://10.42.0.1:8006
