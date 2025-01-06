@@ -1,8 +1,12 @@
 ---
   - hosts: neo
+    vars_files:
+    - 'host_vars/secrets.yaml'
     roles:
       - role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
+      - role: ironicbadger.docker-compose-generator
+        tags: compose
 
   - hosts: neo-yeet
     vars_files:
