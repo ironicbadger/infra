@@ -37,6 +37,14 @@ caddy_endpoints:
         fqdn: px.wd.ktz.me
         upstream: https://10.42.0.1:8006
         tls_insecure: true
+      ## Apps and Services
+      - friendly_name: immich
+        fqdn: immich.wd.ktz.me
+        upstream: http://10.42.1.42:2283
+  - friendly_name: wildcard for *.kvm.wd.ktz.me
+    fqdn: '*.kvm.wd.ktz.me'
+    tls_provider: cloudflare
+    wildcard_endpoints:
       ## PiKVMs
       - friendly_name: basementpikvm
         fqdn: basement.kvm.wd.ktz.me
@@ -46,10 +54,6 @@ caddy_endpoints:
         fqdn: megadesk.kvm.wd.ktz.me
         upstream: https://10.42.0.101:443
         tls_insecure: true
-      ## Apps and Services
-      - friendly_name: immich
-        fqdn: immich.wd.ktz.me
-        upstream: http://10.42.1.42:2283
   ## CA - ONT
   - friendly_name: wildcard for *.ont.ktz.me
     fqdn: '*.ont.ktz.me'
