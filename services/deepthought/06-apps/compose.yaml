@@ -7,9 +7,11 @@ services:
       - "{{ appdata_path }}/apps/mealie:/app/data"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.mealie.rule=Host(`mealie.{{ wd_domain_me }}`)"
+      - "traefik.http.routers.mealie.rule=Host(`mealie.apps.{{ wd_domain_me }}`)"
     environment:
-      - DB_TYPE=sqlite
+      - DB_ENGINE=sqlite
+      - "BASE_URL=https://mealie.apps.{{ wd_domain_me }}"
+      - "OPENAI_API_KEY={{ hoarder_openai_key }}"
     restart: unless-stopped
   freshrss:
     image: lscr.io/linuxserver/freshrss:latest
@@ -18,7 +20,7 @@ services:
       - "{{ appdata_path }}/apps/freshrss:/config"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.freshrss.rule=Host(`rss.apps.wd.{{ domain_me }}`)"
+      - "traefik.http.routers.freshrss.rule=Host(`rss.apps.{{ wd_domain_me }}`)"
     environment:
       - "PUID={{ docker_compose_generator_uid }}"
       - "PGID={{ docker_compose_generator_gid }}"
