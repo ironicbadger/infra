@@ -1,7 +1,7 @@
 services:
   # apps
   mealie:
-    image: hkotel/mealie:v0.5.6
+    image: hkotel/mealie:v2.4.2
     container_name: mealie
     volumes:
       - "{{ appdata_path }}/apps/mealie:/app/data"
