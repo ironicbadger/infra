@@ -4,7 +4,7 @@ services:
     image: ollama/ollama
     container_name: ollama
     volumes:
-      - {{ appdata_path }}/apps/ollama:/root/.ollama
+      - "{{ appdata_path }}/apps/ollama:/root/.ollama"
     ports:
       - 11434:11434
     deploy:
@@ -21,7 +21,7 @@ services:
     image: ghcr.io/open-webui/open-webui:main
     container_name: openwebui
     volumes:
-      - {{ appdata_path }}/apps/open-webui:/app/backend/data
+      - "{{ appdata_path }}/apps/open-webui:/app/backend/data"
     labels:
       - traefik.enable=true
       - traefik.http.routers.ollamawebui.rule=Host(`ollama.{{ nv_wd_domain_me }}`)

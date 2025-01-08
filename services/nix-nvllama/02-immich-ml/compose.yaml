@@ -4,7 +4,7 @@ services:
     image: ghcr.io/immich-app/immich-machine-learning:release-cuda
     container_name: immich-machine-learning
     volumes:
-      - {{ appdata_path }}/apps/immich/cache:/cache
+      - "{{ appdata_path }}/apps/immich/cache:/cache"
     ports:
       - 3003:3003
     dns:
