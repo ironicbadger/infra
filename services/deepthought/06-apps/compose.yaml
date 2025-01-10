@@ -89,7 +89,7 @@ services:
       - --hide-scrollbars
     restart: unless-stopped
   hoarder-meilisearch:
-    image: getmeili/meilisearch:v1.12.1
+    image: getmeili/meilisearch:v1.12.2
     container_name: hoarder-meilisearch
     volumes:
       - "{{ appdata_path }}/apps/hoarder/meilisearch:/meili_data"
