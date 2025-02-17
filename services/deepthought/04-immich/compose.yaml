@@ -5,7 +5,9 @@ services:
     container_name: immich-server
     volumes:
       - /mnt/bigrust20/photos/alex/immich/uploads:/usr/src/app/upload
-      - /mnt/bigrust20/photos/alex/images:/mnt/bigrust20/photos/alex/images:ro
+      - /mnt/bigrust20/photos/alex/images:/mnt/bigrust20/photos/alex/images
+      - /mnt/bigrust20/photos/mum-syno-backup:/mnt/bigrust20/photos/mum/syno-backup:ro
+      - /mnt/bigrust20/photos/MumPhotos:/mnt/bigrust20/photos/mum/MumPhotos:ro
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 2283:2283
