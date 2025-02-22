@@ -69,6 +69,8 @@ services:
     labels:
       - traefik.enable=true
       - "traefik.http.routers.ersatz.rule=Host(`ersatz.{{ m_wd_domain_me }}`)"
+    ports:
+      - 8409:8409
     environment:
       - "PUID={{ docker_compose_generator_uid }}"
       - "PGID={{ docker_compose_generator_gid }}"
