@@ -63,6 +63,8 @@ services:
   ersatztv:
     image: jasongdove/ersatztv:latest-vaapi
     container_name: ersatztv
+    devices:
+      - /dev/dri:/dev/dri
     volumes:
       - "{{ appdata_path }}/mediaservers/ersatztv:/root/.local/share/ersatztv"
       - "{{ storage_path }}:/mnt/jbod:ro"
