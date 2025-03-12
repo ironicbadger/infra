@@ -1,0 +1,11 @@
+services:
+  glance:
+    container_name: glance
+    image: glanceapp/glance
+    volumes:
+      - "{{ appdata_path }}/glance/config:/app/config"
+      - "{{ appdata_path }}/glance/assets:/app/assets"
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.glance.rule=Host(`glance.{{ wd_domain_me }}`)"
