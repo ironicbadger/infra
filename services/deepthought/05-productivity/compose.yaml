@@ -1,7 +1,7 @@
 services:
   ## productivity
   nextcloud:
-    image: nextcloud:30
+    image: nextcloud:31
     container_name: nextcloud
     volumes:
       - "{{ appdata_path }}/apps/nextcloud/data:/var/www/html"
