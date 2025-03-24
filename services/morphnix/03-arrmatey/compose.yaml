@@ -116,7 +116,7 @@ services:
     network_mode: service:gluetun
     volumes:
       - "{{ appdata_path }}/arrmatey/qbit:/config"
-      - /mnt/disks/disk4/bt-dls:/downloads
+      - /mnt/disks/disk2/bt-dls:/downloads
     environment:
       - "PUID={{ docker_compose_generator_uid }}"
       - "PGID={{ docker_compose_generator_gid }}"
