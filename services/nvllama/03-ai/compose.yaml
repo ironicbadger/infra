@@ -24,27 +24,9 @@ services:
       - "{{ appdata_path }}/apps/open-webui:/app/backend/data"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.ollamawebui.rule=Host(`ollama.{{ nv_wd_domain_me }}`)
+      - traefik.http.routers.ollamawebui.rule=Host(`openwebui.{{ nv_wd_domain_me }}`)
     ports:
       - 8080:8080
     environment:
       - OLLAMA_BASE_URL=http://ollama:11434
-    restart: unless-stopped
-  ebook2audiobookxtts:
-    image: athomasson2/ebook2audiobookxtts:huggingface
-    container_name: ebook2audiobookxtts
-    tty: true
-    stdin_open: true
-    ports:
-      - 7860:7860
-    command: python app.py
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: cdi
-              capabilities:
-                - gpu
-              device_ids:
-                - nvidia.com/gpu=all
     restart: unless-stopped

@@ -30,16 +30,6 @@
       - role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
 
-  - hosts: newt
-    vars:
-      docker_compose_hostname: newt
-    vars_files:
-    - 'group_vars/secrets.yaml'
-    roles:
-      - role: ironicbadger.figurine
-      - role: ironicbadger.docker-compose-generator
-        tags: compose
-
   - hosts: ktz-cloud-new
     vars_files:
     - 'group_vars/secrets.yaml'
@@ -63,7 +53,7 @@
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
-  - hosts: nix-nvllama
+  - hosts: nvllama
     vars_files:
     - 'group_vars/secrets.yaml'
     roles:
