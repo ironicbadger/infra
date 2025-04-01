@@ -1,4 +1,5 @@
 ---
+### CORE INFRA
   - hosts: neo
     vars_files:
     - 'group_vars/secrets.yaml'
@@ -7,14 +8,6 @@
       - role: ironicbadger.tailscale-routes-fix
       - role: ironicbadger.docker-compose-generator
         tags: compose
-
-  - hosts: neo-yeet
-    vars_files:
-    - 'group_vars/secrets.yaml'
-    roles:
-      #- role: ironicbadger.figurine
-      - role: ironicbadger.tailscale-routes-fix
-      - role: local-neo-yeet
 
   - hosts: caddy
     vars_files:
@@ -30,12 +23,7 @@
       - role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
 
-  - hosts: ktz-cloud-new
-    vars_files:
-    - 'group_vars/secrets.yaml'
-    roles:
-      - role: ironicbadger.docker-compose-generator
-        tags: compose
+### SERVERS
 
   - hosts: morphnix
     vars_files:
@@ -44,14 +32,23 @@
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
-  - hosts: deepthought
+  - hosts: c137
     vars_files:
     - 'group_vars/secrets.yaml'
+    vars_prompt:
+      - name: "lxc_id"
+        prompt: "Enter LXC container ID"
     roles:
       - role: ironicbadger.figurine
-      - role: ironicbadger.tailscale-routes-fix
-      - role: ironicbadger.docker-compose-generator
-        tags: compose
+      - role: proxmox-host-nvidia-setup
+        tags: proxmox
+      - role: proxmox-lxc-nvidia-setup
+        tags: lxc
+      # - role: ironicbadger.tailscale-routes-fix
+      # - role: ironicbadger.docker-compose-generator
+      #   tags: compose
+
+### VIRTUAL MACHINES
 
   - hosts: nvllama
     vars_files:
@@ -60,17 +57,9 @@
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
-  - hosts: ktz-cloud
-    vars_files:
-    - 'group_vars/secrets.yaml'
-    roles:
-      - role: ironicbadger.docker-compose-generator
-        tags: compose
+### OFFSITE
 
-  - hosts: clarkson
-    vars:
-      - docker_compose_hostname: clarkson
-      - appdata_path: /root/appdata
+  - hosts: ktz-cloud
     vars_files:
     - 'group_vars/secrets.yaml'
     roles:
