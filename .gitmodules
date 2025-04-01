@@ -16,3 +16,6 @@
 [submodule "roles/ironicbadger.proxmox-host-nvidia"]
 	path = roles/ironicbadger.proxmox-host-nvidia
 	url = git@ssh.github.com:ironicbadger/lxc-debian-nvidia.git
+[submodule "roles/ironicbadger.lxc-debian-nvidia"]
+	path = roles/ironicbadger.lxc-debian-nvidia
+	url = git@ssh.github.com:ironicbadger/lxc-debian-nvidia.git
