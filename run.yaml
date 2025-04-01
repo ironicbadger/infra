@@ -24,7 +24,6 @@
       - role: ironicbadger.tailscale-routes-fix
 
 ### SERVERS
-
   - hosts: morphnix
     vars_files:
     - 'group_vars/secrets.yaml'
@@ -41,11 +40,32 @@
       - role: ironicbadger.tailscale-routes-fix
 
 ### LXCs
+  - hosts: immich-app
+    vars_files:
+    - 'group_vars/secrets.yaml'
+    vars:
+      docker_compose_hostname: lxc-immich-app
+      appdata_path: /mnt/appdata
+    roles:
+      - role: ironicbadger.figurine
+      - role: ironicbadger.docker-compose-generator
+        tags: compose
+
+  - hosts: immich-ml
+    vars_files:
+    - 'group_vars/secrets.yaml'
+    vars:
+      docker_compose_hostname: lxc-immich-ml
+    roles:
+      - role: ironicbadger.figurine
+      - role: ironicbadger.docker-compose-generator
+        tags: compose
 
   - hosts: ollama
     vars_files:
     - 'group_vars/secrets.yaml'
     vars:
+      docker_compose_hostname: lxc-ollama
       appdata_path: /mnt/appdata
     roles:
       - role: ironicbadger.figurine
@@ -53,7 +73,6 @@
         tags: compose
 
 ### OFFSITE
-
   - hosts: ktz-cloud
     vars_files:
     - 'group_vars/secrets.yaml'
