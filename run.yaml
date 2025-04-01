@@ -40,15 +40,6 @@
       - role: ironicbadger.proxmox-host-nvidia
       - role: ironicbadger.tailscale-routes-fix
 
-### VIRTUAL MACHINES
-
-  - hosts: nvllama
-    vars_files:
-    - 'group_vars/secrets.yaml'
-    roles:
-      - role: ironicbadger.docker-compose-generator
-        tags: compose
-
 ### OFFSITE
 
   - hosts: ktz-cloud
