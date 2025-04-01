@@ -1,0 +1,43 @@
+resource "proxmox_vm_qemu" "node" {
+    for_each = var.cluster_nodes
+
+    name = "${var.cluster_name}-${each.key}"
+    target_node = each.value["target"]
+    vmid = 2000 + index(keys(var.cluster_nodes), each.key)
+
+    clone = "ubuntu-2404"
+    #full_clone = true
+    cores = 2
+    memory = 8192
+    agent = 1
+
+    # cloud-init
+    # os_type = "cloud-init"
+    # ipconfig0 = "ip=10.42.37.0/24,gw=10.42.37.254"
+    # boot = "order=scsi0;ide3;net0"
+
+    network {
+      id = "0"
+      bridge = "vmbr0"
+      model = "virtio"
+    }
+    disk {
+      type = "disk"
+      size = each.value["disk"]
+      storage = each.value["storage"]
+      slot = "scsi0"
+    }
+    disk {
+      type = "cloudinit"
+      storage = each.value["storage"]
+      slot = "ide3"
+    }
+
+    lifecycle {
+      ignore_changes = [
+        ipconfig0, #dhcp related after initial clone
+        ciuser,
+        sshkeys
+      ]
+    }
+}
