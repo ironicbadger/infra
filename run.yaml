@@ -35,18 +35,10 @@
   - hosts: c137
     vars_files:
     - 'group_vars/secrets.yaml'
-    vars_prompt:
-      - name: "lxc_id"
-        prompt: "Enter LXC container ID"
     roles:
       - role: ironicbadger.figurine
-      - role: proxmox-host-nvidia-setup
-        tags: proxmox
-      - role: proxmox-lxc-nvidia-setup
-        tags: lxc
-      # - role: ironicbadger.tailscale-routes-fix
-      # - role: ironicbadger.docker-compose-generator
-      #   tags: compose
+      - role: ironicbadger.proxmox-host-nvidia
+      - role: ironicbadger.tailscale-routes-fix
 
 ### VIRTUAL MACHINES
 
