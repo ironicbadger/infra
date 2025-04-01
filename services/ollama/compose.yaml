@@ -1,0 +1,27 @@
+services:
+  # AI
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    volumes:
+      - "{{ appdata_path }}/apps/ollama:/root/.ollama"
+    ports:
+      - 11434:11434
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    restart: unless-stopped
+  openwebui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: openwebui
+    volumes:
+      - "{{ appdata_path }}/apps/open-webui:/app/backend/data"
+    ports:
+      - 8080:8080
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+    restart: unless-stopped

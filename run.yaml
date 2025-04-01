@@ -40,6 +40,18 @@
       - role: ironicbadger.proxmox-host-nvidia
       - role: ironicbadger.tailscale-routes-fix
 
+### LXCs
+
+  - hosts: ollama
+    vars_files:
+    - 'group_vars/secrets.yaml'
+    vars:
+      appdata_path: /mnt/appdata
+    roles:
+      - role: ironicbadger.figurine
+      - role: ironicbadger.docker-compose-generator
+        tags: compose
+
 ### OFFSITE
 
   - hosts: ktz-cloud
