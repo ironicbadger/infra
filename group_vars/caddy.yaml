@@ -32,7 +32,7 @@ caddy_endpoints:
       - friendly_name: beszel
         fqdn: beszel.wd.ktz.me
         upstream: http://10.42.0.1:8090
-      ## Proxmoxes
+      ## Proxmox-opedes
       - friendly_name: pxneo
         fqdn: px.wd.ktz.me
         upstream: https://10.42.0.1:8006
@@ -41,6 +41,9 @@ caddy_endpoints:
       - friendly_name: immich
         fqdn: immich.wd.ktz.me
         upstream: http://10.42.0.111:2283
+      - friendly_name: openwebui
+        fqdn: oui.wd.ktz.me
+        upstream: http://10.42.0.113:8080
   - friendly_name: wildcard for *.kvm.wd.ktz.me
     fqdn: '*.kvm.wd.ktz.me'
     tls_provider: cloudflare
