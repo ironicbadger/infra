@@ -39,6 +39,13 @@
       - role: ironicbadger.proxmox-host-nvidia
       - role: ironicbadger.tailscale-routes-fix
 
+  - hosts: pneuma
+    vars_files:
+    - 'group_vars/secrets.yaml'
+    roles:
+      - role: ironicbadger.figurine
+      - role: ironicbadger.tailscale-routes-fix
+
 ### LXCs
   - hosts: immich-app
     vars_files:
