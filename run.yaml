@@ -46,6 +46,18 @@
       - role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
 
+### Frigate
+  - hosts: m720q-3
+    vars_files:
+    - 'group_vars/secrets.yaml'
+    vars:
+      docker_compose_hostname: m720q-3
+      appdata_path: /mnt/appdata
+    roles:
+      - role: ironicbadger.figurine
+      - role: ironicbadger.docker-compose-generator
+        tags: compose
+
 ### LXCs
   - hosts: immich-app
     vars_files:

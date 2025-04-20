@@ -1,0 +1,38 @@
+services:
+  # go2rtc:
+  #   image: alexxit/go2rtc
+  #   network_mode: host
+  #   #privileged: true
+  #   devices:
+  #     - /dev/dri:/dev/dri
+  #   environment:
+  #     - TZ=America/New_York
+  #   volumes:
+  #     - "~/go2rtc:/config"
+  #   restart: unless-stopped
+  frigate:
+    container_name: frigate
+    #privileged: true # this may not be necessary for all setups
+    restart: unless-stopped
+    stop_grace_period: 30s
+    image: ghcr.io/blakeblackshear/frigate:stable
+    shm_size: "512mb"
+    devices:
+      - /dev/bus/usb:/dev/bus/usb
+      - /dev/dri/renderD128:/dev/dri/renderD128
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /opt/appdata/frigate/config:/config
+      - /opt/appdata/frigate/storage:/media/frigate
+      - type: tmpfs
+        target: /tmp/cache
+        tmpfs:
+          size: 1000000000
+    ports:
+      - "8971:8971"
+      - "5000:5000" # Internal unauthenticated access
+      - "8554:8554"
+      - "8555:8555/tcp"
+      - "8555:8555/udp"
+    environment:
+      FRIGATE_RTSP_PASSWORD: "password"
