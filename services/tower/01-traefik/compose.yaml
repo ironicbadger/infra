@@ -3,7 +3,7 @@ services:
     image: traefik
     container_name: tr
     volumes:
-      - {{ appdata_path }}/apps/traefik/letsencrypt:/letsencrypt
+      - "{{ appdata_path }}/apps/traefik/letsencrypt:/letsencrypt"
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       - traefik.enable=false

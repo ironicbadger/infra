@@ -3,10 +3,10 @@
 # ironicbadger.docker-compose-generator
 host_timezone: "America/New_York"
 
-appdata_path: /mnt/appdata
+appdata_path: /mnt/user
 download_path: /mnt/downloads
-storage_path: /mnt/jbod
-bigrust18_path: /mnt/bigrust18
+storage_path: /mnt/user
+#bigrust18_path: /mnt/bigrust18
 wd_domain_me: "wd.{{ domain_me }}"
 m_wd_domain_me: "m.{{ wd_domain_me }}"
 

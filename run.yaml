@@ -24,7 +24,7 @@
       - role: ironicbadger.tailscale-routes-fix
 
 ### SERVERS
-  - hosts: morphnix
+  - hosts: tower
     vars_files:
     - 'group_vars/secrets.yaml'
     roles:
@@ -57,6 +57,13 @@
       - role: ironicbadger.figurine
       - role: ironicbadger.docker-compose-generator
         tags: compose
+
+  - hosts: ms01
+    vars_files:
+    - 'group_vars/secrets.yaml'
+    roles:
+      - role: ironicbadger.figurine
+      - role: ironicbadger.tailscale-routes-fix
 
 ### LXCs
   - hosts: immich-app
