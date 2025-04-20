@@ -9,7 +9,6 @@ services:
     volumes:
       - "{{ appdata_path }}/mediaservers/plex/config:/config"
       - "{{ storage_path }}:/data:ro"
-      - "{{ bigrust18_path }}/media:/bigrust18/media:ro"
       - /mnt/downloads:/downloads:ro
       # ram transcode
       - /dev/shm:/transcode
@@ -28,7 +27,6 @@ services:
     volumes:
       - "{{ appdata_path }}/mediaservers/jellyfin:/config"
       - "{{ storage_path }}:/data:ro"
-      - "{{ bigrust18_path }}/media:/bigrust18/media:ro"
       - /mnt/downloads:/downloads:ro
       # ram transcode
       - /dev/shm:/transcode
@@ -45,21 +43,18 @@ services:
       - "JELLYFIN_PublishedServerUrl=jf.{{ wd_domain_me }}"
     hostname: us-rdu
     restart: unless-stopped
-  abs:
-    image: advplyr/audiobookshelf
-    container_name: abs
-    volumes:
-      - "{{ bigrust18_path }}/media/audiobooks/library:/audiobooks:ro"
-      - "{{ bigrust18_path }}/media/audiobooks/library2:/audiobooks2:ro"
-      - "{{ bigrust18_path }}/media/audiobooks/podcasts:/podcasts"
-      - "{{ appdata_path }}/mediaservers/audiobookshelf/metadata:/metadata"
-      - "{{ appdata_path }}/mediaservers/audiobookshelf/config:/config"
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.audiobookshelf.rule=Host(`abs.{{ wd_domain_me }}`)"
-    ports:
-      - 2284:80
-    restart: unless-stopped
+  # abs:
+  #   image: advplyr/audiobookshelf
+  #   container_name: abs
+  #   volumes:
+  #     - "{{ appdata_path }}/mediaservers/audiobookshelf/metadata:/metadata"
+  #     - "{{ appdata_path }}/mediaservers/audiobookshelf/config:/config"
+  #   labels:
+  #     - traefik.enable=true
+  #     - "traefik.http.routers.audiobookshelf.rule=Host(`abs.{{ wd_domain_me }}`)"
+  #   ports:
+  #     - 2284:80
+  #   restart: unless-stopped
   ersatztv:
     image: jasongdove/ersatztv:latest-vaapi
     container_name: ersatztv

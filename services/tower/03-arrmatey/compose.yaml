@@ -65,25 +65,6 @@ services:
       - prowlarr
       - sabnzbd
     restart: unless-stopped
-  lidarr:
-    image: lscr.io/linuxserver/lidarr
-    container_name: lidarr
-    volumes:
-      - "{{ appdata_path }}/arrmatey/lidarr:/config"
-      - "{{ download_path }}/complete/music:/downloads/complete/music"
-      - "{{ download_path }}/intermediate/music:/downloads-amd"
-      - /mnt/bigrust18/media/music/flac:/music
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.lidarr.rule=Host(`lidarr.{{ m_wd_domain_me }}`)"
-    environment:
-      - "PUID={{ docker_compose_generator_uid }}"
-      - "PGID={{ docker_compose_generator_gid }}"
-      - "TZ={{ host_timezone }}"
-    depends_on:
-      - prowlarr
-      - sabnzbd
-    restart: unless-stopped
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
