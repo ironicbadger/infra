@@ -98,6 +98,17 @@
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
+  - hosts: apps
+    vars_files:
+    - 'group_vars/secrets.yaml'
+    vars:
+      docker_compose_hostname: lxc-apps
+      appdata_path: /mnt/appdata
+    roles:
+      - role: ironicbadger.figurine
+      - role: ironicbadger.docker-compose-generator
+        tags: compose
+
 ### OFFSITE
   - hosts: ktz-cloud
     vars_files:
