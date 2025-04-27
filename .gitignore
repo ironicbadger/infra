@@ -90,6 +90,7 @@ $RECYCLE.BIN/
 *.tfstate
 *.tfstate.*
 *.hcl
+*.tfvars
 
 # python
 __pycache__
