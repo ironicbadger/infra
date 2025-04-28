@@ -20,7 +20,7 @@ services:
       - sys_module
     restart: unless-stopped
   hoarder-web:
-    image: ghcr.io/hoarder-app/hoarder:0.21.0
+    image: ghcr.io/hoarder-app/hoarder:0.24.1
     container_name: hoarder-web
     network_mode: service:ts-hoarder
     depends_on:
