@@ -24,7 +24,7 @@
       - role: ironicbadger.tailscale-routes-fix
 
 ### SERVERS
-  - hosts: tower
+  - hosts: morphnix
     vars_files:
     - 'group_vars/secrets.yaml'
     roles:

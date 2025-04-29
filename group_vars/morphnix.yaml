@@ -1,12 +1,13 @@
 ---
 
 # ironicbadger.docker-compose-generator
-host_timezone: "America/New_York"
+host_timezone: "US/Eastern"
+docker_compose_hostname: "morphnix"
 
-appdata_path: /mnt/user
+appdata_path: /mnt/nvme-appdata
 download_path: /mnt/downloads
-storage_path: /mnt/user
-#bigrust18_path: /mnt/bigrust18
+storage_path: /mnt/jbod
+bigrust_path: /mnt/bigrust
 wd_domain_me: "wd.{{ domain_me }}"
 m_wd_domain_me: "m.{{ wd_domain_me }}"
 

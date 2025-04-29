@@ -10,6 +10,7 @@ services:
       - "{{ appdata_path }}/mediaservers/plex/config:/config"
       - "{{ storage_path }}:/data:ro"
       - /mnt/downloads:/downloads:ro
+      - /mnt/bigrust:/mnt/bigrust:ro
       # ram transcode
       - /dev/shm:/transcode
     labels:
