@@ -1,0 +1,5 @@
+services:
+  librespeed:
+    image: lscr.io/linuxserver/librespeed
+    ports:
+      - 8008:80
