@@ -66,6 +66,16 @@
       - role: ironicbadger.tailscale-routes-fix
 
 ### LXCs
+  - hosts: id
+    vars_files:
+    - 'group_vars/secrets.yaml'
+    vars:
+      docker_compose_hostname: lxc-id
+    roles:
+      - role: ironicbadger.figurine
+      - role: ironicbadger.docker-compose-generator
+        tags: compose
+
   - hosts: immich-app
     vars_files:
     - 'group_vars/secrets.yaml'

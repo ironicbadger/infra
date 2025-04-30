@@ -1,28 +1,42 @@
 services:
+  ts-karakeep:
+    image: tailscale/tailscale:latest
+    container_name: ts-karakeep
+    hostname: keep
+    environment:
+      - "TS_AUTHKEY={{ tailscale_oauth_client_secret }}"
+      - "TS_EXTRA_ARGS=--advertise-tags=tag:container"
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+    volumes:
+      - "{{ appdata_path }}/apps/karakeep/ts-state:/var/lib/tailscale"
+    restart: unless-stopped
   karakeep:
     image: ghcr.io/karakeep-app/karakeep:release
     container_name: karakeep
     volumes:
       - "{{ appdata_path }}/apps/karakeep/data:/data"
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.karakeep.rule=Host(`keep.apps.{{ wd_domain_me }}`)"
+    network_mode: service:ts-karakeep
     environment:
       - MEILI_ADDR=http://karakeep-meilisearch:7700
       - BROWSER_WEB_URL=http://karakeep-chrome:9222
       - "NEXTAUTH_SECRET={{ hoarder_nextauth_secret }}"
       - "MEILI_MASTER_KEY={{ hoarder_nextauth_masterkey }}"
-      - "NEXTAUTH_URL=https://keep.apps.wd.ktz.me"
+      - "NEXTAUTH_URL=https://keep.ktz.ts.net"
       - "OPENAI_API_KEY={{ hoarder_openai_key }}"
       - DATA_DIR=/data
       - CRAWLER_STORE_SCREENSHOT=true
       - CRAWLER_FULL_PAGE_SCREENSHOT=true
       - CRAWLER_ENABLE_ADBLOCKER=true
       # auth
-      - "OAUTH_WELLKNOWN_URL=https://id.wd.ktz.me/.well-known/openid-configuration"
-      - "OAUTH_PROVIDER_NAME=pocketid"
-      - "OAUTH_CLIENT_ID={{ karakeep_oauth_client_id }}"
-      - "OAUTH_CLIENT_SECRET={{ karakeep_oauth_secret }}"
+      - "OAUTH_WELLKNOWN_URL=https://idp.ktz.ts.net/.well-known/openid-configuration"
+      - "OAUTH_PROVIDER_NAME=tsidp"
+      - "OAUTH_CLIENT_ID=unused"
+      - "OAUTH_CLIENT_SECRET=unused"
       #- "OAUTH_TIMEOUT=10000"
       - "OAUTH_SCOPE=openid email profile"
     restart: unless-stopped
