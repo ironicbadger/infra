@@ -38,7 +38,7 @@ services:
       - --hide-scrollbars
     restart: unless-stopped
   karakeep-meilisearch:
-    image: getmeili/meilisearch:v1.13.3
+    image: getmeili/meilisearch:v1.14.0
     container_name: karakeep-meilisearch
     environment:
       - MEILI_NO_ANALYTICS=true
