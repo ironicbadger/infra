@@ -59,3 +59,14 @@ services:
       - traefik.http.routers.sh.entrypoints=websecure
       - traefik.http.routers.sh.tls.certresolver=cloudflare
     restart: unless-stopped
+  # ktz-webfinger:
+  #   image: nginx
+  #   container_name: ktz-webfinger
+  #   volumes:
+  #     - "{{ appdata_path }}/ktz-webfinger/data:/usr/share/nginx/html:ro"
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.webfinger.rule=Host(`ktz.me`)
+  #     - traefik.http.routers.webfinger.entrypoints=websecure
+  #     - traefik.http.routers.webfinger.tls.certresolver=cloudflare
+  #   restart: unless-stopped

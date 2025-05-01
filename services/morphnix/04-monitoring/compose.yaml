@@ -25,3 +25,12 @@ services:
     environment:
       - MODE=standalone
     restart: unless-stopped
+  # whatsupdocker:
+  #   image: getwud/wud
+  #   container_name: wud
+  #   labels:
+  #     - traefik.enable=true
+  #     - "traefik.http.routers.wud.rule=Host(`wud.{{ m_wd_domain_me }}`)"
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock
+  #   restart: unless-stopped
