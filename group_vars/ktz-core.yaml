@@ -10,6 +10,9 @@ caddy_endpoints:
     fqdn: '*.core.ktz.me'
     tls_provider: cloudflare
     wildcard_endpoints:
+      - friendly_name: dns
+        fqdn: dns.core.ktz.me
+        upstream: http://127.0.0.1:3000
       - friendly_name: smokeping
         fqdn: smokeping.core.ktz.me
         upstream: http://localhost:8007
