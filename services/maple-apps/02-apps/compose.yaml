@@ -1,0 +1,18 @@
+services:
+  freshrss:
+    image: freshrss/freshrss:latest
+    container_name: freshrss
+    volumes:
+      - "{{ appdata_path }}/freshrss/data:/var/www/FreshRSS/data"
+      - "{{ appdata_path }}/freshrss/extensions:/var/www/FreshRSS/extensions"
+    environment:
+      - TZ={{ host_timezone }}
+      - CRON_MIN=13,43
+      - "BASE_URL=https://rss.{{ maple_domain_me }}"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.freshrss.rule=Host(`rss.{{ maple_domain_me }}`)"
+      - traefik.http.routers.freshrss.entrypoints=websecure
+      - traefik.http.routers.freshrss.tls.certresolver=cloudflare
+      - traefik.http.services.freshrss.loadbalancer.server.port=80
+    restart: unless-stopped
