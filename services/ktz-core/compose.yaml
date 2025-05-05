@@ -12,7 +12,7 @@ services:
       - "8080:8080"
   # monitoring
   smokeping:
-    image: lscr.io/linuxserver/smokeping:2.8.2-r3-ls130`
+    image: lscr.io/linuxserver/smokeping:2.8.2-r3-ls130
     container_name: smokeping
     volumes:
       - "{{ appdata_path }}/apps/smokeping/config:/config"
