@@ -76,3 +76,23 @@ services:
       retries: 2
       start_period: 10s
     restart: unless-stopped
+  ktz-n8n:
+    image: n8nio/n8n:latest
+    container_name: ktz-n8n
+    restart: unless-stopped
+    volumes:
+      - "{{ appdata_path }}/ktz-n8n:/home/node/.n8n"
+    environment:
+      - N8N_HOST=n8n.{{ domain_cloud }}
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=https
+      - N8N_ENCRYPTION_KEY={{ n8n_encryption_key }}
+      - NODE_ENV=production
+      - "TZ={{ host_timezone }}"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ktzn8n.rule=Host(`n8n.{{ domain_cloud }}`)"
+      - traefik.http.routers.ktzn8n.entrypoints=websecure
+      - traefik.http.routers.ktzn8n.tls.certresolver=cloudflare
+      - traefik.http.services.ktzn8n.loadbalancer.server.port=5678
+
