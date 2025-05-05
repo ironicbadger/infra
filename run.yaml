@@ -1,5 +1,19 @@
 ---
 ### CORE INFRA
+  - hosts: ktz-core
+    vars_files:
+    - 'group_vars/secrets.yaml'
+    vars:
+      docker_compose_hostname: ktz-core
+      appdata_path: /opt/appdata
+    roles:
+      - role: ironicbadger.figurine
+      # pihole
+      - role: ironicbadger.caddy
+        tags: caddy
+      - role: ironicbadger.docker-compose-generator
+        tags: compose
+
   - hosts: neo
     vars_files:
     - 'group_vars/secrets.yaml'
