@@ -8,11 +8,35 @@ services:
     environment:
       - TZ={{ host_timezone }}
       - CRON_MIN=13,43
-      - "BASE_URL=https://rss.{{ maple_domain_me }}"
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.freshrss.rule=Host(`rss.{{ maple_domain_me }}`)"
-      - traefik.http.routers.freshrss.entrypoints=websecure
-      - traefik.http.routers.freshrss.tls.certresolver=cloudflare
-      - traefik.http.services.freshrss.loadbalancer.server.port=80
+      - "BASE_URL=https://rss.{{ apps_domain_me }}"
+    ports:
+      - 8000:80
     restart: unless-stopped
+  # ###
+  # linkwarden:
+  #   env_file: .env
+  #   environment:
+  #     - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/postgres
+  #   restart: always
+  #   # build: . # uncomment to build from source
+  #   image: ghcr.io/linkwarden/linkwarden:latest # comment to build from source
+  #   ports:
+  #     - 3000:3000
+  #   volumes:
+  #     - ./data:/data/data
+  #   depends_on:
+  #     - postgres
+  #     - meilisearch
+  # meilisearch:
+  #   image: getmeili/meilisearch:v1.12.8
+  #   restart: always
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./meili_data:/meili_data
+  # postgres:
+  #   image: postgres:16-alpine
+  #   env_file: .env
+  #   restart: always
+  #   volumes:
+  #     - ./pgdata:/var/lib/postgresql/data

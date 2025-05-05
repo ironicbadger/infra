@@ -7,4 +7,5 @@ tailscale_routes_table: main
 # ironicbadger.docker-compose-generator
 host_timezone: "America/New_York"
 wd_domain_me: "wd.{{ domain_me }}"
-maple_domain_me: "maple.{{ wd_domain_me }}"
+maple_domain_me: "maple.{{ domain_me }}"
+apps_domain_me: "apps.{{ domain_me }}"

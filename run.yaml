@@ -133,10 +133,24 @@
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
-### OFFSITE
+# OFFSITE
+
+## vps
   - hosts: ktz-cloud
     vars_files:
     - 'group_vars/secrets.yaml'
     roles:
+      - role: ironicbadger.docker-compose-generator
+        tags: compose
+
+## maple
+  - hosts: maple-apps
+    vars_files:
+    - 'group_vars/secrets.yaml'
+    vars:
+      docker_compose_hostname: maple-apps
+      appdata_path: /opt/appdata
+    roles:
+      - role: ironicbadger.figurine
       - role: ironicbadger.docker-compose-generator
         tags: compose
