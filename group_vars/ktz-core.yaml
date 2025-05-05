@@ -24,3 +24,10 @@ caddy_endpoints:
         fqdn: px.maple.ktz.me
         upstream: https://192.168.13.10:8006
         tls_insecure: true
+  - friendly_name: wildcard for *.apps.ktz.me
+    fqdn: '*.apps.ktz.me'
+    tls_provider: cloudflare
+    wildcard_endpoints:
+      - friendly_name: rss
+        fqdn: rss.apps.ktz.me
+        upstream: http://100.88.211.94:8000
