@@ -1,13 +1,26 @@
 services:
-  # dns
-
+  # proxy
+  tsdproxy:
+    image: almeidapaulopt/tsdproxy:1
+    container_name: tsdproxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "{{ appdata_path }}/apps/tsdproxy/data:/data"
+      - "{{ appdata_path }}/apps/tsdproxy/config:/config"
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
   # monitoring
   smokeping:
-    image: lscr.io/linuxserver/smokeping
+    image: lscr.io/linuxserver/smokeping:2.8.2-r3-ls130`
     container_name: smokeping
     volumes:
       - "{{ appdata_path }}/apps/smokeping/config:/config"
       - "{{ appdata_path }}/apps/smokeping/data:/data"
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "core-smokeping"
+      tsdproxy.container_port: 80
     ports:
       - 8007:80
     environment:
@@ -17,10 +30,12 @@ services:
     hostname: core
     restart: unless-stopped
   librespeed:
-    image: lscr.io/linuxserver/librespeed
+    image: lscr.io/linuxserver/librespeed:5.4.1-ls231
     container_name: librespeed
     labels:
-      - traefik.enable=false
+      tsdproxy.enable: "true"
+      tsdproxy.name: "core-librespeed"
+      tsdproxy.container_port: 80
     ports:
       - 8008:80
     environment:
