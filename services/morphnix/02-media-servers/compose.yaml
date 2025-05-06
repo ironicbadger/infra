@@ -74,3 +74,16 @@ services:
       - "PGID={{ docker_compose_generator_gid }}"
       - "TZ={{ host_timezone }}"
     restart: unless-stopped
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    user: {{ docker_compose_generator_uid }}:{{ docker_compose_generator_gid }}
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.navidrome.rule=Host(`navidrome.{{ m_wd_domain_me }}`)"
+    environment:
+      - ND_MUSICFOLDER=/mnt/flac
+    volumes:
+      - "{{ appdata_path }}/mediaservers/navidrome:/data"
+      - "/mnt/bigrust/media/music/flac:/mnt/flac:ro"
+    restart: unless-stopped
