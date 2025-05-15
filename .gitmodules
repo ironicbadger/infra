@@ -21,4 +21,4 @@
 	url = git@ssh.github.com:ironicbadger/lxc-debian-nvidia.git
 [submodule "roles/ansible-role-packages"]
 	path = roles/ansible-role-packages
-	url = https://github.com/ironicbadger/ansible-role-packages.git
+	url = git@ssh.github.com/ironicbadger/ansible-role-packages.git
