@@ -38,16 +38,19 @@
       - role: ironicbadger.tailscale-routes-fix
 
 ### SERVERS
-  - hosts: morphnix
+  - hosts: proxmorph
     vars_files:
-    - 'group_vars/secrets.yaml'
+      - 'group_vars/secrets.yaml'
     roles:
+      - role: ironicbadger.figurine
+      - role: ironicbadger.tailscale-routes-fix
+      - role: ironicbadger.packages
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
   - hosts: c137
     vars_files:
-    - 'group_vars/secrets.yaml'
+      - 'group_vars/secrets.yaml'
     roles:
       - role: ironicbadger.figurine
       - role: ironicbadger.proxmox-host-nvidia
@@ -59,18 +62,6 @@
     roles:
       - role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
-
-### Frigate
-  - hosts: m720q-3
-    vars_files:
-    - 'group_vars/secrets.yaml'
-    vars:
-      docker_compose_hostname: m720q-3
-      appdata_path: /mnt/appdata
-    roles:
-      - role: ironicbadger.figurine
-      - role: ironicbadger.docker-compose-generator
-        tags: compose
 
   - hosts: ms01
     vars_files:

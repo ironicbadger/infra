@@ -15,3 +15,8 @@ docker_compose_generator_uid: "1000"
 docker_compose_generator_gid: "100"
 
 disabled_compose_files: []
+
+# ironicbadger.packages
+packages_perform_cleanup: True
+package_list:
+  - htop
