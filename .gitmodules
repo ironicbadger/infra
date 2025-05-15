@@ -19,6 +19,6 @@
 [submodule "roles/ironicbadger.lxc-debian-nvidia"]
 	path = roles/ironicbadger.lxc-debian-nvidia
 	url = git@ssh.github.com:ironicbadger/lxc-debian-nvidia.git
-[submodule "roles/ansible-role-packages"]
-	path = roles/ironicbadger.ansible-role-packages
+[submodule "roles/ironicbadger.packages"]
+	path = roles/ironicbadger.packages
 	url = git@ssh.github.com:ironicbadger/ansible-role-packages.git
