@@ -95,4 +95,47 @@ services:
       - traefik.http.routers.ktzn8n.entrypoints=websecure
       - traefik.http.routers.ktzn8n.tls.certresolver=cloudflare
       - traefik.http.services.ktzn8n.loadbalancer.server.port=5678
+  ###
+  ktz-hedgedoc:
+    image: quay.io/hedgedoc/hedgedoc:latest
+    container_name: ktz-hedgedoc
+    restart: unless-stopped
+    volumes:
+      - "{{ appdata_path }}/ktz-hedgedoc/uploads:/hedgedoc/public/uploads"
+    environment:
+      - CMD_DB_URL=postgres://hedgedoc:{{ hedgedoc_db_password }}@ktz-hedgedoc-db:5432/hedgedoc
+      - CMD_DOMAIN=md.{{ domain_cloud }}
+      - CMD_URL_ADDPORT=false
+      - CMD_PROTOCOL_USESSL=true
+      - CMD_ALLOW_EMAIL_REGISTER=false
+      - "CMD_TZ={{ host_timezone }}"
+      - CMD_OAUTH2_PROVIDERNAME=PocketID
+      - "CMD_OAUTH2_CLIENT_ID={{ hedgedoc_oauth_client_id }}"
+      - "CMD_OAUTH2_CLIENT_SECRET={{ hedgedoc_oauth_secret }}"
+      - CMD_OAUTH2_SCOPE=openid email profile
+      - CMD_OAUTH2_TOKEN_AUTH_METHOD=client_secret_post
+      - CMD_OAUTH2_USER_PROFILE_USERNAME_ATTR=preferred_username
+      - CMD_OAUTH2_USER_PROFILE_DISPLAY_NAME_ATTR=name
+      - CMD_OAUTH2_USER_PROFILE_EMAIL_ATTR=email
+      - CMD_OAUTH2_USER_PROFILE_URL=https://id.{{ domain_me }}/api/oidc/userinfo
+      - CMD_OAUTH2_TOKEN_URL=https://id.{{ domain_me }}/api/oidc/token
+      - CMD_OAUTH2_AUTHORIZATION_URL=https://id.{{ domain_me }}/authorize
+    depends_on:
+      - ktz-hedgedoc-db
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.ktzhedgedoc.rule=Host(`md.{{ domain_cloud }}`)"
+      - traefik.http.routers.ktzhedgedoc.entrypoints=websecure
+      - traefik.http.routers.ktzhedgedoc.tls.certresolver=cloudflare
+      - traefik.http.services.ktzhedgedoc.loadbalancer.server.port=3000
+  ktz-hedgedoc-db:
+    image: postgres:14-alpine
+    container_name: ktz-hedgedoc-db
+    restart: unless-stopped
+    volumes:
+      - "{{ appdata_path }}/ktz-hedgedoc/database:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=hedgedoc
+      - "POSTGRES_PASSWORD={{ hedgedoc_db_password }}"
+      - POSTGRES_DB=hedgedoc
 
