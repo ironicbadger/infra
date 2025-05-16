@@ -100,8 +100,8 @@ services:
     image: quay.io/hedgedoc/hedgedoc:latest
     container_name: ktz-hedgedoc
     restart: unless-stopped
-    volumes:
-      - "{{ appdata_path }}/ktz-hedgedoc/uploads:/hedgedoc/public/uploads"
+    #volumes:
+      #- "{{ appdata_path }}/ktz-hedgedoc/public:/hedgedoc/public"
     environment:
       - CMD_DB_URL=postgres://hedgedoc:{{ hedgedoc_db_password }}@ktz-hedgedoc-db:5432/hedgedoc
       - CMD_DOMAIN=md.{{ domain_cloud }}
@@ -109,6 +109,7 @@ services:
       - CMD_PROTOCOL_USESSL=true
       - CMD_ALLOW_EMAIL_REGISTER=false
       - "CMD_TZ={{ host_timezone }}"
+      ## auth
       - CMD_OAUTH2_PROVIDERNAME=PocketID
       - "CMD_OAUTH2_CLIENT_ID={{ hedgedoc_oauth_client_id }}"
       - "CMD_OAUTH2_CLIENT_SECRET={{ hedgedoc_oauth_secret }}"
