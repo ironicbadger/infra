@@ -13,7 +13,8 @@ compose HOST *V:
 
 # updates submodules
 sub-update:
-  git submodule update --init --recursive
+  #git submodule update --init --recursive
+  git submodule update --remote --recursive
 
 # git submodule - repo URL + optional local folder name
 sub-add URL *NAME:
