@@ -22,3 +22,6 @@
 [submodule "roles/ironicbadger.packages"]
 	path = roles/ironicbadger.packages
 	url = git@ssh.github.com:ironicbadger/ansible-role-packages.git
+[submodule "roles/ironicbadger.mounts"]
+	path = roles/ironicbadger.mounts
+	url = git@github.com:ironicbadger/ansible-role-drivemounts.git
