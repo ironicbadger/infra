@@ -45,6 +45,7 @@
       - role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
       - role: ironicbadger.packages
+      - role: ironicbadger.mounts
       - role: ironicbadger.docker-compose-generator
         tags: compose
 

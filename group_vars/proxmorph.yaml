@@ -19,4 +19,20 @@ disabled_compose_files: []
 # ironicbadger.packages
 packages_perform_cleanup: True
 package_list:
+  - curl
+  - git
   - htop
+  - sudo
+  - tmux
+  - wget
+  - which
+  
+
+# ironicbadger.mounts
+automount_drives: true
+drive_mounts:
+  - mountpoint: "/mnt/parity/parity1"
+    device: "/dev/disk/by-id/ata-WDC_WD180EDGZ-11B9PA0_3ZGA70DZ-part1"
+    fstype: "ext4"
+    opts: "defaults"
+  
