@@ -1,0 +1,76 @@
+---
+- name: Ensure Nix is installed
+  shell: |
+    curl -L https://nixos.org/nix/install | sh -s -- --daemon
+  args:
+    creates: /nix
+  environment:
+    NIX_INSTALLER_NO_MODIFY_PROFILE: "1"
+  become: yes
+
+- name: Create Nix config directory
+  file:
+    path: "{{ nix_home }}/.config/nix"
+    state: directory
+    mode: '0755'
+    owner: "{{ nix_user }}"
+    group: "{{ nix_group }}"
+  become: "{{ 'yes' if nix_user == 'root' else 'no' }}"
+
+- name: Enable flakes
+  copy:
+    dest: "{{ nix_home }}/.config/nix/nix.conf"
+    content: |
+      experimental-features = nix-command flakes
+    mode: '0644'
+    owner: "{{ nix_user }}"
+    group: "{{ nix_group }}"
+  become: "{{ 'yes' if nix_user == 'root' else 'no' }}"
+
+- name: Create home-manager configuration directory
+  file:
+    path: "{{ nix_config_path }}"
+    state: directory
+    mode: '0755'
+    owner: "{{ nix_user }}"
+    group: "{{ nix_group }}"
+  become: "{{ 'yes' if nix_user == 'root' else 'no' }}"
+
+- name: Copy flake.nix file
+  template:
+    src: flake.nix.j2
+    dest: "{{ nix_config_path }}/flake.nix"
+    mode: '0644'
+    owner: "{{ nix_user }}"
+    group: "{{ nix_group }}"
+  become: "{{ 'yes' if nix_user == 'root' else 'no' }}"
+
+- name: Copy home.nix file
+  template:
+    src: home.nix.j2
+    dest: "{{ nix_config_path }}/home.nix"
+    mode: '0644'
+    owner: "{{ nix_user }}"
+    group: "{{ nix_group }}"
+  become: "{{ 'yes' if nix_user == 'root' else 'no' }}"
+
+- name: Install home-manager
+  shell: |
+    . {{ nix_home }}/.nix-profile/etc/profile.d/nix.sh
+    nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+    nix-channel --update
+    nix-shell '<home-manager>' -A install
+  args:
+    creates: "{{ nix_home }}/.config/home-manager"
+  become: "{{ 'yes' if nix_user == 'root' else 'no' }}"
+  become_user: "{{ nix_user }}"
+  when: install_home_manager | bool
+
+- name: Apply home-manager configuration
+  shell: |
+    . {{ nix_home }}/.nix-profile/etc/profile.d/nix.sh
+    cd {{ nix_config_path }}
+    nix-shell '<home-manager>' -A install --command "home-manager switch -b backup"
+  become: "{{ 'yes' if nix_user == 'root' else 'no' }}"
+  become_user: "{{ nix_user }}"
+  when: install_home_manager | bool

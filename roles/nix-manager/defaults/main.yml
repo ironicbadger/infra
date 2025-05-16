@@ -1,0 +1,6 @@
+---
+nix_user: "root"
+nix_group: "root"
+nix_home: "/root"
+install_home_manager: true
+nix_config_path: "{{ nix_home }}/.config/home-manager"

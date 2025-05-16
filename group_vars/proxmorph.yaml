@@ -26,7 +26,43 @@ package_list:
   - tmux
   - wget
   - which
-  
+
+# ironicbadger.nix-home-manager
+nix_packages:
+    # Unstable packages
+    - nixpkgs-unstable.beszel
+
+    # Stable packages
+    - btop
+    - coreutils
+    - cifs-utils
+    - drill
+    - du-dust
+    - dua
+    - duf
+    - entr
+    - fastfetch
+    - fd
+    - ffmpeg
+    - figurine
+    - go
+    - iperf3
+    - ipmitool
+    - just
+    - mc
+    - ncdu
+    - neofetch
+    - nfs-utils
+    - nmap
+    - ripgrep
+    - smartmontools
+    - smbclient
+    - tree
+    - unzip
+    - watch
+    - wget
+    - wireguard-tools
+    - zoxide
 
 # ironicbadger.mounts
 automount_drives: true
@@ -35,4 +71,11 @@ drive_mounts:
     device: "/dev/disk/by-id/ata-WDC_WD180EDGZ-11B9PA0_3ZGA70DZ-part1"
     fstype: "ext4"
     opts: "defaults"
-  
+
+# nix-manager configuration
+nix_user: "root"
+nix_group: "root"
+nix_home: "/root"
+install_home_manager: true
+git_username: "Alex Kretzschmar"
+git_email: "{{ vault_cloudflare_account_email }}"
