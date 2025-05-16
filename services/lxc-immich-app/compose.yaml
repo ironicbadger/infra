@@ -23,7 +23,7 @@ services:
       - immich-database
     restart: unless-stopped
   immich-redis:
-    image: registry.hub.docker.com/library/redis:6.2-alpine@sha256:148bb5411c184abd288d9aaed139c98123eeb8824c5d3fce03cf721db58066d8
+    image: registry.hub.docker.com/library/redis:8.0-alpine@sha256:62b5498c91778f738f0efbf0a6fd5b434011235a3e7b5f2ed4a2c0c63bb1c786
     container_name: immich-redis
     restart: unless-stopped
   immich-database:
