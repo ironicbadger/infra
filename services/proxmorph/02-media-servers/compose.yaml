@@ -8,16 +8,16 @@ services:
       - /dev/dri:/dev/dri
     volumes:
       - "{{ appdata_path }}/mediaservers/plex/config:/config"
-      - "{{ storage_path }}:/data:ro"
+      - "{{ storage_path }}:/data"
       - /mnt/downloads:/downloads:ro
-      - /mnt/bigrust:/mnt/bigrust:ro
+      - /mnt/rust:/mnt/rust:ro
       # ram transcode
       - /dev/shm:/transcode
     labels:
       - traefik.enable=false
     environment:
-      - "PUID={{ docker_compose_generator_uid }}"
-      - "PGID={{ docker_compose_generator_gid }}"
+      - "PUID=1000"
+      - "PGID=100"
       - "TZ={{ host_timezone }}"
     restart: unless-stopped
   jellyfin:
