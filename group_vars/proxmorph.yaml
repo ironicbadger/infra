@@ -109,13 +109,13 @@ drive_mounts:
       - "subvol=data"
       - "compress=zstd"
       - "defaults"
-  - mountpoint: "/mnt/disks/disk4"
-    device: "/dev/disk/by-id/ata-WDC_WD140EDGZ-11B1PA0_Y6GX1KWC-part1"
-    fstype: "btrfs"
-    options: 
-      - "subvol=data"
-      - "compress=zstd"
-      - "defaults"
+  # - mountpoint: "/mnt/disks/disk4"
+  #   device: "/dev/disk/by-id/ata-WDC_WD140EDGZ-11B1PA0_Y6GX1KWC-part1"
+  #   fstype: "btrfs"
+  #   options: 
+  #     - "subvol=data"
+  #     - "compress=zstd"
+  #     - "defaults"
 
 # nix-manager configuration
 nix_user: "root"
