@@ -19,9 +19,12 @@ disabled_compose_files: []
 # ironicbadger.packages
 packages_perform_cleanup: True
 package_list:
+  - bcache-tools
+  - btrfs-progs
   - curl
   - git
   - htop
+  - proxmox-kernel-6.14
   - smbclient
   - sudo
   - tmux
@@ -77,24 +80,35 @@ drive_mounts:
       - "defaults"
       - "minfreespace=250G"
       - "fsname=mergerfs-jbod"
-  # parity
-  - mountpoint: "/mnt/parity/parity1"
-    device: "/dev/disk/by-id/ata-WDC_WD180EDGZ-11B9PA0_3ZGA70DZ-part1"
-    fstype: "ext4"
-    opts: "defaults"
   # data disks
   - mountpoint: "/mnt/disks/disk1"
+    device: "/dev/disk/by-id/ata-WDC_WD180EDGZ-11B9PA0_3ZGA70DZ-part1"
+    fstype: "btrfs"
+    options: 
+      - "subvol=data"
+      - "compress=zstd"
+      - "defaults"
+  - mountpoint: "/mnt/disks/disk2"
     device: "/dev/disk/by-id/ata-WDC_WD180EDGZ-11B9PA0_2TGGDS5Z-part1"
     fstype: "btrfs"
-    opts: ["subvol=data", "defaults"]
-  - mountpoint: "/mnt/disks/disk2"
+    options: 
+      - "subvol=data"
+      - "compress=zstd"
+      - "defaults"
+  - mountpoint: "/mnt/disks/disk3"
     device: "/dev/disk/by-id/ata-WDC_WD180EDGZ-11B9PA0_2GH0M6HS-part1"
     fstype: "btrfs"
-    opts: ["subvol=data", "defaults"]
-  - mountpoint: "/mnt/disks/disk3"
+    options: 
+      - "subvol=data"
+      - "compress=zstd"
+      - "defaults"
+  - mountpoint: "/mnt/disks/disk4"
     device: "/dev/disk/by-id/ata-WDC_WD140EDGZ-11B1PA0_Y6GX1KWC-part1"
     fstype: "btrfs"
-    opts: ["subvol=data", "defaults"]
+    options: 
+      - "subvol=data"
+      - "compress=zstd"
+      - "defaults"
 
 # nix-manager configuration
 nix_user: "root"
