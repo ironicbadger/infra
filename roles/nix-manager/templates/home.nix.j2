@@ -1,0 +1,56 @@
+{ config, pkgs, lib, ... }:
+
+let
+  system = pkgs.stdenv.hostPlatform.system;
+  nixpkgs-unstable = import (fetchTarball {
+    url = "https://github.com/NixOS/nixpkgs/archive/nixos-unstable.tar.gz";
+    sha256 = "0mmcni35fxs87fnhavfprspczgnnkxyizy8a4x57y98y76c4q4da";
+  }) {
+    inherit system;
+    config.allowUnfree = true;
+  };
+in
+{
+  home.username = "{{ nix_user }}";
+  home.homeDirectory = "{{ nix_home }}";
+  home.stateVersion = "23.11";
+  
+  nixpkgs.config.allowUnfree = true;
+
+  home.packages = with pkgs; [
+    {% for package in nix_packages %}
+    {{ package }}
+    {% endfor %}
+  ];
+
+  # Programs managed by home-manager
+  programs.git = {
+    enable = true;
+    userName = "{{ git_username }}";
+    userEmail = "{{ git_email }}";
+  };
+
+  programs.bash = {
+    enable = true;
+    shellAliases = {
+      ll = "ls -la";
+      update = "home-manager switch";
+    };
+  };
+
+  programs.zsh = {
+    enable = true;
+    syntaxHighlighting.enable = true;
+    autosuggestion.enable = true;
+    oh-my-zsh = {
+      enable = true;
+      plugins = [ "git" "docker" "docker-compose" "zoxide" ];
+      theme = "robbyrussell";
+    };
+  };
+
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
+}
