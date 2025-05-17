@@ -2,12 +2,12 @@
 
 # ironicbadger.docker-compose-generator
 host_timezone: "US/Eastern"
-docker_compose_hostname: "morphnix"
+docker_compose_hostname: "proxmorph"
 
 appdata_path: /mnt/nvme-appdata
 download_path: /mnt/downloads
 storage_path: /mnt/jbod
-bigrust_path: /mnt/bigrust
+bigrust_path: /mnt/rust
 wd_domain_me: "wd.{{ domain_me }}"
 m_wd_domain_me: "m.{{ wd_domain_me }}"
 
@@ -25,6 +25,8 @@ package_list:
   - git
   - htop
   - proxmox-kernel-6.14
+  - samba 
+  - samba-common-bin
   - smbclient
   - sudo
   - tmux
