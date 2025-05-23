@@ -1,18 +1,17 @@
 ---
-
 # ironicbadger.docker-compose-generator
 host_timezone: "US/Eastern"
-docker_compose_hostname: "proxmorph"
+docker_compose_hostname: "c137"
 
-appdata_path: /mnt/nvme-appdata
+appdata_path: /mnt/media-apps-tx
 download_path: /mnt/downloads
 storage_path: /mnt/jbod
 bigrust_path: /mnt/rust
 wd_domain_me: "wd.{{ domain_me }}"
 m_wd_domain_me: "m.{{ wd_domain_me }}"
 
-docker_compose_generator_uid: "0"
-docker_compose_generator_gid: "0"
+docker_compose_generator_uid: "1001"
+docker_compose_generator_gid: "1001"
 
 disabled_compose_files: []
 
@@ -72,6 +71,14 @@ nix_packages:
     - wireguard-tools
     - zoxide
 
+# nix-manager configuration
+nix_user: "root"
+nix_group: "root"
+nix_home: "/root"
+install_home_manager: true
+git_username: "Alex Kretzschmar"
+git_email: "{{ vault_cloudflare_account_email }}"
+
 # ironicbadger.mounts
 automount_drives: true
 drive_mounts:
@@ -109,11 +116,3 @@ drive_mounts:
       - "subvol=data"
       - "compress=zstd"
       - "defaults"
-
-# nix-manager configuration
-nix_user: "root"
-nix_group: "root"
-nix_home: "/root"
-install_home_manager: true
-git_username: "Alex Kretzschmar"
-git_email: "{{ vault_cloudflare_account_email }}"

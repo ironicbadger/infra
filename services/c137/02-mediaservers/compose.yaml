@@ -1,0 +1,23 @@
+services:
+## media servers
+  plex:
+    image: plexinc/pms-docker
+    container_name: plex
+    network_mode: host
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - /mnt/media-apps-tx/mediaservers/plex/config:/config
+      #- "{{ appdata_path }}/mediaservers/plex/config:/config"
+      - "{{ storage_path }}:/data"
+      #- /mnt/downloads:/downloads:ro
+      - /mnt/rust:/mnt/rust:ro
+      # ram transcode
+      - /dev/shm:/transcode
+    labels:
+      - traefik.enable=false
+    environment:
+      - "PUID=1001"
+      - "PGID=1001"
+      - "TZ={{ host_timezone }}"
+    restart: unless-stopped
