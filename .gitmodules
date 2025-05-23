@@ -22,9 +22,6 @@
 [submodule "roles/ironicbadger.mounts"]
 	path = roles/ironicbadger.mounts
 	url = git@github.com:ironicbadger/ansible-role-drivemounts.git
-[submodule "roles/proxmox-host-nvidia-setup"]
-	path = roles/proxmox-host-nvidia-setup
-	url = git@ssh.github.com:ironicbadger/proxmox-host-nvidia-setup.git
 [submodule "roles/ironicbadger.proxmox-host-nvidia-setup"]
 	path = roles/ironicbadger.proxmox-host-nvidia-setup
 	url = git@ssh.github.com:ironicbadger/proxmox-host-nvidia-setup.git
