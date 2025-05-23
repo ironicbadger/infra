@@ -15,7 +15,7 @@
 	url = git@github.com:ironicbadger/tailscale-routes-fix.git
 [submodule "roles/ironicbadger.proxmox-host-nvidia"]
 	path = roles/ironicbadger.proxmox-host-nvidia
-	url = git@ssh.github.com:ironicbadger/lxc-debian-nvidia.git
+	url = git@ssh.github.com:ironicbadger/proxmox-host-nvidia-setup.git
 [submodule "roles/ironicbadger.lxc-debian-nvidia"]
 	path = roles/ironicbadger.lxc-debian-nvidia
 	url = git@ssh.github.com:ironicbadger/lxc-debian-nvidia.git
