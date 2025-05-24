@@ -8,9 +8,7 @@ services:
       - /dev/dri:/dev/dri
     volumes:
       - /mnt/media-apps-tx/mediaservers/plex/config:/config
-      #- "{{ appdata_path }}/mediaservers/plex/config:/config"
-      - "{{ storage_path }}:/data"
-      #- /mnt/downloads:/downloads:ro
+      - /mnt/jbod:/data
       - /mnt/rust:/mnt/rust:ro
       # ram transcode
       - /dev/shm:/transcode
