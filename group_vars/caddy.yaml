@@ -23,19 +23,16 @@ caddy_endpoints:
         fqdn: dns.wd.ktz.me
         upstream: http://10.42.0.253
       ## Core Apps
-      - friendly_name: search
-        fqdn: search.wd.ktz.me
-        upstream: http://10.42.0.248:8080
       - friendly_name: blueiris
         fqdn: bi.wd.ktz.me
         upstream: http://10.42.2.1:83
       - friendly_name: beszel
         fqdn: beszel.wd.ktz.me
         upstream: http://10.42.0.1:8090
-      ## Proxmox-opedes
-      - friendly_name: pxneo
+      ## proxmox
+      - friendly_name: px
         fqdn: px.wd.ktz.me
-        upstream: https://10.42.0.1:8006
+        upstream: https://10.42.1.137:8006
         tls_insecure: true
       ## Apps and Services
       - friendly_name: immich
