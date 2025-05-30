@@ -1,0 +1,12 @@
+services:
+  # proxy
+  tsdproxy:
+    image: almeidapaulopt/tsdproxy:1
+    container_name: tsdproxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "{{ appdata_path }}/apps/tsdproxy/data:/data"
+      - "{{ appdata_path }}/apps/tsdproxy/config:/config"
+    restart: unless-stopped
+    ports:
+      - "8080:8080"

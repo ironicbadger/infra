@@ -1,0 +1,78 @@
+services:
+  # dashboard
+  glance:
+    image: glanceapp/glance
+    container_name: glance
+    volumes:
+      - "{{ appdata_path }}/apps/glance/config:/app/config"
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "core-glance"
+      tsdproxy.container_port: 8080
+    ports:
+      - 8006:8080
+    restart: unless-stopped
+  # monitoring
+  smokeping:
+    image: lscr.io/linuxserver/smokeping:2.8.2-r3-ls130
+    container_name: smokeping
+    volumes:
+      - "{{ appdata_path }}/apps/smokeping/config:/config"
+      - "{{ appdata_path }}/apps/smokeping/data:/data"
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "core-smokeping"
+      tsdproxy.container_port: 80
+    ports:
+      - 8007:80
+    environment:
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
+    hostname: core
+    restart: unless-stopped
+  librespeed:
+    image: lscr.io/linuxserver/librespeed:5.4.1-ls231
+    container_name: librespeed
+    labels:
+      tsdproxy.enable: "true"
+      tsdproxy.name: "core-librespeed"
+      tsdproxy.container_port: 80
+    ports:
+      - 8008:80
+    environment:
+      - MODE=standalone
+    restart: unless-stopped
+  # collators
+  freshrss:
+    image: freshrss/freshrss:latest
+    container_name: freshrss
+    volumes:
+      - "{{ appdata_path }}/apps/freshrss/data:/var/www/FreshRSS/data"
+      - "{{ appdata_path }}/apps/freshrss/extensions:/var/www/FreshRSS/extensions"
+    environment:
+      - TZ={{ host_timezone }}
+      - CRON_MIN=13,43
+      - "BASE_URL=https://rss.{{ apps_domain_me }}"
+    ports:
+      - 8000:80
+    restart: unless-stopped
+  # media
+  # audiobookshelf:
+  #   image: ghcr.io/advplyr/audiobookshelf:latest
+  #   container_name: audiobookshelf
+  #   volumes:
+  #     - "{{ appdata_path }}/apps/audiobookshelf/config:/config"
+  #     - "{{ appdata_path }}/apps/audiobookshelf/metadata:/metadata"
+  #     - "/mnt/moosezfs-audiobooks:/audiobooks"
+  #   labels:
+  #     tsdproxy.enable: "true"
+  #     tsdproxy.name: "books"
+  #     tsdproxy.container_port: 80
+  #   ports:
+  #     - 8009:80
+  #   environment:
+  #     - "AUDIOBOOKSHELF_UID={{ docker_compose_generator_uid }}"
+  #     - "AUDIOBOOKSHELF_GID={{ docker_compose_generator_gid }}"
+  #     - "TZ={{ host_timezone }}"
+  #   restart: unless-stopped
