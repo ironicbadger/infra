@@ -65,6 +65,20 @@ services:
       - prowlarr
       - sabnzbd
     restart: unless-stopped
+  huntarr:
+    image: ghcr.io/plexguide/huntarr:latest
+    container_name: huntarr
+    volumes:
+      - "{{ appdata_path }}/arrmatey/huntarr:/config"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.huntarr.rule=Host(`huntarr.{{ m_wd_domain_me }}`)"
+    environment:
+      - "TZ={{ host_timezone }}"
+    depends_on:
+      - sonarr
+      - radarr
+    restart: unless-stopped
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
