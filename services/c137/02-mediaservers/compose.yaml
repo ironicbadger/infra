@@ -9,7 +9,7 @@ services:
     volumes:
       - /mnt/media-apps-tx/mediaservers/plex/config:/config
       - /mnt/jbod:/data
-      - /mnt/rust:/mnt/rust:ro
+      - /mnt/bigrust20:/mnt/bigrust20:ro
       # ram transcode
       - /dev/shm:/transcode
     labels:
