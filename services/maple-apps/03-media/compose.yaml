@@ -1,0 +1,11 @@
+services:
+  abs:
+    image: advplyr/audiobookshelf
+    container_name: abs
+    volumes:
+      - "/mnt/audiobooks/library:/audiobooks:ro"
+      - "{{ appdata_path }}/audiobookshelf/metadata:/metadata"
+      - "{{ appdata_path }}/audiobookshelf/config:/config"
+    ports:
+      - 2284:80
+    restart: unless-stopped
