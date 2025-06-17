@@ -57,9 +57,9 @@ services:
     restart: unless-stopped
   ktz-pocketid:
     image: ghcr.io/pocket-id/pocket-id
-    container_name: pocketid
+    container_name: ktz-pocketid
     environment:
-      - "PUBLIC_APP_URL=https://id.{{ domain_me }}"
+      - "APP_URL=https://id.{{ domain_me }}"
       - TRUST_PROXY=true
       - "MAXMIND_LICENSE_KEY={{ pocket_id_maxmind_key }}"
     labels:
