@@ -68,13 +68,6 @@ services:
       - traefik.http.routers.pocketid.tls.certresolver=cloudflare
     volumes:
       - "{{ appdata_path }}/pocket-id/data:/app/backend/data"
-    # Optional healthcheck
-    healthcheck:
-      test: "curl -f http://localhost/health"
-      interval: 1m30s
-      timeout: 5s
-      retries: 2
-      start_period: 10s
     restart: unless-stopped
   ktz-n8n:
     image: n8nio/n8n:latest
