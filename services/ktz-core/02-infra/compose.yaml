@@ -1,4 +1,27 @@
 services:
+  # auth
+  pocketid:
+    image: ghcr.io/pocket-id/pocket-id:latest
+    container_name: pocketid
+    environment:
+      - "PORT=1411"
+      - "APP_URL=https://id.{{ domain_me }}"
+      - "TRUST_PROXY=true"
+      - "MAXMIND_LICENSE_KEY={{ pocket_id_maxmind_key }}"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.pocketid.rule=Host(`id.{{ domain_me }}`)"
+      - "traefik.http.services.pocketid.loadbalancer.server.port=1411"
+    volumes:
+      - "{{ appdata_path }}/pocket-id/data:/app/data"
+    # Optional healthcheck
+    healthcheck:
+      test: "curl -f http://localhost:1411/healthz"
+      interval: 1m30s
+      timeout: 5s
+      retries: 2
+      start_period: 10s
+    restart: unless-stopped
   # dashboard
   glance:
     image: glanceapp/glance

@@ -13,4 +13,12 @@ services:
       - TZ={{ host_timezone }}
       - CRON_MIN=13,43
       - "BASE_URL=https://rss.{{ apps_domain_me }}"
+      - "OIDC_ENABLED=0"
+      - "OIDC_PROVIDER_METADATA_URL=https://id.{{ domain_me }}/.well-known/openid-configuration"
+      - "OIDC_CLIENT_ID={{ freshrss_oidc_client_id }}"
+      - "OIDC_CLIENT_SECRET={{ freshrss_oidc_client_secret }}"
+      - "OIDC_CLIENT_CRYPTO_KEY={{ freshrss_oidc_crypto_key }}"
+      - "OIDC_REMOTE_USER_CLAIM=preferred_username"
+      - "OIDC_SCOPES=openid email profile"
+      - "OIDC_X_FORWARDED_HEADERS=X-Forwarded-Proto X-Forwarded-Host X-Forwarded-Port"
     restart: unless-stopped
