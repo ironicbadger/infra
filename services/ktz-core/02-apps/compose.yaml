@@ -31,6 +31,40 @@ services:
       - "TZ={{ host_timezone }}"
     hostname: core
     restart: unless-stopped
+  gotify:
+    image: gotify/server:latest
+    container_name: gotify
+    volumes:
+      - "{{ appdata_path }}/apps/gotify/data:/app/data"
+    labels:
+      - "tsdproxy.enable=false"
+      - "traefik.enable=true"
+      - "traefik.http.routers.gotify.rule=Host(`gotify.{{ apps_domain_me }}`)"
+    ports:
+      - 8010:80
+    environment:
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
+      - "GOTIFY_DEFAULTUSER_PASS={{ gotify_default_pass }}"
+    restart: unless-stopped
+  igotify:
+    image: ghcr.io/androidseb25/igotify-notification-assist
+    container_name: igotify
+    volumes:
+      - "{{ appdata_path }}/apps/igotify/config:/app/data"
+    labels:
+      - "tsdproxy.enable=false"
+      - "traefik.enable=true"
+      - "traefik.http.routers.igotify.rule=Host(`igotify.{{ apps_domain_me }}`)"
+      - traefik.http.services.igotify.loadbalancer.server.port=8080
+    ports:
+      - 8011:8080
+    environment:
+      - "TZ={{ host_timezone }}"
+      - "GOTIFY_URLS=http://gotify"
+      - "GOTIFY_CLIENT_TOKENS={{ gotify_client_token }}"
+    restart: unless-stopped
   librespeed:
     image: lscr.io/linuxserver/librespeed:5.4.1-ls231
     container_name: librespeed
