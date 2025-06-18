@@ -1,0 +1,16 @@
+services:
+  # collators
+  freshrss:
+    image: freshrss/freshrss:latest
+    container_name: freshrss
+    volumes:
+      - "{{ appdata_path }}/apps/freshrss/data:/var/www/FreshRSS/data"
+      - "{{ appdata_path }}/apps/freshrss/extensions:/var/www/FreshRSS/extensions"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.freshrss.rule=Host(`rss.{{ apps_domain_me }}`)"
+    environment:
+      - TZ={{ host_timezone }}
+      - CRON_MIN=13,43
+      - "BASE_URL=https://rss.{{ apps_domain_me }}"
+    restart: unless-stopped
