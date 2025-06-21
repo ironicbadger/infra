@@ -35,7 +35,7 @@ services:
     volumes:
       - "{{ appdata_path }}/arrmatey/sonarr:/config"
       - "{{ download_path }}/complete/tv:/downloads/complete/tv"
-      - "{{ storage_path }}/tv:/tv"
+      - "{{ storage_path }}/media/tv:/tv"
     labels:
       - traefik.enable=true
       - "traefik.http.routers.sonarr.rule=Host(`sonarr.{{ m_wd_domain_me }}`)"
@@ -53,7 +53,7 @@ services:
     volumes:
       - "{{ appdata_path }}/arrmatey/radarr:/config"
       - "{{ download_path }}/complete/movies:/downloads/complete/movies"
-      - /mnt/jbod/movies:/movies
+      - "{{ storage_path }}/media/movies:/movies"
     labels:
       - traefik.enable=true
       - "traefik.http.routers.radarr.rule=Host(`radarr.{{ m_wd_domain_me }}`)"
@@ -65,26 +65,26 @@ services:
       - prowlarr
       - sabnzbd
     restart: unless-stopped
-  huntarr:
-    image: ghcr.io/plexguide/huntarr:latest
-    container_name: huntarr
-    volumes:
-      - "{{ appdata_path }}/arrmatey/huntarr:/config"
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.huntarr.rule=Host(`huntarr.{{ m_wd_domain_me }}`)"
-    environment:
-      - "TZ={{ host_timezone }}"
-    depends_on:
-      - sonarr
-      - radarr
-    restart: unless-stopped
-  jellyseerr:
-    image: fallenbagel/jellyseerr:latest
-    container_name: jellyseerr
-    volumes:
-      - "{{ appdata_path }}/arrmatey/jellyseerr:/app/config"
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.jellyseerr.rule=Host(`jellyseerr.{{ m_wd_domain_me }}`)"
-    restart: unless-stopped
+  # huntarr:
+  #   image: ghcr.io/plexguide/huntarr:latest
+  #   container_name: huntarr
+  #   volumes:
+  #     - "{{ appdata_path }}/arrmatey/huntarr:/config"
+  #   labels:
+  #     - traefik.enable=true
+  #     - "traefik.http.routers.huntarr.rule=Host(`huntarr.{{ m_wd_domain_me }}`)"
+  #   environment:
+  #     - "TZ={{ host_timezone }}"
+  #   depends_on:
+  #     - sonarr
+  #     - radarr
+  #   restart: unless-stopped
+  # jellyseerr:
+  #   image: fallenbagel/jellyseerr:latest
+  #   container_name: jellyseerr
+  #   volumes:
+  #     - "{{ appdata_path }}/arrmatey/jellyseerr:/app/config"
+  #   labels:
+  #     - traefik.enable=true
+  #     - "traefik.http.routers.jellyseerr.rule=Host(`jellyseerr.{{ m_wd_domain_me }}`)"
+  #   restart: unless-stopped

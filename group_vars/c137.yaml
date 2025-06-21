@@ -5,8 +5,7 @@ docker_compose_hostname: "c137"
 
 appdata_path: /mnt/nvmeu2/appdata
 download_path: /mnt/downloads
-storage_path: /mnt/jbod
-bigrust_path: /mnt/bigrust20
+storage_path: /mnt/rust
 wd_domain_me: "wd.{{ domain_me }}"
 m_wd_domain_me: "m.{{ wd_domain_me }}"
 
