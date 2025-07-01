@@ -1,7 +1,7 @@
 services:
   # proxy
   tsdproxy:
-    image: almeidapaulopt/tsdproxy:1
+    image: almeidapaulopt/tsdproxy:2
     container_name: tsdproxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
