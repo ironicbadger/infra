@@ -8,15 +8,28 @@ services:
       - /dev/dri:/dev/dri
     volumes:
       - "{{ appdata_path }}/mediaservers/plex/config:/config"
+<<<<<<< HEAD
       - "{{ storage_path }}:{{ storage_path }}:ro"
       # ram transcode
       - /dev/shm:/transcode
+||||||| parent of 504c7d8 (pathing)
+      - /mnt/jbod:/data
+      - /mnt/bigrust20:/mnt/bigrust20:ro
+      # ram transcode
+      - /dev/shm:/transcode
+=======
+      - "{{ storage_path }}:{{ storage_path }}"
+      - "/mnt/downloads/complete:/downloads"
+>>>>>>> 504c7d8 (pathing)
     labels:
       - traefik.enable=false
     environment:
       - "PUID={{ docker_compose_generator_uid }}"
       - "PGID={{ docker_compose_generator_gid }}"
       - "TZ={{ host_timezone }}"
+      - "TRANSCODE_PATH=/transcode"
+    tmpfs:
+      - /transcode:noexec,nosuid,size=8g
     restart: unless-stopped
   jellyfin:
     image: jellyfin/jellyfin
@@ -26,8 +39,15 @@ services:
       - /dev/dri:/dev/dri
     volumes:
       - "{{ appdata_path }}/mediaservers/jellyfin:/config"
+<<<<<<< HEAD
       - "{{ storage_path }}:{{ storage_path }}:ro"
       - /mnt/downloads:/downloads:ro
+||||||| parent of 504c7d8 (pathing)
+      - "/mnt/jbod:/data:ro"
+      - /mnt/downloads:/downloads:ro
+=======
+      - "{{ storage_path }}:{{ storage_path }}"
+>>>>>>> 504c7d8 (pathing)
       # ram transcode
       - /dev/shm:/transcode
     labels:

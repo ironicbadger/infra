@@ -79,6 +79,15 @@ services:
   #     - sonarr
   #     - radarr
   #   restart: unless-stopped
+  overseerr:
+    image: sctx/overseerr:latest
+    container_name: overseerr
+    volumes:
+      - "{{ appdata_path }}/arrmatey/overseerr:/app/config"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.overseerr.rule=Host(`overseerr.{{ m_wd_domain_me }}`)"
+    restart: unless-stopped
   # jellyseerr:
   #   image: fallenbagel/jellyseerr:latest
   #   container_name: jellyseerr
