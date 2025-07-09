@@ -25,7 +25,7 @@ services:
       disable: false
     restart: unless-stopped
   immich-redis:
-    image: docker.io/valkey/valkey:8-bookworm@sha256:42cba146593a5ea9a622002c1b7cba5da7be248650cbb64ecb9c6c33d29794b1
+    image: docker.io/valkey/valkey:8-bookworm@sha256:620286c7b6c9db39c9be8bae9cc1f187a47d4b52d1b513bdf5e0cc869e65d55d
     container_name: immich-redis
     restart: unless-stopped
   immich-database:
