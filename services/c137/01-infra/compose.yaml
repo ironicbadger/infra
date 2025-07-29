@@ -1,0 +1,51 @@
+services:
+  tr:
+    image: traefik
+    container_name: tr
+    volumes:
+      - "{{ appdata_path }}/apps/traefik/letsencrypt:/letsencrypt"
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - traefik.enable=false
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - CF_DNS_API_TOKEN={{ vault_cloudflare_dns_api_token }}
+    command:
+      - --log.level=info
+      - --accesslog=false
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+      - --entrypoints.web.http.redirections.entryPoint.to=websecure
+      - --entrypoints.web.http.redirections.entryPoint.scheme=https
+      - --entrypoints.websecure.address=:443
+      - --entrypoints.websecure.http.tls.certresolver=cloudflare
+      - --certificatesresolvers.cloudflare.acme.dnschallenge=true
+      - --certificatesresolvers.cloudflare.acme.dnschallenge.provider=cloudflare
+      - --certificatesresolvers.cloudflare.acme.email={{ vault_cloudflare_account_email }}
+      - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
+      - --serversTransport.insecureSkipVerify=true
+    restart: unless-stopped
+  copyparty:
+    image: copyparty/ac:latest
+    container_name: copyparty
+    user: "{{ docker_compose_generator_uid }}:{{ docker_compose_generator_gid }}"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.copyparty.rule=Host(`cp.{{ m_wd_domain_me }}`)"
+    volumes:
+      - "{{ appdata_path }}/apps/copyparty/config:/cfg"
+      - "/mnt:/mnt"
+    environment:
+      LD_PRELOAD: /usr/lib/libmimalloc-secure.so.2
+    stop_grace_period: 15s
+    healthcheck:
+      # hide it from logs with "/._" so it matches the default --lf-url filter
+      test: ["CMD-SHELL", "wget --spider -q 127.0.0.1:3923/?reset=/._"]
+      interval: 1m
+      timeout: 2s
+      retries: 5
+      start_period: 15s
