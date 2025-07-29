@@ -1,0 +1,49 @@
+services:
+  ## immich
+  immich-server:
+    image: ghcr.io/immich-app/immich-server:release
+    container_name: immich-server
+    volumes:
+      - /mnt/bigrust20/photos/alex/immich/uploads:/usr/src/app/upload
+      - /mnt/bigrust20/photos/alex/images:/mnt/bigrust20/photos/alex/images:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 2283:2283
+    environment:
+      - IMMICH_VERSION=release
+      - UPLOAD_LOCATION=./library
+      - "DB_PASSWORD={{ immich_db_password }}"
+      - "DB_USERNAME={{ immich_db_username }}"
+      - "DB_DATABASE_NAME={{ immich_db_name }}"
+      - "DB_DATA_LOCATION={{ immich_db_location }}"
+      - "DB_HOSTNAME={{ immich_db_hostname}}"
+      - REDIS_HOSTNAME=immich-redis
+    depends_on:
+      - immich-redis
+      - immich-database
+    healthcheck:
+      disable: false
+    restart: unless-stopped
+  immich-redis:
+    image: docker.io/valkey/valkey:8-bookworm@sha256:42cba146593a5ea9a622002c1b7cba5da7be248650cbb64ecb9c6c33d29794b1
+    container_name: immich-redis
+    restart: unless-stopped
+  immich-database:
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0
+    container_name: immich-database
+    volumes:
+      - "{{ appdata_path }}/databases/immich/db:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_PASSWORD={{ immich_db_password }}"
+      - "POSTGRES_USER={{ immich_db_username }}"
+      - "POSTGRES_DB={{ immich_db_name }}"
+      - "POSTGRES_INITDB_ARGS='--data-checksums'"
+    healthcheck:
+      test: >-
+        pg_isready --dbname="{{ immich_db_name }}" --username="{{ immich_db_username }}" || exit 1; Chksum="$$(psql --dbname="{{ immich_db_name }}" --username="{{ immich_db_username }}" --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1
+      interval: 5m
+      start_interval: 30s
+      start_period: 5m
+    command: >-
+      postgres -c shared_preload_libraries=vectors.so,vchord -c 'search_path="{{ immich_db_username }}", public, vectors' -c logging_collector=on -c max_wal_size=2GB -c shared_buffers=512MB -c wal_compression=on
+    restart: unless-stopped
