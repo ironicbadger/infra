@@ -1,0 +1,45 @@
+{
+  "ignition": {
+    "version": "3.5.0"
+  },
+  "passwd": {
+    "users": [
+      {
+        "groups": [
+          "wheel",
+          "sudo",
+          "docker"
+        ],
+        "name": "core",
+        "sshAuthorizedKeys": [
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA2bSgQvelWzGLh4v1nv+OYx8YNijAikvVq4E9qXDWYN alex@mac-studio"
+        ]
+      }
+    ]
+  },
+  "storage": {
+    "files": [
+      {
+        "path": "/etc/hostname",
+        "contents": {
+          "compression": "",
+          "source": "data:,fcos-nvidia"
+        },
+        "mode": 420
+      }
+    ]
+  },
+  "systemd": {
+    "units": [
+      {
+        "enabled": false,
+        "mask": true,
+        "name": "zincati.service"
+      },
+      {
+        "enabled": true,
+        "name": "docker.socket"
+      }
+    ]
+  }
+}

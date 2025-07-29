@@ -1,0 +1,26 @@
+variant: fcos
+version: 1.6.0
+passwd:
+  users:
+    - name: core
+      ssh_authorized_keys:
+        - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIA2bSgQvelWzGLh4v1nv+OYx8YNijAikvVq4E9qXDWYN alex@mac-studio
+      groups:
+        - wheel
+        - sudo
+        - docker
+
+storage:
+  files:
+    - path: /etc/hostname
+      mode: 0644
+      contents:
+        inline: fcos-nvidia
+
+systemd:
+  units:
+    - name: zincati.service
+      enabled: false
+      mask: true
+    - name: docker.socket
+      enabled: true
