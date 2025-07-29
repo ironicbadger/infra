@@ -1,0 +1,69 @@
+services:
+  paperless:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.paperless.rule=Host(`paperless.{{ m_wd_domain_me }}`)"
+    restart: unless-stopped
+    depends_on:
+      - paperless-db
+      - paperless-broker
+    volumes:
+      - "{{ appdata_path }}/apps/paperless/data:/usr/src/paperless/data"
+      - "{{ appdata_path }}/apps/paperless/media:/usr/src/paperless/media"
+      - "{{ appdata_path }}/apps/paperless/export:/usr/src/paperless/export"
+      - "{{ appdata_path }}/apps/paperless/consume:/usr/src/paperless/consume"
+    environment:
+      - "PAPERLESS_REDIS=redis://paperless-broker:6379"
+      - "PAPERLESS_DBHOST=paperless-db"
+      - "PAPERLESS_DBENGINE=postgres"
+      - "USERMAP_UID={{ docker_compose_generator_uid }}"
+      - "USERMAP_GID={{ docker_compose_generator_gid }}"
+      - "PAPERLESS_TIME_ZONE={{ host_timezone }}"
+      - "PAPERLESS_SECRET_KEY={{ paperless_secret_key }}"
+      - "PAPERLESS_DBNAME={{ paperless_db_name }}"
+      - "PAPERLESS_DBUSER={{ paperless_db_user }}"
+      - "PAPERLESS_DBPASS={{ paperless_db_password }}"
+      - "PAPERLESS_URL=https://paperless.{{ m_wd_domain_me }}"
+      - "PAPERLESS_CORS_ALLOWED_HOSTS=https://paperless.{{ m_wd_domain_me }}"
+      - "PAPERLESS_CSRF_TRUSTED_ORIGINS=https://paperless.{{ m_wd_domain_me }}"
+  paperless-broker:
+    image: docker.io/library/redis:8
+    container_name: paperless-broker
+    volumes:
+      - paperlessredisdata:/data
+    restart: unless-stopped
+  paperless-db:
+    image: docker.io/library/postgres:17
+    container_name: paperless-db
+    volumes:
+      - "{{ appdata_path }}/apps/paperless/db:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_DB={{ paperless_db_name }}"
+      - "POSTGRES_USER={{ paperless_db_user }}"
+      - "POSTGRES_PASSWORD={{ paperless_db_password }}"
+    restart: unless-stopped
+  paperless-ai:
+    image: clusterzx/paperless-ai
+    container_name: paperless-ai
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges=true
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.paperlessai.rule=Host(`paperlessai.{{ m_wd_domain_me }}`)"
+    environment:
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - PAPERLESS_AI_PORT=3000
+      - RAG_SERVICE_URL=http://localhost:8000
+      - RAG_SERVICE_ENABLED=true
+    #ports:
+    #  - "3333:3000"
+    volumes:
+      - "{{ appdata_path }}/apps/paperless/ai:/app/data"
+volumes:
+  paperlessredisdata:
