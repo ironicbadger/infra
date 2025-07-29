@@ -17,7 +17,12 @@ services:
       - "{{ appdata_path }}/apps/traefik/letsencrypt:/letsencrypt"
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
-      - traefik.enable=false
+      - traefik.enable=true
+      - traefik.http.routers.adguard.rule=Host(`dns.{{ core_domain_me }}`)
+      - traefik.http.routers.adguard.tls=true
+      - traefik.http.routers.adguard.tls.certresolver=cloudflare
+      - traefik.http.routers.adguard.service=adguard
+      - traefik.http.services.adguard.loadbalancer.server.url=http://172.17.0.1:3000
     ports:
       - 80:80
       - 443:443
