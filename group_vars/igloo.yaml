@@ -1,0 +1,26 @@
+---
+# ironicbadger.docker-compose-generator
+host_timezone: "US/Eastern"
+docker_compose_hostname: "igloo"
+docker_compose_generator_uid: "0"
+docker_compose_generator_gid: "0"
+disabled_compose_files: []
+
+appdata_path: /mnt/nvmeu2/appdata
+storage_path: /mnt/rust
+igloo_domain_me: "igloo.{{ domain_me }}"
+
+# ironicbadger.packages
+packages_perform_cleanup: True
+package_list:
+  - curl
+  - git
+  - htop
+  - intel-gpu-tools
+  - samba
+  - samba-common-bin
+  - smbclient
+  - sudo
+  - tmux
+  - wget
+  - which
