@@ -1,28 +1,4 @@
 ---
-### CORE INFRA
-  - hosts: ktz-core
-    vars_files:
-    - 'group_vars/secrets.yaml'
-    vars:
-      docker_compose_hostname: ktz-core
-      appdata_path: /opt/appdata
-    roles:
-      - role: ironicbadger.figurine
-      # pihole
-      - role: ironicbadger.caddy
-        tags: caddy
-      - role: ironicbadger.docker-compose-generator
-        tags: compose
-
-  - hosts: neo
-    vars_files:
-    - 'group_vars/secrets.yaml'
-    roles:
-      - role: ironicbadger.figurine
-      - role: ironicbadger.tailscale-routes-fix
-      - role: ironicbadger.docker-compose-generator
-        tags: compose
-
   - hosts: caddy
     vars_files:
     - 'group_vars/secrets.yaml'
@@ -38,18 +14,6 @@
       - role: ironicbadger.tailscale-routes-fix
 
 ### SERVERS
-  - hosts: proxmorph
-    vars_files:
-      - 'group_vars/secrets.yaml'
-    roles:
-      - role: ironicbadger.figurine
-      - role: ironicbadger.tailscale-routes-fix
-      - role: ironicbadger.packages
-      - role: nix-manager
-      - role: ironicbadger.mounts
-      - role: ironicbadger.docker-compose-generator
-        tags: compose
-
   - hosts: c137
     vars_files:
       - 'group_vars/secrets.yaml'
@@ -64,13 +28,6 @@
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
-  - hosts: pneuma
-    vars_files:
-    - 'group_vars/secrets.yaml'
-    roles:
-      - role: ironicbadger.figurine
-      - role: ironicbadger.tailscale-routes-fix
-
   - hosts: ms01
     vars_files:
     - 'group_vars/secrets.yaml'
@@ -79,16 +36,6 @@
       - role: ironicbadger.tailscale-routes-fix
 
 ### LXCs
-  - hosts: id
-    vars_files:
-    - 'group_vars/secrets.yaml'
-    vars:
-      docker_compose_hostname: lxc-id
-    roles:
-      - role: ironicbadger.figurine
-      - role: ironicbadger.docker-compose-generator
-        tags: compose
-
   - hosts: immich-app
     vars_files:
     - 'group_vars/secrets.yaml'
@@ -121,19 +68,8 @@
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
-  - hosts: apps
-    vars_files:
-    - 'group_vars/secrets.yaml'
-    vars:
-      docker_compose_hostname: lxc-apps
-      appdata_path: /mnt/appdata
-    roles:
-      - role: ironicbadger.figurine
-      - role: ironicbadger.docker-compose-generator
-        tags: compose
 
-# OFFSITE
-
+# EXTERNAL
 ## vps
   - hosts: ktz-cloud
     vars_files:
@@ -142,14 +78,13 @@
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
-## maple
-  - hosts: maple-apps
+
+## igloo
+  - hosts: igloo
     vars_files:
     - 'group_vars/secrets.yaml'
-    vars:
-      docker_compose_hostname: maple-apps
-      appdata_path: /opt/appdata
     roles:
       - role: ironicbadger.figurine
+      - role: ironicbadger.packages
       - role: ironicbadger.docker-compose-generator
         tags: compose
