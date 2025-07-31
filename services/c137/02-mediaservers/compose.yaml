@@ -42,3 +42,27 @@ services:
       - "TZ=US/Eastern"
       - "JELLYFIN_PublishedServerUrl=jf.wd.ktz.me"
     restart: unless-stopped
+
+  fileflows:
+    image: revenz/fileflows
+    container_name: fileflows
+    restart: unless-stopped
+    ports:
+      - "19200:5000"
+    devices:
+      - "/dev/dri:/dev/dri"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.fileflows.rule=Host(`ff.m.wd.ktz.me`)"
+      - traefik.http.services.fileflows.loadbalancer.server.port=5000
+    environment:
+      - TempPathHost=/mnt/nvmeu2/appdata/apps/fileflows/tmp
+      - TZ=America/New_York
+      - PUID=1001
+      - PGID=1001
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /mnt/nvmeu2/appdata/apps/fileflows/tmp:/temp
+      - /mnt/bigrust20/video/youtube-tailscale:/app/Data
+      - /mnt/nvmeu2/appdata/apps/fileflows/logs:/app/Logs
+      - /mnt/nvmeu2/appdata/apps/fileflows/common:/app/common
