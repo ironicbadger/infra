@@ -3,7 +3,7 @@ services:
     image: traefik
     container_name: tr
     volumes:
-      - "{{ appdata_path }}/apps/traefik/letsencrypt:/letsencrypt"
+      - "/root/apps/traefik/letsencrypt:/letsencrypt"
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       - traefik.enable=false
@@ -32,13 +32,16 @@ services:
   copyparty:
     image: copyparty/ac:latest
     container_name: copyparty
+    hostname: igloo
     user: "0:0"
+    ports:
+      - 3923:3923
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.copyparty.rule=Host(`cp.{{ m_wd_domain_me }}`)"
+      - "traefik.http.routers.copyparty.rule=Host(`cp.{{ igloo_domain_me }}`)"
     volumes:
-      - "{{ appdata_path }}/apps/copyparty/config:/cfg"
-      - "/mnt:/mnt"
+      - "/root/apps/copyparty/config:/cfg"
+      - "/:/mnt"
     environment:
       LD_PRELOAD: /usr/lib/libmimalloc-secure.so.2
     stop_grace_period: 15s
