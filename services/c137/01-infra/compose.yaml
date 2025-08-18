@@ -7,6 +7,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     labels:
       - traefik.enable=false
+    security_opt:
+      - apparmor:unconfined
     ports:
       - 80:80
       - 443:443
@@ -29,23 +31,23 @@ services:
       - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
       - --serversTransport.insecureSkipVerify=true
     restart: unless-stopped
-  copyparty:
-    image: copyparty/ac:latest
-    container_name: copyparty
-    user: "0:0"
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.copyparty.rule=Host(`cp.{{ m_wd_domain_me }}`)"
-    volumes:
-      - "{{ appdata_path }}/apps/copyparty/config:/cfg"
-      - "/mnt:/mnt"
-    environment:
-      LD_PRELOAD: /usr/lib/libmimalloc-secure.so.2
-    stop_grace_period: 15s
-    healthcheck:
-      # hide it from logs with "/._" so it matches the default --lf-url filter
-      test: ["CMD-SHELL", "wget --spider -q 127.0.0.1:3923/?reset=/._"]
-      interval: 1m
-      timeout: 2s
-      retries: 5
-      start_period: 15s
+  # copyparty:
+  #   image: copyparty/ac:latest
+  #   container_name: copyparty
+  #   user: "0:0"
+  #   labels:
+  #     - traefik.enable=true
+  #     - "traefik.http.routers.copyparty.rule=Host(`cp.{{ m_wd_domain_me }}`)"
+  #   volumes:
+  #     - "{{ appdata_path }}/apps/copyparty/config:/cfg"
+  #     - "/mnt:/mnt"
+  #   environment:
+  #     LD_PRELOAD: /usr/lib/libmimalloc-secure.so.2
+  #   stop_grace_period: 15s
+  #   healthcheck:
+  #     # hide it from logs with "/._" so it matches the default --lf-url filter
+  #     test: ["CMD-SHELL", "wget --spider -q 127.0.0.1:3923/?reset=/._"]
+  #     interval: 1m
+  #     timeout: 2s
+  #     retries: 5
+  #     start_period: 15s
