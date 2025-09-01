@@ -22,6 +22,7 @@ services:
       - "database__connection__user={{ ktzblog_db_user }}"
       - "database__connection__password={{ ktzblog_db_pass }}"
       - database__connection__database=ghost
+      - security__staffDeviceVerification=false
     restart: unless-stopped
   ktz-blog-db:
     image: mysql:8.4
@@ -49,6 +50,7 @@ services:
       - "database__connection__user={{ purrfect_db_user }}"
       - "database__connection__password={{ purrfect_db_pass }}"
       - database__connection__database=ghost
+      - security__staffDeviceVerification=false
     depends_on:
       - ktz-blog-cat-db
     restart: unless-stopped
