@@ -1,0 +1,17 @@
+---
+# Manage zrepl service
+
+- name: Ensure zrepl service is enabled and started
+  systemd:
+    name: zrepl
+    enabled: "{{ zrepl_service_enabled }}"
+    state: "{{ zrepl_service_state }}"
+    daemon_reload: yes
+  become: true
+
+- name: Wait for zrepl to be ready
+  wait_for:
+    path: "{{ zrepl_control_socket }}"
+    state: present
+    timeout: 30
+  when: zrepl_service_state == 'started'

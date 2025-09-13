@@ -115,3 +115,166 @@ drive_mounts:
       - "subvol=data"
       - "compress=zstd"
       - "defaults"
+
+# zrepl configuration - using new unified job structure
+# Define replication targets
+zrepl_targets:
+  igloo: "100.91.74.29:27808"
+
+zrepl_jobs:
+  # Push appdata to igloo
+  - name: "igloo_appdata"
+    type: push
+    connect:
+      type: "tcp"
+      address: "{{ zrepl_targets.igloo }}"
+    filesystems:
+      "nvmeu2/appdata<": true
+    send:
+      encrypted: false
+    snapshotting:
+      type: "periodic"
+      prefix: "zrepl_igloo_"
+      interval: "60m"
+    pruning:
+      keep_sender:
+        - type: "not_replicated"
+      keep_receiver:
+        - type: "regex"
+          negate: true
+          regex: "^zrepl_igloo_"
+        - type: "grid"
+          grid: "1x1h(keep=all) | 24x1h | 7x1d | 2x30d"
+          regex: "^zrepl_igloo_"
+
+  # Push data to igloo
+  - name: "igloo_data"
+    type: push
+    connect:
+      type: "tcp"
+      address: "{{ zrepl_targets.igloo }}"
+    filesystems:
+      "rust/data<": true
+    send:
+      encrypted: false
+    snapshotting:
+      type: "periodic"
+      prefix: "zrepl_"
+      interval: "60m"
+    pruning:
+      keep_sender:
+        - type: "not_replicated"
+      keep_receiver:
+        - type: "regex"
+          negate: true
+          regex: "^zrepl_"
+        - type: "grid"
+          grid: "1x1h(keep=all) | 24x1h | 7x1d | 2x30d"
+          regex: "^zrepl_"
+
+  # Push media to igloo (excluding movies and tv)
+  - name: "igloo_media"
+    type: push
+    connect:
+      type: "tcp"
+      address: "100.91.74.29:27808"
+    filesystems:
+      "rust/media<": true
+      "rust/media/movies<": false
+      "rust/media/tv<": false
+    send:
+      encrypted: false
+    snapshotting:
+      type: "periodic"
+      prefix: "zrepl_"
+      interval: "60m"
+    pruning:
+      keep_sender:
+        - type: "not_replicated"
+      keep_receiver:
+        - type: "regex"
+          negate: true
+          regex: "^zrepl_"
+        - type: "grid"
+          grid: "1x1h(keep=all) | 24x1h | 7x1d | 2x30d"
+          regex: "^zrepl_"
+
+  # Push photos to igloo
+  - name: "igloo_photos"
+    type: push
+    connect:
+      type: "tcp"
+      address: "100.91.74.29:27808"
+    filesystems:
+      "rust/photos<": true
+    send:
+      encrypted: false
+    snapshotting:
+      type: "periodic"
+      prefix: "zrepl_"
+      interval: "60m"
+    pruning:
+      keep_sender:
+        - type: "not_replicated"
+      keep_receiver:
+        - type: "regex"
+          negate: true
+          regex: "^zrepl_"
+        - type: "grid"
+          grid: "1x1h(keep=all) | 24x1h | 7x1d | 2x30d"
+          regex: "^zrepl_"
+
+  # Push video to igloo
+  - name: "igloo_video"
+    type: push
+    connect:
+      type: "tcp"
+      address: "100.91.74.29:27808"
+    filesystems:
+      "rust/video<": true
+    send:
+      encrypted: false
+    snapshotting:
+      type: "periodic"
+      prefix: "zrepl_"
+      interval: "60m"
+    pruning:
+      keep_sender:
+        - type: "not_replicated"
+      keep_receiver:
+        - type: "regex"
+          negate: true
+          regex: "^zrepl_"
+        - type: "grid"
+          grid: "1x1h(keep=all) | 24x1h | 7x1d | 2x30d"
+          regex: "^zrepl_"
+
+  # Push appdata to snowball
+  - name: "snowball_appdata"
+    type: push
+    connect:
+      type: "tcp"
+      address: "100.88.250.125:27809"
+    filesystems:
+      "nvmeu2/appdata<": true
+    send:
+      encrypted: false
+    snapshotting:
+      type: "periodic"
+      prefix: "zrepl_snowball_"
+      interval: "60m"
+    pruning:
+      keep_sender:
+        - type: "not_replicated"
+      keep_receiver:
+        - type: "regex"
+          negate: true
+          regex: "^zrepl_snowball_"
+        - type: "grid"
+          grid: "1x1h(keep=all) | 24x1h | 7x1d | 2x30d"
+          regex: "^zrepl_snowball_"
+
+# Enable monitoring for centralized status checking
+zrepl_monitoring:
+  - type: "prometheus"
+    listen: ":9811"

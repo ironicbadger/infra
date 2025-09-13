@@ -25,6 +25,8 @@
       #- role: nix-manager
       - role: ironicbadger.mounts
         tags: mounts
+      - role: zrepl
+        tags: zrepl
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
@@ -86,5 +88,7 @@
     roles:
       - role: ironicbadger.figurine
       - role: ironicbadger.packages
+      - role: zrepl
+        tags: zrepl
       - role: ironicbadger.docker-compose-generator
         tags: compose

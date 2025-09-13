@@ -1,0 +1,35 @@
+---
+# Configure zrepl
+
+- name: Create zrepl configuration directory
+  file:
+    path: "{{ zrepl_config_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+
+- name: Create zrepl runtime directory
+  file:
+    path: "{{ item | dirname }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  become: true
+  with_items:
+    - "{{ zrepl_control_socket }}"
+    - "{{ zrepl_stdinserver_socket }}"
+
+- name: Generate zrepl configuration
+  template:
+    src: zrepl.yml.j2
+    dest: "{{ zrepl_config_path }}"
+    owner: root
+    group: root
+    mode: '0644'
+    backup: yes
+    validate: 'zrepl configcheck --config %s'
+  become: true
+  notify: restart zrepl

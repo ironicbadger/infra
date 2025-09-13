@@ -1,0 +1,51 @@
+---
+# Install zrepl using apt repository
+
+- name: Install zrepl dependencies
+  apt:
+    name:
+      - curl
+      - gnupg
+      - lsb-release
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Add zrepl GPG key
+  shell: |
+    curl -fsSL https://zrepl.cschwarz.com/apt/apt-key.asc | gpg --dearmor | tee /usr/share/keyrings/zrepl.gpg > /dev/null
+  args:
+    creates: /usr/share/keyrings/zrepl.gpg
+  become: true
+
+- name: Get system architecture
+  command: dpkg --print-architecture
+  register: system_arch
+  changed_when: false
+
+- name: Get distribution info
+  shell: |
+    echo "$(lsb_release -i -s | tr '[:upper:]' '[:lower:]') $(lsb_release -c -s | tr '[:upper:]' '[:lower:]')"
+  register: distro_info
+  changed_when: false
+
+- name: Add zrepl APT repository
+  apt_repository:
+    repo: "deb [arch={{ system_arch.stdout }} signed-by=/usr/share/keyrings/zrepl.gpg] https://zrepl.cschwarz.com/apt/{{ distro_info.stdout }} main"
+    state: present
+    filename: zrepl
+  become: true
+
+- name: Install zrepl package
+  apt:
+    name: zrepl
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Hold zrepl package version
+  dpkg_selections:
+    name: zrepl
+    selection: hold
+  when: zrepl_hold_package | default(false)
+  become: true

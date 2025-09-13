@@ -1,0 +1,75 @@
+---
+# zrepl role default variables
+
+# Configuration paths
+zrepl_config_path: "/etc/zrepl/zrepl.yml"
+zrepl_config_dir: "/etc/zrepl"
+zrepl_control_socket: "/var/run/zrepl/control"
+zrepl_stdinserver_socket: "/var/run/zrepl/stdinserver"
+
+# Installation settings
+zrepl_hold_package: false  # Set to true to prevent package updates
+
+# Service configuration
+zrepl_service_enabled: true
+zrepl_service_state: "started"
+
+# Global logging configuration
+zrepl_logging:
+  - type: "syslog"
+    format: "human"
+    level: "warn"
+
+# Global monitoring configuration (optional)
+zrepl_monitoring: []
+# Example:
+# zrepl_monitoring:
+#   - type: "prometheus"
+#     listen: ":9811"
+#     listen_freebind: false
+
+# Unified jobs configuration (NEW PREFERRED METHOD)
+# All job types (push, pull, sink, source, snap) are now configured in a single list
+zrepl_jobs: []
+# Example structure:
+# zrepl_jobs:
+#   - name: "backup_to_target"
+#     type: push  # Required: push, pull, sink, source, or snap
+#     connect:
+#       type: "tcp"
+#       address: "192.168.1.10:27808"
+#     filesystems:
+#       "pool/dataset<": true
+#     send:
+#       encrypted: false
+#     snapshotting:
+#       type: "periodic"
+#       prefix: "zrepl_"
+#       interval: "1h"
+#     pruning:
+#       keep_sender:
+#         - type: "not_replicated"
+#       keep_receiver:
+#         - type: "grid"
+#           grid: "1x1h(keep=all) | 24x1h | 7x1d | 4x30d"
+#           regex: "^zrepl_"
+#
+#   - name: "receive_backups"
+#     type: sink
+#     root_fs: "pool/backups/source1"
+#     serve:
+#       type: "tcp"
+#       listen: "0.0.0.0:27808"
+#       clients:
+#         "192.168.1.100": "data"
+#     recv:
+#       placeholder:
+#         encryption: "off"
+
+# LEGACY CONFIGURATION (DEPRECATED - Still supported for backward compatibility)
+# These variables will be automatically converted to the unified format
+zrepl_push_jobs: []
+zrepl_sink_jobs: []
+zrepl_snap_jobs: []
+zrepl_source_jobs: []
+zrepl_pull_jobs: []

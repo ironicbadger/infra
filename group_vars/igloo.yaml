@@ -24,3 +24,31 @@ package_list:
   - tmux
   - wget
   - which
+
+# zrepl configuration - using new unified job structure
+zrepl_jobs:
+  # Sink for c137 push jobs
+  - name: "c137_sink"
+    type: sink
+    root_fs: "z2tank/backups/c137"
+    serve:
+      type: "tcp"
+      listen: "100.91.74.29:27808"
+      clients:
+        "100.107.197.66": "data"  # Maps c137's IP to "data" to avoid duplication
+    recv:
+      placeholder:
+        encryption: "off"
+        
+  # Sink for snowball push jobs
+  - name: "snowball_sink"
+    type: sink
+    root_fs: "z2tank/backups/snowball"
+    serve:
+      type: "tcp"
+      listen: "100.91.74.29:27809"  # Different port for snowball
+      clients:
+        "100.88.250.125": "data"  # Consistent naming pattern
+    recv:
+      placeholder:
+        encryption: "off"

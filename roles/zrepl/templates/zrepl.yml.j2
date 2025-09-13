@@ -1,0 +1,66 @@
+# {{ ansible_managed }}
+# zrepl configuration for {{ inventory_hostname }}
+
+global:
+{% if zrepl_logging is defined and zrepl_logging %}
+  logging:
+    - type: syslog
+      format: human
+      level: warn
+{% endif %}
+{% if zrepl_monitoring is defined and zrepl_monitoring %}
+  monitoring:
+{% for monitor in zrepl_monitoring %}
+    - type: {{ monitor.get('type', 'prometheus') }}
+      listen: "{{ monitor.get('listen', ':9811') }}"
+{% endfor %}
+{% endif %}
+{% if zrepl_control_socket is defined %}
+  control:
+    sockpath: "{{ zrepl_control_socket }}"
+{% endif %}
+
+jobs:
+{% for job in zrepl_jobs %}
+  - name: "{{ job.get('name', 'unnamed') }}"
+    type: {{ job.get('type', 'push') }}
+{% if 'root_fs' in job %}
+    root_fs: "{{ job['root_fs'] }}"
+{% endif %}
+{% if 'connect' in job %}
+    connect:
+{{ job['connect'] | to_nice_yaml | indent(6, True) }}
+{%- endif %}
+{% if 'serve' in job %}
+    serve:
+{{ job['serve'] | to_nice_yaml | indent(6, True) }}
+{%- endif %}
+{% if 'filesystems' in job %}
+    filesystems:
+{{ job['filesystems'] | to_nice_yaml | indent(6, True) }}
+{%- endif %}
+{% if 'send' in job %}
+    send:
+{{ job['send'] | to_nice_yaml | indent(6, True) }}
+{%- endif %}
+{% if 'recv' in job %}
+    recv:
+{{ job['recv'] | to_nice_yaml | indent(6, True) }}
+{%- endif %}
+{% if 'replication' in job %}
+    replication:
+{{ job['replication'] | to_nice_yaml | indent(6, True) }}
+{%- endif %}
+{% if 'snapshotting' in job %}
+    snapshotting:
+{{ job['snapshotting'] | to_nice_yaml | indent(6, True) }}
+{%- endif %}
+{% if 'pruning' in job %}
+    pruning:
+{{ job['pruning'] | to_nice_yaml | indent(6, True) }}
+{%- endif %}
+{% if 'interval' in job %}
+    interval: "{{ job['interval'] }}"
+{% endif %}
+
+{% endfor %}

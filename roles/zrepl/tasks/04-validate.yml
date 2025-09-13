@@ -1,0 +1,16 @@
+---
+# Validate zrepl installation and configuration
+
+- name: Check zrepl status
+  command: zrepl status
+  register: zrepl_status
+  changed_when: false
+  failed_when: false
+  when: zrepl_service_state == 'started'
+
+- name: Display zrepl status
+  debug:
+    var: zrepl_status.stdout_lines
+  when: 
+    - zrepl_service_state == 'started'
+    - zrepl_status.rc == 0

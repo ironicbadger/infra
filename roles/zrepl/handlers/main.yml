@@ -1,0 +1,20 @@
+---
+# zrepl handlers for service management
+
+- name: restart zrepl
+  systemd:
+    name: zrepl
+    state: restarted
+    daemon_reload: yes
+  become: true
+
+- name: reload zrepl
+  systemd:
+    name: zrepl
+    state: reloaded
+  become: true
+
+- name: reload systemd
+  systemd:
+    daemon_reload: yes
+  become: true

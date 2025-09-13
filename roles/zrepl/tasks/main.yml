@@ -1,0 +1,26 @@
+---
+# Main tasks file for zrepl role
+
+- name: Install zrepl
+  import_tasks: 01-install.yml
+  tags:
+    - zrepl
+    - zrepl-install
+
+- name: Configure zrepl
+  import_tasks: 02-configure.yml
+  tags:
+    - zrepl
+    - zrepl-configure
+
+- name: Manage zrepl service
+  import_tasks: 03-service.yml
+  tags:
+    - zrepl
+    - zrepl-service
+
+- name: Validate zrepl
+  import_tasks: 04-validate.yml
+  tags:
+    - zrepl
+    - zrepl-validate

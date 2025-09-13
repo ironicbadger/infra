@@ -1,0 +1,25 @@
+---
+galaxy_info:
+  author: Alex Kretzschmar
+  description: zrepl configuration and management role
+  license: MIT
+  min_ansible_version: 2.9
+  platforms:
+    - name: Debian
+      versions:
+        - bookworm
+        - bullseye
+        - trixie
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
+  galaxy_tags:
+    - zfs
+    - backup
+    - replication
+    - zrepl
+    - storage
+
+dependencies: []
