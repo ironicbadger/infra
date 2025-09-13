@@ -1,6 +1,6 @@
 ---
 # ironicbadger.docker-compose-generator
-host_timezone: "US/Eastern"
+host_timezone: "America/New_York"
 docker_compose_hostname: "c137"
 
 appdata_path: /mnt/nvmeu2/appdata
