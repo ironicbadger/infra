@@ -78,44 +78,6 @@ install_home_manager: true
 git_username: "Alex Kretzschmar"
 git_email: "{{ vault_cloudflare_account_email }}"
 
-# ironicbadger.mounts
-automount_drives: true
-drive_mounts:
-  # mergings
-  - mountpoint: "/mnt/jbod"
-    device: "/mnt/disks/disk*"
-    fstype: "mergerfs"
-    options:
-      - "defaults"
-      - "minfreespace=250G"
-      - "allow_other"
-      - "use_ino"
-      - "cache.files=partial"
-      - "dropcacheonclose=true"
-      - "fsname=mergerfs-jbod"
-  # data disks
-  - mountpoint: "/mnt/disks/disk1"
-    device: "/dev/disk/by-id/ata-WDC_WD180EDGZ-11B9PA0_3ZGA70DZ-part1"
-    fstype: "btrfs"
-    options:
-      - "subvol=data"
-      - "compress=zstd"
-      - "defaults"
-  - mountpoint: "/mnt/disks/disk2"
-    device: "/dev/disk/by-id/ata-WDC_WD180EDGZ-11B9PA0_2TGGDS5Z-part1"
-    fstype: "btrfs"
-    options:
-      - "subvol=data"
-      - "compress=zstd"
-      - "defaults"
-  - mountpoint: "/mnt/disks/disk3"
-    device: "/dev/disk/by-id/ata-WDC_WD180EDGZ-11B9PA0_2GH0M6HS-part1"
-    fstype: "btrfs"
-    options:
-      - "subvol=data"
-      - "compress=zstd"
-      - "defaults"
-
 # zrepl configuration - using new unified job structure
 # Define replication targets
 zrepl_targets:
