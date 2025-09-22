@@ -1,0 +1,17 @@
+# ironicbadger.packages
+packages_perform_cleanup: True
+package_list:
+  - bcache-tools
+  - btrfs-progs
+  - btop
+  - curl
+  - git
+  - htop
+  - intel-gpu-tools
+  - samba
+  - samba-common-bin
+  - smbclient
+  - sudo
+  - tmux
+  - wget
+  - which
