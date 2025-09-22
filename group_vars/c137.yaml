@@ -23,7 +23,6 @@ package_list:
   - git
   - htop
   - intel-gpu-tools
-  - proxmox-kernel-6.14
   - samba
   - samba-common-bin
   - smbclient
@@ -121,7 +120,7 @@ zrepl_jobs:
       encrypted: false
     snapshotting:
       type: "periodic"
-      prefix: "zrepl_"
+      prefix: "zrepl_data_"
       interval: "60m"
     pruning:
       keep_sender:
@@ -129,10 +128,10 @@ zrepl_jobs:
       keep_receiver:
         - type: "regex"
           negate: true
-          regex: "^zrepl_"
+          regex: "^zrepl_data_"
         - type: "grid"
           grid: "1x1h(keep=all) | 24x1h | 7x1d | 2x30d"
-          regex: "^zrepl_"
+          regex: "^zrepl_data_"
 
   # Push media to igloo (excluding movies and tv)
   - name: "igloo_media"
@@ -148,7 +147,7 @@ zrepl_jobs:
       encrypted: false
     snapshotting:
       type: "periodic"
-      prefix: "zrepl_"
+      prefix: "zrepl_media_"
       interval: "60m"
     pruning:
       keep_sender:
@@ -156,10 +155,10 @@ zrepl_jobs:
       keep_receiver:
         - type: "regex"
           negate: true
-          regex: "^zrepl_"
+          regex: "^zrepl_media_"
         - type: "grid"
           grid: "1x1h(keep=all) | 24x1h | 7x1d | 2x30d"
-          regex: "^zrepl_"
+          regex: "^zrepl_media_"
 
   # Push photos to igloo
   - name: "igloo_photos"
@@ -173,7 +172,7 @@ zrepl_jobs:
       encrypted: false
     snapshotting:
       type: "periodic"
-      prefix: "zrepl_"
+      prefix: "zrepl_photos_"
       interval: "60m"
     pruning:
       keep_sender:
@@ -181,10 +180,10 @@ zrepl_jobs:
       keep_receiver:
         - type: "regex"
           negate: true
-          regex: "^zrepl_"
+          regex: "^zrepl_photos_"
         - type: "grid"
           grid: "1x1h(keep=all) | 24x1h | 7x1d | 2x30d"
-          regex: "^zrepl_"
+          regex: "^zrepl_photos_"
 
   # Push video to igloo
   - name: "igloo_video"
@@ -198,7 +197,7 @@ zrepl_jobs:
       encrypted: false
     snapshotting:
       type: "periodic"
-      prefix: "zrepl_"
+      prefix: "zrepl_video_"
       interval: "60m"
     pruning:
       keep_sender:
@@ -206,10 +205,10 @@ zrepl_jobs:
       keep_receiver:
         - type: "regex"
           negate: true
-          regex: "^zrepl_"
+          regex: "^zrepl_video_"
         - type: "grid"
           grid: "1x1h(keep=all) | 24x1h | 7x1d | 2x30d"
-          regex: "^zrepl_"
+          regex: "^zrepl_video_"
 
   # Push appdata to snowball
   - name: "snowball_appdata"
