@@ -9,3 +9,15 @@ host_timezone: "America/New_York"
 wd_domain_me: "wd.{{ domain_me }}"
 maple_domain_me: "maple.{{ domain_me }}"
 apps_domain_me: "apps.{{ domain_me }}"
+
+# ironicbadger.packages
+packages_perform_cleanup: True
+package_list:
+  - btop
+  - curl
+  - git
+  - htop
+  - sudo
+  - tmux
+  - wget
+  - which
