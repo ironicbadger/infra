@@ -35,7 +35,7 @@ services:
       - paperlessredisdata:/data
     restart: unless-stopped
   paperless-db:
-    image: docker.io/library/postgres:17
+    image: docker.io/library/postgres:18
     container_name: paperless-db
     volumes:
       - "{{ appdata_path }}/apps/paperless/db:/var/lib/postgresql/data"
