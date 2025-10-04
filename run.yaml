@@ -18,7 +18,8 @@
     vars_files:
       - 'group_vars/secrets.yaml'
     roles:
-      - role: ironicbadger.figurine
+      #- role: ironicbadger.figurine
+      - role: ktz-server-welcome
       - role: ironicbadger.proxmox-host-nvidia-setup
       - role: ironicbadger.tailscale-routes-fix
       - role: ironicbadger.packages
@@ -34,7 +35,8 @@
     vars_files:
     - 'group_vars/secrets.yaml'
     roles:
-      - role: ironicbadger.figurine
+      #- role: ironicbadger.figurine
+      - role: ktz-server-welcome
       - role: ironicbadger.tailscale-routes-fix
       - role: ironicbadger.packages
 
@@ -43,9 +45,9 @@
     - 'group_vars/secrets.yaml'
     roles:
       #- role: ironicbadger.figurine
+      - role: ktz-server-welcome
       - role: ironicbadger.tailscale-routes-fix
       - role: ironicbadger.packages
-      - role: ktz-server-welcome
 
 ### LXCs
   - hosts: immich-app

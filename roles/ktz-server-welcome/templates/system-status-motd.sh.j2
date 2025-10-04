@@ -44,8 +44,9 @@ CPU_TEMP=$(echo "$SENSORS_OUTPUT" | grep -i "Package id 0:" | awk '{print int($4
 [ -z "$CPU_TEMP" ] && CPU_TEMP=$(echo "$SENSORS_OUTPUT" | grep -i "Tctl:" | awk '{print int($2)}' | head -1)
 
 # Motherboard/chipset temperature from cached output
-MB_TEMP=$(echo "$SENSORS_OUTPUT" | grep -E "MB Temperature:|motherboard|PCH" | awk '{print int($2)}' | head -1)
-[ -z "$MB_TEMP" ] && MB_TEMP=$(echo "$SENSORS_OUTPUT" | awk '/acpitz/,/^$/ {if (/temp1:/) print int($2)}' | head -1)
+MB_TEMP=$(echo "$SENSORS_OUTPUT" | grep -E "SYSTIN:" | awk '{print int($2)}' | head -1)
+[ -z "$MB_TEMP" ] && MB_TEMP=$(echo "$SENSORS_OUTPUT" | grep -E "MB Temperature:|motherboard" | awk '{print int($2)}' | head -1)
+[ -z "$MB_TEMP" ] && MB_TEMP=$(echo "$SENSORS_OUTPUT" | awk '/acpitz/,/^$/ {if (/temp1:/) {gsub(/[^0-9.]/, "", $2); print int($2)}}' | head -1)
 
 # Check for GPU
 if command -v nvidia-smi &> /dev/null; then
@@ -95,7 +96,7 @@ while IFS= read -r sata_device; do
     TEMP=$(smartctl -A /dev/$sata_device 2>/dev/null | grep -i "Temperature_Celsius" | awk '{print $10}' | head -1)
     [ -z "$TEMP" ] && TEMP=$(smartctl -A /dev/$sata_device 2>/dev/null | grep -i "Airflow_Temperature" | awk '{print $10}' | head -1)
 
-    MODEL=$(lsblk -d -n -o MODEL /dev/$sata_device 2>/dev/null | xargs | sed 's/WD//; s/Western Digital//; s/Seagate//' | cut -c1-20)
+    MODEL=$(lsblk -d -n -o MODEL /dev/$sata_device 2>/dev/null | xargs | sed 's/WDC //; s/Western Digital //; s/Seagate //' | cut -c1-20)
     SIZE=$(lsblk -d -n -o SIZE /dev/$sata_device 2>/dev/null | xargs)
 
     SATA_DRIVES+=("$sata_device:$MODEL-$SIZE:$TEMP")
