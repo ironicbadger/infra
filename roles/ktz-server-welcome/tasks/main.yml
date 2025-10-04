@@ -1,0 +1,72 @@
+---
+# Main tasks file for ktz-server-welcome role
+
+- name: Install required packages
+  ansible.builtin.apt:
+    name:
+      - smartmontools
+      - lm-sensors
+      - nvme-cli
+    state: present
+    update_cache: yes
+  tags:
+    - ktz-server-welcome
+    - packages
+
+- name: Deploy system status MOTD script
+  ansible.builtin.template:
+    src: system-status-motd.sh.j2
+    dest: /usr/local/bin/system-status-motd.sh
+    mode: '0755'
+    owner: root
+    group: root
+  tags:
+    - ktz-server-welcome
+    - script
+
+- name: Create update-motd.d directory if it doesn't exist
+  ansible.builtin.file:
+    path: /etc/update-motd.d
+    state: directory
+    mode: '0755'
+  tags:
+    - ktz-server-welcome
+    - motd
+
+- name: Configure MOTD to call system status script
+  ansible.builtin.copy:
+    dest: /etc/update-motd.d/99-system-status
+    content: |
+      #!/bin/bash
+      /usr/local/bin/system-status-motd.sh
+    mode: '0755'
+    owner: root
+    group: root
+  tags:
+    - ktz-server-welcome
+    - motd
+
+- name: Add profile.d script for interactive shells
+  ansible.builtin.copy:
+    dest: /etc/profile.d/system-status.sh
+    content: |
+      #!/bin/bash
+      /usr/local/bin/system-status-motd.sh
+    mode: '0644'
+    owner: root
+    group: root
+  tags:
+    - ktz-server-welcome
+    - motd
+
+- name: Disable default MOTD scripts (optional)
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: '0644'
+  loop:
+    - /etc/update-motd.d/10-help-text
+    - /etc/update-motd.d/50-motd-news
+  ignore_errors: yes
+  tags:
+    - ktz-server-welcome
+    - motd

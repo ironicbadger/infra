@@ -1,0 +1,211 @@
+#!/bin/bash
+{% raw %}
+
+# Color definitions
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+GRAY='\033[0;90m'
+BOLD='\033[1m'
+NC='\033[0m'
+
+# Column width constants
+DEVICE_WIDTH=10
+NVME_MODEL_WIDTH=25
+SATA_MODEL_WIDTH=30
+
+# Function to get color based on temperature
+get_temp_color() {
+    local temp=$1
+    if [ "$temp" -lt 50 ]; then
+        echo "${GREEN}"
+    elif [ "$temp" -lt 65 ]; then
+        echo "${YELLOW}"
+    else
+        echo "${RED}"
+    fi
+}
+
+# Function to strip ANSI codes and measure display width
+get_display_width() {
+    echo -e "$1" | sed 's/\x1b\[[0-9;]*m//g' | wc -m | tr -d ' '
+}
+
+# Get hostname
+HOSTNAME=$(hostname)
+
+# Cache sensors output (run once)
+SENSORS_OUTPUT=$(sensors 2>/dev/null)
+
+# Get system temperatures from cached output
+CPU_TEMP=$(echo "$SENSORS_OUTPUT" | grep -i "Package id 0:" | awk '{print int($4)}' | head -1)
+[ -z "$CPU_TEMP" ] && CPU_TEMP=$(echo "$SENSORS_OUTPUT" | grep -i "Tdie:" | awk '{print int($2)}' | head -1)
+[ -z "$CPU_TEMP" ] && CPU_TEMP=$(echo "$SENSORS_OUTPUT" | grep -i "Tctl:" | awk '{print int($2)}' | head -1)
+
+# Motherboard/chipset temperature from cached output
+MB_TEMP=$(echo "$SENSORS_OUTPUT" | grep -E "MB Temperature:|motherboard|PCH" | awk '{print int($2)}' | head -1)
+[ -z "$MB_TEMP" ] && MB_TEMP=$(echo "$SENSORS_OUTPUT" | awk '/acpitz/,/^$/ {if (/temp1:/) print int($2)}' | head -1)
+
+# Check for GPU
+if command -v nvidia-smi &> /dev/null; then
+    GPU_TEMP=$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader 2>/dev/null | head -1)
+else
+    GPU_TEMP=""
+fi
+
+# Format temperature displays
+if [ -n "$CPU_TEMP" ]; then
+    CPU_DISPLAY="$(get_temp_color $CPU_TEMP)${CPU_TEMP}°C${NC}"
+else
+    CPU_DISPLAY="N/A"
+fi
+
+if [ -n "$MB_TEMP" ]; then
+    MB_DISPLAY="$(get_temp_color $MB_TEMP)${MB_TEMP}°C${NC}"
+else
+    MB_DISPLAY="N/A"
+fi
+
+if [ -n "$GPU_TEMP" ]; then
+    GPU_DISPLAY="$(get_temp_color $GPU_TEMP)${GPU_TEMP}°C${NC}"
+else
+    GPU_DISPLAY="N/A"
+fi
+
+# Get system load and uptime
+LOAD=$(uptime | awk -F'load average:' '{print $2}' | xargs)
+UPTIME=$(uptime -p | sed 's/up //; s/ hours\?/h/; s/ minutes\?/m/; s/ days\?/d/')
+
+# Collect NVMe drives
+declare -a NVME_DRIVES
+while IFS= read -r nvme_device; do
+    TEMP=$(smartctl -a /dev/$nvme_device 2>/dev/null | grep -i "Temperature:" | awk '{print $2}' | head -1)
+    [ -z "$TEMP" ] && TEMP=$(nvme smart-log /dev/$nvme_device 2>/dev/null | grep "temperature" | awk '{print $3}' | head -1)
+
+    MODEL=$(lsblk -d -n -o MODEL /dev/$nvme_device 2>/dev/null | xargs | sed 's/Samsung //; s/WD //; s/Western Digital //' | cut -c1-20)
+    SIZE=$(lsblk -d -n -o SIZE /dev/$nvme_device 2>/dev/null | xargs)
+
+    NVME_DRIVES+=("$nvme_device:$MODEL-$SIZE:$TEMP")
+done < <(lsblk -d -n -o NAME,TYPE | awk '$2=="disk" && $1~/^nvme/ {print $1}')
+
+# Collect SATA drives
+declare -a SATA_DRIVES
+while IFS= read -r sata_device; do
+    TEMP=$(smartctl -A /dev/$sata_device 2>/dev/null | grep -i "Temperature_Celsius" | awk '{print $10}' | head -1)
+    [ -z "$TEMP" ] && TEMP=$(smartctl -A /dev/$sata_device 2>/dev/null | grep -i "Airflow_Temperature" | awk '{print $10}' | head -1)
+
+    MODEL=$(lsblk -d -n -o MODEL /dev/$sata_device 2>/dev/null | xargs | sed 's/WD//; s/Western Digital//; s/Seagate//' | cut -c1-20)
+    SIZE=$(lsblk -d -n -o SIZE /dev/$sata_device 2>/dev/null | xargs)
+
+    SATA_DRIVES+=("$sata_device:$MODEL-$SIZE:$TEMP")
+done < <(lsblk -d -n -o NAME,TYPE | awk '$2=="disk" && $1~/^sd/ {print $1}')
+
+# Collect ZFS pools (single call per pool)
+declare -a ZFS_POOLS
+if command -v zpool &> /dev/null; then
+    while IFS=$'\t' read -r POOL_NAME POOL_STATUS POOL_SIZE POOL_ALLOC POOL_CAP; do
+        [ "$POOL_NAME" = "NAME" ] && continue
+        POOL_CAP=${POOL_CAP%\%}
+        ZFS_POOLS+=("$POOL_NAME:$POOL_STATUS:$POOL_ALLOC:$POOL_SIZE:$POOL_CAP")
+    done < <(zpool list -H -o name,health,size,allocated,capacity 2>/dev/null)
+fi
+
+# Build all output lines first to calculate max width
+MAX_WIDTH=80
+
+# System info line
+if [ -n "$GPU_TEMP" ]; then
+    SYS_LINE=$(printf "${BOLD}SYS${NC} CPU: %b ${GRAY}|${NC} MB: %b ${GRAY}|${NC} GPU: %b ${GRAY}|${NC} Load: %s ${GRAY}|${NC} Up: %s" \
+        "$CPU_DISPLAY" "$MB_DISPLAY" "$GPU_DISPLAY" "$LOAD" "$UPTIME")
+else
+    SYS_LINE=$(printf "${BOLD}SYS${NC} CPU: %b ${GRAY}|${NC} MB: %b ${GRAY}|${NC} Load: %s ${GRAY}|${NC} Up: %s" \
+        "$CPU_DISPLAY" "$MB_DISPLAY" "$LOAD" "$UPTIME")
+fi
+
+SYS_WIDTH=$(get_display_width "$SYS_LINE")
+[ $SYS_WIDTH -gt $MAX_WIDTH ] && MAX_WIDTH=$SYS_WIDTH
+
+# Build drive lines
+MAX_NVME=${#NVME_DRIVES[@]}
+MAX_SATA=${#SATA_DRIVES[@]}
+MAX_ROWS=$((MAX_NVME > MAX_SATA ? MAX_NVME : MAX_SATA))
+declare -a DRIVE_LINES
+
+for ((i=0; i<MAX_ROWS; i++)); do
+    # Left column (NVMe)
+    if [ $i -lt $MAX_NVME ]; then
+        IFS=':' read -r DEVICE MODEL TEMP <<< "${NVME_DRIVES[$i]}"
+        if [ -n "$TEMP" ]; then
+            DRIVE_LINE=$(printf " %-${DEVICE_WIDTH}s %-${NVME_MODEL_WIDTH}s %b%3s°C${NC}" \
+                "$DEVICE:" "$MODEL" "$(get_temp_color $TEMP)" "$TEMP")
+        else
+            DRIVE_LINE=$(printf " %-${DEVICE_WIDTH}s %-${NVME_MODEL_WIDTH}s N/A  " "$DEVICE:" "$MODEL")
+        fi
+    else
+        DRIVE_LINE=$(printf "%-$((DEVICE_WIDTH + NVME_MODEL_WIDTH + 8))s" "")
+    fi
+
+    # Right column (SATA)
+    if [ $i -lt $MAX_SATA ]; then
+        IFS=':' read -r DEVICE MODEL TEMP <<< "${SATA_DRIVES[$i]}"
+        if [ -n "$TEMP" ]; then
+            DRIVE_LINE+=$(printf "   %-${DEVICE_WIDTH}s %-${SATA_MODEL_WIDTH}s %b%3s°C${NC}" \
+                "$DEVICE:" "$MODEL" "$(get_temp_color $TEMP)" "$TEMP")
+        else
+            DRIVE_LINE+=$(printf "   %-${DEVICE_WIDTH}s %-${SATA_MODEL_WIDTH}s N/A  " "$DEVICE:" "$MODEL")
+        fi
+    fi
+
+    DRIVE_LINES+=("$DRIVE_LINE")
+
+    DRIVE_WIDTH=$(get_display_width "$DRIVE_LINE")
+    [ $DRIVE_WIDTH -gt $MAX_WIDTH ] && MAX_WIDTH=$DRIVE_WIDTH
+done
+
+# Build ZFS lines
+declare -a ZFS_LINES
+if [ ${#ZFS_POOLS[@]} -gt 0 ]; then
+    for pool_info in "${ZFS_POOLS[@]}"; do
+        IFS=':' read -r POOL_NAME POOL_STATUS POOL_ALLOC POOL_SIZE POOL_CAP <<< "$pool_info"
+
+        case "$POOL_STATUS" in
+            ONLINE)  STATUS_COLOR="${GREEN}" ;;
+            DEGRADED) STATUS_COLOR="${YELLOW}" ;;
+            *) STATUS_COLOR="${RED}" ;;
+        esac
+
+        ZFS_LINE=$(printf " %-12s %b%-8s${NC} ${GRAY}│${NC} %s/%s (%s%%)" \
+            "$POOL_NAME:" "$STATUS_COLOR" "$POOL_STATUS" "$POOL_ALLOC" "$POOL_SIZE" "$POOL_CAP")
+        ZFS_LINES+=("$ZFS_LINE")
+
+        ZFS_WIDTH=$(get_display_width "$ZFS_LINE")
+        [ $ZFS_WIDTH -gt $MAX_WIDTH ] && MAX_WIDTH=$ZFS_WIDTH
+    done
+fi
+
+# Print everything with consistent divider width
+DIVIDER="${CYAN}$(printf "─%.0s" $(seq 1 $MAX_WIDTH))${NC}"
+
+printf "\n"
+printf "%b\n" "$DIVIDER"
+printf "%b\n" "${CYAN}${BOLD}System Status: ${HOSTNAME}${NC}"
+printf "%b\n" "$SYS_LINE"
+
+printf "%b\n" "$DIVIDER"
+printf "%b\n" "${CYAN}${BOLD}Drives${NC}"
+for drive_line in "${DRIVE_LINES[@]}"; do
+    printf "%b\n" "$drive_line"
+done
+
+if [ ${#ZFS_POOLS[@]} -gt 0 ]; then
+    printf "%b\n" "$DIVIDER"
+    printf "%b\n" "${CYAN}${BOLD}ZFS Pools${NC}"
+    for zfs_line in "${ZFS_LINES[@]}"; do
+        printf "%b\n" "$zfs_line"
+    done
+fi
+
+printf "%b\n" "$DIVIDER"
+printf "\n"
+{% endraw %}

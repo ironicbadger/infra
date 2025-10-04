@@ -38,13 +38,14 @@
       - role: ironicbadger.tailscale-routes-fix
       - role: ironicbadger.packages
 
-  - hosts: pi5
+  - hosts: meeseeks
     vars_files:
     - 'group_vars/secrets.yaml'
     roles:
-      - role: ironicbadger.figurine
+      #- role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
       - role: ironicbadger.packages
+      - role: ktz-server-welcome
 
 ### LXCs
   - hosts: immich-app
