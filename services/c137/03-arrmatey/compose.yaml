@@ -115,23 +115,3 @@ services:
   #     - traefik.enable=true
   #     - "traefik.http.routers.jellyseerr.rule=Host(`jellyseerr.{{ m_wd_domain_me }}`)"
   #   restart: unless-stopped
-  lidify:
-    image: thewicklowwolf/lidify:latest
-    container_name: lidify
-    volumes:
-      - "{{ appdata_path }}/arrmatey/lidify:/lidify/config"
-      - /etc/localtime:/etc/localtime:ro
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.lidify.rule=Host(`lidify.{{ m_wd_domain_me }}`)"
-    environment:
-      - "PUID={{ docker_compose_generator_uid }}"
-      - "PGID={{ docker_compose_generator_gid }}"
-      - "last_fm_api_key={{ last_fm_api_key }}"
-      - "last_fm_api_secret={{ last_fm_api_secret }}"
-      - mode=LastFM
-      - lidarr_address=http://lidarr:8686
-      - "lidarr_api_key={{ lidarr_api_key }}"
-    depends_on:
-      - lidarr
-    restart: unless-stopped
