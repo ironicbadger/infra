@@ -65,5 +65,34 @@ services:
     #  - "3333:3000"
     volumes:
       - "{{ appdata_path }}/apps/paperless/ai:/app/data"
+  nextcloud:
+    image: nextcloud:32
+    container_name: nextcloud
+    volumes:
+      - "{{ appdata_path }}/apps/nextcloud/data:/var/www/html"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.nc.rule=Host(`nc.ktz.cloud`)
+    environment:
+      - NEXTCLOUD_TRUSTED_DOMAINS=nc.ktz.cloud
+      - REDIS_HOST=nextcloud-redis
+    depends_on:
+      - nextcloud-db
+      - nextcloud-redis
+    restart: unless-stopped
+  nextcloud-redis:
+    image: redis:alpine
+    container_name: nextcloud-redis
+    restart: unless-stopped
+  nextcloud-db:
+    image: postgres:16
+    container_name: nextcloud-db
+    volumes:
+      - "{{ appdata_path }}/apps/nextcloud/db:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_USER={{ nextcloud_db_user }}"
+      - "POSTGRES_PASSWORD={{ nextcloud_db_password }}"
+      - "POSTGRES_DB={{ nextcloud_db_name }}"
+    restart: unless-stopped
 volumes:
   paperlessredisdata:
