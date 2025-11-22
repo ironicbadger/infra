@@ -1,0 +1,11 @@
+[Unit]
+Description=Restart Plex Docker Container
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/docker restart {{ plex_container_name }}
+
+[Install]
+WantedBy=multi-user.target

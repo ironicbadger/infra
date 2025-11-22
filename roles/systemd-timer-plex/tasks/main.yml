@@ -1,0 +1,28 @@
+---
+- name: Deploy plex-restart systemd service
+  ansible.builtin.template:
+    src: plex-restart.service.j2
+    dest: /etc/systemd/system/plex-restart.service
+    mode: '0644'
+  become: true
+  notify: reload systemd
+
+- name: Deploy plex-restart systemd timer
+  ansible.builtin.template:
+    src: plex-restart.timer.j2
+    dest: /etc/systemd/system/plex-restart.timer
+    mode: '0644'
+  become: true
+  notify: reload systemd
+
+- name: Reload systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+
+- name: Enable and start plex-restart timer
+  ansible.builtin.systemd:
+    name: plex-restart.timer
+    enabled: true
+    state: started
+  become: true

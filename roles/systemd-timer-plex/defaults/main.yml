@@ -1,0 +1,5 @@
+---
+plex_restart_time: "04:00:00"
+# Allowed values: daily, weekly, monthly, yearly, hourly, *-*-* (specific date pattern)
+plex_restart_frequency: "daily"
+plex_container_name: "plex"

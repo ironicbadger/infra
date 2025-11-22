@@ -1,0 +1,10 @@
+[Unit]
+Description=Timer to restart Plex Docker container
+Requires=plex-restart.service
+
+[Timer]
+OnCalendar={{ plex_restart_frequency }} {{ plex_restart_time }}
+Persistent=true
+
+[Install]
+WantedBy=timers.target
