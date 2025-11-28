@@ -1,4 +1,17 @@
 services:
+  ## tsidp
+  ktz-tsidp:
+    container_name: ktz-tsidp
+    image: ghcr.io/tailscale/tsidp:latest
+    volumes:
+      - "{{ appdata_path }}/ktz-tsidp:/data"
+    environment:
+      - TAILSCALE_USE_WIP_CODE=1
+      - "TS_AUTH_KEY={{ tailscale_authkey_cp }}"
+      - TS_STATE_DIR=/data
+      - TS_HOSTNAME=idp
+      - TSIDP_ENABLE_STS=1
+    restart: unless-stopped
   ## monitoring
   smokeping:
     image: lscr.io/linuxserver/smokeping
