@@ -11,6 +11,7 @@ services:
       - TS_STATE_DIR=/data
       - TS_HOSTNAME=idp
       - TSIDP_ENABLE_STS=1
+      - TSIDP_USE_FUNNEL=1
     restart: unless-stopped
   ## monitoring
   smokeping:
