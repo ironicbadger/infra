@@ -1,0 +1,68 @@
+server:
+  port: 8080
+
+pages:
+  - name: Home
+    columns:
+      - size: small
+        widgets:
+          - type: bookmarks
+            groups:
+              - title: Media
+                links:
+                  - title: Jellyfin
+                    url: https://jf.wd.ktz.me
+                  - title: Overseerr
+                    url: https://overseerr.m.wd.ktz.me
+              - title: Arr Stack
+                links:
+                  - title: Prowlarr
+                    url: https://prowlarr.m.wd.ktz.me
+                  - title: Sonarr
+                    url: https://sonarr.m.wd.ktz.me
+                  - title: Radarr
+                    url: https://radarr.m.wd.ktz.me
+                  - title: Lidarr
+                    url: https://lidarr.m.wd.ktz.me
+                  - title: SABnzbd
+                    url: https://sabnzbd.m.wd.ktz.me
+              - title: Apps
+                links:
+                  - title: Paperless
+                    url: https://paperless.m.wd.ktz.me
+                  - title: Paperless AI
+                    url: https://paperlessai.m.wd.ktz.me
+                  - title: Nextcloud
+                    url: https://nc.ktz.cloud
+              - title: Monitoring
+                links:
+                  - title: Smokeping
+                    url: https://smokeping.m.wd.ktz.me/smokeping
+      - size: full
+        widgets:
+          - type: monitor
+            cache: 1m
+            title: Services
+            sites:
+              - title: Jellyfin
+                url: https://jf.wd.ktz.me
+              - title: Overseerr
+                url: https://overseerr.m.wd.ktz.me
+              - title: Prowlarr
+                url: https://prowlarr.m.wd.ktz.me
+              - title: Sonarr
+                url: https://sonarr.m.wd.ktz.me
+              - title: Radarr
+                url: https://radarr.m.wd.ktz.me
+              - title: Lidarr
+                url: https://lidarr.m.wd.ktz.me
+              - title: SABnzbd
+                url: https://sabnzbd.m.wd.ktz.me
+              - title: Paperless
+                url: https://paperless.m.wd.ktz.me
+              - title: Paperless AI
+                url: https://paperlessai.m.wd.ktz.me
+              - title: Nextcloud
+                url: https://nc.ktz.cloud
+              - title: Smokeping
+                url: https://smokeping.m.wd.ktz.me/smokeping

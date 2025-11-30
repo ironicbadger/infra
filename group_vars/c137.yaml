@@ -11,6 +11,7 @@ m_wd_domain_me: "m.{{ wd_domain_me }}"
 
 docker_compose_generator_uid: "1001"
 docker_compose_generator_gid: "1001"
+docker_compose_generator_zfs_enabled: true
 
 disabled_compose_files: []
 

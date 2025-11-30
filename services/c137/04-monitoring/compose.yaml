@@ -25,3 +25,15 @@ services:
     environment:
       - MODE=standalone
     restart: unless-stopped
+  glance:
+    image: glanceapp/glance
+    container_name: glance
+    volumes:
+      - "{{ appdata_path }}/apps/glance:/app/config"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.glance.rule=Host(`glance.{{ m_wd_domain_me }}`)"
+      - traefik.http.services.glance.loadbalancer.server.port=8080
+    environment:
+      - "TZ={{ host_timezone }}"
+    restart: unless-stopped
