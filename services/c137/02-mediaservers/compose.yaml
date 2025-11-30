@@ -42,6 +42,21 @@ services:
       - "TZ=US/Eastern"
       - "JELLYFIN_PublishedServerUrl=jf.wd.ktz.me"
     restart: unless-stopped
+  audiobookshelf:
+    image: ghcr.io/advplyr/audiobookshelf:latest
+    container_name: audiobookshelf
+    volumes:
+      - "{{ appdata_path }}/mediaservers/audiobookshelf:/config"
+      - "/mnt/rust/media/audiobooks:/audiobooks"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.audiobookshelf.rule=Host(`audiobooks.wd.ktz.me`)"
+      - traefik.http.services.audiobookshelf.loadbalancer.server.port=80
+    environment:
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
+    restart: unless-stopped
 
   # fileflows:
   #   image: revenz/fileflows
