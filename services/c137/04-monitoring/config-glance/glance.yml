@@ -17,9 +17,27 @@ theme:
   contrast-multiplier: 1.3
 
 pages:
-  - name: ktz
+  - name: ktz.dash
     columns:
       - size: small
+        widgets:
+          - type: extension
+            url: http://ping-graph:8080
+            allow-potentially-dangerous-html: true
+            cache: 1m
+          - type: clock
+            hour-format: 24h
+            timezones:
+              - timezone: America/New_York
+                label: Raleigh
+              - timezone: Europe/London
+                label: London
+          - type: weather
+            location: Raleigh, North Carolina, United States
+          - type: weather
+            location: London, United Kingdom
+
+      - size: full
         widgets:
           - type: bookmarks
             groups:
@@ -51,14 +69,34 @@ pages:
                 links:
                   - title: Smokeping
                     url: https://smokeping.m.wd.ktz.me/smokeping
-      - size: full
-        widgets:
           - type: monitor
             cache: 1m
-            title: Infrastructure
+            title: Infrastructure (wd)
             sites:
-              - title: Proxmox (rdu)
+              - title: Proxmox
                 url: https://px.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png
+              - title: Home Assistant
+                url: https://ha.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/home-assistant.png
+              - title: Blue Iris
+                url: https://bi.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/blue-iris.png
+              - title: AdGuard Home
+                url: https://dns.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/adguard-home.png
+              - title: Unifi
+                url: https://unifi.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/unifi.png
+              - title: tsidp
+                url: https://idp.ktz.ts.net
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/tailscale-light.png
+          - type: monitor
+            cache: 1m
+            title: Infrastructure (external)
+            sites:
+              - title: Proxmox (ts)
+                url: https://px.velociraptor-noodlefish.ts.net/
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png
               - title: Proxmox (igloo)
                 url: https://igloo.ktz.ts.net/
@@ -66,15 +104,17 @@ pages:
               - title: Proxmox (snowball)
                 url: https://snowball.ktz.ts.net/
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png
-              - title: Home Assistant
-                url: https://ha.wd.ktz.me
-                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/home-assistant.png
-              - title: Unifi
-                url: https://unifi.wd.ktz.me
-                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/unifi.png
-              - title: AdGuard Home
-                url: https://dns.wd.ktz.me
-                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/adguard-home.png
+          - type: monitor
+            cache: 1m
+            title: IP KVMs
+            sites:
+              - title: PiKVM m720q
+                url: https://pikvm-lenovos.ktz.ts.net/
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/pikvm.png
+              - title: LibreSpeed (c137)
+                url: http://10.42.1.137:8008/
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/librespeed-light.png
+
           - type: monitor
             cache: 1m
             title: Media
@@ -127,9 +167,4 @@ pages:
               - title: Smokeping
                 url: https://smokeping.m.wd.ktz.me/smokeping
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/smokeping.png
-              - title: Blue Iris
-                url: https://bi.wd.ktz.me
-                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/blue-iris.png
-              - title: PiKVM m720q
-                url: https://pikvm-lenovos.ktz.ts.net/
-                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/pikvm.png
+
