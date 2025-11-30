@@ -1,8 +1,23 @@
 server:
   port: 8080
 
+document:
+  head: |
+    <style>
+      .monitor-site-icon {
+        opacity: 1 !important;
+        filter: saturate(1.3) !important;
+      }
+    </style>
+
+theme:
+  background-color: 0 0 16
+  primary-color: 24 97 58
+  negative-color: 209 88 54
+  contrast-multiplier: 1.3
+
 pages:
-  - name: Home
+  - name: ktz
     columns:
       - size: small
         widgets:
@@ -30,8 +45,6 @@ pages:
                 links:
                   - title: Paperless
                     url: https://paperless.m.wd.ktz.me
-                  - title: Paperless AI
-                    url: https://paperlessai.m.wd.ktz.me
                   - title: Nextcloud
                     url: https://nc.ktz.cloud
               - title: Monitoring
@@ -42,27 +55,81 @@ pages:
         widgets:
           - type: monitor
             cache: 1m
-            title: Services
+            title: Infrastructure
+            sites:
+              - title: Proxmox (rdu)
+                url: https://px.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png
+              - title: Proxmox (igloo)
+                url: https://igloo.ktz.ts.net/
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png
+              - title: Proxmox (snowball)
+                url: https://snowball.ktz.ts.net/
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png
+              - title: Home Assistant
+                url: https://ha.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/home-assistant.png
+              - title: Unifi
+                url: https://unifi.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/unifi.png
+              - title: AdGuard Home
+                url: https://dns.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/adguard-home.png
+          - type: monitor
+            cache: 1m
+            title: Media
             sites:
               - title: Jellyfin
                 url: https://jf.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/jellyfin.png
               - title: Overseerr
                 url: https://overseerr.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/overseerr.png
+              - title: Audiobookshelf
+                url: https://audiobooks.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/audiobookshelf.png
+          - type: monitor
+            cache: 1m
+            title: Arrr Matey!
+            sites:
               - title: Prowlarr
                 url: https://prowlarr.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/prowlarr.png
               - title: Sonarr
                 url: https://sonarr.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/sonarr.png
               - title: Radarr
                 url: https://radarr.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/radarr.png
               - title: Lidarr
                 url: https://lidarr.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/lidarr.png
               - title: SABnzbd
                 url: https://sabnzbd.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/sabnzbd.png
+          - type: monitor
+            cache: 1m
+            title: Apps
+            sites:
               - title: Paperless
                 url: https://paperless.m.wd.ktz.me
-              - title: Paperless AI
-                url: https://paperlessai.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/paperless-ngx.png
               - title: Nextcloud
                 url: https://nc.ktz.cloud
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/nextcloud.png
+              - title: Immich
+                url: https://immich.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/immich.png
+          - type: monitor
+            cache: 1m
+            title: Monitoring & Access
+            sites:
               - title: Smokeping
                 url: https://smokeping.m.wd.ktz.me/smokeping
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/smokeping.png
+              - title: Blue Iris
+                url: https://bi.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/blue-iris.png
+              - title: PiKVM m720q
+                url: https://pikvm-lenovos.ktz.ts.net/
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/pikvm.png
