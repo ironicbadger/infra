@@ -19,7 +19,7 @@ services:
     restart: unless-stopped
 
   ktz-garage:
-    image: dxflrs/garage:v0.9.4
+    image: dxflrs/garage:v2.1.0
     container_name: ktz-garage
     network_mode: service:ktz-garage-ts
     depends_on:
