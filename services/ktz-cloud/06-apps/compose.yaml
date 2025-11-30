@@ -20,7 +20,7 @@ services:
       - https://paste.{{ domain_cloud }}
     restart: unless-stopped
   ktz-lychee:
-    image: lycheeorg/lychee:v6.4.1
+    image: lycheeorg/lychee:v6.10.2
     container_name: ktz-lychee
     volumes:
       - "{{ appdata_path }}/ktz-lychee/app/config:/conf"
