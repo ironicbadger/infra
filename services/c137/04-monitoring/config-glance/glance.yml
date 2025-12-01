@@ -22,7 +22,7 @@ pages:
       - size: small
         widgets:
           - type: extension
-            url: http://ping-graph:8080
+            url: http://glance-ping-graph:8080
             allow-potentially-dangerous-html: true
             cache: 1m
           - type: clock
