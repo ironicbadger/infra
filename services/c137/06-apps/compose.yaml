@@ -31,8 +31,6 @@ services:
   paperless-broker:
     image: docker.io/library/redis:8
     container_name: paperless-broker
-    volumes:
-      - paperlessredisdata:/data
     restart: unless-stopped
   paperless-db:
     image: docker.io/library/postgres:17
@@ -94,5 +92,35 @@ services:
       - "POSTGRES_PASSWORD={{ nextcloud_db_password }}"
       - "POSTGRES_DB={{ nextcloud_db_name }}"
     restart: unless-stopped
-volumes:
-  paperlessredisdata:
+  miniflux:
+    image: miniflux/miniflux:latest
+    container_name: miniflux
+    depends_on:
+      - miniflux-db
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.miniflux.rule=Host(`miniflux.{{ m_wd_domain_me }}`)"
+    environment:
+      - "DATABASE_URL=postgres://{{ miniflux_db_user }}:{{ miniflux_db_password | urlencode }}@miniflux-db/{{ miniflux_db_name }}?sslmode=disable"
+      - RUN_MIGRATIONS=1
+      - CREATE_ADMIN=0
+      - "ADMIN_USERNAME={{ miniflux_admin_user }}"
+      - "ADMIN_PASSWORD={{ miniflux_admin_password }}"
+      - OAUTH2_PROVIDER=oidc
+      - "OAUTH2_CLIENT_ID={{ miniflux_oidc_client_id }}"
+      - "OAUTH2_CLIENT_SECRET={{ miniflux_oidc_client_secret }}"
+      - "OAUTH2_REDIRECT_URL=https://miniflux.{{ m_wd_domain_me }}/oauth2/oidc/callback"
+      - "OAUTH2_OIDC_DISCOVERY_ENDPOINT={{ miniflux_oidc_discovery_endpoint }}"
+      - OAUTH2_OIDC_PROVIDER_NAME=Tailscale
+      - OAUTH2_USER_CREATION=0
+    restart: unless-stopped
+  miniflux-db:
+    image: postgres:17
+    container_name: miniflux-db
+    volumes:
+      - "{{ appdata_path }}/apps/miniflux/db:/var/lib/postgresql/data"
+    environment:
+      - "POSTGRES_USER={{ miniflux_db_user }}"
+      - "POSTGRES_PASSWORD={{ miniflux_db_password }}"
+      - "POSTGRES_DB={{ miniflux_db_name }}"
+    restart: unless-stopped
