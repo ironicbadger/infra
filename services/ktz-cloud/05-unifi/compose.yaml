@@ -29,7 +29,7 @@ services:
     mem_limit: 2g
     restart: unless-stopped
   ktz-unifi-db:
-    image: docker.io/mongo:7.0
+    image: docker.io/mongo:8.2
     container_name: ktz-unifi-db
     logging:
       driver: none
