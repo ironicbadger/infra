@@ -40,6 +40,8 @@ services:
   glance-ping-graph:
     image: ghcr.io/ironicbadger/glance-ping-graph:latest
     container_name: glance-ping-graph
+    volumes:
+      - "{{ appdata_path }}/apps/glance-ping-graph:/data"
     labels:
       - traefik.enable=true
       - "traefik.http.routers.ping-graph.rule=Host(`ping.{{ m_wd_domain_me }}`)"
@@ -47,6 +49,6 @@ services:
     environment:
       - TARGETS=1.1.1.1:dns,google.com:tcp,10.42.0.253:dns
       - INTERVAL=30s
-      - HISTORY=6h
+      - HISTORY=2h
       - "BASE_URL=https://ping.{{ m_wd_domain_me }}"
     restart: unless-stopped
