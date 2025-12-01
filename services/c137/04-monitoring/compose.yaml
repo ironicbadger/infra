@@ -37,10 +37,9 @@ services:
     environment:
       - "TZ={{ host_timezone }}"
     restart: unless-stopped
-  ping-graph:
-    build: "{{ appdata_path }}/apps/ping-graph"
-    pull_policy: build
-    container_name: ping-graph
+  glance-ping-graph:
+    image: ghcr.io/ironicbadger/glance-ping-graph:latest
+    container_name: glance-ping-graph
     labels:
       - traefik.enable=true
       - "traefik.http.routers.ping-graph.rule=Host(`ping.{{ m_wd_domain_me }}`)"
