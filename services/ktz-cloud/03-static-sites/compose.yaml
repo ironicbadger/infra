@@ -9,18 +9,14 @@ services:
     - traefik.http.routers.pmswiki.entrypoints=websecure
     - traefik.http.routers.pmswiki.tls.certresolver=cloudflare
     restart: unless-stopped
-  ktz-simplelinks:
-    image: fascinated/simple-links:latest
-    container_name: ktz-simplelinks
-    volumes:
-      - "{{ appdata_path }}/ktzme/config/config.yml:/usr/src/app/config.yml:ro"
-      - "{{ appdata_path }}/ktzme/config/public:/usr/src/app/public:rw"
+  ktz-linkme:
+    image: ghcr.io/ironicbadger/linkme:latest
+    container_name: ktz-linkme
     labels:
       - traefik.enable=true
       - traefik.http.routers.ktzme.rule=Host(`alex.ktz.me`)
       - traefik.http.routers.ktzme.entrypoints=websecure
       - traefik.http.routers.ktzme.tls.certresolver=cloudflare
-      - traefik.http.services.ktzme.loadbalancer.server.port=3000
     restart: unless-stopped
   ktz-systems:
     image: nginx
