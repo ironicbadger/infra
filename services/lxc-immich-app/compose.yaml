@@ -1,11 +1,19 @@
+configs:
+  immichframe-family-ts-serve:
+    content: |
+      { "TCP": { "443": { "HTTPS": true } },
+        "Web": { "$${TS_CERT_DOMAIN}:443": { "Handlers": { "/": { "Proxy": "http://127.0.0.1:8080" } } } },
+        "AllowFunnel": { "$${TS_CERT_DOMAIN}:443": false } }
+
 services:
   ## immich
   immich-server:
     image: ghcr.io/immich-app/immich-server:release
     container_name: immich-server
     volumes:
-      - /mnt/bigrust20/photos/alex/immich/uploads:/usr/src/app/upload
-      - /mnt/bigrust20/photos/alex/images:/mnt/bigrust20/photos/alex/images:ro
+      - /mnt/rust/photos/alex/immich/uploads:/usr/src/app/upload
+      - /mnt/rust/photos/alex/images:/mnt/rust/photos/alex/images:ro
+      - /mnt/rust/photos/mum-syno-backup/storage/photos/mum:/mnt/rust/photos/mum
       - /etc/localtime:/etc/localtime:ro
     ports:
       - 2283:2283
@@ -29,7 +37,7 @@ services:
     container_name: immich-redis
     restart: unless-stopped
   immich-database:
-    image: ghcr.io/immich-app/postgres:14-vectorchord0.3.0-pgvectors0.2.0
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0
     container_name: immich-database
     volumes:
       - "{{ appdata_path }}/databases/immich/db:/var/lib/postgresql/data"
@@ -46,4 +54,52 @@ services:
       start_period: 5m
     command: >-
       postgres -c shared_preload_libraries=vectors.so,vchord -c 'search_path="{{ immich_db_username }}", public, vectors' -c logging_collector=on -c max_wal_size=2GB -c shared_buffers=512MB -c wal_compression=on
+    restart: unless-stopped
+  immichframe:
+    container_name: immichframe
+    image: ghcr.io/immichframe/immichframe:latest
+    volumes:
+      - "{{ appdata_path }}/databases/immich/immichframe:/app/Config"
+    ports:
+      - 8080:8080
+    environment:
+      - TZ=America/New_York
+      - "ImmichServerUrl={{ immich_immich_serverurl }}"
+      - "ApiKey={{ immich_immichframe_apikey }}"
+      - "PrimaryColor=#FFFFFF"
+      - "ClockFormat=HH:mm"
+      - PhotoDateFormat=yyyy-MM-dd
+    restart: unless-stopped
+  immichframe-family:
+    container_name: immichframe-family
+    image: ghcr.io/immichframe/immichframe:latest
+    network_mode: service:immichframe-family-ts
+    environment:
+      - TZ=America/New_York
+      - "ImmichServerUrl={{ immich_immich_serverurl }}"
+      - "ApiKey={{ immich_immichframe_apikey }}"
+      - "Albums=f87c0067-2d11-4c7c-9321-12bc0969df6b"
+      - "PrimaryColor=#FFFFFF"
+      - "ClockFormat=HH:mm"
+      - PhotoDateFormat=yyyy-MM-dd
+    depends_on:
+      - immichframe-family-ts
+    restart: unless-stopped
+  immichframe-family-ts:
+    container_name: immichframe-family-ts
+    image: tailscale/tailscale:latest
+    hostname: immichframe-family
+    ports:
+      - 8081:8080
+    environment:
+      - "TS_AUTHKEY={{ immich_immichframe_family_ts_authkey }}?ephemeral=false"
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_SERVE_CONFIG=/config/serve.json
+      - TS_USERSPACE=true
+      - TS_EXTRA_ARGS=--advertise-tags=tag:family-share
+    volumes:
+      - "{{ appdata_path }}/databases/immich/immichframe/family-ts:/var/lib/tailscale"
+    configs:
+      - source: immichframe-family-ts-serve
+        target: /config/serve.json
     restart: unless-stopped

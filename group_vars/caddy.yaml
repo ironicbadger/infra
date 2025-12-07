@@ -35,6 +35,12 @@ caddy_endpoints:
       - friendly_name: immich
         fqdn: immich.wd.ktz.me
         upstream: http://10.42.0.111:2283
+      - friendly_name: immichframe
+        fqdn: immichframe.wd.ktz.me
+        upstream: http://10.42.0.111:8080
+      - friendly_name: immichframe-family
+        fqdn: immichframe-family.wd.ktz.me
+        upstream: http://10.42.0.111:8081
   - friendly_name: wildcard for *.kvm.wd.ktz.me
     fqdn: '*.kvm.wd.ktz.me'
     tls_provider: cloudflare
