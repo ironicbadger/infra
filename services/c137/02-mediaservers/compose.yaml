@@ -57,6 +57,21 @@ services:
       - "PGID={{ docker_compose_generator_gid }}"
       - "TZ={{ host_timezone }}"
     restart: unless-stopped
+  navidrome:
+    image: deluan/navidrome:latest
+    container_name: navidrome
+    user: "{{ docker_compose_generator_uid }}:{{ docker_compose_generator_gid }}"
+    volumes:
+      - "{{ appdata_path }}/mediaservers/navidrome:/data"
+      - "/mnt/rust/media/music/library:/music:ro"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.navidrome.rule=Host(`navidrome.m.wd.ktz.me`)"
+      - traefik.http.services.navidrome.loadbalancer.server.port=4533
+    environment:
+      - ND_MUSICFOLDER=/music
+      - "TZ={{ host_timezone }}"
+    restart: unless-stopped
 
   # fileflows:
   #   image: revenz/fileflows
