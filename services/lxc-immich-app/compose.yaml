@@ -78,7 +78,8 @@ services:
       - TZ=America/New_York
       - "ImmichServerUrl={{ immich_immich_serverurl }}"
       - "ApiKey={{ immich_immichframe_apikey }}"
-      - "Albums=f87c0067-2d11-4c7c-9321-12bc0969df6b"
+      #- "Albums=f87c0067-2d11-4c7c-9321-12bc0969df6b"
+      - "People=18f4bbe4-b869-4d9e-94f2-0fe9c5733fd1"
       - "PrimaryColor=#FFFFFF"
       - "ClockFormat=HH:mm"
       - PhotoDateFormat=yyyy-MM-dd

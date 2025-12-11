@@ -3,21 +3,21 @@
 #
 # Usage: docker compose -f compose.yaml -f nvidia.compose.yaml up -d
 
-services:
-  immich-machine-learning:
-    image: ghcr.io/immich-app/immich-machine-learning:release-cuda
-    container_name: immich-machine-learning
-    volumes:
-      - model-cache:/cache
-    restart: unless-stopped
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities:
-                - gpu
+# services:
+#   immich-machine-learning:
+#     image: ghcr.io/immich-app/immich-machine-learning:release-cuda
+#     container_name: immich-machine-learning
+#     volumes:
+#       - model-cache:/cache
+#     restart: unless-stopped
+#     deploy:
+#       resources:
+#         reservations:
+#           devices:
+#             - driver: nvidia
+#               count: 1
+#               capabilities:
+#                 - gpu
 
-volumes:
-  model-cache:
+# volumes:
+#   model-cache:
