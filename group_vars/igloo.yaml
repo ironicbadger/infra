@@ -1,6 +1,6 @@
 ---
 # ironicbadger.docker-compose-generator
-host_timezone: "American/New_York"
+host_timezone: "America/New_York"
 docker_compose_hostname: "igloo"
 docker_compose_generator_uid: "0"
 docker_compose_generator_gid: "0"
