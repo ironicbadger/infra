@@ -1,0 +1,37 @@
+---
+# Main tasks file for node-exporter role
+
+- name: Deploy node-exporter container
+  when: node_exporter_state == "started"
+  tags:
+    - exporters
+    - node-exporter
+  block:
+    - name: Create node-exporter container
+      community.docker.docker_container:
+        name: "{{ node_exporter_container_name }}"
+        image: "{{ node_exporter_image }}"
+        state: started
+        restart_policy: unless-stopped
+        network_mode: host
+        pid_mode: host
+        volumes:
+          - "/:/host:ro,rslave"
+          - "/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket:ro"
+        command: >-
+          --path.rootfs={{ node_exporter_rootfs_path }}
+          {% for collector in node_exporter_collectors %}
+          --collector.{{ collector }}
+          {% endfor %}
+          {% for collector in node_exporter_disabled_collectors %}
+          --no-collector.{{ collector }}
+          {% endfor %}
+
+- name: Remove node-exporter container
+  when: node_exporter_state == "absent"
+  tags:
+    - exporters
+    - node-exporter
+  community.docker.docker_container:
+    name: "{{ node_exporter_container_name }}"
+    state: absent

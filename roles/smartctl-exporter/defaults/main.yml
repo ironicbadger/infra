@@ -1,0 +1,16 @@
+---
+# smartctl-exporter role default variables
+
+# Container settings
+smartctl_exporter_image: "prometheuscommunity/smartctl-exporter:latest"
+smartctl_exporter_container_name: "smartctl-exporter"
+smartctl_exporter_port: 9633
+
+# Service state
+smartctl_exporter_state: "started"  # started, absent
+
+# Scan interval in seconds (how often to rescan for devices)
+smartctl_exporter_rescan_interval: "60s"
+
+# Device polling interval
+smartctl_exporter_scrape_interval: "60s"

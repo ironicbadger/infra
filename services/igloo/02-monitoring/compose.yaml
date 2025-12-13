@@ -1,0 +1,24 @@
+services:
+  # prometheus exporters
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    command:
+      - '--path.rootfs=/host'
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    pid: host
+    network_mode: host
+    volumes:
+      - /:/host:ro,rslave
+    restart: unless-stopped
+
+  smartctl-exporter:
+    image: prometheuscommunity/smartctl-exporter:latest
+    container_name: smartctl-exporter
+    privileged: true
+    user: root
+    ports:
+      - "9633:9633"
+    restart: unless-stopped

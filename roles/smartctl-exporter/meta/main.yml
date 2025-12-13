@@ -1,0 +1,21 @@
+---
+galaxy_info:
+  author: Alex Kretzschmar
+  description: Deploy Prometheus smartctl-exporter via Docker for SMART disk monitoring
+  license: MIT
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+        - trixie
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
+
+dependencies:
+  - role: geerlingguy.docker
+    when: ansible_facts['os_family'] == 'Debian'

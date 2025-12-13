@@ -1,0 +1,68 @@
+---
+# Monitoring configuration
+# This file is NOT encrypted - contains no secrets
+
+# Hosts to monitor (Tailscale IPs for reliable connectivity)
+# Add/remove hosts by editing this list
+monitoring_targets:
+  - name: c137
+    address: "100.107.197.66"
+    description: "Primary storage server"
+    exporters:
+      - node
+      - smartctl
+      - zrepl
+
+  - name: igloo
+    address: "100.91.74.29"
+    description: "Backup server"
+    exporters:
+      - node
+      - smartctl
+      - zrepl
+
+  - name: snowball
+    address: "100.88.250.125"
+    description: "Secondary backup"
+    exporters:
+      - node
+      - smartctl
+
+  # TODO: Add Tailscale IPs for these hosts
+  # - name: ms01
+  #   address: "100.x.x.x"
+  #   description: "Application server (Proxmox)"
+  #   exporters:
+  #     - node
+  #     - smartctl
+
+  # - name: ktz-cloud
+  #   address: "100.x.x.x"
+  #   description: "VPS"
+  #   exporters:
+  #     - node
+  #     - smartctl
+
+# Exporter ports (standard)
+exporter_ports:
+  node: 9100
+  smartctl: 9633
+  zrepl: 9811
+
+# Alert thresholds (easily tunable)
+alert_thresholds:
+  disk_usage_warning: 80
+  disk_usage_critical: 90
+  cpu_usage_warning: 90
+  memory_usage_warning: 90
+  temperature_warning: 60
+  temperature_critical: 70
+  disk_temperature_warning: 55
+  disk_temperature_critical: 65
+  zrepl_stale_hours: 2
+
+# Scrape intervals
+scrape_intervals:
+  node: "30s"
+  smartctl: "5m"
+  zrepl: "1m"

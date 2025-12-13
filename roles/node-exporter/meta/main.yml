@@ -1,0 +1,21 @@
+---
+galaxy_info:
+  author: Alex Kretzschmar
+  description: Deploy Prometheus node-exporter via Docker
+  license: MIT
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Debian
+      versions:
+        - bullseye
+        - bookworm
+        - trixie
+    - name: Ubuntu
+      versions:
+        - focal
+        - jammy
+        - noble
+
+dependencies:
+  - role: geerlingguy.docker
+    when: ansible_facts['os_family'] == 'Debian'

@@ -1,0 +1,21 @@
+---
+# node-exporter role default variables
+
+# Container settings
+node_exporter_image: "prom/node-exporter:latest"
+node_exporter_container_name: "node-exporter"
+node_exporter_port: 9100
+
+# Service state
+node_exporter_state: "started"  # started, absent
+
+# Additional collectors to enable (beyond defaults)
+node_exporter_collectors:
+  - systemd
+  - processes
+
+# Collectors to disable
+node_exporter_disabled_collectors: []
+
+# Path configuration for host filesystem access
+node_exporter_rootfs_path: "/host"

@@ -1,0 +1,31 @@
+---
+# Main tasks file for smartctl-exporter role
+
+- name: Deploy smartctl-exporter container
+  when: smartctl_exporter_state == "started"
+  tags:
+    - exporters
+    - smartctl-exporter
+  block:
+    - name: Create smartctl-exporter container
+      community.docker.docker_container:
+        name: "{{ smartctl_exporter_container_name }}"
+        image: "{{ smartctl_exporter_image }}"
+        state: started
+        restart_policy: unless-stopped
+        privileged: true
+        user: root
+        ports:
+          - "{{ smartctl_exporter_port }}:9633"
+        command: >-
+          --smartctl.rescan={{ smartctl_exporter_rescan_interval }}
+          --smartctl.scrape-interval={{ smartctl_exporter_scrape_interval }}
+
+- name: Remove smartctl-exporter container
+  when: smartctl_exporter_state == "absent"
+  tags:
+    - exporters
+    - smartctl-exporter
+  community.docker.docker_container:
+    name: "{{ smartctl_exporter_container_name }}"
+    state: absent
