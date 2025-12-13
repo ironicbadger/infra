@@ -1,0 +1,5 @@
+# SOPS configuration for infra repository
+creation_rules:
+  # Match any yaml file for encryption
+  - path_regex: \.yaml$
+    age: age1helw9qcwl8lfy8xwm5cecnn2ljxlafhlplg3dehpk7ma4l94695qmqm9zg
