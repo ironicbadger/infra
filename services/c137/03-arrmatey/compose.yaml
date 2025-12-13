@@ -106,6 +106,19 @@ services:
       - traefik.enable=true
       - "traefik.http.routers.overseerr.rule=Host(`overseerr.{{ m_wd_domain_me }}`)"
     restart: unless-stopped
+  recyclarr:
+    image: ghcr.io/recyclarr/recyclarr
+    container_name: recyclarr
+    user: "{{ docker_compose_generator_uid }}:{{ docker_compose_generator_gid }}"
+    volumes:
+      - "{{ appdata_path }}/arrmatey/recyclarr:/config"
+    environment:
+      - "TZ={{ host_timezone }}"
+      - CRON_SCHEDULE=@daily
+    depends_on:
+      - sonarr
+      - radarr
+    restart: unless-stopped
   # jellyseerr:
   #   image: fallenbagel/jellyseerr:latest
   #   container_name: jellyseerr
