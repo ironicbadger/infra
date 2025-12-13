@@ -1,7 +1,5 @@
 ---
   - hosts: caddy
-    vars_files:
-    - 'group_vars/secrets.yaml'
     roles:
       - role: ironicbadger.figurine
       - role: ironicbadger.tailscale-routes-fix
@@ -15,8 +13,6 @@
 
 ### SERVERS
   - hosts: c137
-    vars_files:
-      - 'group_vars/secrets.yaml'
     roles:
       #- role: ironicbadger.figurine
       - role: ktz-server-welcome
@@ -34,8 +30,6 @@
         tags: plex-restart
 
   - hosts: ms01
-    vars_files:
-    - 'group_vars/secrets.yaml'
     roles:
       #- role: ironicbadger.figurine
       - role: ktz-server-welcome
@@ -43,8 +37,6 @@
       - role: ironicbadger.packages
 
   - hosts: meeseeks
-    vars_files:
-    - 'group_vars/secrets.yaml'
     roles:
       #- role: ironicbadger.figurine
       - role: ktz-server-welcome
@@ -53,8 +45,6 @@
 
 ### LXCs
   - hosts: immich-app
-    vars_files:
-    - 'group_vars/secrets.yaml'
     vars:
       docker_compose_hostname: lxc-immich-app
       appdata_path: /mnt/appdata
@@ -64,8 +54,6 @@
         tags: compose
 
   - hosts: immich-ml
-    vars_files:
-    - 'group_vars/secrets.yaml'
     vars:
       docker_compose_hostname: lxc-immich-ml
     roles:
@@ -74,8 +62,6 @@
         tags: compose
 
   - hosts: ollama
-    vars_files:
-    - 'group_vars/secrets.yaml'
     vars:
       docker_compose_hostname: lxc-ollama
       appdata_path: /mnt/appdata
@@ -88,8 +74,6 @@
 # EXTERNAL
 ## vps
   - hosts: ktz-cloud
-    vars_files:
-    - 'group_vars/secrets.yaml'
     roles:
       - role: ironicbadger.docker-compose-generator
         tags: compose
@@ -97,8 +81,6 @@
 
 ## igloo
   - hosts: igloo
-    vars_files:
-    - 'group_vars/secrets.yaml'
     roles:
       - role: ironicbadger.figurine
       - role: ironicbadger.packages

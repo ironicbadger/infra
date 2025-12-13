@@ -9,6 +9,17 @@ compose HOST *V:
   ansible-playbook run.yaml --limit {{HOST}} --tags compose {{V}}
 
 ##########
+## secrets management (SOPS/age)
+
+# Edit secrets file with SOPS
+sops FILE='group_vars/secrets.sops.yaml':
+    EDITOR='code --wait' sops {{FILE}}
+
+# View decrypted secrets (read-only)
+sops-show FILE='group_vars/secrets.sops.yaml':
+    sops --decrypt {{FILE}}
+
+##########
 ## repo stuff
 
 # updates submodules
@@ -36,7 +47,3 @@ sub-add URL *NAME:
 # optionally use --force to force reinstall all requirements
 reqs *FORCE:
 	ansible-galaxy install -r requirements.yaml {{FORCE}}
-
-# just vault (encrypt/decrypt/edit)
-vault ACTION:
-    EDITOR='code --wait' ansible-vault {{ACTION}} group_vars/secrets.yaml
