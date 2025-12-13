@@ -1,0 +1,41 @@
+# Sonarr - TV Shows
+sonarr:
+  tv:
+    base_url: http://sonarr:8989
+    api_key: {{ sonarr_api_key }}
+
+    include:
+      - template: sonarr-quality-definition-series
+      - template: sonarr-v4-quality-profile-web-2160p
+      - template: sonarr-v4-custom-formats-web-2160p
+      - template: sonarr-v4-quality-profile-web-1080p
+      - template: sonarr-v4-custom-formats-web-1080p
+
+    quality_profiles:
+      # 4K TV - best available WEB quality
+      - name: WEB-2160p
+      # 1080p TV - good quality, smaller files
+      - name: WEB-1080p
+
+# Radarr - Movies
+radarr:
+  movies:
+    base_url: http://radarr:7878
+    api_key: {{ radarr_api_key }}
+
+    include:
+      - template: radarr-quality-definition-movie
+      - template: radarr-quality-profile-uhd-bluray-web
+      - template: radarr-custom-formats-uhd-bluray-web
+      - template: radarr-quality-profile-sqp-2
+      - template: radarr-custom-formats-sqp-2
+      - template: radarr-quality-profile-hd-bluray-web
+      - template: radarr-custom-formats-hd-bluray-web
+
+    quality_profiles:
+      # Best 4K quality - UHD Bluray preferred, no file size limit
+      - name: UHD Bluray + WEB
+      # Balanced 4K - good quality with reasonable file sizes
+      - name: SQP-2
+      # HD 720p/1080p - smaller files
+      - name: HD Bluray + WEB

@@ -101,6 +101,8 @@ lychee_mysql_database: ENC[AES256_GCM,data:bQt0yQKU,iv:xBPVQlt8Mjo9kZrXjAXlYHy6l
 lychee_mysql_user: ENC[AES256_GCM,data:pILBNz5z,iv:mROl8nuvacgLjV+UMy+NeV7HXjeKwvtw7QoFSar9IlI=,tag:z/vL0ujZRCGZaUo/Xod6AA==,type:str]
 #ENC[AES256_GCM,data:qUuCOqeBbKqu,iv:DObT6QhmtjyduW6PTKHBiMwg4dLz6iBxu8Oub69LqVc=,tag:QvLWpq5zDyjpwtyheYPSIg==,type:comment]
 searxng_base_url: ENC[AES256_GCM,data:y84rM6RYihHKIlipVNvqy88=,iv:BRyHvWbOzQgtLFnt7XNWliz+JmW1/I+TzLdm/W094tQ=,tag:YITR4/efzqgKFQpcRsb3Xw==,type:str]
+sonarr_api_key: ENC[AES256_GCM,data:hzEgHYTYKLK5zDTnKCZYvJGF3YqIoh6Ar3V1JLjlptQ=,iv:ovW8ebepX1CgskPhrjiBdyghPvG+gQP3t+nHEGIYKBc=,tag:pW9qJc4PkhipvNJI18ipUg==,type:str]
+radarr_api_key: ENC[AES256_GCM,data:8oXSZ8DHL75XDs5FtxyINi8eQBL8O/SUysbJTYq7pis=,iv:Nlsiv5JsOgf/qetopG6/DsHpVxAu/1r1wtTO6c5FQl0=,tag:2MlsCT7yfgxdL8tsUGEA1A==,type:str]
 sops:
     age:
         - recipient: age1helw9qcwl8lfy8xwm5cecnn2ljxlafhlplg3dehpk7ma4l94695qmqm9zg
@@ -112,7 +114,7 @@ sops:
             TWhRa0oyQzBqL1NWRmNZdWNva256VmsKJrk1FRhGN8yKcJafOkjQGkUK38Zxgs9R
             swQ97Ay/l+GPP2GKBWF5sRU/g338/FsfUSYl2DtDplCBjqKvIC/+Fg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-12-13T15:34:41Z"
-    mac: ENC[AES256_GCM,data:Y4WZKQUcmd3AQ+QRpV2UOpbcpGkNOvmHgNOaXfbrHhK6SCxdGrfwhGJGUm5eSn2IK8HrFvSxTIIruqVLr/J0rqb/KK6kEgYnK4RppxDGY3b8OK3DWGhdlpWeLB4IQAd/2W8yD+7znYPFbrict7F1NRai2uYuU+keLM/F0PVry8U=,iv:dfFdKUXohsEjZouYXBaUa6jmyT9miBLYjH5hku2lOQA=,tag:7/uuH2B5M0f95NFpWiOgAA==,type:str]
+    lastmodified: "2025-12-13T17:31:55Z"
+    mac: ENC[AES256_GCM,data:C18Y5A+Hm+oI04NrS86ZMZ66Uc1hXC6eo/aF9vrsG/ZIlfFXjQhVYmM9v3DPMWomLtR7Vx2cvV9yUZ5sl8NHQC+xbEo0bCyGHe6MyVUAgvEILldg4iveQhtqVwiTOzmLlOPVqsMv8ZUvYAnX28BMvJMEn+nK1GdNjWS27oxlA/U=,iv:aQY5IgmxBbzjYTtkB1vEq07o6X1Nhrnv2IMrRdi6P3A=,tag:RE5qrjjGZWzjIK59KH4SDQ==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0
