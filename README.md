@@ -1,6 +1,8 @@
-# infra
+# ironicbadger/infra
 
-Ansible-based infrastructure for managing self-hosted services across multiple hosts.
+We started at 100% no leaked credentials. Each time a leak has occurred the counter gets decremented by one. Oops.
+
+This repo is the living, breathing source of truth for my self-hosted infrastructure. I run everything in the open because open source matters.
 
 ## Architecture
 
