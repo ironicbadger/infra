@@ -1,0 +1,7 @@
+---
+# ironicbadger.docker-compose-generator
+host_timezone: "America/New_York"
+docker_compose_hostname: "snowball"
+docker_compose_generator_uid: "0"
+docker_compose_generator_gid: "0"
+disabled_compose_files: []
