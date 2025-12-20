@@ -12,11 +12,11 @@ compose HOST *V:
 ## secrets management (SOPS/age)
 
 # Edit secrets file with SOPS
-sops FILE='group_vars/secrets.sops.yaml':
+sops FILE='group_vars/all.sops.yaml':
     EDITOR='code --wait' sops {{FILE}}
 
 # View decrypted secrets (read-only)
-sops-show FILE='group_vars/secrets.sops.yaml':
+sops-show FILE='group_vars/all.sops.yaml':
     sops --decrypt {{FILE}}
 
 ##########

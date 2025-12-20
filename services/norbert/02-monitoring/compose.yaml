@@ -1,0 +1,29 @@
+services:
+  # monitoring
+  smokeping:
+    image: lscr.io/linuxserver/smokeping
+    container_name: smokeping
+    volumes:
+      - "{{ appdata_path }}/apps/smokeping/config:/config"
+      - "{{ appdata_path }}/apps/smokeping/data:/data"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.smokeping.rule=Host(`smokeping.{{ norbert_domain_me }}`)"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - "TZ={{ host_timezone }}"
+    dns:
+      - 1.1.1.1
+    hostname: norbert
+    restart: unless-stopped
+  librespeed:
+    image: lscr.io/linuxserver/librespeed
+    container_name: librespeed
+    labels:
+      - traefik.enable=false
+    ports:
+      - 8008:80
+    environment:
+      - MODE=standalone
+    restart: unless-stopped

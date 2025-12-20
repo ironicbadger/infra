@@ -1,0 +1,14 @@
+# ironicbadger.docker-compose-generator
+host_timezone: "Europe/London"
+docker_compose_hostname: "norbert"
+
+appdata_path: /opt/appdata
+
+docker_compose_generator_uid: "1000"
+docker_compose_generator_gid: "1000"
+docker_compose_generator_zfs_enabled: true
+
+disabled_compose_files: []
+
+# ironicbadger.tailscale-routes-fix
+tailscale_routes_fix_lan_subnet: 192.168.17.0/24

@@ -88,3 +88,12 @@
         tags: zrepl
       - role: ironicbadger.docker-compose-generator
         tags: compose
+
+## norbert
+  - hosts: norbert
+    roles:
+      - role: ironicbadger.figurine
+      - role: ironicbadger.packages
+      - role: ironicbadger.tailscale-routes-fix
+      - role: ironicbadger.docker-compose-generator
+        tags: compose
