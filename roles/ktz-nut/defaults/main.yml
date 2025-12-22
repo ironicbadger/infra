@@ -1,0 +1,21 @@
+---
+nut_mode: standalone
+
+nut_ups_name: apcups
+nut_ups_desc: "APC UPS"
+nut_ups_driver: usbhid-ups
+nut_ups_port: auto
+nut_ups_vendorid: ""
+nut_ups_productid: ""
+
+nut_upsd_port: 3493
+nut_listen_addresses:
+  - 127.0.0.1
+  - 0.0.0.0
+
+nut_run_user: nut
+nut_monitor_username: upsmon
+nut_monitor_password: ""
+nut_monitor_power_value: 1
+nut_monitor_role: master
+nut_upsmon_shutdowncmd: "/sbin/shutdown -h +0"

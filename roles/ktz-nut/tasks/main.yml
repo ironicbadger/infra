@@ -1,0 +1,91 @@
+---
+- name: Install NUT packages on Debian
+  apt:
+    name:
+      - nut
+      - nut-server
+      - nut-client
+    state: present
+    update_cache: true
+  when: ansible_os_family == "Debian"
+
+- name: Collect service facts
+  service_facts:
+
+- name: Select NUT driver unit name
+  set_fact:
+    nut_driver_unit: >-
+      {{
+        ('nut-driver.service' in ansible_facts.services) | ternary(
+          'nut-driver',
+          ('nut-driver.target' in ansible_facts.services) | ternary(
+            'nut-driver.target',
+            ('nut-driver@.service' in ansible_facts.services) | ternary(
+              'nut-driver@' ~ nut_ups_name,
+              ''
+            )
+          )
+        )
+      }}
+
+- name: Ensure NUT monitor password is set
+  assert:
+    that:
+      - nut_monitor_password | length > 0
+    fail_msg: "Set nut_monitor_password (e.g., vault_nut_monitor_password) before applying."
+
+- name: Configure NUT mode
+  template:
+    src: nut.conf.j2
+    dest: /etc/nut/nut.conf
+    owner: root
+    group: nut
+    mode: "0640"
+  notify: restart nut services
+
+- name: Configure UPS definition
+  template:
+    src: ups.conf.j2
+    dest: /etc/nut/ups.conf
+    owner: root
+    group: nut
+    mode: "0640"
+  notify: restart nut services
+
+- name: Configure upsd listener
+  template:
+    src: upsd.conf.j2
+    dest: /etc/nut/upsd.conf
+    owner: root
+    group: nut
+    mode: "0640"
+  notify: restart nut services
+
+- name: Configure upsd users
+  template:
+    src: upsd.users.j2
+    dest: /etc/nut/upsd.users
+    owner: root
+    group: nut
+    mode: "0640"
+  notify: restart nut services
+
+- name: Configure upsmon
+  template:
+    src: upsmon.conf.j2
+    dest: /etc/nut/upsmon.conf
+    owner: root
+    group: nut
+    mode: "0640"
+  notify: restart nut services
+
+- name: Enable and start NUT services
+  systemd:
+    name: "{{ item | trim }}"
+    enabled: true
+    state: started
+  loop:
+    - nut-server
+    - nut-monitor
+    - "{{ nut_driver_unit }}"
+  when: item | trim | length > 0

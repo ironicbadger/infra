@@ -1,0 +1,10 @@
+[{{ nut_ups_name }}]
+  driver = {{ nut_ups_driver }}
+  port = {{ nut_ups_port }}
+  desc = "{{ nut_ups_desc }}"
+{% if nut_ups_vendorid %}
+  vendorid = {{ nut_ups_vendorid }}
+{% endif %}
+{% if nut_ups_productid %}
+  productid = {{ nut_ups_productid }}
+{% endif %}

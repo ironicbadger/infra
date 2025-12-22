@@ -95,5 +95,6 @@
       - role: ironicbadger.figurine
       - role: ironicbadger.packages
       - role: ironicbadger.tailscale-routes-fix
+      - role: ktz-nut
       - role: ironicbadger.docker-compose-generator
         tags: compose

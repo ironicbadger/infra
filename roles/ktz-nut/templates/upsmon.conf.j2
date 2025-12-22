@@ -1,0 +1,9 @@
+RUN_AS_USER {{ nut_run_user }}
+MONITOR {{ nut_ups_name }}@localhost {{ nut_monitor_power_value }} {{ nut_monitor_username }} {{ nut_monitor_password }} {{ nut_monitor_role }}
+MINSUPPLIES 1
+SHUTDOWNCMD "{{ nut_upsmon_shutdowncmd }}"
+POLLFREQ 5
+POLLFREQALERT 5
+HOSTSYNC 15
+DEADTIME 15
+POWERDOWNFLAG /etc/killpower
