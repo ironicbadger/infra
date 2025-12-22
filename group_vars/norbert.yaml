@@ -6,9 +6,24 @@ appdata_path: /opt/appdata
 
 docker_compose_generator_uid: "1000"
 docker_compose_generator_gid: "1000"
-docker_compose_generator_zfs_enabled: true
+docker_compose_generator_zfs_enabled: false
 
 disabled_compose_files: []
 
 # ironicbadger.tailscale-routes-fix
 tailscale_routes_fix_lan_subnet: 192.168.17.0/24
+
+# ktz-nut
+nut_ups_name: apcups
+nut_ups_desc: "APC UPS (USB)"
+nut_ups_driver: usbhid-ups
+nut_ups_port: auto
+nut_monitor_username: upsmon
+nut_monitor_password: "{{ vault_nut_monitor_password }}"
+nut_listen_addresses:
+  - 0.0.0.0
+
+# grafana
+grafana_oidc_client_id: "{{ vault_grafana_oidc_client_id }}"
+grafana_oidc_client_secret: "{{ vault_grafana_oidc_client_secret }}"
+grafana_admin_password: "{{ vault_grafana_admin_password }}"

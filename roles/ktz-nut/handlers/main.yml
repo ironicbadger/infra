@@ -1,0 +1,10 @@
+---
+- name: restart nut services
+  systemd:
+    name: "{{ item | trim }}"
+    state: restarted
+  loop:
+    - nut-server
+    - nut-monitor
+    - "{{ nut_driver_unit | default('') }}"
+  when: item | trim | length > 0

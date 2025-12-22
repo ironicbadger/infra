@@ -1,0 +1,3 @@
+{% for address in nut_listen_addresses %}
+LISTEN {{ address }} {{ nut_upsd_port }}
+{% endfor %}
