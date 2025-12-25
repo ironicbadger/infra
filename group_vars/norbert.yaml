@@ -23,6 +23,11 @@ nut_monitor_password: "{{ vault_nut_monitor_password }}"
 nut_listen_addresses:
   - 0.0.0.0
 
+# unifi (unpoller)
+unifi_nor_controller_url: "https://192.168.17.1"
+unifi_nor_controller_site: "default"
+unifi_nor_controller_verify_ssl: "false"
+
 # grafana
 grafana_oidc_client_id: "{{ vault_grafana_oidc_client_id }}"
 grafana_oidc_client_secret: "{{ vault_grafana_oidc_client_secret }}"

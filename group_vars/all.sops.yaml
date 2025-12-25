@@ -108,6 +108,8 @@ vault_grafana_admin_password: ENC[AES256_GCM,data:fk/3vYAoAfy7+eDc8BGGzJc/EjCQ3H
 vault_nut_monitor_password: ENC[AES256_GCM,data:JCm8LVj1GpQAIUOGVq0BmFCKwtDFclVDxt7S3rlRQp2iLCpJ/YFZ3z+0s54Ay2/o,iv:U5zrXYkjNFkFIs54P491Afx0ds+9FZNHOzaolQsydRo=,tag:CsTImO4MGRJdD2CnO6tdtw==,type:str]
 vault_grafana_oidc_client_id: ENC[AES256_GCM,data:qkI8obKlC4trniSAfCf7tGAwbmspwaGpABu2nyC10f0=,iv:O2ig0aaDvrb32sRLJtKZMOvP/t+VK9T+bD6t+CB87qA=,tag:ixi6O4eF1Wnnl9dmMIprfA==,type:str]
 vault_grafana_oidc_client_secret: ENC[AES256_GCM,data:3BswhAy6pBJcoDjRy2NiOKviFOxtruxHmqiCdgCoJb4TgQpIlxzKoansHMU/HwSK9x/B8Na8cAlnuqlB/IA54A==,iv:dAbdSirGnYsQuO10Mg4gzlMk5QsuFFX4bkfKlOUPR40=,tag:Qre0rMMYPsGlhF33XUgObA==,type:str]
+unifi_nor_controller_username: ENC[AES256_GCM,data:3Um+BldaEV5zHTs=,iv:tLOxfZUrl12bVKc0T7Vzy9EmLiJB1O9mrwSAVuvWHHw=,tag:hFF4dMaRlK2zHZhuTe07bA==,type:str]
+unifi_nor_controller_password: ENC[AES256_GCM,data:L9axf03I66k3+S2bigt9zZHDhFE=,iv:eo1vcE1WOA6mh5fkQFmv0S0wkDVQ1U95pfC/S0FGRno=,tag:JdpQmK09RyFKb1OYr1Km8A==,type:str]
 sops:
     age:
         - recipient: age1helw9qcwl8lfy8xwm5cecnn2ljxlafhlplg3dehpk7ma4l94695qmqm9zg
@@ -119,7 +121,7 @@ sops:
             TWhRa0oyQzBqL1NWRmNZdWNva256VmsKJrk1FRhGN8yKcJafOkjQGkUK38Zxgs9R
             swQ97Ay/l+GPP2GKBWF5sRU/g338/FsfUSYl2DtDplCBjqKvIC/+Fg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-12-22T00:25:55Z"
-    mac: ENC[AES256_GCM,data:X+CgZzOA/50fUPX12uc/PNe1Pnr3TpCD3ZR/ZtfSDm+qlI3SnNbYMYl6HC6+WC2xL0n2bj7242lo0ZfB+1rBhbf4f5JAh4lklh8MdJwLar0aL0AGYdVjzN1SfYnbo92cACWiar1r/y3SRpCXommy7/Q1YVxa0Zr4uBy+3uTSliw=,iv:pY4CDbDSE/P0v8Vb4ocVSqqwbW85OzdWcUZOC12IkbU=,tag:Kxhu5ld/ochdaCQ6ndb1cw==,type:str]
+    lastmodified: "2025-12-22T18:07:54Z"
+    mac: ENC[AES256_GCM,data:aHAV08e7lhyWSA1qSmJdvI5Usk9JUeQiLWb9dWwO3dOIujPBzK7/UOrbv/8KiwEhzg1hnBzkEE0npNR25xYYYgNJ0hXOIOCUnVOkEGXN8k9qCl4+1Qzrt8ePQfxvxEIM24JhsbjaliY6GiQj8c5Xun+YuJfLWaoC8o2HzqYaxuI=,iv:lLVDAh7pDONOnA+F92LU4nXmxwKoAUzgOEx+FAaPchM=,tag:DaaErTu4e1CwCzYtceilGQ==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0

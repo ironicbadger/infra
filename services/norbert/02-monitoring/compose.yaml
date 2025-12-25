@@ -52,6 +52,17 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     restart: unless-stopped
+  unpoller:
+    image: ghcr.io/unpoller/unpoller:latest
+    container_name: unpoller
+    environment:
+      - "UP_UNIFI_DEFAULT_URL={{ unifi_nor_controller_url }}"
+      - "UP_UNIFI_DEFAULT_USER={{ unifi_nor_controller_username }}"
+      - "UP_UNIFI_DEFAULT_PASS={{ unifi_nor_controller_password }}"
+      - "UP_UNIFI_DEFAULT_SITE={{ unifi_nor_controller_site }}"
+      - "UP_UNIFI_DEFAULT_VERIFY_SSL={{ unifi_nor_controller_verify_ssl }}"
+      - "UP_INFLUXDB_DISABLE=true"
+    restart: unless-stopped
   grafana:
     image: grafana/grafana-oss:latest
     container_name: grafana
@@ -75,6 +86,7 @@ services:
       - GF_AUTH_GENERIC_OAUTH_API_URL=https://idp.ktz.ts.net/userinfo
       - GF_AUTH_GENERIC_OAUTH_ALLOW_SIGN_UP=true
       - GF_AUTH_GENERIC_OAUTH_USE_PKCE=true
+      - GF_USERS_AUTO_ASSIGN_ORG_ROLE=Editor
       - "GF_SECURITY_ADMIN_PASSWORD={{ grafana_admin_password }}"
     user: "{{ docker_compose_generator_uid }}:{{ docker_compose_generator_gid }}"
     restart: unless-stopped

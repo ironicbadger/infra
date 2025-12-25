@@ -12,3 +12,7 @@ scrape_configs:
     static_configs:
       - targets:
           - nut-exporter:9199
+  - job_name: unifi
+    static_configs:
+      - targets:
+          - unpoller:9130
