@@ -19,7 +19,7 @@
     - name: Assert expected IPv4 is present
       ansible.builtin.assert:
         that:
-          - expected_ip_cidr in ip_addr.stdout
+          - ip_addr.stdout is search(expected_ip_cidr)
         fail_msg: "Expected {{ expected_ip_cidr }} on {{ core_network_interface }}"
 
     - name: Check default route
@@ -30,7 +30,7 @@
     - name: Assert default gateway
       ansible.builtin.assert:
         that:
-          - "default via {{ core_ipv4_gateway }}" in default_route.stdout
+          - default_route.stdout is search("default via " ~ core_ipv4_gateway)
         fail_msg: "Expected default gateway {{ core_ipv4_gateway }}"
 
     - name: Read resolv.conf
@@ -41,7 +41,7 @@
     - name: Assert resolv.conf has expected nameservers
       ansible.builtin.assert:
         that:
-          - "nameserver {{ item }}" in resolv_conf.stdout
+          - resolv_conf.stdout is search("nameserver " ~ item)
         fail_msg: "Missing nameserver {{ item }} in /etc/resolv.conf"
       loop: "{{ core_dns_servers }}"
 
@@ -51,12 +51,17 @@
       register: networkd_conf
       when: network_backend == "networkd"
 
+    - name: Set decoded systemd-networkd config
+      ansible.builtin.set_fact:
+        networkd_conf_text: "{{ networkd_conf.content | b64decode }}"
+      when: network_backend == "networkd"
+
     - name: Assert systemd-networkd config matches
       ansible.builtin.assert:
         that:
-          - "Address={{ core_ipv4_address }}/{{ core_ipv4_prefix }}" in (networkd_conf.content | b64decode)
-          - "Gateway={{ core_ipv4_gateway }}" in (networkd_conf.content | b64decode)
-          - "DNS={{ core_dns_servers | join(' ') }}" in (networkd_conf.content | b64decode)
+          - networkd_conf_text is search("Address=" ~ core_ipv4_address ~ "/" ~ core_ipv4_prefix)
+          - networkd_conf_text is search("Gateway=" ~ core_ipv4_gateway)
+          - networkd_conf_text is search("DNS=" ~ (core_dns_servers | join(' ')))
         fail_msg: "systemd-networkd config does not match expected values"
       when: network_backend == "networkd"
 
@@ -69,6 +74,6 @@
     - name: Assert NetworkManager connection present
       ansible.builtin.assert:
         that:
-          - network_nm_connection_name in nm_connections.stdout_lines
-        fail_msg: "Expected NetworkManager connection {{ network_nm_connection_name }}"
+          - (network_nm_connection_name | default("core-static")) in nm_connections.stdout_lines
+        fail_msg: "Expected NetworkManager connection {{ network_nm_connection_name | default('core-static') }}"
       when: network_backend == "networkmanager"
