@@ -1,0 +1,13 @@
+---
+figurine_download_latest_ver: true  # Change to 'false' to pin to a specific version
+figurine_pinned_ver: 1.2.0  # Overriden by 'figurine_download_latest_ver' variable
+
+figurine_install_login_script: true
+figurine_font: "3d.flf"
+
+figurine_system_bin_path: /usr/local/bin
+figurine_binary_path: "{{ figurine_system_bin_path }}/figurine"
+figurine_arch: amd64
+
+figurine_gh_url: https://github.com/arsham/figurine/releases/download
+figurine_download_directory: "/tmp/figurine"

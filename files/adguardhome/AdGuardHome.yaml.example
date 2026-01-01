@@ -1,0 +1,2 @@
+# Export a working AdGuard Home config and place it here.
+# Then set inventory/group_vars/core.yaml: adguard_config_src to point at this file.

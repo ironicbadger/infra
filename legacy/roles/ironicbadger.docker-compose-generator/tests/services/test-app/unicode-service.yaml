@@ -1,0 +1,16 @@
+configs:
+  unicode-config:
+    content: |
+      {"description": "日本語テスト", "emoji": "🚀", "café": "latté"}
+
+services:
+  unicode-service:
+    image: alpine:latest
+    container_name: unicode-service
+    labels:
+      - "description=Service with unicode: 日本語"
+      - "emoji=🎉"
+    environment:
+      - "GREETING=Héllo Wörld"
+      - "JAPANESE=こんにちは"
+    restart: unless-stopped

@@ -1,0 +1,16 @@
+---
+network_backend: ""
+
+network_unit_paths:
+  - /etc/systemd/system
+  - /lib/systemd/system
+  - /usr/lib/systemd/system
+
+network_disable_services_networkd:
+  - dhcpcd.service
+
+network_disable_services_networkmanager:
+  - dhcpcd.service
+
+network_nm_connection_name: "core-static"
+network_nm_autoconnect_priority: 100

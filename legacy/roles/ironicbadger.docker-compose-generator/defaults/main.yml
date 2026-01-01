@@ -1,0 +1,5 @@
+---
+docker_compose_generator_output_path: "~"
+docker_compose_generator_uid: "1000"
+docker_compose_generator_gid: "1000"
+services_directory: "{{ playbook_dir }}/services/"

@@ -1,0 +1,6 @@
+---
+caddy_amd64_linux_binary_url: "https://caddyserver.com/api/download?os=linux&arch=amd64&p=github.com%2Fcaddy-dns%2Fcloudflare"
+caddy_binary_path: /usr/local/bin/caddy
+caddyfile_path: /etc/caddy
+caddy_user: caddy
+caddy_group: caddy

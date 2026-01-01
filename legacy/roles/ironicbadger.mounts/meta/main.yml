@@ -1,0 +1,30 @@
+---
+galaxy_info:
+  author: IB Team
+  description: Role to manage drive mounts on Debian systems
+  company: IB
+
+  # If the issue tracker for your role is not on github, uncomment the
+  # next line and provide a value
+  # issue_tracker_url: http://example.com/issue/tracker
+
+  license: MIT
+
+  min_ansible_version: "2.9"
+
+  # Platforms supported by this role
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+
+  galaxy_tags:
+    - system
+    - filesystem
+    - mount
+    - fstab
+
+dependencies: []

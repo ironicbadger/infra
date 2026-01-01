@@ -1,0 +1,64 @@
+## {{ ansible_managed }}
+{% if caddy_tls_providers is defined %}
+{% for item in caddy_tls_providers %}
+
+({{ item.provider }}) {
+    tls {
+        {{ item.challenge_type }} {{ item.provider }} {{ item.provider_api_token }}
+{% if item.resolver is defined %}
+        resolvers {{ item.resolver_ip }}
+{% endif %}
+    }
+}
+{% endfor %}
+{% endif %}
+
+{% if caddy_endpoints is defined %}
+{% for endpoint in caddy_endpoints %}
+
+# {{ endpoint.friendly_name }}
+{% if endpoint.fqdn.startswith("*") %}
+{{ endpoint.fqdn }} {
+    import {{ endpoint.tls_provider }}
+
+{% if endpoint.wildcard_endpoints is defined %}
+{% for wildcard_endpoint in endpoint.wildcard_endpoints %}
+    @{{ ( wildcard_endpoint.fqdn | split(".") )[0] }} host {{ wildcard_endpoint.fqdn }}
+    handle @{{ ( wildcard_endpoint.fqdn | split(".") )[0] }} {
+{% if wildcard_endpoint.tls_insecure | default(false) %}
+        reverse_proxy {{ wildcard_endpoint.upstream }} {
+            transport http {
+                tls_insecure_skip_verify
+            }
+        }
+    }
+{% else %}
+        reverse_proxy {{ wildcard_endpoint.upstream }}
+    }
+{% endif %}
+{% endfor %}
+{% endif %}
+    # Fallback for otherwise unhandled domains
+    handle {
+        abort
+    }
+}
+{% else %}
+{% if endpoint.tls_insecure | default(false) %}
+{{ endpoint.fqdn }} {
+    reverse_proxy {{ endpoint.upstream }} {
+        transport http {
+            tls_insecure_skip_verify
+        }
+    }
+    import {{ endpoint.tls_provider }}
+}
+{% else %}
+{{ endpoint.fqdn }} {
+    reverse_proxy {{ endpoint.upstream }}
+    import {{ endpoint.tls_provider }}
+}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endif %}

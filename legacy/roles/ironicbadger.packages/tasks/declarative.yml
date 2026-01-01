@@ -1,0 +1,51 @@
+---
+
+# Read the current packages state file if it exists
+- name: Check if package state file exists
+  stat:
+    path: "{{ packages_state_file }}"
+  register: state_file_check
+
+- name: Read previously installed packages
+  slurp:
+    src: "{{ packages_state_file }}"
+  register: previous_packages_b64
+  when: state_file_check.stat.exists | default(false)
+
+- name: Set previously installed packages
+  set_fact:
+    previously_installed_packages: "{{ (previous_packages_b64.content | b64decode).splitlines() | list if previous_packages_b64.content | default('') else [] }}"
+  when: state_file_check.stat.exists | default(false)
+
+- name: Set previously installed packages to empty list if file doesn't exist
+  set_fact:
+    previously_installed_packages: []
+  when: not (state_file_check.stat.exists | default(false))
+
+# Set current packages list
+- name: Set current packages list
+  set_fact:
+    current_package_list: "{{ package_list }}"
+
+# Determine packages to remove (cleanup)
+- name: Identify packages to remove
+  set_fact:
+    packages_to_remove: "{{ previously_installed_packages | difference(current_package_list) }}"
+
+# Remove packages not in the desired state (cleanup)
+- name: Remove packages
+  apt:
+    name: "{{ packages_to_remove }}"
+    state: absent
+  when: 
+    - packages_perform_cleanup | bool
+    - packages_to_remove | length > 0
+    - packages_to_remove[0] != ""
+
+# Store the current package list in the state file
+- name: Write current package list to state file
+  copy:
+    content: "{{ current_package_list | join('\n') }}\n"
+    dest: "{{ packages_state_file }}"
+    mode: '0600'
+  when: current_package_list | length > 0 and current_package_list[0] != ""

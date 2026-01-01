@@ -1,0 +1,77 @@
+---
+
+## check if installed and get latest version
+- name: check if figurine is installed already
+  stat:
+    path: "{{ figurine_binary_path }}"
+  register: binary_exists
+
+- name: set fact if installed
+  set_fact:
+    figurine_is_installed: "{{ binary_exists.stat.exists }}"
+
+- name: check figurine version
+  shell: "{{ figurine_binary_path }} version | awk '{ print $3 }' | cut -c 2-"
+  changed_when: false
+  register: installed_version_registered
+  when: figurine_is_installed == True
+  check_mode: false
+
+- name: get latest release
+  uri:
+    url: https://api.github.com/repos/arsham/figurine/releases/latest
+    return_content: true
+  register: release_version_registered
+  when: figurine_download_latest_ver == True
+  check_mode: false
+
+- name: set figurine version (latest)
+  set_fact:
+    figurine_ver: "{{ release_version_registered.json.tag_name|regex_replace('v') }}"
+  when: figurine_download_latest_ver == True
+
+- name: set figurine version (pinned)
+  set_fact:
+    figurine_ver: "{{ figurine_pinned_ver }}"
+  when: figurine_download_latest_ver == False
+
+## install
+- block:
+    - name: Set Arch
+      vars:
+        arch_lut:
+          aarch64: arm64
+          armv6l: arm
+          armv7l: arm
+          x86_64: amd64
+      set_fact:
+        arch: "{{ arch_lut[ansible_architecture] | default(ansible_architecture) }}"
+
+    ## v1.2.1 changed naming scheme
+    - name: Set Download URL for v < 1.2.1
+      set_fact:
+        figurine_pkg_path: "v{{ figurine_ver }}/figurine_linux_v{{ figurine_ver }}.tar.gz"
+      when: figurine_ver is version('1.2.1', '<')
+
+    - name: Set Download URL for v > 1.2.0
+      set_fact:
+        figurine_pkg_path: "v{{ figurine_ver }}/figurine_linux_{{ arch }}_v{{ figurine_ver }}.tar.gz"
+      when: figurine_ver is version('1.2.0', '>')
+    
+    - name: Extract figurine download into install path
+      unarchive:
+        remote_src: true
+        src: "{{ figurine_gh_url }}/{{ figurine_pkg_path }}"
+        #src: "figurine_linux_v{{ figurine_ver }}.tar.gz"
+        dest: "{{ figurine_system_bin_path }}"
+        extra_opts: [--strip-components=1]
+
+  when: figurine_is_installed == False or ( figurine_is_installed == True and figurine_download_latest_ver == True and installed_version_registered.stdout != figurine_ver ) or ( figurine_is_installed == True and figurine_download_latest_ver == False and installed_version_registered.stdout != figurine_pinned_ver )
+
+
+## configurine
+- name: configure login
+  template:
+    src: figurine.sh.j2
+    dest: /etc/profile.d/figurine.sh
+  when: figurine_install_login_script

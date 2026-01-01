@@ -1,0 +1,30 @@
+---
+# tasks file for ansible-role-drivemounts
+
+- name: Install mergerfs if needed
+  ansible.builtin.package:
+    name: mergerfs
+    state: present
+  when: drive_mounts | selectattr('fstype', 'eq', 'mergerfs') | list | count > 0
+
+- name: Ensure mount directories exist
+  ansible.builtin.file:
+    path: "{{ item.mountpoint }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ drive_mounts }}"
+  loop_control:
+    label: "{{ item.mountpoint }}"
+  when: drive_mounts is defined
+
+- name: Configure drives in fstab
+  ansible.builtin.mount:
+    path: "{{ item.mountpoint }}"
+    src: "{{ item.device }}"
+    fstype: "{{ item.fstype }}"
+    opts: "{{ item.options | default(['defaults']) | join(',') }}"
+    state: "{{ (automount_drives | bool) | ternary('mounted', 'present') }}"
+  loop: "{{ drive_mounts }}"
+  loop_control:
+    label: "{{ item.mountpoint }}"
+  when: drive_mounts is defined

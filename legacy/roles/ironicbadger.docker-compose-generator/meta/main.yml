@@ -1,0 +1,46 @@
+---
+galaxy_info:
+  role_name: docker_compose_generator
+  author: Alex Kretzschmar
+  description: Create a docker-compose.yml file
+  issue_tracker_url: https://github.com/ironicbadger/ansible-role-create-users/issues
+  license: GPLv2
+  min_ansible_version: 2.4
+  platforms:
+  - name: EL
+    versions:
+    - all
+  - name: GenericUNIX
+    versions:
+    - all
+    - any
+  - name: Fedora
+    versions:
+    - all
+  - name: opensuse
+    versions:
+    - all
+  - name: Amazon
+    versions:
+    - all
+  - name: GenericBSD
+    versions:
+    - all
+    - any
+  - name: FreeBSD
+    versions:
+    - all
+  - name: Ubuntu
+    versions:
+    - all
+  - name: SLES
+    versions:
+    - all
+  - name: GenericLinux
+    versions:
+    - all
+    - any
+  - name: Debian
+    versions:
+    - all
+dependencies: []

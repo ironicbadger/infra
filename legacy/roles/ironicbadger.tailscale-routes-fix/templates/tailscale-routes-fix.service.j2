@@ -1,0 +1,11 @@
+[Unit]
+Description=Add custom IP rule at boot for Tailscale
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/ip rule add to {{ tailscale_routes_fix_lan_subnet }} priority 2500 lookup {{ tailscale_routes_table }}
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

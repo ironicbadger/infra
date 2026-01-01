@@ -1,0 +1,13 @@
+---
+
+- name: update yum packages
+  yum:
+    name: '*'
+    state: latest
+    update_cache: yes
+  when: full_update_apt_packages
+
+- name: install listed packages
+  yum:
+    name: "{{ redhat_package_list }}"
+    state: latest

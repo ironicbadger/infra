@@ -1,0 +1,33 @@
+---
+
+- name: download latest release
+  get_url:
+    url: "{{ caddy_amd64_linux_binary_url }}"
+    dest: "{{ caddy_binary_path }}"
+    owner: root
+    group: root
+    mode: a+x
+  ignore_errors: true
+
+- name: add caddy group
+  ansible.builtin.group:
+    name: "{{ caddy_group }}"
+
+- name: Add the caddy user
+  ansible.builtin.user:
+    name: "{{ caddy_user }}"
+    group: "{{ caddy_group }}"
+
+- name: install caddy systemd service
+  template:
+    src: caddy.service.j2
+    dest: /etc/systemd/system/caddy.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: restart caddy service
+  ansible.builtin.systemd:
+    name: caddy
+    daemon_reload: true
+    enabled: yes

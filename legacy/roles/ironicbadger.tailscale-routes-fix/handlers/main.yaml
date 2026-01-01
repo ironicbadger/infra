@@ -1,0 +1,7 @@
+---
+
+- name: start and enable tailscale routes fix service
+  service:
+    name: tailscale-routes-fix
+    state: started
+    enabled: yes

@@ -1,92 +1,30 @@
-# ironicbadger/infra
+# infra (core rebuild)
 
-We started at 100% no leaked credentials. Each time a leak has occurred the counter gets decremented by one. Oops.
+This repo is the clean-slate core infrastructure rebuild, aligned with `plan.md`.
 
-This repo is the living, breathing source of truth for my self-hosted infrastructure. I run everything in the open because open source matters.
+Focus: **edge DNS + VIP** on the core nodes (Zimaboard + Pi 5) with boring, reproducible Ansible.
 
-## Architecture
+## Layout
 
-```mermaid
-%%{init: {"theme": "base", "themeVariables": {
-    "fontFamily": "monospace",
-    "primaryColor": "#5a5a5a",
-    "primaryTextColor": "#e8e8e8",
-    "primaryBorderColor": "#707070",
-    "lineColor": "#d4782c",
-    "secondaryColor": "#4a4a4a",
-    "tertiaryColor": "#3a3a3a",
-    "background": "#3a3a3a",
-    "mainBkg": "#4a4a4a",
-    "secondBkg": "#5a5a5a",
-    "textColor": "#e8e8e8"
-}, "flowchart": {"curve": "basis"}, "themeCSS": ".edge-pattern-dotted { stroke-width: 2px !important; } .flowchart-link { stroke-width: 2px !important; } .edgeLabel { font-size: 14px; background: #2a2a2a; }"}}%%
-flowchart LR
-    subgraph home["Home 🇺🇸"]
-        direction TB
-        c137["c137<br/>media/storage server<br/>zpool: rust (164TB)"]
-        ms01["ms01<br/>app Server<br/>Caddy, DNS, Home Assistant"]
-    end
+- `inventory/` - hosts and vars
+- `playbooks/` - playbooks for core nodes
+- `roles/` - minimal, local roles (network, chrony, adguard, keepalived)
+- `files/` - declarative config artifacts (AdGuard Home)
+- `legacy/` - previous repo structure, preserved for reference
 
-    subgraph offsite["Off-site"]
-        direction TB
-        ktz-cloud["ktz-cloud<br/>VPS 🇺🇸"]
-        igloo["igloo - Canada 🇨🇦<br/>zpool: tank (62TB)"]
-        snowball["snowball - UK 🇬🇧"]
-    end
+## Quick start
 
-    c137 -.->|"zrepl via tailscale"| igloo
-    c137 -.->|"zrepl via tailscale"| snowball
-    c137 <-.->|"zrepl via tailscale"| ktz-cloud
-```
-
-## Technologies
-
-- **Ansible** - Configuration management
-- **Docker Compose** - Container orchestration (via `docker-compose-generator`)
-- **SOPS + age** - Secret encryption
-- **Tailscale** - Mesh VPN
-- **ZFS + zrepl** - Storage and replication
-- **Just** - Task runner
-
-## Roles Philosophy
-
-Roles are sourced three ways:
-
-| Type | Location | Purpose |
-|------|----------|---------|
-| **Submodules** | `roles/ironicbadger.*` | Reusable roles maintained in separate repos. Pinned to specific commits. |
-| **Galaxy** | `requirements.yaml` | Community roles (e.g., `geerlingguy.docker`). Installed via `just reqs`. |
-| **Local** | `roles/<name>` | Project-specific roles not useful elsewhere (e.g., `zrepl`, `ktz-server-welcome`). |
-
-## Prerequisites
-
-- Ansible
-- SOPS with age keyfile at `~/.config/sops/age/keys.txt`
-- SSH access to target hosts
-
-## Usage
+1) Update `inventory/hosts.ini` with hostnames/IPs.
+2) Set variables in `inventory/group_vars/core.yaml` and per-host files in `inventory/host_vars/`.
+3) Copy `files/adguardhome/AdGuardHome.yaml.example` to `files/adguardhome/AdGuardHome.yaml`, replace it with your exported AdGuard config, then set `adguard_config_src` in `inventory/group_vars/core.yaml`.
+4) Run the playbook:
 
 ```bash
-just reqs              # Install galaxy dependencies
-just run <host> <tags> # Run playbook on host
-just compose <host>    # Deploy docker-compose services
-just sops <file>       # Edit encrypted secrets
-just sub-update        # Update git submodules
+just core <host>        # apply to a single host
+just core-all           # apply to all core nodes
 ```
 
-## Structure
+## Notes
 
-```
-├── run.yaml              # Main playbook
-├── hosts.ini             # Inventory
-├── justfile              # Task automation
-├── group_vars/           # Variables (some SOPS encrypted)
-├── roles/                # Ansible roles
-└── services/             # Docker Compose configs per host
-    └── <hostname>/
-        └── <##-category>/
-            ├── compose.yaml
-            └── config-<app>/
-```
-
-Services are organized under `services/<hostname>/<##-category>/`. The `docker-compose-generator` role merges these into a single compose file on deployment.
+- The VIP is health-gated on the AdGuard service.
+- DNS config is treated as a deployed artifact.

@@ -1,0 +1,11 @@
+---
+
+package_list:
+  - ""
+
+full_update_apt_packages: False
+
+# Declarative mode settings
+packages_declarative_mode: True
+packages_perform_cleanup: False
+packages_state_file: "/root/.installed-packages.txt"

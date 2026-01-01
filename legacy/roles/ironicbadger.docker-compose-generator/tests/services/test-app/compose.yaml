@@ -1,0 +1,54 @@
+configs:
+  test-config:
+    content: |
+      {"key": "value"}
+  another-config:
+    file: ./config.json
+
+networks:
+  test-network:
+    driver: bridge
+  backend:
+    external: true
+
+volumes:
+  test-volume:
+    driver: local
+  data-volume:
+    driver_opts:
+      type: nfs
+      o: addr=10.0.0.1,rw
+      device: ":/path/to/dir"
+
+secrets:
+  test-secret:
+    file: ./secret.txt
+  db-password:
+    external: true
+
+services:
+  test-service:
+    image: nginx:latest
+    container_name: test-service
+    ports:
+      - "8080:80"
+    environment:
+      - FOO=bar
+    volumes:
+      - test-volume:/data
+    networks:
+      - test-network
+    configs:
+      - source: test-config
+        target: /etc/config.json
+    secrets:
+      - test-secret
+    restart: unless-stopped
+  another-service:
+    image: redis:latest
+    container_name: another-service
+    networks:
+      - backend
+    volumes:
+      - data-volume:/data
+    restart: unless-stopped

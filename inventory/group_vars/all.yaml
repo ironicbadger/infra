@@ -1,0 +1,8 @@
+---
+base_timezone: "America/New_York"
+
+base_packages:
+  - ca-certificates
+  - curl
+  - sudo
+  - vim

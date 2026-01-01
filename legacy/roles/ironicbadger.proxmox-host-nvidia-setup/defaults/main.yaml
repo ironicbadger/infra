@@ -1,0 +1,28 @@
+---
+# NVIDIA driver version (if not auto-detecting latest)
+nvidia_driver_version: "570.124.04"
+
+# Whether to auto-detect latest driver
+nvidia_auto_detect_latest: true
+
+# Proxmox-specific settings
+proxmox_headers_package: "proxmox-headers-{{ ansible_kernel }}"
+
+# Installation directories and paths
+temp_dir: "/tmp/nvidia_install"
+
+# Device paths (rarely need to change these)
+nvidia_device_paths:
+  - "/dev/nvidia0"
+  - "/dev/nvidiactl"
+  - "/dev/nvidia-modeset"
+  - "/dev/nvidia-uvm"
+  - "/dev/nvidia-uvm-tools"
+  - "/dev/nvidia-caps/nvidia-cap1"
+  - "/dev/nvidia-caps/nvidia-cap2"
+
+# Device paths for special purposes (rendering/display)
+nvidia_dri_device_paths:
+  - "/dev/dri/card0"
+  - "/dev/dri/card1"
+  - "/dev/dri/renderD128"

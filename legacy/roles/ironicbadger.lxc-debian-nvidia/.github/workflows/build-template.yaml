@@ -1,0 +1,113 @@
+name: Build LXC Template
+
+on:
+  repository_dispatch:
+    types: [build-new-template]
+  workflow_dispatch:
+    inputs:
+      driver_version:
+        description: 'NVIDIA driver version to use'
+        required: false
+        default: ''
+
+# Add permissions declaration
+permissions:
+  contents: write
+  packages: write
+  actions: write
+
+jobs:
+  build-template:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      
+      - name: Set driver version
+        id: set-version
+        run: |
+          if [ "${{ github.event_name }}" == "repository_dispatch" ]; then
+            DRIVER_VERSION="${{ github.event.client_payload.driver_version }}"
+          elif [ -n "${{ github.event.inputs.driver_version }}" ]; then
+            DRIVER_VERSION="${{ github.event.inputs.driver_version }}"
+          else
+            DRIVER_VERSION=$(curl -s https://download.nvidia.com/XFree86/Linux-x86_64/latest.txt | awk '{print $2}' | cut -d'/' -f2 | sed 's/NVIDIA-Linux-x86_64-\(.*\).run/\1/')
+          fi
+          echo "Using NVIDIA driver version: $DRIVER_VERSION"
+          echo "driver_version=$DRIVER_VERSION" >> $GITHUB_OUTPUT
+          
+          # Create output directory if it doesn't exist
+          mkdir -p ./output
+      
+      - name: Build LXC template image
+        run: |
+          # Build the template using Docker
+          docker build \
+            --build-arg NVIDIA_DRIVER_VERSION=${{ steps.set-version.outputs.driver_version }} \
+            -t nvidia-lxc-template:${{ steps.set-version.outputs.driver_version }} \
+            .
+          
+          # Extract the template from the container
+          CONTAINER_ID=$(docker create nvidia-lxc-template:${{ steps.set-version.outputs.driver_version }})
+          docker cp $CONTAINER_ID:/template/nvidia-template-debian12-${{ steps.set-version.outputs.driver_version }}.tar.gz ./output/
+          docker rm $CONTAINER_ID
+          
+          echo "Template created at ./output/nvidia-template-debian12-${{ steps.set-version.outputs.driver_version }}.tar.gz"
+      
+      - name: Create Release
+        id: create_release
+        if: ${{ !env.ACT }} # Skip when running locally with act
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: v${{ steps.set-version.outputs.driver_version }}
+          name: NVIDIA Template v${{ steps.set-version.outputs.driver_version }}
+          body: |
+            Proxmox LXC template with NVIDIA driver version ${{ steps.set-version.outputs.driver_version }}
+            
+            ### Features
+            - Pre-installed NVIDIA driver ${{ steps.set-version.outputs.driver_version }}
+            - Docker with NVIDIA Container Toolkit
+            - Sample Docker Compose file for Ollama
+          files: |
+            ./output/nvidia-template-debian12-${{ steps.set-version.outputs.driver_version }}.tar.gz
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Update last built version
+        if: ${{ !env.ACT }} # Skip git operations when running locally with act
+        run: |
+          # Make sure we're up to date with remote
+          git pull --rebase origin main
+
+          # Update the version file
+          echo "${{ steps.set-version.outputs.driver_version }}" > last_built_version.txt
+
+          # Configure Git
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          # Check if there are changes to commit
+          if [[ -n "$(git status --porcelain last_built_version.txt)" ]]; then
+            # Add, commit and push
+            git add last_built_version.txt
+            git commit -m "Update last built version to ${{ steps.set-version.outputs.driver_version }}"
+            git push
+            echo "Successfully updated last_built_version.txt"
+          else
+            echo "No changes to last_built_version.txt, skipping commit"
+          fi
+          
+      - name: Local testing output
+        if: ${{ env.ACT }}
+        run: |
+          echo "Template would be created as a GitHub release with tag v${{ steps.set-version.outputs.driver_version }}"
+          echo "${{ steps.set-version.outputs.driver_version }}" > last_built_version.txt
+          echo "When running in GitHub, this would commit the last_built_version.txt file"

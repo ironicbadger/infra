@@ -1,0 +1,44 @@
+---
+- name: Read .dest file for {{ config_dir.path | basename }}
+  set_fact:
+    config_dest: "{{ lookup('template', config_dir.path + '/.dest') | trim }}"
+
+- name: Get parent ZFS dataset for {{ config_dir.path | basename }}
+  shell: "df --output=source {{ config_dest | dirname }} | tail -1"
+  register: parent_dataset
+  when: docker_compose_generator_zfs_enabled | default(false)
+  changed_when: false
+
+- name: Create ZFS dataset for {{ config_dir.path | basename }}
+  community.general.zfs:
+    name: "{{ parent_dataset.stdout }}/{{ config_dest | basename }}"
+    state: present
+  when:
+    - docker_compose_generator_zfs_enabled | default(false)
+    - parent_dataset.stdout is defined
+    - parent_dataset.stdout | trim | length > 0
+  become: true
+
+- name: Ensure destination directory exists
+  file:
+    path: "{{ config_dest }}"
+    state: directory
+    owner: "{{ docker_compose_generator_uid }}"
+    group: "{{ docker_compose_generator_gid }}"
+
+- name: Find config files to copy (excluding .dest)
+  find:
+    paths: "{{ config_dir.path }}"
+    excludes: ".dest"
+    file_type: file
+  delegate_to: localhost
+  become: false
+  register: config_files
+
+- name: Template config files to destination
+  template:
+    src: "{{ item.path }}"
+    dest: "{{ config_dest }}/{{ item.path | basename }}"
+    owner: "{{ docker_compose_generator_uid }}"
+    group: "{{ docker_compose_generator_gid }}"
+  loop: "{{ config_files.files }}"

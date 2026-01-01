@@ -1,0 +1,28 @@
+---
+# defaults file for ansible-role-drivemounts
+
+# Whether to automatically mount drives or just configure them in fstab
+automount_drives: false
+
+# Set to empty list by default, to be overridden in playbooks or host_vars/group_vars
+drive_mounts: []
+
+# Example configuration (commented out):
+#
+# drive_mounts:
+#   - mountpoint: "/mnt/disk1"
+#     device: "/dev/disk/by-id/ata-WDC_WD180EDGZ-11B9PA0_2TGGDS5Z-part1"
+#     fstype: "btrfs"
+#     options: 
+#       - "subvol=data"
+#
+#   - mountpoint: "/mnt/disk2"
+#     device: "/dev/sdb1"
+#     fstype: "ext4"
+#     options:
+#       - "defaults"
+#       - "noatime"
+#
+#   - mountpoint: "/backup"
+#     device: "UUID=e9812b5e-d856-41f9-9b37-9c4bd872d172" 
+#     fstype: "xfs"

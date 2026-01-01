@@ -1,0 +1,95 @@
+name: Check NVIDIA Driver Version
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Run weekly on Sunday at midnight
+  workflow_dispatch:  # Allow manual triggering
+
+# Add permissions declaration to ensure actions have write access
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+jobs:
+  check-driver-version:
+    runs-on: ubuntu-latest
+    outputs:
+      driver_version: ${{ steps.check-version.outputs.driver_version }}
+      update_available: ${{ steps.check-version.outputs.update_available }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Check latest NVIDIA driver version
+        id: check-version
+        run: |
+          # Get the latest version
+          latest_driver=$(curl -s https://download.nvidia.com/XFree86/Linux-x86_64/latest.txt | awk '{print $2}')
+          latest_version=$(echo "$latest_driver" | cut -d'/' -f2 | sed 's/NVIDIA-Linux-x86_64-\(.*\).run/\1/')
+          echo "Latest driver version: $latest_version"
+          echo "driver_version=$latest_version" >> $GITHUB_OUTPUT
+
+          # Check if we need to build a new template
+          if [ -f "last_built_version.txt" ]; then
+            last_version=$(cat last_built_version.txt)
+            if [ "$latest_version" != "$last_version" ]; then
+              echo "New driver version detected: $latest_version (previous: $last_version)"
+              echo "update_available=true" >> $GITHUB_OUTPUT
+            else
+              echo "No new driver version available"
+              echo "update_available=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "No previous version found, building new template"
+            echo "update_available=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update version file
+        if: steps.check-version.outputs.update_available == 'true'
+        run: |
+          echo "New driver version detected: ${{ steps.check-version.outputs.driver_version }}"
+          echo "${{ steps.check-version.outputs.driver_version }}" > last_built_version.txt
+
+      - name: Commit and push changes
+        if: steps.check-version.outputs.update_available == 'true'
+        run: |
+          # Clean any potential unstaged changes
+          git reset --hard HEAD
+
+          # Make sure we're up to date with remote
+          git pull origin main
+
+          # Update the version file
+          echo "${{ steps.check-version.outputs.driver_version }}" > last_built_version.txt
+
+          # Configure Git
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+          # Add, commit and push
+          git add last_built_version.txt
+          git commit -m "Update last built version to ${{ steps.check-version.outputs.driver_version }}"
+          git push
+
+      - name: Trigger build workflow
+        if: steps.check-version.outputs.update_available == 'true'
+        run: |
+          echo "Triggering build workflow for driver version ${{ steps.check-version.outputs.driver_version }}"
+          gh workflow run build-template.yaml -f driver_version=${{ steps.check-version.outputs.driver_version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # When running locally with act
+      - name: Build locally if new version is available (Act)
+        if: steps.check-version.outputs.update_available == 'true' && (env.ACT || github.repository == '')
+        run: |
+          echo "Would trigger build-template workflow with driver version: ${{ steps.check-version.outputs.driver_version }}"
+          echo "${{ steps.check-version.outputs.driver_version }}" > last_built_version.txt
+          echo "When running in GitHub, update the repository secret REPO_ACCESS_TOKEN with a GitHub Personal Access Token"

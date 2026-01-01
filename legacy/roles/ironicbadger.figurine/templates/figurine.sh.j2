@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo ""
+/usr/local/bin/figurine -f {{ figurine_font }} {{ figurine_name | default(ansible_hostname) }}
+echo ""

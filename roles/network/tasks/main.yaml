@@ -1,0 +1,14 @@
+---
+- name: Validate network backend
+  ansible.builtin.assert:
+    that:
+      - network_backend in ["networkd", "networkmanager"]
+    fail_msg: "network_backend must be set to 'networkd' or 'networkmanager'"
+
+- name: Configure with systemd-networkd (Debian 13)
+  ansible.builtin.include_tasks: networkd.yaml
+  when: network_backend == "networkd"
+
+- name: Configure with NetworkManager (Raspberry Pi OS)
+  ansible.builtin.include_tasks: networkmanager.yaml
+  when: network_backend == "networkmanager"

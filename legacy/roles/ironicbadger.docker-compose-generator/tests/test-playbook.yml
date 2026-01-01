@@ -1,0 +1,115 @@
+---
+- name: Test docker-compose-generator role
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  vars:
+    services_directory: "{{ playbook_dir }}/services/"
+    docker_compose_generator_output_path: "{{ playbook_dir }}/output"
+    docker_compose_generator_uid: "{{ ansible_user_uid }}"
+    docker_compose_generator_gid: "{{ ansible_user_gid }}"
+    docker_compose_hostname: "test-app"
+
+  pre_tasks:
+    - name: Gather minimal facts
+      setup:
+        gather_subset:
+          - "!all"
+          - user
+
+  roles:
+    - role: "{{ playbook_dir }}/.."
+
+  post_tasks:
+    - name: Read generated compose file
+      slurp:
+        src: "{{ docker_compose_generator_output_path }}/compose.yaml"
+      register: generated_compose_raw
+
+    - name: Parse generated compose file
+      set_fact:
+        generated_compose: "{{ generated_compose_raw.content | b64decode | from_yaml }}"
+
+    - name: Verify configs section exists
+      assert:
+        that:
+          - generated_compose.configs is defined
+          - "'test-config' in generated_compose.configs"
+          - "'another-config' in generated_compose.configs"
+        fail_msg: "configs section missing or incomplete"
+        success_msg: "configs section OK"
+
+    - name: Verify networks section exists
+      assert:
+        that:
+          - generated_compose.networks is defined
+          - "'test-network' in generated_compose.networks"
+          - "'backend' in generated_compose.networks"
+        fail_msg: "networks section missing or incomplete"
+        success_msg: "networks section OK"
+
+    - name: Verify volumes section exists
+      assert:
+        that:
+          - generated_compose.volumes is defined
+          - "'test-volume' in generated_compose.volumes"
+          - "'data-volume' in generated_compose.volumes"
+        fail_msg: "volumes section missing or incomplete"
+        success_msg: "volumes section OK"
+
+    - name: Verify secrets section exists
+      assert:
+        that:
+          - generated_compose.secrets is defined
+          - "'test-secret' in generated_compose.secrets"
+          - "'db-password' in generated_compose.secrets"
+        fail_msg: "secrets section missing or incomplete"
+        success_msg: "secrets section OK"
+
+    - name: Verify services section exists
+      assert:
+        that:
+          - generated_compose.services is defined
+          - "'test-service' in generated_compose.services"
+          - "'another-service' in generated_compose.services"
+        fail_msg: "services section missing or incomplete"
+        success_msg: "services section OK"
+
+    - name: Verify service details preserved
+      assert:
+        that:
+          - generated_compose.services['test-service'].image == 'nginx:latest'
+          - generated_compose.services['test-service'].container_name == 'test-service'
+          - generated_compose.services['another-service'].image == 'redis:latest'
+        fail_msg: "service details not preserved correctly"
+        success_msg: "service details OK"
+
+    - name: Verify unicode content preserved
+      assert:
+        that:
+          - "'unicode-service' in generated_compose.services"
+          - "'unicode-config' in generated_compose.configs"
+          - "generated_compose.services['unicode-service'].labels | length == 2"
+        fail_msg: "unicode content not preserved correctly"
+        success_msg: "unicode content OK"
+
+    - name: Verify output is valid YAML by re-parsing
+      set_fact:
+        reparsed_compose: "{{ generated_compose_raw.content | b64decode | from_yaml }}"
+
+    - name: Verify re-parsed YAML matches original
+      assert:
+        that:
+          - reparsed_compose.services | length == generated_compose.services | length
+        fail_msg: "YAML re-parsing produced different result"
+        success_msg: "YAML validity OK"
+
+    - name: Clean up output directory
+      file:
+        path: "{{ docker_compose_generator_output_path }}"
+        state: absent
+
+    - name: All tests passed
+      debug:
+        msg: "All compose generator tests passed successfully!"

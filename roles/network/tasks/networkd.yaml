@@ -1,0 +1,47 @@
+---
+- name: Ensure systemd-networkd config directory exists
+  ansible.builtin.file:
+    path: /etc/systemd/network
+    state: directory
+    mode: "0755"
+
+- name: Write static network config
+  ansible.builtin.template:
+    src: 10-core.network.j2
+    dest: /etc/systemd/network/10-core.network
+    mode: "0644"
+  notify: Restart systemd-networkd
+
+- name: Enable and start systemd-networkd
+  ansible.builtin.systemd:
+    name: systemd-networkd
+    enabled: true
+    state: started
+
+- name: Write static resolv.conf
+  ansible.builtin.template:
+    src: resolv.conf.j2
+    dest: /etc/resolv.conf
+    mode: "0644"
+
+- name: Check DHCP service unit files
+  ansible.builtin.stat:
+    path: "{{ item.1 }}/{{ item.0 }}"
+  loop: "{{ network_disable_services_networkd | product(network_unit_paths) | list }}"
+  register: networkd_unit_stats
+
+- name: Build DHCP service list to disable
+  ansible.builtin.set_fact:
+    networkd_services_present: >-
+      {{ networkd_unit_stats.results
+         | selectattr('stat.exists')
+         | map(attribute='item.0')
+         | list
+         | unique }}
+
+- name: Disable DHCP-related services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: false
+    state: stopped
+  loop: "{{ networkd_services_present }}"

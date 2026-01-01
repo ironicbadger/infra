@@ -1,0 +1,6 @@
+---
+base_timezone: "UTC"
+base_packages:
+  - ca-certificates
+  - curl
+  - sudo

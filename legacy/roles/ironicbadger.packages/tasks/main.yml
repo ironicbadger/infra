@@ -1,0 +1,10 @@
+---
+
+# Import declarative package handling tasks if enabled
+- name: Handle packages declaratively
+  import_tasks: declarative.yml
+  when: packages_declarative_mode | bool
+
+# Install packages on Debian systems
+- name: Install packages on Debian systems
+  include_tasks: debian.yml

@@ -1,0 +1,21 @@
+---
+
+- name: is caddy binary present
+  stat:
+    path: "{{ caddy_binary_path }}"
+  register: caddy_installed
+
+# caddy does not ship plugins. if you need a plugin, such as the cloudflare
+# plugin you must download or compile the binary yourself.
+# the caddy project provides a compilation service but it makes versioning
+# very difficult to reliably automate against. if you want a specific caddy
+# binary, override the "caddy_amd64_linux_binary_url" variable.
+# this role defaults to using the binary with the cloudflare plugin.
+- name: install caddy
+  include_tasks:
+    file: install.yaml
+  #when: caddy_installed == false
+
+- name: configure caddy
+  include_tasks:
+    file: configure.yaml

@@ -1,0 +1,74 @@
+---
+- name: Verify core network configuration
+  hosts: core
+  become: true
+  vars:
+    expected_ip_cidr: "{{ core_ipv4_address }}/{{ core_ipv4_prefix }}"
+  tasks:
+    - name: Validate network backend is set
+      ansible.builtin.assert:
+        that:
+          - network_backend in ["networkd", "networkmanager"]
+        fail_msg: "network_backend must be 'networkd' or 'networkmanager'"
+
+    - name: Check interface has expected IPv4
+      ansible.builtin.command: ip -4 -o addr show dev {{ core_network_interface }}
+      register: ip_addr
+      changed_when: false
+
+    - name: Assert expected IPv4 is present
+      ansible.builtin.assert:
+        that:
+          - expected_ip_cidr in ip_addr.stdout
+        fail_msg: "Expected {{ expected_ip_cidr }} on {{ core_network_interface }}"
+
+    - name: Check default route
+      ansible.builtin.command: ip route show default
+      register: default_route
+      changed_when: false
+
+    - name: Assert default gateway
+      ansible.builtin.assert:
+        that:
+          - "default via {{ core_ipv4_gateway }}" in default_route.stdout
+        fail_msg: "Expected default gateway {{ core_ipv4_gateway }}"
+
+    - name: Read resolv.conf
+      ansible.builtin.command: cat /etc/resolv.conf
+      register: resolv_conf
+      changed_when: false
+
+    - name: Assert resolv.conf has expected nameservers
+      ansible.builtin.assert:
+        that:
+          - "nameserver {{ item }}" in resolv_conf.stdout
+        fail_msg: "Missing nameserver {{ item }} in /etc/resolv.conf"
+      loop: "{{ core_dns_servers }}"
+
+    - name: Check systemd-networkd config
+      ansible.builtin.slurp:
+        src: /etc/systemd/network/10-core.network
+      register: networkd_conf
+      when: network_backend == "networkd"
+
+    - name: Assert systemd-networkd config matches
+      ansible.builtin.assert:
+        that:
+          - "Address={{ core_ipv4_address }}/{{ core_ipv4_prefix }}" in (networkd_conf.content | b64decode)
+          - "Gateway={{ core_ipv4_gateway }}" in (networkd_conf.content | b64decode)
+          - "DNS={{ core_dns_servers | join(' ') }}" in (networkd_conf.content | b64decode)
+        fail_msg: "systemd-networkd config does not match expected values"
+      when: network_backend == "networkd"
+
+    - name: Check NetworkManager connection exists
+      ansible.builtin.command: nmcli -t -f NAME con show
+      register: nm_connections
+      changed_when: false
+      when: network_backend == "networkmanager"
+
+    - name: Assert NetworkManager connection present
+      ansible.builtin.assert:
+        that:
+          - network_nm_connection_name in nm_connections.stdout_lines
+        fail_msg: "Expected NetworkManager connection {{ network_nm_connection_name }}"
+      when: network_backend == "networkmanager"

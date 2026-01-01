@@ -1,0 +1,41 @@
+name: Test Compose Generator
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install ansible pytest
+
+      - name: Run filter plugin unit tests
+        run: |
+          cd tests
+          python -m pytest test_yaml_indent.py -v
+
+      - name: Run compose generator tests
+        run: |
+          cd tests
+          ansible-playbook test-playbook.yml -v
+
+      - name: Test failed
+        if: failure()
+        run: |
+          echo "::error::Compose generator tests failed! Check the output above for details."
+          exit 1

@@ -1,0 +1,130 @@
+---
+- name: Create temporary directory
+  ansible.builtin.file:
+    path: "{{ temp_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: Install prerequisites
+  ansible.builtin.apt:
+    name:
+      - build-essential
+      - "{{ proxmox_headers_package }}"
+    state: present
+    update_cache: true
+
+- name: Disable Nouveau kernel module
+  ansible.builtin.blockinfile:
+    path: /etc/modprobe.d/blacklist-nouveau.conf
+    create: true
+    mode: '0644'
+    block: |
+      blacklist nouveau
+      options nouveau modeset=0
+  register: nouveau_disabled
+
+- name: Update initramfs if Nouveau was disabled
+  ansible.builtin.command: update-initramfs -u
+  when: nouveau_disabled.changed
+  register: initramfs_updated
+  changed_when: initramfs_updated.rc == 0
+
+- name: Get latest NVIDIA driver info
+  ansible.builtin.uri:
+    url: https://download.nvidia.com/XFree86/Linux-x86_64/latest.txt
+    return_content: true
+  register: latest_driver_info
+  when: nvidia_auto_detect_latest | bool
+
+- name: Set driver download variables when auto-detecting
+  ansible.builtin.set_fact:
+    driver_path: "{{ latest_driver_info.content.split(' ')[1] | trim }}"
+    driver_file: "{{ latest_driver_info.content.split(' ')[1] | trim | basename }}"
+  when: nvidia_auto_detect_latest | bool
+
+- name: Set driver download variables when using fixed version
+  ansible.builtin.set_fact:
+    driver_path: "{{ nvidia_driver_version }}/NVIDIA-Linux-x86_64-{{ nvidia_driver_version }}.run"
+    driver_file: "NVIDIA-Linux-x86_64-{{ nvidia_driver_version }}.run"
+  when: not nvidia_auto_detect_latest | bool
+
+- name: Download NVIDIA driver
+  ansible.builtin.get_url:
+    url: "https://download.nvidia.com/XFree86/Linux-x86_64/{{ driver_path }}"
+    dest: "{{ temp_dir }}/{{ driver_file }}"
+    mode: '0755'
+
+- name: Run NVIDIA driver installation
+  ansible.builtin.command: ./{{ driver_file }} --silent --no-questions --ui=none --no-x-check --install-libglvnd
+  args:
+    chdir: "{{ temp_dir }}"
+    creates: /usr/bin/nvidia-smi
+  register: nvidia_install
+  changed_when: nvidia_install.rc == 0
+
+- name: Add kernel modules to load at boot
+  ansible.builtin.blockinfile:
+    path: /etc/modules-load.d/modules.conf
+    create: true
+    mode: '0644'
+    block: |
+      nvidia-drm
+      nvidia-uvm
+
+- name: Create NVIDIA udev rules
+  ansible.builtin.template:
+    src: 70-nvidia.rules.j2
+    dest: /etc/udev/rules.d/70-nvidia.rules
+    mode: '0644'
+
+- name: Copy NVIDIA persistence daemon archive
+  ansible.builtin.copy:
+    src: /usr/share/doc/NVIDIA_GLX-1.0/samples/nvidia-persistenced-init.tar.bz2
+    dest: "{{ temp_dir }}/nvidia-persistenced-init.tar.bz2"
+    remote_src: true
+    mode: '0644'
+
+- name: Extract NVIDIA persistence daemon bzip2 archive
+  ansible.builtin.command: bunzip2 "{{ temp_dir }}/nvidia-persistenced-init.tar.bz2"
+  args:
+    creates: "{{ temp_dir }}/nvidia-persistenced-init.tar"
+  register: bunzip_result
+  changed_when: bunzip_result.rc == 0
+
+- name: Extract NVIDIA persistence daemon tar archive
+  ansible.builtin.unarchive:
+    src: "{{ temp_dir }}/nvidia-persistenced-init.tar"
+    dest: "{{ temp_dir }}"
+    remote_src: true
+  args:
+    creates: "{{ temp_dir }}/nvidia-persistenced-init/install.sh"
+
+- name: Remove old persistence service if exists
+  ansible.builtin.file:
+    path: /etc/systemd/system/nvidia-persistenced.service
+    state: absent
+
+- name: Make NVIDIA persistence daemon installer executable
+  ansible.builtin.file:
+    path: "{{ temp_dir }}/nvidia-persistenced-init/install.sh"
+    mode: '0755'
+
+- name: Install NVIDIA persistence daemon
+  ansible.builtin.command: ./install.sh
+  args:
+    chdir: "{{ temp_dir }}/nvidia-persistenced-init"
+    creates: /lib/systemd/system/nvidia-persistenced.service
+  register: persistence_install
+  changed_when: persistence_install.rc == 0
+
+- name: Enable and start NVIDIA persistence daemon
+  ansible.builtin.systemd:
+    name: nvidia-persistenced
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: Clean up installation files
+  ansible.builtin.file:
+    path: "{{ temp_dir }}"
+    state: absent

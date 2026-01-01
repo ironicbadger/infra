@@ -1,0 +1,23 @@
+vrrp_script chk_adguard {
+  script "{{ keepalived_check_script }}"
+  interval {{ keepalived_check_interval }}
+  weight {{ keepalived_check_weight }}
+}
+
+vrrp_instance {{ keepalived_instance_name }} {
+  state {{ keepalived_state }}
+  interface {{ keepalived_interface }}
+  virtual_router_id {{ keepalived_router_id }}
+  priority {{ keepalived_priority }}
+  advert_int {{ keepalived_advert_interval }}
+  authentication {
+    auth_type PASS
+    auth_pass {{ keepalived_auth_pass }}
+  }
+  virtual_ipaddress {
+    {{ keepalived_virtual_ip }}
+  }
+  track_script {
+    chk_adguard
+  }
+}

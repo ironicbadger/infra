@@ -1,0 +1,14 @@
+---
+- name: Core edge nodes (DNS + VIP)
+  hosts: core
+  become: true
+  roles:
+    - role: base
+    - role: network
+      tags: network
+    - role: chrony
+      tags: chrony
+    - role: adguardhome
+      tags: adguard
+    - role: keepalived
+      tags: keepalived

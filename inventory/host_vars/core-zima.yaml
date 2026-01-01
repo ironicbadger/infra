@@ -1,0 +1,7 @@
+---
+core_ipv4_address: "10.42.0.6"
+keepalived_state: "BACKUP"
+keepalived_priority: 110
+adguard_arch: "amd64"
+core_network_interface: "enp2s0"
+network_backend: "networkd"
