@@ -45,8 +45,8 @@ pages:
                 links:
                   - title: Jellyfin
                     url: https://jf.wd.ktz.me
-                  - title: Overseerr
-                    url: https://overseerr.m.wd.ktz.me
+                  - title: Seerr
+                    url: https://seerr.m.wd.ktz.me
               - title: Arr Stack
                 links:
                   - title: Prowlarr
@@ -122,9 +122,9 @@ pages:
               - title: Jellyfin
                 url: https://jf.wd.ktz.me
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/jellyfin.png
-              - title: Overseerr
-                url: https://overseerr.m.wd.ktz.me
-                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/overseerr.png
+              - title: Seerr
+                url: https://seerr.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/seerr.png
               - title: Audiobookshelf
                 url: https://audiobooks.wd.ktz.me
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/audiobookshelf.png

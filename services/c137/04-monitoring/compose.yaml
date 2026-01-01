@@ -52,3 +52,20 @@ services:
       - HISTORY=2h
       - "BASE_URL=https://ping.{{ m_wd_domain_me }}"
     restart: unless-stopped
+  tautulli:
+    image: lscr.io/linuxserver/tautulli:latest
+    container_name: tautulli
+    depends_on:
+      - plex
+    volumes:
+      - "{{ appdata_path }}/mediaservers/tautulli:/config"
+      - "{{ appdata_path }}/mediaservers/plex/config/Library/Application Support/Plex Media Server/Logs:/logs:ro"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.tautulli.rule=Host(`tautulli.m.wd.ktz.me`)"
+      - traefik.http.services.tautulli.loadbalancer.server.port=8181
+    environment:
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
+    restart: unless-stopped

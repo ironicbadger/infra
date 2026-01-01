@@ -123,48 +123,12 @@ services:
       - "OPENVPN_USER={{ gluetun_privado_username }}"
       - "OPENVPN_PASSWORD={{ gluetun_privado_password }}"
     restart: unless-stopped
-  # huntarr:
-  #   image: ghcr.io/plexguide/huntarr:latest
-  #   container_name: huntarr
-  #   volumes:
-  #     - "{{ appdata_path }}/arrmatey/huntarr:/config"
-  #   labels:
-  #     - traefik.enable=true
-  #     - "traefik.http.routers.huntarr.rule=Host(`huntarr.{{ m_wd_domain_me }}`)"
-  #   environment:
-  #     - "TZ={{ host_timezone }}"
-  #   depends_on:
-  #     - sonarr
-  #     - radarr
-  #   restart: unless-stopped
-  overseerr:
-    image: sctx/overseerr:latest
-    container_name: overseerr
+  seerr:
+    image: ghcr.io/seerr-team/seerr:develop
+    container_name: seerr
     volumes:
-      - "{{ appdata_path }}/arrmatey/overseerr:/app/config"
+      - "{{ appdata_path }}/arrmatey/seerr:/app/config"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.overseerr.rule=Host(`overseerr.{{ m_wd_domain_me }}`)"
+      - "traefik.http.routers.seerr.rule=Host(`seerr.{{ m_wd_domain_me }}`)"
     restart: unless-stopped
-  recyclarr:
-    image: ghcr.io/recyclarr/recyclarr
-    container_name: recyclarr
-    user: "{{ docker_compose_generator_uid }}:{{ docker_compose_generator_gid }}"
-    volumes:
-      - "{{ appdata_path }}/arrmatey/recyclarr:/config"
-    environment:
-      - "TZ={{ host_timezone }}"
-      - CRON_SCHEDULE=@daily
-    depends_on:
-      - sonarr
-      - radarr
-    restart: unless-stopped
-  # jellyseerr:
-  #   image: fallenbagel/jellyseerr:latest
-  #   container_name: jellyseerr
-  #   volumes:
-  #     - "{{ appdata_path }}/arrmatey/jellyseerr:/app/config"
-  #   labels:
-  #     - traefik.enable=true
-  #     - "traefik.http.routers.jellyseerr.rule=Host(`jellyseerr.{{ m_wd_domain_me }}`)"
-  #   restart: unless-stopped
