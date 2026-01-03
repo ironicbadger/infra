@@ -46,7 +46,9 @@
     owner: "{{ adguard_user }}"
     group: "{{ adguard_group }}"
     mode: "0640"
-  when: adguard_config_src | length > 0
+  when:
+    - adguard_overwrite_config | bool
+    - adguard_config_src | length > 0
   notify: Restart adguardhome
 
 - name: Install AdGuard systemd service
