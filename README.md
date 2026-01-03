@@ -39,42 +39,6 @@ flowchart LR
     c137 <-.->|"zrepl via tailscale"| ktz-cloud
 ```
 
-## Core Edge Nodes (VIP)
-
-Caddy and AdGuardHome are configured to run using keepalived and a floating VIP.
-
-| Host | IP | Role | Hardware |
-|------|-----|------|----------|
-| core-pi5 | 10.42.0.5 | Primary | Raspberry Pi 5 |
-| core-zima | 10.42.0.6 | Backup | ZimaBlade |
-| **VIP** | **10.42.0.53** | Floating | - |
-
-### Services
-
-- **AdGuard Home** - Local DNS resolution (port 53, web UI on 3000)
-- **Caddy** - Reverse proxy with automatic TLS
-- **Keepalived** - VRRP failover for VIP
-- **Chrony** - NTP time synchronization
-- **AdGuard Home Sync** - Config replication from primary to backup
-
-### Usage
-
-```bash
-just core                 # Run full core playbook
-just core --tags caddy    # Run only caddy role
-just core --tags network  # Run only network role
-just core --tags adguard  # Run only adguard role
-```
-
-### Network Backend
-
-The `core-network` role supports two backends configured via `network_backend`:
-
-- `networkd` - systemd-networkd (Debian)
-- `networkmanager` - NetworkManager (Raspberry Pi OS)
-
-The role removes dhcpcd packages and writes a static `/etc/resolv.conf`.
-
 ## Technologies
 
 - **Ansible** - Configuration management
@@ -126,3 +90,40 @@ just sub-update        # Update git submodules
 ```
 
 Services are organized under `services/<hostname>/<##-category>/`. The `docker-compose-generator` role merges these into a single compose file on deployment.
+
+
+## Core Edge Nodes (VIP)
+
+Caddy and AdGuardHome are configured to run using keepalived and a floating VIP.
+
+| Host | IP | Role | Hardware |
+|------|-----|------|----------|
+| core-pi5 | 10.42.0.5 | Primary | Raspberry Pi 5 |
+| core-zima | 10.42.0.6 | Backup | ZimaBlade |
+| **VIP** | **10.42.0.53** | Floating | - |
+
+### Services
+
+- **AdGuard Home** - Local DNS resolution (port 53, web UI on 3000)
+- **Caddy** - Reverse proxy with automatic TLS
+- **Keepalived** - VRRP failover for VIP
+- **Chrony** - NTP time synchronization
+- **AdGuard Home Sync** - Config replication from primary to backup
+
+### Usage
+
+```bash
+just core                 # Run full core playbook
+just core --tags caddy    # Run only caddy role
+just core --tags network  # Run only network role
+just core --tags adguard  # Run only adguard role
+```
+
+### Network Backend
+
+The `core-network` role supports two backends configured via `network_backend`:
+
+- `networkd` - systemd-networkd (Debian)
+- `networkmanager` - NetworkManager (Raspberry Pi OS)
+
+The role removes dhcpcd packages and writes a static `/etc/resolv.conf`.
