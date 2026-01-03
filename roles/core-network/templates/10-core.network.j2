@@ -1,0 +1,8 @@
+[Match]
+Name={{ core_network_interface }}
+
+[Network]
+Address={{ core_ipv4_address }}/{{ core_ipv4_prefix }}
+Gateway={{ core_ipv4_gateway }}
+DNS={{ core_dns_servers | join(' ') }}
+DHCP=no

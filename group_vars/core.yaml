@@ -1,0 +1,88 @@
+---
+# Core edge nodes (DNS + VIP) configuration
+
+# Network settings
+core_network_interface: "eth0"
+core_ipv4_prefix: 21
+core_ipv4_gateway: "10.42.0.254"
+core_dns_servers:
+  - "1.1.1.1"
+  - "1.0.0.1"
+
+# Keepalived / VIP settings
+core_vip_cidr: "10.42.0.53/21"
+keepalived_instance_name: "VI_DNS"
+keepalived_router_id: 53
+# keepalived_auth_pass comes from all.sops.yaml
+keepalived_advert_interval: 1
+keepalived_check_interval: 2
+
+# Chrony NTP pools
+chrony_pools:
+  - "0.pool.ntp.org"
+  - "1.pool.ntp.org"
+  - "2.pool.ntp.org"
+  - "3.pool.ntp.org"
+
+# AdGuard Home settings
+adguard_version: "0.107.71"
+adguard_install_dir: "/opt/adguardhome"
+adguard_config_dir: "/etc/adguardhome"
+adguard_work_dir: "/var/lib/adguardhome"
+adguard_config_src: "{{ playbook_dir }}/../files/adguardhome/AdGuardHome.yaml"
+adguard_config_dest: "/etc/adguardhome/AdGuardHome.yaml"
+
+# AdGuard Home Sync settings (runs on master only)
+adguardhome_sync_version: "0.6.12"
+adguardhome_sync_cron: "*/5 * * * *"  # Every 5 minutes
+adguardhome_sync_origin_url: "http://{{ hostvars['core-pi5']['core_ipv4_address'] }}:3000"
+adguardhome_sync_replica_url: "http://{{ hostvars['core-zima']['core_ipv4_address'] }}:3000"
+# adguard_username and adguard_password come from all.sops.yaml
+
+# Packages for core nodes
+package_list:
+  - btop
+  - curl
+  - wget
+  - vim
+  - htop
+  - net-tools
+  - dnsutils
+
+# Caddy reverse proxy settings
+caddy_binary_path: /usr/local/bin/caddy
+caddyfile_path: /etc/caddy
+
+caddy_tls_providers:
+  - provider: cloudflare
+    challenge_type: dns
+    provider_api_token: "{{ cloudflare_token_wd_caddy }}"
+
+caddy_endpoints:
+  # - friendly_name: AdGuard Home
+  #   fqdn: dns.wd.ktz.me
+  #   upstream: localhost:3000
+  #   tls_provider: cloudflare
+  ## USA - WD
+  - friendly_name: wildcard for *.wd.ktz.me
+    fqdn: '*.wd.ktz.me'
+    tls_provider: cloudflare
+    wildcard_endpoints:
+      ## Network Core services
+      - friendly_name: unifi
+        fqdn: unifi.wd.ktz.me
+        upstream: https://10.42.0.254:443
+        tls_insecure: true
+      - friendly_name: AdGuard Home
+        fqdn: dns.wd.ktz.me
+        upstream: localhost:3000
+        tls_provider: cloudflare
+      ## proxmox
+      - friendly_name: px
+        fqdn: px.wd.ktz.me
+        upstream: https://10.42.1.20:8006
+        tls_insecure: true
+      ## Apps and Services
+      - friendly_name: immich
+        fqdn: immich.wd.ktz.me
+        upstream: http://10.42.0.111:2283

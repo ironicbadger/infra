@@ -1,0 +1,5 @@
+---
+chrony_conf_path: /etc/chrony/chrony.conf
+chrony_pools:
+  - "0.pool.ntp.org"
+  - "1.pool.ntp.org"

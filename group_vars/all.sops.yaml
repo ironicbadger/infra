@@ -108,6 +108,10 @@ vault_grafana_admin_password: ENC[AES256_GCM,data:fk/3vYAoAfy7+eDc8BGGzJc/EjCQ3H
 vault_nut_monitor_password: ENC[AES256_GCM,data:JCm8LVj1GpQAIUOGVq0BmFCKwtDFclVDxt7S3rlRQp2iLCpJ/YFZ3z+0s54Ay2/o,iv:U5zrXYkjNFkFIs54P491Afx0ds+9FZNHOzaolQsydRo=,tag:CsTImO4MGRJdD2CnO6tdtw==,type:str]
 vault_grafana_oidc_client_id: ENC[AES256_GCM,data:qkI8obKlC4trniSAfCf7tGAwbmspwaGpABu2nyC10f0=,iv:O2ig0aaDvrb32sRLJtKZMOvP/t+VK9T+bD6t+CB87qA=,tag:ixi6O4eF1Wnnl9dmMIprfA==,type:str]
 vault_grafana_oidc_client_secret: ENC[AES256_GCM,data:3BswhAy6pBJcoDjRy2NiOKviFOxtruxHmqiCdgCoJb4TgQpIlxzKoansHMU/HwSK9x/B8Na8cAlnuqlB/IA54A==,iv:dAbdSirGnYsQuO10Mg4gzlMk5QsuFFX4bkfKlOUPR40=,tag:Qre0rMMYPsGlhF33XUgObA==,type:str]
+#ENC[AES256_GCM,data:5CtG1MH5,iv:t/Oq4EETOBaf+dtQ65SyJU3t4ICZptWE+Qd9cMSoSV0=,tag:fs2dTvScKjl7SBDDkf6GHA==,type:comment]
+keepalived_auth_pass: ENC[AES256_GCM,data:GhtSTFhxhV205H9OAi0=,iv:KfsiyiiXrlG3CSwDJ6wUVvGWTh27Me+oresyk3cD/Oo=,tag:u2jK10XYG+W1GYBiGFK5aA==,type:str]
+adguard_username: ENC[AES256_GCM,data:VYmRUoM=,iv:5CRgI/4b722rbG4desZxk77bWZ85KJyd35+ZS5r26tY=,tag:yjfs7SEfrrhNXP50uj+/JQ==,type:str]
+adguard_password: ENC[AES256_GCM,data:PQ8Z7pRzol8z,iv:p/xUiEZl3pBeHhoNJyzLePowHzx1JhSyE/fVqckEOvg=,tag:eEvMM/qHJ+XDpJXniiTsQw==,type:str]
 sops:
     age:
         - recipient: age1helw9qcwl8lfy8xwm5cecnn2ljxlafhlplg3dehpk7ma4l94695qmqm9zg
@@ -119,7 +123,7 @@ sops:
             TWhRa0oyQzBqL1NWRmNZdWNva256VmsKJrk1FRhGN8yKcJafOkjQGkUK38Zxgs9R
             swQ97Ay/l+GPP2GKBWF5sRU/g338/FsfUSYl2DtDplCBjqKvIC/+Fg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2025-12-22T00:25:55Z"
-    mac: ENC[AES256_GCM,data:X+CgZzOA/50fUPX12uc/PNe1Pnr3TpCD3ZR/ZtfSDm+qlI3SnNbYMYl6HC6+WC2xL0n2bj7242lo0ZfB+1rBhbf4f5JAh4lklh8MdJwLar0aL0AGYdVjzN1SfYnbo92cACWiar1r/y3SRpCXommy7/Q1YVxa0Zr4uBy+3uTSliw=,iv:pY4CDbDSE/P0v8Vb4ocVSqqwbW85OzdWcUZOC12IkbU=,tag:Kxhu5ld/ochdaCQ6ndb1cw==,type:str]
+    lastmodified: "2026-01-03T01:18:12Z"
+    mac: ENC[AES256_GCM,data:SKnvmkATeE7xzu5+y75CxD9uCJ4ZKxpydRJtB0OUtxOITiL+hG8qogkNMeJobwdeR/sZ75W8s804b6XNLD9lJ0MveFuPlT4yepT+f0jTnFJEijSHfd7OWClJro/TquFhJlA9tUSAmfage3pA1kTfugv+5SCnxv98hQ2PmoedYT0=,iv:OjMis4xc2KTqiPdhDiuxNv59+LUYO+LrVSmDOz5hsp8=,tag:9RaUn03Hj/G8jB4+ecNR0g==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0

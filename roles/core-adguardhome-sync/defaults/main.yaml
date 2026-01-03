@@ -1,0 +1,23 @@
+---
+adguardhome_sync_version: "0.6.12"
+adguardhome_sync_install_dir: "/opt/adguardhome-sync"
+adguardhome_sync_config_dir: "/etc/adguardhome-sync"
+adguardhome_sync_cron: "*/5 * * * *"
+adguardhome_sync_run_on_start: true
+
+# These should be set in group_vars/core.yaml or host_vars
+adguardhome_sync_origin_url: ""
+adguardhome_sync_replica_url: ""
+
+# Credentials should come from SOPS
+adguard_username: "admin"
+# adguard_password: "" # From all.sops.yaml
+
+# Sync feature toggles (all enabled by default)
+adguardhome_sync_general: true
+adguardhome_sync_filters: true
+adguardhome_sync_rewrites: true
+adguardhome_sync_services: true
+adguardhome_sync_clients: true
+adguardhome_sync_dns: true
+adguardhome_sync_dhcp: false  # Usually not needed

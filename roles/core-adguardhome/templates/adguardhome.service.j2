@@ -1,0 +1,17 @@
+[Unit]
+Description=AdGuard Home
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User={{ adguard_user }}
+Group={{ adguard_group }}
+ExecStart={{ adguard_install_dir }}/AdGuardHome/AdGuardHome -c {{ adguard_config_dest }} -w {{ adguard_work_dir }}
+Restart=on-failure
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
