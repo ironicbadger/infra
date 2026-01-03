@@ -1,0 +1,6 @@
+{% for pool in chrony_pools %}pool {{ pool }} iburst
+{% endfor %}
+
+driftfile /var/lib/chrony/chrony.drift
+makestep 1.0 3
+rtcsync

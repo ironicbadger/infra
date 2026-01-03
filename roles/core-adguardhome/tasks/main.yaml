@@ -1,0 +1,67 @@
+---
+- name: Ensure AdGuard user exists
+  ansible.builtin.user:
+    name: "{{ adguard_user }}"
+    system: true
+    shell: /usr/sbin/nologin
+    create_home: false
+
+- name: Create AdGuard directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ adguard_user }}"
+    group: "{{ adguard_group }}"
+    mode: "0750"
+  loop:
+    - "{{ adguard_config_dir }}"
+    - "{{ adguard_work_dir }}"
+
+- name: Create AdGuard install directory
+  ansible.builtin.file:
+    path: "{{ adguard_install_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Download AdGuard Home
+  ansible.builtin.get_url:
+    url: "https://github.com/AdguardTeam/AdGuardHome/releases/download/v{{ adguard_version }}/AdGuardHome_linux_{{ adguard_arch }}.tar.gz"
+    dest: "/tmp/AdGuardHome_{{ adguard_version }}_{{ adguard_arch }}.tar.gz"
+    mode: "0644"
+
+- name: Install AdGuard Home
+  ansible.builtin.unarchive:
+    src: "/tmp/AdGuardHome_{{ adguard_version }}_{{ adguard_arch }}.tar.gz"
+    dest: "{{ adguard_install_dir }}"
+    remote_src: true
+    extra_opts:
+      - "--strip-components=1"
+
+- name: Deploy AdGuard config
+  ansible.builtin.copy:
+    src: "{{ adguard_config_src }}"
+    dest: "{{ adguard_config_dest }}"
+    owner: "{{ adguard_user }}"
+    group: "{{ adguard_group }}"
+    mode: "0640"
+  when:
+    - adguard_overwrite_config | bool
+    - adguard_config_src | length > 0
+  notify: Restart adguardhome
+
+- name: Install AdGuard systemd service
+  ansible.builtin.template:
+    src: adguardhome.service.j2
+    dest: /etc/systemd/system/adguardhome.service
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Restart adguardhome
+
+- name: Enable and start AdGuard
+  ansible.builtin.systemd:
+    name: adguardhome
+    enabled: true
+    state: started

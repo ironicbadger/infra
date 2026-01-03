@@ -1,0 +1,11 @@
+---
+adguard_version: "0.107.51"
+adguard_arch: "amd64"
+adguard_install_dir: "/opt/adguardhome"
+adguard_config_dir: "/etc/adguardhome"
+adguard_work_dir: "/var/lib/adguardhome"
+adguard_config_src: ""
+adguard_config_dest: "/etc/adguardhome/AdGuardHome.yaml"
+adguard_overwrite_config: false
+adguard_user: "adguard"
+adguard_group: "adguard"

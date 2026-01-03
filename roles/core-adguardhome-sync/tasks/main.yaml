@@ -1,0 +1,56 @@
+---
+- name: Skip if sync not enabled on this host
+  ansible.builtin.meta: end_host
+  when: not (adguardhome_sync_enabled | default(false))
+
+- name: Create adguardhome-sync directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  loop:
+    - "{{ adguardhome_sync_install_dir }}"
+    - "{{ adguardhome_sync_config_dir }}"
+
+- name: Determine architecture
+  ansible.builtin.set_fact:
+    sync_arch: "{{ 'arm64' if ansible_architecture == 'aarch64' else 'amd64' }}"
+
+- name: Download adguardhome-sync
+  ansible.builtin.get_url:
+    url: "https://github.com/bakito/adguardhome-sync/releases/download/v{{ adguardhome_sync_version }}/adguardhome-sync_{{ adguardhome_sync_version }}_linux_{{ sync_arch }}.tar.gz"
+    dest: "/tmp/adguardhome-sync_{{ adguardhome_sync_version }}.tar.gz"
+    mode: "0644"
+
+- name: Extract adguardhome-sync
+  ansible.builtin.unarchive:
+    src: "/tmp/adguardhome-sync_{{ adguardhome_sync_version }}.tar.gz"
+    dest: "{{ adguardhome_sync_install_dir }}"
+    remote_src: true
+    creates: "{{ adguardhome_sync_install_dir }}/adguardhome-sync"
+
+- name: Deploy adguardhome-sync config
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: "{{ adguardhome_sync_config_dir }}/config.yaml"
+    owner: root
+    group: root
+    mode: "0600"
+  notify: Restart adguardhome-sync
+
+- name: Install adguardhome-sync systemd service
+  ansible.builtin.template:
+    src: adguardhome-sync.service.j2
+    dest: /etc/systemd/system/adguardhome-sync.service
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Restart adguardhome-sync
+
+- name: Enable and start adguardhome-sync
+  ansible.builtin.systemd:
+    name: adguardhome-sync
+    enabled: true
+    state: started

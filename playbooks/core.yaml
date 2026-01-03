@@ -1,0 +1,31 @@
+---
+- name: Core edge nodes (DNS + VIP)
+  hosts: core
+  become: true
+
+  pre_tasks:
+    - name: Set timezone
+      community.general.timezone:
+        name: America/New_York
+
+  roles:
+    - role: ironicbadger.packages
+      tags: packages
+
+    - role: core-network
+      tags: network
+
+    - role: core-chrony
+      tags: chrony
+
+    - role: core-adguardhome
+      tags: adguard
+
+    - role: ironicbadger.caddy
+      tags: caddy
+
+    - role: core-keepalived
+      tags: keepalived
+
+    - role: core-adguardhome-sync
+      tags: sync

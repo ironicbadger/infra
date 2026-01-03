@@ -1,0 +1,12 @@
+---
+keepalived_instance_name: "VI_DNS"
+keepalived_interface: "{{ core_network_interface }}"
+keepalived_router_id: 53
+keepalived_state: "BACKUP"
+keepalived_priority: 100
+keepalived_auth_pass: "change-me"
+keepalived_advert_interval: 1
+keepalived_check_interval: 2
+keepalived_virtual_ip: "{{ core_vip_cidr }}"
+keepalived_check_script: "/usr/local/bin/check-adguard.sh"
+keepalived_check_weight: -30

@@ -1,0 +1,15 @@
+---
+# Core Pi5 - MASTER node for VIP and AdGuard sync
+
+core_ipv4_address: "10.42.0.5"
+keepalived_state: "MASTER"
+keepalived_priority: 120
+adguard_arch: "arm64"
+core_network_interface: "eth0"
+network_backend: "networkmanager"
+
+# This node runs adguardhome-sync as the origin
+adguardhome_sync_enabled: true
+
+# Caddy binary URL (arm64 for Pi5)
+caddy_amd64_linux_binary_url: "https://caddyserver.com/api/download?os=linux&arch=arm64&p=github.com%2Fcaddy-dns%2Fcloudflare"

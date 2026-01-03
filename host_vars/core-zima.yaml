@@ -1,0 +1,15 @@
+---
+# Core Zima - BACKUP node for VIP
+
+core_ipv4_address: "10.42.0.6"
+keepalived_state: "BACKUP"
+keepalived_priority: 110
+adguard_arch: "amd64"
+core_network_interface: "enp2s0"
+network_backend: "networkd"
+
+# This node is a replica, sync is disabled
+adguardhome_sync_enabled: false
+
+# Caddy binary URL (amd64 for Zima)
+caddy_amd64_linux_binary_url: "https://caddyserver.com/api/download?os=linux&arch=amd64&p=github.com%2Fcaddy-dns%2Fcloudflare"

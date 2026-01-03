@@ -21,7 +21,7 @@ caddy_endpoints:
         tls_insecure: true
       - friendly_name: dns
         fqdn: dns.wd.ktz.me
-        upstream: http://10.42.0.253
+        upstream: http://10.42.0.53
       ## Core Apps
       - friendly_name: blueiris
         fqdn: bi.wd.ktz.me

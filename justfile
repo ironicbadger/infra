@@ -8,6 +8,10 @@ run HOST *TAGS:
 compose HOST *V:
   ansible-playbook run.yaml --limit {{HOST}} --tags compose {{V}}
 
+# Core edge nodes (DNS + VIP)
+core *TAGS:
+  ansible-playbook -b playbooks/core.yaml {{TAGS}}
+
 ##########
 ## secrets management (SOPS/age)
 

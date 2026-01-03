@@ -1,0 +1,14 @@
+[Unit]
+Description=AdGuard Home Sync
+After=network-online.target adguardhome.service
+Wants=network-online.target
+Requires=adguardhome.service
+
+[Service]
+Type=simple
+ExecStart={{ adguardhome_sync_install_dir }}/adguardhome-sync run --config {{ adguardhome_sync_config_dir }}/config.yaml
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

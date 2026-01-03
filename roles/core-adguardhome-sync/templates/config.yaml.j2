@@ -1,0 +1,34 @@
+# AdGuard Home Sync configuration
+# Managed by Ansible - do not edit manually
+
+origin:
+  url: {{ adguardhome_sync_origin_url }}
+  username: {{ adguard_username }}
+  password: {{ adguard_password }}
+
+replicas:
+  - url: {{ adguardhome_sync_replica_url }}
+    username: {{ adguard_username }}
+    password: {{ adguard_password }}
+
+cron: "{{ adguardhome_sync_cron }}"
+runOnStart: {{ adguardhome_sync_run_on_start | lower }}
+
+# Feature toggles
+features:
+  generalSettings: {{ adguardhome_sync_general | lower }}
+  queryLogConfig: false
+  statsConfig: false
+  clientSettings: {{ adguardhome_sync_clients | lower }}
+  services: {{ adguardhome_sync_services | lower }}
+  filters: {{ adguardhome_sync_filters | lower }}
+  rewrites: {{ adguardhome_sync_rewrites | lower }}
+  dns:
+    serverConfig: {{ adguardhome_sync_dns | lower }}
+    accessLists: {{ adguardhome_sync_dns | lower }}
+  dhcp:
+    serverConfig: {{ adguardhome_sync_dhcp | lower }}
+    staticLeases: {{ adguardhome_sync_dhcp | lower }}
+
+api:
+  port: 8080

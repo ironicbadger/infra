@@ -1,0 +1,63 @@
+---
+- name: Ensure NetworkManager is enabled
+  ansible.builtin.systemd:
+    name: NetworkManager
+    enabled: true
+    state: started
+
+- name: List NetworkManager connections
+  ansible.builtin.command: nmcli -t -f NAME con show
+  register: nm_connections
+  changed_when: false
+
+- name: Create NetworkManager connection
+  ansible.builtin.command: >-
+    nmcli con add type ethernet ifname {{ core_network_interface }}
+    con-name {{ network_nm_connection_name }}
+    ipv4.method manual
+    ipv4.addresses {{ core_ipv4_address }}/{{ core_ipv4_prefix }}
+    ipv4.gateway {{ core_ipv4_gateway }}
+    ipv4.dns "{{ core_dns_servers | join(' ') }}"
+    ipv6.method ignore
+  when: network_nm_connection_name not in nm_connections.stdout_lines
+
+- name: Update NetworkManager connection
+  ansible.builtin.command: >-
+    nmcli con mod {{ network_nm_connection_name }}
+    ipv4.method manual
+    ipv4.addresses {{ core_ipv4_address }}/{{ core_ipv4_prefix }}
+    ipv4.gateway {{ core_ipv4_gateway }}
+    ipv4.dns "{{ core_dns_servers | join(' ') }}"
+    ipv6.method ignore
+  when: network_nm_connection_name in nm_connections.stdout_lines
+
+- name: Set autoconnect priority
+  ansible.builtin.command: >-
+    nmcli con mod {{ network_nm_connection_name }}
+    connection.autoconnect yes
+    connection.autoconnect-priority {{ network_nm_autoconnect_priority }}
+
+- name: Bring up NetworkManager connection
+  ansible.builtin.command: nmcli con up {{ network_nm_connection_name }}
+
+- name: Check DHCP service unit files
+  ansible.builtin.stat:
+    path: "{{ item.1 }}/{{ item.0 }}"
+  loop: "{{ network_disable_services_networkmanager | product(network_unit_paths) | list }}"
+  register: networkmanager_unit_stats
+
+- name: Build DHCP service list to disable
+  ansible.builtin.set_fact:
+    networkmanager_services_present: >-
+      {{ networkmanager_unit_stats.results
+         | selectattr('stat.exists')
+         | map(attribute='item.0')
+         | list
+         | unique }}
+
+- name: Disable DHCP-related services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: false
+    state: stopped
+  loop: "{{ networkmanager_services_present }}"
