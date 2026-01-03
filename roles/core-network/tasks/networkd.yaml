@@ -18,6 +18,15 @@
     enabled: true
     state: started
 
+- name: Remove dhcpcd packages
+  ansible.builtin.apt:
+    name:
+      - dhcpcd-base
+      - dhcpcd
+      - dhcpcd5
+    state: absent
+    purge: true
+
 - name: Write static resolv.conf
   ansible.builtin.template:
     src: resolv.conf.j2
