@@ -1,0 +1,65 @@
+# TeslaMate - Self-hosted data logger for Tesla vehicles
+# Documentation: https://docs.teslamate.org/docs/installation/docker
+
+services:
+  teslamate:
+    image: teslamate/teslamate:latest
+    container_name: teslamate
+    restart: always
+    environment:
+      - "ENCRYPTION_KEY={{ teslamate_encryption_key }}"
+      - "DATABASE_USER={{ teslamate_db_user }}"
+      - "DATABASE_PASS={{ teslamate_db_password }}"
+      - "DATABASE_NAME={{ teslamate_db_name }}"
+      - DATABASE_HOST=teslamate-db
+      - MQTT_HOST=mosquitto
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.teslamate.rule=Host(`teslamate.{{ m_wd_domain_me }}`)"
+      - traefik.http.services.teslamate.loadbalancer.server.port=4000
+    ports:
+      - 4000:4000
+    depends_on:
+      - teslamate-db
+      - mosquitto
+
+  teslamate-db:
+    image: postgres:18-trixie
+    container_name: teslamate-db
+    restart: always
+    environment:
+      - "POSTGRES_USER={{ teslamate_db_user }}"
+      - "POSTGRES_PASSWORD={{ teslamate_db_password }}"
+      - "POSTGRES_DB={{ teslamate_db_name }}"
+    volumes:
+      - "{{ appdata_path }}/apps/teslamate/teslamate-db:/var/lib/postgresql"
+
+  teslamate-grafana:
+    image: teslamate/grafana:latest
+    container_name: teslamate-grafana
+    restart: always
+    user: "{{ docker_compose_generator_uid }}:{{ docker_compose_generator_gid }}"
+    environment:
+      - "DATABASE_USER={{ teslamate_db_user }}"
+      - "DATABASE_PASS={{ teslamate_db_password }}"
+      - "DATABASE_NAME={{ teslamate_db_name }}"
+      - DATABASE_HOST=teslamate-db
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.teslamate-grafana.rule=Host(`teslamate-grafana.{{ m_wd_domain_me }}`)"
+      - traefik.http.services.teslamate-grafana.loadbalancer.server.port=3000
+    ports:
+      - 3000:3000
+    volumes:
+      - "{{ appdata_path }}/apps/teslamate/teslamate-grafana-data:/var/lib/grafana"
+    depends_on:
+      - teslamate-db
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: teslamate-mosquitto
+    restart: always
+    command: mosquitto -c /mosquitto-no-auth.conf
+    volumes:
+      - "{{ appdata_path }}/apps/teslamate/mosquitto-conf:/mosquitto/config"
+      - "{{ appdata_path }}/apps/teslamate/mosquitto-data:/mosquitto/data"
