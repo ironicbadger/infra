@@ -55,3 +55,11 @@ services:
       - "MYSQL_DATABASE={{ lychee_mysql_database }}"
       - "MYSQL_USER={{ lychee_mysql_user }}"
     restart: unless-stopped
+  plesla:
+    container_name: plesla
+    image: ghcr.io/ironicbadger/plesla:latest
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.plesla.rule=Host(`plesla.ktz.cloud`)
+      - traefik.http.routers.plesla.tls.certresolver=cloudflare
+    restart: unless-stopped
