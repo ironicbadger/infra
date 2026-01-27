@@ -82,6 +82,10 @@ caddy_endpoints:
         fqdn: px.wd.ktz.me
         upstream: https://10.42.1.20:8006
         tls_insecure: true
+      - friendly_name: fwd
+        fqdn: fwd.wd.ktz.me
+        upstream: https://192.168.1.13:8006
+        tls_insecure: true
       ## Apps and Services
       - friendly_name: immich
         fqdn: immich.wd.ktz.me
