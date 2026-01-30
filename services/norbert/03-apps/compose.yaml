@@ -1,0 +1,16 @@
+services:
+  convertx:
+    image: ghcr.io/c4illin/convertx:latest
+    container_name: convertx
+    volumes:
+      - "{{ appdata_path }}/apps/convertx:/app/data"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.convertx.rule=Host(`convertx.{{ norbert_domain_me }}`)"
+      - traefik.http.services.convertx.loadbalancer.server.port=3000
+    environment:
+      - "JWT_SECRET={{ convertx_jwt_secret }}"
+      - ACCOUNT_REGISTRATION=false
+      - HTTP_ALLOWED=false
+      - ALLOW_UNAUTHENTICATED=false
+    restart: unless-stopped

@@ -117,6 +117,8 @@ teslamate_encryption_key: ENC[AES256_GCM,data:84/xfP8ZX8B+9ho5WFs0DRCgl5UakMPO3J
 teslamate_db_user: ENC[AES256_GCM,data:bZNfQNYtZHXe,iv:ZBxDmtcXzm9r35JLPEMEPUfSzlr/iy4UT+uDJkUkJlA=,tag:AmLVJ6hSCKDJDSHK4SHC6g==,type:str]
 teslamate_db_password: ENC[AES256_GCM,data:FGQsVOvbcK4gsoecRCNbIY+Skykkiz2eCnPYj7CmjcK3CAvDi7fuyQemibk=,iv:S5yWNLwKVJfruVKHiT1R6qIh6N2S+fI1gk2s+qaV/XE=,tag:we/M3OTl4hDYEbD5/2e5Ug==,type:str]
 teslamate_db_name: ENC[AES256_GCM,data:XGHwFJ0RX+t5,iv:oeorf/3igsKADsU3k5xblTlM1MQsvW8NRkNQNKCR7pY=,tag:JOYJR+VuP2J3XoSsM6hzog==,type:str]
+#ENC[AES256_GCM,data:npw9F8TOzBn8,iv:7RwCxY6oGK9xDjggATfA0+RgqpS/XYxT8f+z4kwNjaI=,tag:682bne4FFnOdU9Q4JrqRxA==,type:comment]
+convertx_jwt_secret: ENC[AES256_GCM,data:E+Z8Wc/xANJtwlQ8+6aPptXH29nuXus+Vx3ebetIfQ0+CLQJnTTJ87i5T0sFhREEwSTd0x07N5bOql55sG7lfg==,iv:CdNJhwSCARAwboLEZ71BiKxeMOqfnImeT8GCAKWcNJk=,tag:p5XdBE3vA22Fg3KLY0QQSg==,type:str]
 sops:
     age:
         - recipient: age1helw9qcwl8lfy8xwm5cecnn2ljxlafhlplg3dehpk7ma4l94695qmqm9zg
@@ -128,7 +130,7 @@ sops:
             TWhRa0oyQzBqL1NWRmNZdWNva256VmsKJrk1FRhGN8yKcJafOkjQGkUK38Zxgs9R
             swQ97Ay/l+GPP2GKBWF5sRU/g338/FsfUSYl2DtDplCBjqKvIC/+Fg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-01-14T03:45:39Z"
-    mac: ENC[AES256_GCM,data:upAtPDBMeTNTa0Df4+dCE2sLCYzrYLeCpv2JYYZjv65IcFvKvL57NqPfZlKfAoZBxXJMF/mgvHdBadjyUS44ZalhWx1O10GEXstAMfQlxjgcZU/LAgFRsJlw4RXDHfVOXXl5gtnLIXb26r8UI80O3jc9ckBglv1Ne3T0oqqhdlY=,iv:9BUI3hu/ecGPcEd5cdrVzlO21UVRDXFJjAGsB9tKKd4=,tag:bitT3r2sfgEUX1l2daSegA==,type:str]
+    lastmodified: "2026-01-30T16:18:46Z"
+    mac: ENC[AES256_GCM,data:uRuYdkyJKuDiuZWoUpCIi4509CgmSkUaPZe5Sf8+fkSqi4hDrzJ50DvA2++xbFMJWamKZQFc2XyEGjjIe93VCpzUHXrp88pSOu3+A9ZMItVjzxjY1fSMoKG6nNGtbSEiaVmEiaCbW5YMuVXFGquNYO2WTOuY7hoSpaQHOE3YBRI=,iv:LjGgr/UrdkgyuKc6NLkwfijlt+1cDm0GHXF2eKqHoDo=,tag:fTBUih7nlbiaax8L2tXn7Q==,type:str]
     unencrypted_suffix: _unencrypted
     version: 3.11.0
