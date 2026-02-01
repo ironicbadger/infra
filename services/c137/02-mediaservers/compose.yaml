@@ -74,6 +74,21 @@ services:
       - ND_COVERARTPRIORITY=embedded
       - "TZ={{ host_timezone }}"
     restart: unless-stopped
+  calibre-web:
+    image: lscr.io/linuxserver/calibre-web
+    container_name: calibre-web
+    volumes:
+      - "{{ appdata_path }}/mediaservers/calibre-web:/config"
+      - "{{ storage_path }}/media/books:/books"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.calibre.rule=Host(`calibre.{{ m_wd_domain_me }}`)"
+      - traefik.http.services.calibre.loadbalancer.server.port=8083
+    environment:
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
+    restart: unless-stopped
 
   # fileflows:
   #   image: revenz/fileflows
