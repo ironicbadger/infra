@@ -74,21 +74,48 @@ services:
       - ND_COVERARTPRIORITY=embedded
       - "TZ={{ host_timezone }}"
     restart: unless-stopped
-  calibre-web:
-    image: lscr.io/linuxserver/calibre-web
-    container_name: calibre-web
-    volumes:
-      - "{{ appdata_path }}/mediaservers/calibre-web:/config"
-      - "{{ storage_path }}/media/books:/books"
+  cwa:
+    image: crocodilestick/calibre-web-automated:latest
+    container_name: cwa
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.calibre.rule=Host(`calibre.{{ m_wd_domain_me }}`)"
-      - traefik.http.services.calibre.loadbalancer.server.port=8083
+      - "traefik.http.routers.cwa.rule=Host(`cwa.m.wd.ktz.me`)"
+      - traefik.http.routers.cwa.entrypoints=websecure
+      - traefik.http.routers.cwa.tls=true
+      - traefik.http.services.cwa.loadbalancer.server.port=8083
+      - traefik.http.middlewares.cwa-headers.headers.customRequestHeaders.X-Scheme=https
+      - traefik.http.middlewares.cwa-headers.headers.customRequestHeaders.X-Forwarded-Proto=https
+      - traefik.http.middlewares.cwa-headers.headers.customRequestHeaders.X-Forwarded-Port=443
+      - traefik.http.routers.cwa.middlewares=cwa-headers
     environment:
       - "PUID={{ docker_compose_generator_uid }}"
       - "PGID={{ docker_compose_generator_gid }}"
       - "TZ={{ host_timezone }}"
+      # Hardcover API Key required for Hardcover as a Metadata Provider, get one here: https://docs.hardcover.app/api/getting-started/
+      - "HARDCOVER_TOKEN={{ cwa_hardcover_api_token }}"
+      - NETWORK_SHARE_MODE=false
+    volumes:
+      - "{{ appdata_path }}/mediaservers/calibre-web/config:/config"
+      # This is an ingest dir, NOT a library one. Anything added here will be automatically added to your library according to the settings you have configured in CWA Settings page. All files placed here are REMOVED AFTER PROCESSING
+      - "{{ appdata_path }}/mediaservers/calibre-web/book-ingest:/cwa-book-ingest"
+      - "{{ appdata_path }}/mediaservers/calibre-web/calibre-lib:/calibre-library"
+      - "{{ appdata_path }}/mediaservers/calibre-web/calibre-plugins:/config/.config/calibre/plugins"
     restart: unless-stopped
+  # calibre-web:
+  #   image: lscr.io/linuxserver/calibre-web
+  #   container_name: calibre-web
+  #   volumes:
+  #     - "{{ appdata_path }}/mediaservers/calibre-web:/config"
+  #     - "{{ storage_path }}/media/books:/books"
+  #   labels:
+  #     - traefik.enable=true
+  #     - "traefik.http.routers.calibre.rule=Host(`calibre.{{ m_wd_domain_me }}`)"
+  #     - traefik.http.services.calibre.loadbalancer.server.port=8083
+  #   environment:
+  #     - "PUID={{ docker_compose_generator_uid }}"
+  #     - "PGID={{ docker_compose_generator_gid }}"
+  #     - "TZ={{ host_timezone }}"
+  #   restart: unless-stopped
 
   # fileflows:
   #   image: revenz/fileflows
