@@ -25,7 +25,7 @@ services:
       - security__staffDeviceVerification=false
     restart: unless-stopped
   ktz-blog-db:
-    image: mysql:8.4
+    image: mysql:9.6
     container_name: ktz-blog-db
     volumes:
       - "{{ appdata_path }}/ktz-blog/db:/var/lib/mysql"
@@ -55,7 +55,7 @@ services:
       - ktz-blog-cat-db
     restart: unless-stopped
   ktz-blog-cat-db:
-    image: mysql:8.4
+    image: mysql:9.6
     container_name: ktz-blog-cat-db
     volumes:
       - "{{ appdata_path }}/ktz-blog-cat/db:/var/lib/mysql"
