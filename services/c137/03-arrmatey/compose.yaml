@@ -132,3 +132,19 @@ services:
       - traefik.enable=true
       - "traefik.http.routers.seerr.rule=Host(`seerr.{{ m_wd_domain_me }}`)"
     restart: unless-stopped
+  shelfmark:
+    image: ghcr.io/calibrain/shelfmark:latest
+    container_name: shelfmark
+    volumes:
+      - "{{ appdata_path }}/arrmatey/shelfmark:/config"
+      - "{{ storage_path }}/media/books:/books"
+      - "{{ download_path }}/complete/books:/downloads"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.shelfmark.rule=Host(`shelfmark.{{ m_wd_domain_me }}`)"
+      - traefik.http.services.shelfmark.loadbalancer.server.port=8084
+    environment:
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
+    restart: unless-stopped

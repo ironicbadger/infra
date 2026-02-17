@@ -97,8 +97,9 @@ services:
     volumes:
       - "{{ appdata_path }}/mediaservers/calibre-web/config:/config"
       # This is an ingest dir, NOT a library one. Anything added here will be automatically added to your library according to the settings you have configured in CWA Settings page. All files placed here are REMOVED AFTER PROCESSING
-      - "{{ appdata_path }}/mediaservers/calibre-web/book-ingest:/cwa-book-ingest"
-      - "{{ appdata_path }}/mediaservers/calibre-web/calibre-lib:/calibre-library"
+      - "{{ download_path }}/complete/books:/cwa-book-ingest"
+      #- "{{ appdata_path }}/mediaservers/calibre-web/book-ingest:/cwa-book-ingest"
+      - "{{ storage_path }}/media/books:/calibre-library"
       - "{{ appdata_path }}/mediaservers/calibre-web/calibre-plugins:/config/.config/calibre/plugins"
     restart: unless-stopped
   # calibre-web:
