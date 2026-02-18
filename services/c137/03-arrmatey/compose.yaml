@@ -148,6 +148,19 @@ services:
       - "PGID={{ docker_compose_generator_gid }}"
       - "TZ={{ host_timezone }}"
     restart: unless-stopped
+  kavita:
+    image: ghcr.io/kareadita/kavita:latest
+    container_name: kavita
+    volumes:
+      - "{{ appdata_path }}/arrmatey/kavita:/kavita/config"
+      - "{{ storage_path }}/media/comics:/books"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.kavita.rule=Host(`kavita.{{ m_wd_domain_me }}`)"
+      - traefik.http.services.kavita.loadbalancer.server.port=5000
+    environment:
+      - "TZ={{ host_timezone }}"
+    restart: unless-stopped
   sponsorblock:
     image: ghcr.io/dmunozv04/isponsorblocktv
     container_name: sponsorblock
