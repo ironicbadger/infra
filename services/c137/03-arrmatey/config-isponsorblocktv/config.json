@@ -1,0 +1,22 @@
+{
+    "devices": [
+        {
+            "screen_id": "586m0028ggrck0117vs5k5ubu4",
+            "name": "YouTube on TV"
+        }
+    ],
+    "apikey": "",
+    "skip_categories": [
+        "sponsor",
+        "selfpromo",
+        "exclusive_access"
+    ],
+    "channel_whitelist": [],
+    "skip_count_tracking": true,
+    "mute_ads": true,
+    "skip_ads": true,
+    "minimum_skip_length": 5,
+    "auto_play": false,
+    "join_name": "iSponsorBlockTV",
+    "use_proxy": true
+}

@@ -148,3 +148,10 @@ services:
       - "PGID={{ docker_compose_generator_gid }}"
       - "TZ={{ host_timezone }}"
     restart: unless-stopped
+  sponsorblock:
+    image: ghcr.io/dmunozv04/isponsorblocktv
+    container_name: sponsorblock
+    network_mode: host
+    volumes:
+      - "{{ appdata_path }}/arrmatey/isponsorblocktv:/app/data"
+    restart: unless-stopped
