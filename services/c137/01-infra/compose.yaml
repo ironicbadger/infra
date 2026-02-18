@@ -31,6 +31,16 @@ services:
       - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
       - --serversTransport.insecureSkipVerify=true
     restart: unless-stopped
+  dockhand:
+    image: fnsys/dockhand:latest
+    container_name: dockhand
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.dockhand.rule=Host(`dockhand.{{ m_wd_domain_me }}`)"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "{{ appdata_path }}/apps/dockhand:/app/data"
+    restart: unless-stopped
   # copyparty:
   #   image: copyparty/ac:latest
   #   container_name: copyparty

@@ -1,0 +1,201 @@
+{
+  // Tailscale ACLs (GitOps-managed).
+  "randomizeClientPort": true, // for OPNsense
+
+  "tagOwners": {
+    // Site tags
+    "tag:norfolk": [],
+
+    // Role/service tags
+    "tag:server": [],
+    "tag:ssh": [],
+    "tag:idp": [],
+    "tag:connector-uk": [],
+    "tag:connector-github": [],
+    "tag:container": [],
+
+    // K8s tags (owned by the operator tag)
+    "tag:k8s-operator": ["tag:k8s-operator"],
+    "tag:k8s": ["tag:k8s-operator"],
+    "tag:k8s-m720q": ["tag:k8s-operator"],
+    "tag:k8s-funnel": ["tag:k8s-operator"]
+  },
+
+  "groups": {
+    // User-based grouping for client devices (exit-node access).
+    "group:alex": ["alexktz@gmail.com"]
+  },
+
+  "hosts": {
+    // Godmode workstations (explicit device ownership, no tags).
+    "baldrick": "100.67.48.126",
+    "magrathea": "100.95.89.118",
+    "alexs-mac-studio": "100.92.189.64",
+    "alexs-macbook-pro14": "100.82.236.9",
+    "mooncake": "100.80.82.66"
+  },
+
+  "ssh": [
+    {
+      "action": "accept",
+      // Keep this list in sync with hosts above.
+      "src": [
+        "baldrick",
+        "magrathea",
+        "alexs-mac-studio",
+        "alexs-macbook-pro14",
+        "mooncake"
+      ],
+      "dst": ["tag:ssh", "autogroup:self"],
+      "users": ["root", "autogroup:nonroot"]
+    }
+  ],
+
+  "nodeAttrs": [
+    {
+      "target": ["tag:k8s-funnel"],
+      "attr": ["funnel"]
+    },
+    {
+      "target": ["tag:idp"],
+      "attr": ["funnel"]
+    },
+    {
+      "target": ["autogroup:member"],
+      "attr": ["funnel"]
+    },
+    {
+      "target": ["autogroup:member"],
+      "attr": ["drive:share", "drive:access"]
+    },
+    {
+      "target": ["*"],
+      "app": {
+        "tailscale.com/app-connectors": [
+          {
+            "name": "bbc",
+            "connectors": ["tag:connector-uk"],
+            "domains": ["*.bbc.com", "*.bbc.co.uk", "*.bbci.co.uk"]
+          },
+          {
+            "name": "github",
+            "connectors": ["tag:connector-github"],
+            "presetAppID": "github"
+          }
+        ]
+      }
+    }
+  ],
+
+  "grants": [
+    {
+      // Godmode workstations
+      "src": [
+        "baldrick",
+        "magrathea",
+        "alexs-mac-studio",
+        "alexs-macbook-pro14",
+        "mooncake"
+      ],
+      "dst": ["*"],
+      "ip": ["*"]
+    },
+    {
+      // Servers can access each other
+      "src": ["tag:server"],
+      "dst": ["tag:server"],
+      "ip": ["*"]
+    },
+    {
+      // Allow your user-owned devices to use exit nodes.
+      "src": ["group:alex"],
+      "dst": ["autogroup:internet"],
+      "ip": ["*"]
+    },
+    {
+      // RDU subnets
+      "src": [
+        "baldrick",
+        "magrathea",
+        "alexs-mac-studio",
+        "alexs-macbook-pro14",
+        "mooncake"
+      ],
+      "dst": ["10.42.0.0/21"],
+      "ip": ["*"]
+    },
+    {
+      // NR subnets
+      "src": [
+        "baldrick",
+        "magrathea",
+        "alexs-mac-studio",
+        "alexs-macbook-pro14",
+        "mooncake"
+      ],
+      "dst": ["192.168.16.0/24"],
+      "ip": ["*"]
+    },
+    {
+      // Default DNS for tailnet nodes
+      "src": ["*"],
+      "dst": ["10.42.0.253"],
+      "ip": ["udp:53"]
+    },
+    {
+      "src": ["autogroup:shared"],
+      "dst": ["*"],
+      "ip": ["*"]
+    },
+    {
+      // K8s API server access
+      "src": ["*"],
+      "dst": ["tag:k8s-operator"],
+      "ip": ["tcp:443"]
+    },
+    {
+      "src": ["autogroup:member"],
+      "dst": ["tag:k8s-operator"],
+      "app": {
+        "tailscale.com/cap/kubernetes": [
+          {
+            "impersonate": {
+              "groups": ["system:masters"]
+            }
+          }
+        ]
+      }
+    },
+    {
+      "src": ["*"],
+      "dst": ["tag:idp"],
+      "ip": ["*"]
+    },
+    {
+      "src": ["*"],
+      "dst": ["tag:idp"],
+      "app": {
+        "tailscale.com/cap/tsidp": [
+          {
+            "allow_admin_ui": true,
+            "allow_dcr": true,
+            "includeInUserInfo": true,
+            "users": ["*"],
+            "resources": ["*"]
+          }
+        ]
+      }
+    }
+  ],
+
+  "autoApprovers": {
+    "routes": {
+      "0.0.0.0/0": ["tag:connector-uk"],
+      "::/0": ["tag:connector-uk"]
+    },
+    "services": {
+      "tag:k8s": ["tag:k8s"],
+      "tag:k8s-operator": ["tag:k8s-operator"]
+    }
+  }
+}

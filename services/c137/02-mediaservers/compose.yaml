@@ -66,7 +66,7 @@ services:
       - "/mnt/rust/media/music/library:/music:ro"
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.navidrome.rule=Host(`navidrome.m.wd.ktz.me`)"
+      - "traefik.http.routers.navidrome.rule=Host(`navidrome.{{ m_wd_domain_me }}`)"
       - traefik.http.services.navidrome.loadbalancer.server.port=4533
     environment:
       - ND_MUSICFOLDER=/music
@@ -79,7 +79,7 @@ services:
     container_name: cwa
     labels:
       - traefik.enable=true
-      - "traefik.http.routers.cwa.rule=Host(`cwa.m.wd.ktz.me`)"
+      - "traefik.http.routers.cwa.rule=Host(`cwa.{{ m_wd_domain_me }}`)"
       - traefik.http.routers.cwa.entrypoints=websecure
       - traefik.http.routers.cwa.tls=true
       - traefik.http.services.cwa.loadbalancer.server.port=8083
