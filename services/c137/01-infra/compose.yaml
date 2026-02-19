@@ -1,3 +1,12 @@
+configs:
+  copyparty-ts-serve:
+    content: |
+      {"TCP":{"443":{"HTTPS":true}},
+      "Web":{"$${TS_CERT_DOMAIN}:443":
+          {"Handlers":{"/":
+          {"Proxy":"http://127.0.0.1:3923"}}}},
+      "AllowFunnel":{"$${TS_CERT_DOMAIN}:443":false}}
+
 services:
   tr:
     image: traefik
@@ -41,23 +50,53 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - "{{ appdata_path }}/apps/dockhand:/app/data"
     restart: unless-stopped
-  # copyparty:
-  #   image: copyparty/ac:latest
-  #   container_name: copyparty
-  #   user: "0:0"
-  #   labels:
-  #     - traefik.enable=true
-  #     - "traefik.http.routers.copyparty.rule=Host(`cp.{{ m_wd_domain_me }}`)"
-  #   volumes:
-  #     - "{{ appdata_path }}/apps/copyparty/config:/cfg"
-  #     - "/mnt:/mnt"
-  #   environment:
-  #     LD_PRELOAD: /usr/lib/libmimalloc-secure.so.2
-  #   stop_grace_period: 15s
-  #   healthcheck:
-  #     # hide it from logs with "/._" so it matches the default --lf-url filter
-  #     test: ["CMD-SHELL", "wget --spider -q 127.0.0.1:3923/?reset=/._"]
-  #     interval: 1m
-  #     timeout: 2s
-  #     retries: 5
-  #     start_period: 15s
+  copyparty-ts:
+    image: tailscale/tailscale:latest
+    container_name: copyparty-ts
+    hostname: copyparty
+    environment:
+      - "TS_AUTHKEY={{ tailscale_authkey_cp }}"
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_SERVE_CONFIG=/config/serve.json
+      - TS_USERSPACE=false
+      - TS_ENABLE_HEALTH_CHECK=true
+      - TS_LOCAL_ADDR_PORT=127.0.0.1:41234
+    configs:
+      - source: copyparty-ts-serve
+        target: /config/serve.json
+    volumes:
+      - "{{ appdata_path }}/apps/copyparty/ts-state:/var/lib/tailscale"
+      - "{{ appdata_path }}/apps/copyparty/ts-config:/config"
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:41234/healthz"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    restart: unless-stopped
+  copyparty:
+    image: copyparty/ac:latest
+    container_name: copyparty
+    network_mode: service:copyparty-ts
+    user: "0:0"
+    volumes:
+      - "{{ appdata_path }}/apps/copyparty/config:/cfg"
+      - "/mnt:/mnt"
+    depends_on:
+      - copyparty-ts
+    environment:
+      LD_PRELOAD: /usr/lib/libmimalloc-secure.so.2
+    stop_grace_period: 15s
+    healthcheck:
+      # hide it from logs with "/._" so it matches the default --lf-url filter
+      test: ["CMD-SHELL", "wget --spider -q 127.0.0.1:3923/?reset=/._"]
+      interval: 1m
+      timeout: 2s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
