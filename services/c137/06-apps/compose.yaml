@@ -83,7 +83,7 @@ services:
     container_name: nextcloud-redis
     restart: unless-stopped
   nextcloud-db:
-    image: postgres:16
+    image: postgres:18
     container_name: nextcloud-db
     volumes:
       - "{{ appdata_path }}/apps/nextcloud/db:/var/lib/postgresql/data"
@@ -115,7 +115,7 @@ services:
       - OAUTH2_USER_CREATION=0
     restart: unless-stopped
   miniflux-db:
-    image: postgres:17
+    image: postgres:18
     container_name: miniflux-db
     volumes:
       - "{{ appdata_path }}/apps/miniflux/db:/var/lib/postgresql/data"
