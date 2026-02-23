@@ -1,0 +1,14 @@
+services:
+  dumbot:
+    image: ghcr.io/shayne/dumbot:latest
+    container_name: dumbot
+    environment:
+      - "TZ={{ host_timezone }}"
+      - "ANTHROPIC_API_KEY={{ dumbot_anthropic_api_key }}"
+      - "TELEGRAM_BOT_TOKEN={{ dumbot_telegram_bot_token }}"
+      - "TAVILY_API_KEY={{ dumbot_tavily_api_key }}"
+      - DUMBOT_DB_FILE=/data/dumbot.db
+      - DUMBOT_STORAGE_DIR=/data
+    volumes:
+      - "{{ appdata_path }}/apps/dumbot:/data"
+    restart: unless-stopped
