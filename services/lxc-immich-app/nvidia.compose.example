@@ -10,6 +10,9 @@
 #     volumes:
 #       - model-cache:/cache
 #     restart: unless-stopped
+#     environment:
+#     - MACHINE_LEARNING_PRELOAD__CLIP=ViT-SO400M-16-SigLIP2-384__webli
+#     - MACHINE_LEARNING_MODEL_TTL=0
 #     deploy:
 #       resources:
 #         reservations:
