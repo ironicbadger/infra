@@ -1,0 +1,14 @@
+clusterName: talos-prod
+apiEndpoint: https://142.132.240.94:6443
+nodes:
+  - hostname: prod-cp1
+    publicIP: 188.245.55.44
+    privateIP: 10.10.0.11
+
+  - hostname: prod-cp2
+    publicIP: 49.13.4.239
+    privateIP: 10.10.0.12
+
+  - hostname: prod-cp3
+    publicIP: 188.245.55.216
+    privateIP: 10.10.0.13
