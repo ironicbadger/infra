@@ -136,7 +136,7 @@ services:
     image: ghcr.io/kieraneglin/pinchflat:latest
     container_name: pinchflat
     volumes:
-      - "{{ storage_path }}/media/youtube:/s"
+      - "{{ storage_path }}/media/youtube:/downloads"
       - "{{ appdata_path }}/mediaservers/pinchflat:/config"
     labels:
       - traefik.enable=true
