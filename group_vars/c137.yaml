@@ -15,6 +15,10 @@ docker_compose_generator_zfs_enabled: true
 
 disabled_compose_files: []
 
+obsidian_livesync_domain: "obsidian.{{ m_wd_domain_me }}"
+obsidian_livesync_path_prefix: "/sync"
+obsidian_livesync_couchdb_user: "obsidian"
+
 # ironicbadger.packages
 packages_perform_cleanup: True
 package_list:

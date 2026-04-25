@@ -1,0 +1,52 @@
+services:
+  obsidian-livesync:
+    image: couchdb:3
+    container_name: obsidian-livesync
+    entrypoint:
+      - /bin/sh
+      - -ec
+      - |
+          cat >/opt/couchdb/etc/local.d/10-livesync.ini <<EOF
+          [couchdb]
+          single_node = true
+          max_document_size = 50000000
+
+          [chttpd]
+          require_valid_user = true
+          max_http_request_size = 4294967296
+
+          [chttpd_auth]
+          require_valid_user = true
+          authentication_redirect = {{ obsidian_livesync_path_prefix }}/_utils/session.html
+
+          [httpd]
+          WWW-Authenticate = Basic realm="couchdb"
+          enable_cors = true
+
+          [cors]
+          origins = app://obsidian.md,capacitor://localhost,http://localhost
+          credentials = true
+          headers = accept, authorization, content-type, origin, referer
+          methods = GET, PUT, POST, HEAD, DELETE
+          max_age = 3600
+          EOF
+          exec /docker-entrypoint.sh /opt/couchdb/bin/couchdb
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.obsidian-livesync.rule=Host(`{{ obsidian_livesync_domain }}`) && PathPrefix(`{{ obsidian_livesync_path_prefix }}`)"
+      - "traefik.http.routers.obsidian-livesync.middlewares=obsidian-livesync-strip,obsidian-livesync-cors"
+      - "traefik.http.middlewares.obsidian-livesync-strip.stripprefix.prefixes={{ obsidian_livesync_path_prefix }}"
+      - "traefik.http.middlewares.obsidian-livesync-cors.headers.accesscontrolallowmethods=GET,PUT,POST,HEAD,DELETE"
+      - "traefik.http.middlewares.obsidian-livesync-cors.headers.accesscontrolallowheaders=accept,authorization,content-type,origin,referer"
+      - "traefik.http.middlewares.obsidian-livesync-cors.headers.accesscontrolalloworiginlist=app://obsidian.md,capacitor://localhost,http://localhost"
+      - "traefik.http.middlewares.obsidian-livesync-cors.headers.accesscontrolmaxage=3600"
+      - "traefik.http.middlewares.obsidian-livesync-cors.headers.addvaryheader=true"
+      - "traefik.http.middlewares.obsidian-livesync-cors.headers.accesscontrolallowcredentials=true"
+      - "traefik.http.services.obsidian-livesync.loadbalancer.server.port=5984"
+    environment:
+      - "COUCHDB_USER={{ obsidian_livesync_couchdb_user }}"
+      - "COUCHDB_PASSWORD={{ obsidian_livesync_couchdb_password }}"
+      - "COUCHDB_SECRET={{ obsidian_livesync_couchdb_secret }}"
+    volumes:
+      - "{{ appdata_path }}/apps/obsidian-livesync/data:/opt/couchdb/data"
+    restart: unless-stopped
