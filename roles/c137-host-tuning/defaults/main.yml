@@ -1,0 +1,11 @@
+---
+c137_kernel_cmdline_args:
+  - nvme_core.default_ps_max_latency_us=0
+  - pcie_port_pm=off
+
+c137_stale_nvidia_modules:
+  - nvidia-drm
+  - nvidia-uvm
+
+c137_manage_fancontrol: true
+c137_manage_lxc_gpu_apparmor_profile: true

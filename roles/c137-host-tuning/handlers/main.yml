@@ -1,0 +1,14 @@
+---
+- name: Refresh proxmox boot entries
+  ansible.builtin.command: proxmox-boot-tool refresh
+  changed_when: true
+
+- name: Restart fancontrol
+  ansible.builtin.systemd:
+    name: fancontrol
+    state: restarted
+
+- name: Restart apparmor
+  ansible.builtin.systemd:
+    name: apparmor
+    state: restarted

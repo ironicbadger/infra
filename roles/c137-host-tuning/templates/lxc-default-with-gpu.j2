@@ -1,0 +1,19 @@
+# AppArmor profile for LXC containers with GPU access
+# Allows access to Intel GPU devices for QuickSync Video
+
+profile lxc-container-default-with-gpu flags=(attach_disconnected,mediate_deleted) {
+  #include <abstractions/lxc/container-base>
+
+  # Allow access to GPU devices
+  /dev/dri/ r,
+  /dev/dri/** rw,
+
+  # Allow sysfs GPU access
+  /sys/devices/pci*/**/drm/ r,
+  /sys/devices/pci*/**/drm/** r,
+  /sys/class/drm/ r,
+  /sys/class/drm/** r,
+
+  # Allow GPU related proc access
+  /proc/sys/dev/i915/* r,
+}

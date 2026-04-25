@@ -1,0 +1,54 @@
+---
+- name: Read Proxmox kernel command line
+  ansible.builtin.slurp:
+    src: /etc/kernel/cmdline
+  register: c137_kernel_cmdline
+
+- name: Persist c137 kernel arguments
+  ansible.builtin.copy:
+    dest: /etc/kernel/cmdline
+    owner: root
+    group: root
+    mode: '0644'
+    content: |
+      {{
+        (
+          (c137_kernel_cmdline.content | b64decode | trim).split()
+          + c137_kernel_cmdline_args
+        ) | unique | join(' ')
+      }}
+  notify: Refresh proxmox boot entries
+
+- name: Disable stale NVIDIA module autoload
+  ansible.builtin.replace:
+    path: "{{ item.0 }}"
+    regexp: "^({{ item.1 }})$"
+    replace: "#\\1"
+  loop: "{{ ['/etc/modules', '/etc/modules-load.d/modules.conf'] | product(c137_stale_nvidia_modules) }}"
+
+- name: Disable NVIDIA persistence service when GPU is passed through
+  ansible.builtin.systemd:
+    name: nvidia-persistenced
+    enabled: false
+    state: stopped
+  failed_when: false
+
+- name: Install c137 fancontrol configuration
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/files/fancontrol/c137-fancontrol"
+    dest: /etc/fancontrol
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart fancontrol
+  when: c137_manage_fancontrol | bool
+
+- name: Install valid LXC GPU AppArmor profile
+  ansible.builtin.template:
+    src: lxc-default-with-gpu.j2
+    dest: /etc/apparmor.d/lxc/lxc-default-with-gpu
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart apparmor
+  when: c137_manage_lxc_gpu_apparmor_profile | bool
