@@ -80,7 +80,7 @@ caddy_endpoints:
       ## proxmox
       - friendly_name: px
         fqdn: px.wd.ktz.me
-        upstream: https://10.42.1.20:8006
+        upstream: https://10.42.1.10:8006
         tls_insecure: true
       - friendly_name: fwd
         fqdn: fwd.wd.ktz.me
