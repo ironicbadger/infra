@@ -1,0 +1,12 @@
+---
+# ironicbadger.docker-compose-generator
+host_timezone: "America/New_York"
+docker_compose_hostname: "meeseeks"
+
+appdata_path: /mnt/nvmeu2/appdata
+download_path: /mnt/downloads
+storage_path: /mnt/rust
+
+docker_compose_generator_uid: "1000"
+docker_compose_generator_gid: "1000"
+docker_compose_generator_zfs_enabled: true

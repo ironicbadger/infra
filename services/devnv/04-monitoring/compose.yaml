@@ -55,8 +55,6 @@ services:
   tautulli:
     image: lscr.io/linuxserver/tautulli:latest
     container_name: tautulli
-    depends_on:
-      - plex
     volumes:
       - "{{ appdata_path }}/mediaservers/tautulli:/config"
       - "{{ appdata_path }}/mediaservers/plex/config/Library/Application Support/Plex Media Server/Logs:/logs:ro"
