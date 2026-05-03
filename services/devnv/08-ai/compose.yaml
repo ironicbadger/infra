@@ -12,3 +12,25 @@ services:
     volumes:
       - "{{ appdata_path }}/apps/dumbot:/data"
     restart: unless-stopped
+  immich-machine-learning:
+    image: ghcr.io/immich-app/immich-machine-learning:release-cuda
+    container_name: immich-machine-learning
+    ports:
+      - 3003:3003
+    volumes:
+      - model-cache:/cache
+    restart: unless-stopped
+    environment:
+      - MACHINE_LEARNING_PRELOAD__CLIP=ViT-SO400M-16-SigLIP2-384__webli
+      - MACHINE_LEARNING_MODEL_TTL=0
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities:
+                - gpu
+
+volumes:
+  model-cache:
