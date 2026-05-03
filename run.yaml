@@ -7,25 +7,6 @@
         tags: caddy
 
 ### SERVERS
-  - hosts: c137
-    roles:
-      #- role: ironicbadger.figurine
-      - role: c137-host-tuning
-        tags: c137-host-tuning
-      - role: ktz-server-welcome
-      #- role: ironicbadger.proxmox-host-nvidia-setup
-      - role: ironicbadger.tailscale-routes-fix
-      - role: ironicbadger.packages
-      #- role: nix-manager
-      # - role: ironicbadger.mounts
-      #   tags: mounts
-      - role: zrepl
-        tags: zrepl
-      - role: ironicbadger.docker-compose-generator
-        tags: compose
-      - role: systemd-timer-plex
-        tags: plex-restart
-
   - hosts: devnv
     roles:
       #- role: ironicbadger.figurine
