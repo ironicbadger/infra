@@ -27,15 +27,16 @@ package_list:
 
 # zrepl configuration - using new unified job structure
 zrepl_jobs:
-  # Sink for c137 push jobs
-  - name: "c137_sink"
+  # Sink for meeseeks push jobs. The dataset was renamed from the old c137 path
+  # to preserve the existing replicated snapshot history.
+  - name: "meeseeks_sink"
     type: sink
-    root_fs: "z2tank/backups/c137"
+    root_fs: "z2tank/backups/meeseeks"
     serve:
       type: "tcp"
       listen: "100.91.74.29:27808"
       clients:
-        "100.107.197.66": "data"  # Maps c137's IP to "data" to avoid duplication
+        "100.107.18.108": "data"  # Maps meeseeks' IP to "data" to preserve the old child path
     recv:
       placeholder:
         encryption: "off"

@@ -18,6 +18,14 @@
 
   - hosts: meeseeks
     roles:
+      - role: ironicbadger.figurine
+      - role: ktz-server-welcome
+      - role: zrepl
+        tags: zrepl
+      - role: docker-daemon
+        tags:
+          - compose
+          - docker
       - role: ironicbadger.docker-compose-generator
         tags: compose
 

@@ -1,0 +1,10 @@
+---
+- name: Restart docker
+  ansible.builtin.systemd:
+    name: docker
+    state: restarted
+
+- name: Load Docker AppArmor profile
+  ansible.builtin.command: apparmor_parser -r /etc/apparmor.d/docker
+  changed_when: true
+  when: docker_daemon_disable_apparmor | default(false) | bool
