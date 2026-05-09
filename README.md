@@ -46,6 +46,7 @@ flowchart LR
 - **SOPS + age** - Secret encryption
 - **Tailscale** - Mesh VPN
 - **ZFS + zrepl** - Storage and replication
+- **Proxmox VM provisioning** - VM creation and clone-time metadata
 - **Just** - Task runner
 
 ## Roles Philosophy
@@ -70,9 +71,14 @@ Roles are sourced three ways:
 just reqs              # Install galaxy dependencies
 just run <host> <tags> # Run playbook on host
 just compose <host>    # Deploy docker-compose services
+just vm <command>      # Create/list Proxmox VMs
 just sops <file>       # Edit encrypted secrets
 just sub-update        # Update git submodules
 ```
+
+NixOS host definitions and deployments live in
+[`ironicbadger/nix-config`](https://github.com/ironicbadger/nix-config). This
+repo only creates the Proxmox VM shell for those hosts.
 
 ## Structure
 
@@ -80,6 +86,7 @@ just sub-update        # Update git submodules
 ├── run.yaml              # Main playbook
 ├── hosts.ini             # Inventory
 ├── justfile              # Task automation
+├── nix/                  # Proxmox VM declarations and clone helper
 ├── group_vars/           # Variables (some SOPS encrypted)
 ├── roles/                # Ansible roles
 └── services/             # Docker Compose configs per host

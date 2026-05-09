@@ -1,0 +1,386 @@
+#!/usr/bin/env bash
+# Purpose: create Proxmox VMs from existing templates.
+set -euo pipefail
+
+repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$repo_root"
+
+usage() {
+  cat <<'USAGE'
+Usage:
+  just vm help
+  just vm list-templates
+  just vm list-configs
+  just vm create NAME [VMID]
+
+Examples:
+  just vm list-templates
+  just vm list-configs
+  just vm create forgejo
+  just vm create forgejo 1101
+
+Infra ownership:
+  This repo owns Proxmox VM existence and clone-time metadata.
+  NixOS templates and host configurations are owned by ironicbadger/nix-config.
+
+VM config:
+  nix/data/proxmox.nix  Proxmox endpoint and external template IDs
+  nix/data/vms.nix      VM declarations created by this repo
+
+Overrides:
+  VMID argument overrides configured vmid.
+  VM_CORES, VM_MEMORY_MIB, and VM_STORAGE override configured values.
+USAGE
+}
+
+nix_eval_raw() {
+  nix --extra-experimental-features 'nix-command' eval --raw --impure --expr "$1"
+}
+
+proxmox_value() {
+  local attr="$1"
+
+  nix_eval_raw "let cfg = import ./data/proxmox.nix; in builtins.toString (cfg.${attr})"
+}
+
+template_value() {
+  local template="$1"
+  local attr="$2"
+
+  INFRA_TEMPLATE="$template" INFRA_TEMPLATE_ATTR="$attr" \
+    nix_eval_raw '
+      let
+        cfg = import ./data/proxmox.nix;
+        template = builtins.getEnv "INFRA_TEMPLATE";
+        attr = builtins.getEnv "INFRA_TEMPLATE_ATTR";
+        templates = cfg.templates or {};
+      in
+        if builtins.hasAttr template templates
+        then builtins.toString (builtins.getAttr attr (builtins.getAttr template templates))
+        else throw "unknown Proxmox template: ${template}"
+    '
+}
+
+vm_value() {
+  local name="$1"
+  local attr="$2"
+  local default="$3"
+
+  INFRA_VM_NAME="$name" INFRA_VM_ATTR="$attr" INFRA_VM_DEFAULT="$default" \
+    nix_eval_raw '
+      let
+        name = builtins.getEnv "INFRA_VM_NAME";
+        attr = builtins.getEnv "INFRA_VM_ATTR";
+        default = builtins.getEnv "INFRA_VM_DEFAULT";
+        cfg = import ./data/vms.nix;
+        defaults = cfg.defaults or {};
+        vms = cfg.vms or {};
+        vm = if builtins.hasAttr name vms then builtins.getAttr name vms else {};
+        merged = defaults // vm;
+      in
+        if builtins.hasAttr attr merged
+        then builtins.toString (builtins.getAttr attr merged)
+        else default
+    '
+}
+
+template_rows() {
+  nix_eval_raw '
+    let
+      cfg = import ./data/proxmox.nix;
+      templates = cfg.templates or {};
+      names = builtins.attrNames templates;
+      render = name:
+        let template = builtins.getAttr name templates;
+        in "${name}\t${builtins.toString template.vmid}\t${template.name}";
+    in builtins.concatStringsSep "\n" (map render names) + "\n"
+  '
+}
+
+encode_arg() {
+  if [ -n "$1" ]; then
+    printf '%s' "$1" | base64 | tr -d '\n'
+  else
+    printf '%s' "__empty__"
+  fi
+}
+
+proxmox_host="$(proxmox_value proxmox.host)"
+proxmox_user="$(proxmox_value proxmox.user)"
+default_template="$(proxmox_value defaults.template)"
+default_storage="$(proxmox_value defaults.storage)"
+
+ssh_common=(
+  -o BatchMode=yes
+  -o ConnectTimeout=5
+  -o ServerAliveInterval=30
+  -o ServerAliveCountMax=12
+)
+
+pve_ssh() {
+  ssh "${ssh_common[@]}" "${proxmox_user}@${proxmox_host}" "$@"
+}
+
+cmd="${1:-help}"
+shift || true
+
+case "$cmd" in
+  help|-h|--help)
+    usage
+    ;;
+  list-templates)
+    printf '%-12s %-6s %-34s %-10s %s\n' TEMPLATE VMID NAME STATE TEMPLATE_FLAG
+    while IFS=$'\t' read -r template vmid expected_name; do
+      [ -n "$template" ] || continue
+
+      if config="$(pve_ssh "qm config '$vmid'" 2>/dev/null)"; then
+        name="$(printf '%s\n' "$config" | awk -F': ' '$1 == "name" { print $2; exit }')"
+        is_template="$(printf '%s\n' "$config" | awk -F': ' '$1 == "template" { print $2; exit }')"
+        state="$(pve_ssh "qm status '$vmid'" | awk '{ print $2 }')"
+        printf '%-12s %-6s %-34s %-10s %s\n' "$template" "$vmid" "$name" "$state" "${is_template:-0}"
+      else
+        printf '%-12s %-6s %-34s %-10s %s\n' "$template" "$vmid" "$expected_name" missing 0
+      fi
+    done < <(template_rows)
+    ;;
+  list-configs)
+    nix_eval_raw '
+      let
+        cfg = import ./data/vms.nix;
+        defaults = cfg.defaults or {};
+        vms = cfg.vms or {};
+        names = builtins.attrNames vms;
+        render = name:
+          let
+            vm = defaults // builtins.getAttr name vms;
+            vmid = if vm ? vmid then builtins.toString vm.vmid else "auto";
+            template = vm.template or "-";
+            cores = builtins.toString (vm.cores or 2);
+            memoryMiB = builtins.toString (vm.memoryMiB or 4096);
+            diskGiB = if vm ? diskGiB then builtins.toString vm.diskGiB else "-";
+            storage = vm.storage or "-";
+            ipConfig0 = vm.ipConfig0 or "ip=dhcp";
+          in "${name}\t${vmid}\t${template}\t${cores}\t${memoryMiB}\t${diskGiB}\t${storage}\t${ipConfig0}";
+      in builtins.concatStringsSep "\n" ([ "NAME\tVMID\tTEMPLATE\tCORES\tMEMORY_MIB\tDISK_GIB\tSTORAGE\tIPCONFIG0" ] ++ map render names) + "\n"
+    ' | column -t
+    ;;
+  create)
+    if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+      usage >&2
+      exit 2
+    fi
+
+    name="$1"
+    configured_vmid="$(vm_value "$name" vmid "")"
+    vmid="${2:-$configured_vmid}"
+    template_key="$(vm_value "$name" template "$default_template")"
+    template_vmid="$(template_value "$template_key" vmid)"
+    template_name="$(template_value "$template_key" name)"
+    cores="${VM_CORES:-$(vm_value "$name" cores 2)}"
+    memory_mib="${VM_MEMORY_MIB:-$(vm_value "$name" memoryMiB 4096)}"
+    storage="${VM_STORAGE:-$(vm_value "$name" storage "$default_storage")}"
+    disk_gib="$(vm_value "$name" diskGiB "")"
+    ci_user="$(vm_value "$name" ciUser "")"
+    ip_config0="$(vm_value "$name" ipConfig0 "ip=dhcp")"
+    ssh_public_key="$(vm_value "$name" sshPublicKey "")"
+    description="$(vm_value "$name" description "created from ${template_name} (${template_vmid})")"
+    disk_gib_b64="$(encode_arg "$disk_gib")"
+    ci_user_b64="$(encode_arg "$ci_user")"
+    ip_config0_b64="$(encode_arg "$ip_config0")"
+    ssh_public_key_b64="$(encode_arg "$ssh_public_key")"
+    description_b64="$(encode_arg "$description")"
+
+    case "$name" in
+      *[!A-Za-z0-9._-]*|"")
+        echo "VM name must contain only letters, numbers, dot, underscore, and dash: ${name}" >&2
+        exit 2
+        ;;
+    esac
+
+    case "$cores" in
+      ''|*[!0-9]*)
+        echo "VM_CORES must be a positive integer." >&2
+        exit 2
+        ;;
+    esac
+
+    case "$memory_mib" in
+      ''|*[!0-9]*)
+        echo "VM_MEMORY_MIB must be a positive integer MiB value." >&2
+        exit 2
+        ;;
+    esac
+
+    if [ -z "$storage" ]; then
+      echo "VM storage must not be empty." >&2
+      exit 2
+    fi
+
+    case "$disk_gib" in
+      ''|*[!0-9]*)
+        if [ -n "$disk_gib" ]; then
+          echo "diskGiB must be a positive integer GiB value." >&2
+          exit 2
+        fi
+        ;;
+    esac
+
+    if [ -z "$vmid" ]; then
+      vmid="$(pve_ssh "pvesh get /cluster/nextid")"
+    fi
+
+    case "$vmid" in
+      ''|*[!0-9]*)
+        echo "VMID must be a positive integer: ${vmid}" >&2
+        exit 2
+        ;;
+    esac
+
+    echo "Creating ${name} (${vmid}) from ${template_name} (${template_vmid})."
+
+    ssh "${ssh_common[@]}" "${proxmox_user}@${proxmox_host}" bash -s -- \
+      "$template_vmid" "$template_name" "$vmid" "$name" "$storage" \
+      "$cores" "$memory_mib" "$disk_gib_b64" "$ci_user_b64" "$ip_config0_b64" \
+      "$ssh_public_key_b64" "$description_b64" <<'REMOTE'
+set -euo pipefail
+
+decode_arg() {
+  if [ "$1" = "__empty__" ]; then
+    return 0
+  fi
+
+  printf '%s' "$1" | base64 -d
+}
+
+template_vmid="$1"
+template_name="$2"
+vmid="$3"
+name="$4"
+storage="$5"
+cores="$6"
+memory_mib="$7"
+disk_gib="$(decode_arg "$8")"
+ci_user="$(decode_arg "$9")"
+ip_config0="$(decode_arg "${10}")"
+ssh_public_key="$(decode_arg "${11}")"
+description="$(decode_arg "${12}")"
+
+template_config="$(qm config "$template_vmid")"
+actual_template_name="$(printf '%s\n' "$template_config" | awk -F': ' '$1 == "name" { print $2; exit }')"
+is_template="$(printf '%s\n' "$template_config" | awk -F': ' '$1 == "template" { print $2; exit }')"
+
+if [ "$actual_template_name" != "$template_name" ] || [ "$is_template" != "1" ]; then
+  echo "VMID ${template_vmid} is not template '${template_name}'." >&2
+  exit 2
+fi
+
+if qm config "$vmid" >/dev/null 2>&1; then
+  existing_name="$(qm config "$vmid" | awk -F': ' '$1 == "name" { print $2; exit }')"
+  echo "VMID ${vmid} already exists as '${existing_name}'." >&2
+  exit 2
+fi
+
+qm clone "$template_vmid" "$vmid" \
+  --name "$name" \
+  --full 1 \
+  --storage "$storage" >/dev/null
+
+qm_set_args=(
+  --cores "$cores"
+  --memory "$memory_mib"
+  --agent enabled=1
+  --description "$description"
+)
+
+ssh_key_file=""
+cleanup_remote() {
+  if [ -n "$ssh_key_file" ]; then
+    rm -f "$ssh_key_file"
+  fi
+}
+trap cleanup_remote EXIT
+
+if [ -n "$ssh_public_key" ]; then
+  ssh_key_file="$(mktemp "/tmp/infra-vm-create-${vmid}.sshkeys.XXXXXX")"
+  printf '%s\n' "$ssh_public_key" > "$ssh_key_file"
+  qm_set_args+=(--sshkeys "$ssh_key_file")
+fi
+
+if [ -n "$ci_user" ]; then
+  qm_set_args+=(--ciuser "$ci_user")
+fi
+
+if [ -n "$ip_config0" ]; then
+  qm_set_args+=(--ipconfig0 "$ip_config0")
+fi
+
+qm set "$vmid" "${qm_set_args[@]}" >/dev/null
+
+if [ -n "$disk_gib" ]; then
+  current_disk_gib="$(
+    qm config "$vmid" |
+      awk -F'size=' '$1 ~ /^virtio0:/ && NF > 1 { sub(/G.*/, "", $2); print int($2); exit }'
+  )"
+
+  if [ -z "$current_disk_gib" ]; then
+    echo "Could not determine current virtio0 size for ${vmid}." >&2
+    exit 2
+  fi
+
+  if [ "$disk_gib" -gt "$current_disk_gib" ]; then
+    qm resize "$vmid" virtio0 "${disk_gib}G" >/dev/null
+  elif [ "$disk_gib" -lt "$current_disk_gib" ]; then
+    echo "Refusing to shrink virtio0 from ${current_disk_gib}G to ${disk_gib}G." >&2
+    exit 2
+  fi
+fi
+
+if [ -n "$ci_user" ] || [ -n "$ip_config0" ] || [ -n "$ssh_public_key" ]; then
+  qm cloudinit update "$vmid" >/dev/null
+fi
+
+qm start "$vmid"
+
+echo "Waiting for guest agent and IPv4."
+for _ in $(seq 1 60); do
+  if qm guest exec "$vmid" --timeout 30 -- /run/current-system/sw/bin/ip -4 -o addr show scope global \
+    >/tmp/infra-vm-create-ip.json 2>/dev/null; then
+    ip="$(
+      jq -r '.["out-data"] // ""' /tmp/infra-vm-create-ip.json |
+        awk '
+          {
+            for (i = 1; i <= NF; i++) {
+              if ($i == "inet") {
+                split($(i + 1), address, "/")
+                print address[1]
+                exit
+              }
+            }
+          }
+        '
+    )"
+
+    if [ -n "$ip" ]; then
+      printf '%s\n' "$ip" > "/tmp/infra-vm-create-${vmid}.ip"
+      break
+    fi
+  fi
+  sleep 5
+done
+
+if ! test -s "/tmp/infra-vm-create-${vmid}.ip"; then
+  echo "VM created and started, but no IPv4 address was reported yet." >&2
+  exit 3
+fi
+REMOTE
+
+    ip="$(pve_ssh "cat '/tmp/infra-vm-create-${vmid}.ip'")"
+    echo "OK: ${name} (${vmid}) is running at ${ip}."
+    echo "If this is a NixOS VM, deploy its host configuration from ironicbadger/nix-config."
+    ;;
+  *)
+    echo "Unknown VM command: ${cmd}" >&2
+    usage >&2
+    exit 2
+    ;;
+esac

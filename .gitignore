@@ -114,3 +114,7 @@ vault.yaml
 .editorconfig
 
 credentials.auto.tfvars
+
+# Nix build outputs
+nix/result
+nix/result-*

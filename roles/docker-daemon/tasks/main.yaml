@@ -1,0 +1,42 @@
+---
+- name: Ensure Docker daemon config directory exists
+  ansible.builtin.file:
+    path: /etc/docker
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Configure Docker daemon
+  ansible.builtin.copy:
+    dest: /etc/docker/daemon.json
+    content: "{{ docker_daemon_config | to_nice_json }}\n"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Restart docker
+    - Load Docker AppArmor profile
+  when: docker_daemon_config is defined
+
+- name: Install AppArmor parser
+  ansible.builtin.package:
+    name: apparmor
+    state: present
+  when: docker_daemon_disable_apparmor | default(false) | bool
+
+- name: Configure Docker AppArmor profile
+  ansible.builtin.template:
+    src: docker-apparmor-unconfined.j2
+    dest: /etc/apparmor.d/docker
+    owner: root
+    group: root
+    mode: "0644"
+  register: docker_daemon_apparmor_profile
+  notify: Load Docker AppArmor profile
+  when: docker_daemon_disable_apparmor | default(false) | bool
+
+- name: Load Docker AppArmor profile
+  ansible.builtin.command: apparmor_parser -r /etc/apparmor.d/docker
+  changed_when: docker_daemon_apparmor_profile.changed
+  when: docker_daemon_disable_apparmor | default(false) | bool

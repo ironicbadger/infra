@@ -1,0 +1,7 @@
+abi <abi/4.0>,
+include <tunables/global>
+
+# Docker has no daemon.json option for disabling AppArmor. Keep the Docker
+# profile name that dockerd applies by default, but make it non-enforcing.
+profile docker-default flags=(unconfined) {
+}
