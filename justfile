@@ -13,6 +13,13 @@ core *TAGS:
   ansible-playbook -b playbooks/core.yaml {{TAGS}}
 
 ##########
+## Proxmox VM provisioning
+
+# VM command group for laptop-driven Proxmox VM operations. Run `just vm help`.
+vm *ARGS:
+  nix/scripts/vm {{ARGS}}
+
+##########
 ## secrets management (SOPS/age)
 
 # Edit secrets file with SOPS
