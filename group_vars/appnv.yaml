@@ -1,7 +1,7 @@
 ---
 # ironicbadger.docker-compose-generator
 host_timezone: "America/New_York"
-docker_compose_hostname: "devnv"
+docker_compose_hostname: "appnv"
 
 appdata_path: /mnt/nvmeu2/appdata
 download_path: /mnt/downloads

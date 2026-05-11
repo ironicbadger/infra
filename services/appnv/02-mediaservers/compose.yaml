@@ -55,11 +55,14 @@ services:
       # Hardcover API Key required for Hardcover as a Metadata Provider, get one here: https://docs.hardcover.app/api/getting-started/
       - "HARDCOVER_TOKEN={{ cwa_hardcover_api_token }}"
       - NETWORK_SHARE_MODE=false
+      # appnv serves these paths from VM/bind mounts; polling avoids missed ingest events.
+      - CWA_WATCH_MODE=poll
     volumes:
       - "{{ appdata_path }}/mediaservers/calibre-web/config:/config"
-      # This is an ingest dir, NOT a library one. Anything added here will be automatically added to your library according to the settings you have configured in CWA Settings page. All files placed here are REMOVED AFTER PROCESSING
+      # Shared Shelfmark/SAB drop zone. CWA imports files from here, then removes them.
       - "{{ download_path }}/complete/books:/cwa-book-ingest"
       #- "{{ appdata_path }}/mediaservers/calibre-web/book-ingest:/cwa-book-ingest"
+      # Managed Calibre library. Imported books end up on the host at /mnt/rust/media/books.
       - "{{ storage_path }}/media/books:/calibre-library"
       - "{{ appdata_path }}/mediaservers/calibre-web/calibre-plugins:/config/.config/calibre/plugins"
     restart: unless-stopped

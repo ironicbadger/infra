@@ -7,7 +7,7 @@
         tags: caddy
 
 ### SERVERS
-  - hosts: devnv
+  - hosts: appnv
     roles:
       #- role: ironicbadger.figurine
       #- role: ktz-server-welcome
