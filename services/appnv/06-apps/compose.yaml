@@ -44,3 +44,22 @@ services:
       - "SYMFONY__ENV__DOMAIN_NAME=https://wallabag.{{ m_wd_domain_me }}"
       - SYMFONY__ENV__DATABASE_DRIVER=pdo_sqlite
     restart: unless-stopped
+  bambuddy:
+    image: ghcr.io/maziggy/bambuddy:latest
+    container_name: bambuddy
+    cap_add:
+      - NET_BIND_SERVICE
+    network_mode: host
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.bambuddy.rule=Host(`bambuddy.{{ m_wd_domain_me }}`)"
+      - traefik.http.services.bambuddy.loadbalancer.server.port=8000
+    volumes:
+      - "{{ appdata_path }}/apps/bambuddy/data:/app/data"
+      - "{{ appdata_path }}/apps/bambuddy/logs:/app/logs"
+    environment:
+      - "TZ={{ host_timezone }}"
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - PORT=8000
+    restart: unless-stopped
