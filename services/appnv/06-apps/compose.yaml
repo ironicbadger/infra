@@ -20,6 +20,7 @@ services:
       - "OAUTH2_OIDC_DISCOVERY_ENDPOINT={{ miniflux_oidc_discovery_endpoint }}"
       - OAUTH2_OIDC_PROVIDER_NAME=Tailscale
       - OAUTH2_USER_CREATION=0
+      - FETCHER_ALLOW_PRIVATE_NETWORKS=1
     restart: unless-stopped
   miniflux-db:
     image: postgres:17
@@ -30,4 +31,16 @@ services:
       - "POSTGRES_USER={{ miniflux_db_user }}"
       - "POSTGRES_PASSWORD={{ miniflux_db_password }}"
       - "POSTGRES_DB={{ miniflux_db_name }}"
+    restart: unless-stopped
+  wallabag:
+    image: wallabag/wallabag:latest
+    container_name: wallabag
+    volumes:
+      - "{{ appdata_path }}/apps/wallabag:/var/www/wallabag/data"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.wallabag.rule=Host(`wallabag.{{ m_wd_domain_me }}`)"
+    environment:
+      - "SYMFONY__ENV__DOMAIN_NAME=https://wallabag.{{ m_wd_domain_me }}"
+      - SYMFONY__ENV__DATABASE_DRIVER=pdo_sqlite
     restart: unless-stopped

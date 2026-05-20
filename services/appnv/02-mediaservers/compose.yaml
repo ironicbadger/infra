@@ -18,6 +18,37 @@ services:
       - "PGID={{ docker_compose_generator_gid }}"
       - "TZ={{ host_timezone }}"
     restart: unless-stopped
+  storyteller:
+    image: registry.gitlab.com/storyteller-platform/storyteller:latest-cuda-13.1.0
+    container_name: storyteller
+    runtime: nvidia
+    mem_limit: 16g
+    cpus: "8.0"
+    volumes:
+      - "{{ appdata_path }}/mediaservers/storyteller/data:/data:rw"
+      - "{{ appdata_path }}/mediaservers/storyteller/config:/config:ro"
+      - "{{ storage_path }}/media/books:/books:ro"
+      - "{{ storage_path }}/media/audiobooks:/audiobooks:ro"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.storyteller.rule=Host(`storyteller.{{ m_wd_domain_me }}`)"
+      - traefik.http.services.storyteller.loadbalancer.server.port=8001
+    environment:
+      - STORYTELLER_SECRET_KEY_FILE=/data/STORYTELLER_SECRET_KEY.txt
+      - STORYTELLER_CONFIG=/config/storyteller.json
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - "TZ={{ host_timezone }}"
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
   navidrome:
     image: deluan/navidrome:latest
     container_name: navidrome

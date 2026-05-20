@@ -1,0 +1,11 @@
+{
+  "libraryName": "Storyteller",
+  "webUrl": "https://storyteller.m.wd.ktz.me",
+  "transcriptionEngine": "whisper.cpp",
+  "whisperModel": "small.en",
+  "whisperThreads": 1,
+  "parallelTranscodes": 1,
+  "parallelTranscribes": 1,
+  "readaloudLocationType": "INTERNAL",
+  "readaloudLocation": ""
+}
