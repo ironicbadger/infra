@@ -64,7 +64,7 @@ services:
     volumes:
       - "{{ appdata_path }}/apps/paperless/ai:/app/data"
   nextcloud:
-    image: nextcloud:32
+    image: nextcloud:33
     container_name: nextcloud
     volumes:
       - "{{ appdata_path }}/apps/nextcloud/data:/var/www/html"
