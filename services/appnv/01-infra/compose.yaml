@@ -5,6 +5,7 @@ services:
     volumes:
       - "{{ appdata_path }}/apps/traefik/letsencrypt:/letsencrypt"
       - /var/run/docker.sock:/var/run/docker.sock:ro
+    # Lets Traefik route to services using network_mode: host, e.g. bambuddy.
     extra_hosts:
       - host.docker.internal:host-gateway
     labels:
