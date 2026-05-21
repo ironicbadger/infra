@@ -45,6 +45,8 @@ pages:
                 links:
                   - title: Jellyfin
                     url: https://jf.wd.ktz.me
+                  - title: Wizarr
+                    url: https://wizarr.m.wd.ktz.me
                   - title: Seerr
                     url: https://seerr.m.wd.ktz.me
               - title: Arr Stack
@@ -122,6 +124,9 @@ pages:
               - title: Jellyfin
                 url: https://jf.wd.ktz.me
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/jellyfin.png
+              - title: Wizarr
+                url: https://wizarr.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/wizarr.png
               - title: Seerr
                 url: https://seerr.m.wd.ktz.me
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/seerr.png
@@ -167,4 +172,3 @@ pages:
               - title: Smokeping
                 url: https://smokeping.m.wd.ktz.me/smokeping
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/smokeping.png
-

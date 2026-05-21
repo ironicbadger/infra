@@ -49,6 +49,21 @@ services:
               count: all
               capabilities: [gpu]
     restart: unless-stopped
+  wizarr:
+    image: ghcr.io/wizarrrr/wizarr:latest
+    container_name: wizarr
+    volumes:
+      - "{{ appdata_path }}/mediaservers/wizarr:/data"
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.wizarr.rule=Host(`wizarr.{{ m_wd_domain_me }}`)"
+      - traefik.http.services.wizarr.loadbalancer.server.port=5690
+    environment:
+      - "PUID={{ docker_compose_generator_uid }}"
+      - "PGID={{ docker_compose_generator_gid }}"
+      - DISABLE_BUILTIN_AUTH=false
+      - "TZ={{ host_timezone }}"
+    restart: unless-stopped
   navidrome:
     image: deluan/navidrome:latest
     container_name: navidrome
