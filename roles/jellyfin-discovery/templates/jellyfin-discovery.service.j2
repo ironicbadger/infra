@@ -1,0 +1,25 @@
+[Unit]
+Description=Jellyfin UDP discovery responder
+Documentation=https://jellyfin.org/docs/general/post-install/networking/
+Wants=network-online.target
+After=network-online.target docker.service
+
+[Service]
+Type=simple
+DynamicUser=yes
+Environment=PYTHONUNBUFFERED=1
+Environment=JELLYFIN_DISCOVERY_ADDRESS={{ jellyfin_discovery_address }}
+Environment=JELLYFIN_INFO_URL={{ jellyfin_discovery_info_url }}
+Environment=JELLYFIN_DISCOVERY_BIND={{ jellyfin_discovery_bind_address }}
+Environment=JELLYFIN_DISCOVERY_PORT={{ jellyfin_discovery_port }}
+ExecStart=/usr/bin/python3 {{ jellyfin_discovery_script_path }}
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+RestrictAddressFamilies=AF_INET AF_INET6
+
+[Install]
+WantedBy=multi-user.target

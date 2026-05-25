@@ -87,6 +87,9 @@ caddy_endpoints:
         upstream: https://192.168.1.13:8006
         tls_insecure: true
       ## Apps and Services
+      - friendly_name: jellyfin
+        fqdn: jf.wd.ktz.me
+        upstream: http://10.42.1.10:2285
       - friendly_name: immich
         fqdn: immich.wd.ktz.me
         upstream: http://10.42.0.111:2283

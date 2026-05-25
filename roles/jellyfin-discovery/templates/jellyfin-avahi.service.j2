@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE service-group SYSTEM "avahi-service.dtd">
+<service-group>
+  <name replace-wildcards="yes">{{ jellyfin_discovery_mdns_name }}</name>
+  <service protocol="ipv4">
+    <type>_jellyfin._tcp</type>
+    <port>{{ jellyfin_discovery_http_port }}</port>
+    <txt-record>url={{ jellyfin_discovery_address }}</txt-record>
+    <txt-record>path=/</txt-record>
+  </service>
+  <service protocol="ipv4">
+    <type>_http._tcp</type>
+    <port>{{ jellyfin_discovery_http_port }}</port>
+    <txt-record>url={{ jellyfin_discovery_address }}</txt-record>
+    <txt-record>path=/</txt-record>
+  </service>
+  <service protocol="ipv4">
+    <type>_jellyfin._udp</type>
+    <port>{{ jellyfin_discovery_port }}</port>
+    <txt-record>url={{ jellyfin_discovery_address }}</txt-record>
+  </service>
+</service-group>

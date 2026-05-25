@@ -1,0 +1,10 @@
+---
+jellyfin_discovery_address: "https://jf.wd.ktz.me"
+jellyfin_discovery_info_url: "http://127.0.0.1:2285/System/Info/Public"
+jellyfin_discovery_bind_address: "0.0.0.0"
+jellyfin_discovery_port: "7359"
+jellyfin_discovery_script_path: /usr/local/bin/jellyfin-discovery-responder
+jellyfin_discovery_http_port: "8096"
+jellyfin_discovery_mdns_enabled: true
+jellyfin_discovery_mdns_name: "Jellyfin"
+jellyfin_discovery_mdns_service_path: /etc/avahi/services/jellyfin.service

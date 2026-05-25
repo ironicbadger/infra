@@ -1,0 +1,48 @@
+---
+- name: Install Jellyfin discovery responder
+  ansible.builtin.template:
+    src: jellyfin-discovery-responder.py.j2
+    dest: "{{ jellyfin_discovery_script_path }}"
+    owner: root
+    group: root
+    mode: "0755"
+  notify: restart jellyfin discovery
+
+- name: Install Jellyfin discovery systemd service
+  ansible.builtin.template:
+    src: jellyfin-discovery.service.j2
+    dest: /etc/systemd/system/jellyfin-discovery.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart jellyfin discovery
+
+- name: Enable and start Jellyfin discovery
+  ansible.builtin.systemd:
+    name: jellyfin-discovery
+    enabled: true
+    state: started
+    daemon_reload: true
+
+- name: Install mDNS responder
+  ansible.builtin.package:
+    name: avahi-daemon
+    state: present
+  when: jellyfin_discovery_mdns_enabled | bool
+
+- name: Advertise Jellyfin over mDNS
+  ansible.builtin.template:
+    src: jellyfin-avahi.service.j2
+    dest: "{{ jellyfin_discovery_mdns_service_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+  notify: restart avahi
+  when: jellyfin_discovery_mdns_enabled | bool
+
+- name: Enable and start mDNS responder
+  ansible.builtin.systemd:
+    name: avahi-daemon
+    enabled: true
+    state: started
+  when: jellyfin_discovery_mdns_enabled | bool

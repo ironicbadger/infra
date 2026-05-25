@@ -28,6 +28,10 @@
           - docker
       - role: ironicbadger.docker-compose-generator
         tags: compose
+      - role: jellyfin-discovery
+        tags:
+          - compose
+          - jellyfin-discovery
 
 ### LXCs
   - hosts: immich-app

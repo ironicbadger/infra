@@ -1,0 +1,11 @@
+---
+- name: restart jellyfin discovery
+  ansible.builtin.systemd:
+    name: jellyfin-discovery
+    state: restarted
+    daemon_reload: true
+
+- name: restart avahi
+  ansible.builtin.systemd:
+    name: avahi-daemon
+    state: restarted

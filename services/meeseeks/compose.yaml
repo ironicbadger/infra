@@ -37,9 +37,10 @@ services:
       - traefik.http.services.jellyfin.loadbalancer.server.port=8096
     ports:
       - 2285:8096
+      - 8096:8096
     environment:
       - "PUID={{ docker_compose_generator_uid }}"
       - "PGID={{ docker_compose_generator_gid }}"
       - "TZ=US/Eastern"
-      - "JELLYFIN_PublishedServerUrl=jf.wd.ktz.me"
+      - "JELLYFIN_PublishedServerUrl=https://jf.wd.ktz.me"
     restart: unless-stopped
