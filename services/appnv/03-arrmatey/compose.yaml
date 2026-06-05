@@ -98,13 +98,40 @@ services:
       - "TZ={{ host_timezone }}"
       - WEBUI_PORT=8080
     restart: unless-stopped
+  nodecast-tv:
+    build: https://github.com/technomancer702/nodecast-tv.git#main
+    container_name: iptv
+    network_mode: service:gluetun
+    runtime: nvidia
+    volumes:
+      - "{{ appdata_path }}/apps/nodecast:/app/data"
+    depends_on:
+      - gluetun
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
   gluetun:
     image: qmcgaw/gluetun
     container_name: gluetun
     labels:
       - traefik.enable=true
       - "traefik.http.routers.gluetun.rule=Host(`qbit.{{ m_wd_domain_me }}`)"
+      - traefik.http.routers.gluetun.service=gluetun
       - traefik.http.services.gluetun.loadbalancer.server.port=8080
+      - "traefik.http.routers.nodecast-tv.rule=Host(`iptv.{{ m_wd_domain_me }}`)"
+      - traefik.http.routers.nodecast-tv.service=nodecast-tv
+      - traefik.http.services.nodecast-tv.loadbalancer.server.port=3000
     cap_add:
       - NET_ADMIN
     devices:
