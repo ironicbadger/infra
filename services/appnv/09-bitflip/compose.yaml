@@ -1,0 +1,45 @@
+services:
+  whisperx-ts:
+    image: tailscale/tailscale:stable
+    container_name: whisperx-ts
+    hostname: rdu-whisperx
+    environment:
+      - TS_AUTHKEY=tskey-auth-abc123
+      - TS_HOSTNAME=rdu-whisperx
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_USERSPACE=false
+    volumes:
+      - tailscale-state:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    ports:
+      - "8200:8000"
+    restart: unless-stopped
+
+  whisperx:
+    image: ghcr.io/macnow/whisperx-api:v1.11.6
+    container_name: whisperx
+    network_mode: service:whisperx-ts
+    depends_on:
+      - whisperx-ts
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - capabilities: [gpu]
+    volumes:
+      - /tmp/whisperx:/root/.cache
+    environment:
+      - MODEL_TTL_SEC=600
+      - WARMUP_MODEL=large-v3-turbo
+      - "HF_TOKEN={{ whisperx_hf_token }}"
+      - DIARIZATION_MODEL=pyannote/speaker-diarization-community-1
+      - LOCAL_ONLY_MODELS=0
+    restart: unless-stopped
+
+volumes:
+  tailscale-state:

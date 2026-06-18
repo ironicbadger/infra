@@ -127,6 +127,8 @@ dumbot_telegram_bot_token: ENC[AES256_GCM,data:Swy06ASHjtcKlwjFPmzwFVImtOE4SLZFr
 dumbot_tavily_api_key: ENC[AES256_GCM,data:n2vWKPLUmcl31+LwnzICXRbP97SeZLdol50wGotdLCmAx57094h1taxrYR2AvcXUxlUIxzIoOk9uHg==,iv:wq3S8WPHhFAGIs+WPBRnK1IVTIy7R+mlLxLKaesIX9Y=,tag:Rtgg5vEKVHVNqHKHXW+06w==,type:str]
 obsidian_livesync_couchdb_password: ENC[AES256_GCM,data:nmGTtjkaLGv7+PUzzVkCeRjO9WB8lFsTjZ/m+EymrzY=,iv:pXTWIY59xlDn4udNgKrqzZ2XYZg2pKZ2gC8eYuSjyfc=,tag:h4HVkhuFRQ+QdN2D4prC1w==,type:str]
 obsidian_livesync_couchdb_secret: ENC[AES256_GCM,data:phaSp7znxczLef5fRYXuXBi1l1H1kz2saocAFwm/ynWpS/m3HCNUCIWfIpdgw4PHzWpc7fC8GW01W9J0QcSADA==,iv:lb4zUmnb6KN3O3u046aDPhM/1nxqDyRy5jkYhypkvCc=,tag:Zl4ppM8rJymOwLoakrNfZQ==,type:str]
+#ENC[AES256_GCM,data:HFEh/qGWF+ib,iv:H66xpdwcTfNGNNeFaDZDRwc7UaXTNphe43ZrzlSCOhM=,tag:iUr7UxmftzAMJYGVu+iCmA==,type:comment]
+whisperx_hf_token: ENC[AES256_GCM,data:7gII79QZtsOH2gW/nATE5O/wxRHQdMh6E8g6AE3pRDwOFEWtAA==,iv:lqdILP/8lCg9jGFj7dhLDel7fCI7bPibivjIxDv1FoA=,tag:5uzTsZ1Eu9URgf4KPNVwpA==,type:str]
 sops:
     age:
         - recipient: age1helw9qcwl8lfy8xwm5cecnn2ljxlafhlplg3dehpk7ma4l94695qmqm9zg
@@ -138,7 +140,7 @@ sops:
             TWhRa0oyQzBqL1NWRmNZdWNva256VmsKJrk1FRhGN8yKcJafOkjQGkUK38Zxgs9R
             swQ97Ay/l+GPP2GKBWF5sRU/g338/FsfUSYl2DtDplCBjqKvIC/+Fg==
             -----END AGE ENCRYPTED FILE-----
-    lastmodified: "2026-04-22T01:15:38Z"
-    mac: ENC[AES256_GCM,data:zp7P4kMhy907JfPbeRjJvZP3Etn7czPziMgcQcSHfwegNv+49z8HazZlh1yNVfsPCVb5xMfd3RaZF54Vi4TuWbDVW9ir4P9j3ZScoynFxlubX3wnmDMkzMHe6wCpml5NmMLtAw0bACLJTqTefUBau7bX3I/xCdm3J6l5hn5yxM4=,iv:QoNYLkYd2Xkxj6lRGZa6KThVfdzlw+car+jRG7Wiz5c=,tag:4maC3M+lMtgbTEnWTmFHBg==,type:str]
+    lastmodified: "2026-06-18T19:55:26Z"
+    mac: ENC[AES256_GCM,data:xdmoYh9G9m4ZTDfiUTovVd1QBvPzXt+/OypjxCmVKNFEZ8gVaTfQUZg8EI8U0/bA/0nxQpA759TWlLeQ8hEgkNqvuOqZwE3IT2oVZUnAM+FTkSs+L31WJKpywGk5QVxqUdJeCyaTBPsWu+1tKNcq4AAhIwlpBbXVhUh2rbAowl8=,iv:mgxCYub2HGlLc0qTOZXc9wD7pGhfOg9HxskssP571SY=,tag:weq3sw2Ap03krpnCxfwm2g==,type:str]
     unencrypted_suffix: _unencrypted
-    version: 3.11.0
+    version: 3.12.2
