@@ -1,0 +1,18 @@
+---
+- name: Check rendered compose file exists
+  ansible.builtin.stat:
+    path: "{{ docker_compose_up_file }}"
+  register: docker_compose_up_file_stat
+
+- name: Start rendered Docker Compose stack
+  ansible.builtin.command:
+    cmd: docker compose -p {{ docker_compose_up_project }} -f {{ docker_compose_up_file }} up -d --remove-orphans
+  register: docker_compose_up_result
+  changed_when: >-
+    ('Started' in docker_compose_up_result.stdout) or
+    ('Created' in docker_compose_up_result.stdout) or
+    ('Recreated' in docker_compose_up_result.stdout) or
+    ('Removed' in docker_compose_up_result.stdout) or
+    ('Pulling' in docker_compose_up_result.stdout) or
+    ('Pulled' in docker_compose_up_result.stdout)
+  when: docker_compose_up_file_stat.stat.exists

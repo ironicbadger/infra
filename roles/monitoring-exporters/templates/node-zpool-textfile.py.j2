@@ -1,0 +1,68 @@
+#!/usr/bin/env python3
+import os
+import pathlib
+import subprocess
+import tempfile
+
+OUTPUT_DIR = pathlib.Path("{{ monitoring_node_exporter_textfile_dir }}")
+OUTPUT_FILE = OUTPUT_DIR / "zpool.prom"
+HEALTH_STATES = ["ONLINE", "DEGRADED", "FAULTED", "OFFLINE", "REMOVED", "UNAVAIL", "SUSPENDED"]
+
+
+def run(cmd):
+    return subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
+def label(value):
+    return str(value).replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+
+
+def emit(lines, metric, labels, value):
+    label_text = ",".join(f'{key}="{label(val)}"' for key, val in labels.items())
+    lines.append(f"{metric}" + "{" + label_text + "} " + str(value))
+
+
+def main():
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "# HELP node_zpool_size_bytes ZFS pool total size.",
+        "# TYPE node_zpool_size_bytes gauge",
+        "# HELP node_zpool_allocated_bytes ZFS pool allocated bytes.",
+        "# TYPE node_zpool_allocated_bytes gauge",
+        "# HELP node_zpool_free_bytes ZFS pool free bytes.",
+        "# TYPE node_zpool_free_bytes gauge",
+        "# HELP node_zpool_capacity_percent ZFS pool capacity used percentage.",
+        "# TYPE node_zpool_capacity_percent gauge",
+        "# HELP node_zpool_health_ok ZFS pool health, 1 means ONLINE.",
+        "# TYPE node_zpool_health_ok gauge",
+        "# HELP node_zpool_health_status ZFS pool health state.",
+        "# TYPE node_zpool_health_status gauge",
+    ]
+
+    result = run(["zpool", "list", "-Hp", "-o", "name,size,alloc,free,cap,health"])
+    if result.returncode == 0:
+        for raw_line in result.stdout.splitlines():
+            parts = raw_line.split("\t")
+            if len(parts) != 6:
+                continue
+            pool, size, allocated, free, capacity, health = parts
+            labels = {"pool": pool}
+            emit(lines, "node_zpool_size_bytes", labels, int(size))
+            emit(lines, "node_zpool_allocated_bytes", labels, int(allocated))
+            emit(lines, "node_zpool_free_bytes", labels, int(free))
+            emit(lines, "node_zpool_capacity_percent", labels, int(capacity))
+            emit(lines, "node_zpool_health_ok", labels, 1 if health == "ONLINE" else 0)
+            states = sorted(set(HEALTH_STATES + [health]))
+            for state in states:
+                emit(lines, "node_zpool_health_status", labels | {"health": state}, 1 if state == health else 0)
+
+    fd, tmp_name = tempfile.mkstemp(prefix=".zpool.", suffix=".prom", dir=str(OUTPUT_DIR))
+    with os.fdopen(fd, "w") as tmp_file:
+        tmp_file.write("\n".join(lines))
+        tmp_file.write("\n")
+    os.chmod(tmp_name, 0o644)
+    os.replace(tmp_name, OUTPUT_FILE)
+
+
+if __name__ == "__main__":
+    main()

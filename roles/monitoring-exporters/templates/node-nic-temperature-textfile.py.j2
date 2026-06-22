@@ -1,0 +1,187 @@
+#!/usr/bin/env python3
+import os
+import pathlib
+import re
+import subprocess
+import tempfile
+
+OUTPUT_DIR = pathlib.Path("{{ monitoring_node_exporter_textfile_dir }}")
+OUTPUT_FILE = OUTPUT_DIR / "nic_temperature.prom"
+INTERFACES = {{ monitoring_collector.nic_temp_interfaces | default([]) | to_json }}
+THERMAL_ZONE_TYPES = set({{ monitoring_collector.nic_temp_thermal_zone_types | default([]) | to_json }})
+
+
+def run(cmd):
+    return subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
+def read(path):
+    try:
+        return pathlib.Path(path).read_text().strip()
+    except OSError:
+        return ""
+
+
+def label(value):
+    return str(value).replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+
+
+def metric_line(metric, labels, value):
+    label_text = ",".join(f'{key}="{label(val)}"' for key, val in labels.items())
+    return f"{metric}" + "{" + label_text + "} " + str(value)
+
+
+def interface_info(iface):
+    result = run(["ethtool", "-i", iface])
+    info = {}
+    for line in result.stdout.splitlines():
+        if ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        info[key.strip()] = value.strip()
+    return info
+
+
+def pci_slot_for_iface(iface):
+    device = pathlib.Path("/sys/class/net") / iface / "device"
+    try:
+        return device.resolve().name
+    except OSError:
+        return ""
+
+
+def hwmon_temperatures(iface):
+    device = pathlib.Path("/sys/class/net") / iface / "device"
+    for hwmon in sorted(device.glob("hwmon/hwmon*")):
+        source_name = read(hwmon / "name") or hwmon.name
+        for temp_input in sorted(hwmon.glob("temp*_input")):
+            raw = read(temp_input)
+            if not raw:
+                continue
+            match = re.match(r"temp(\d+)_input", temp_input.name)
+            sensor = f"temp{match.group(1)}" if match else temp_input.stem
+            sensor_label = read(hwmon / f"{sensor}_label") or sensor
+            try:
+                value = float(raw) / 1000.0
+            except ValueError:
+                continue
+            yield {
+                "source": "hwmon",
+                "sensor": sensor_label,
+                "chip": source_name,
+                "value": value,
+            }
+
+
+def sfp_temperature(iface):
+    result = run(["ethtool", "-m", iface])
+    if result.returncode != 0:
+        return None, {}
+
+    module = {}
+    for line in result.stdout.splitlines():
+        if ":" not in line:
+            continue
+        key, value = line.split(":", 1)
+        key = key.strip()
+        value = value.strip()
+        if key == "Vendor name":
+            module["vendor"] = value
+        elif key == "Vendor PN":
+            module["part"] = value
+        elif key == "Vendor SN":
+            module["serial"] = value
+
+        if "temperature" in key.lower():
+            match = re.search(r"(-?\d+(?:\.\d+)?)\s*(?:degrees|C)", value)
+            if match:
+                return float(match.group(1)), module
+    return None, module
+
+
+def thermal_zone_temperatures():
+    for zone in sorted(pathlib.Path("/sys/class/thermal").glob("thermal_zone*")):
+        zone_type = read(zone / "type")
+        if THERMAL_ZONE_TYPES and zone_type not in THERMAL_ZONE_TYPES:
+            continue
+        raw = read(zone / "temp")
+        if not raw:
+            continue
+        try:
+            value = float(raw) / 1000.0
+        except ValueError:
+            continue
+        yield zone.name, zone_type, value
+
+
+def main():
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "# HELP node_nic_interface_info Monitored NIC interface metadata.",
+        "# TYPE node_nic_interface_info gauge",
+        "# HELP node_nic_temperature_available Whether a direct NIC or SFP temperature sensor was found for this interface.",
+        "# TYPE node_nic_temperature_available gauge",
+        "# HELP node_nic_temperature_celsius Direct NIC temperature from a kernel hwmon sensor.",
+        "# TYPE node_nic_temperature_celsius gauge",
+        "# HELP node_sfp_module_temperature_celsius SFP/SFP+ module temperature from ethtool DOM data.",
+        "# TYPE node_sfp_module_temperature_celsius gauge",
+        "# HELP node_chassis_thermal_zone_temperature_celsius Chassis thermal zone temperature used as a slot-area proxy when NICs expose no direct sensor.",
+        "# TYPE node_chassis_thermal_zone_temperature_celsius gauge",
+    ]
+
+    for iface in INTERFACES:
+        net_path = pathlib.Path("/sys/class/net") / iface
+        if not net_path.exists():
+            continue
+
+        info = interface_info(iface)
+        pci_slot = pci_slot_for_iface(iface)
+        base_labels = {
+            "interface": iface,
+            "driver": info.get("driver", ""),
+            "bus_info": info.get("bus-info", ""),
+            "pci_slot": pci_slot,
+        }
+        lines.append(metric_line("node_nic_interface_info", base_labels, 1))
+
+        found_direct_temperature = False
+        for temp in hwmon_temperatures(iface):
+            labels = dict(base_labels)
+            labels.update({
+                "source": temp["source"],
+                "sensor": temp["sensor"],
+                "chip": temp["chip"],
+            })
+            lines.append(metric_line("node_nic_temperature_celsius", labels, temp["value"]))
+            found_direct_temperature = True
+
+        sfp_temp, module = sfp_temperature(iface)
+        if sfp_temp is not None:
+            labels = dict(base_labels)
+            labels.update({
+                "vendor": module.get("vendor", ""),
+                "part": module.get("part", ""),
+                "serial": module.get("serial", ""),
+            })
+            lines.append(metric_line("node_sfp_module_temperature_celsius", labels, sfp_temp))
+            found_direct_temperature = True
+
+        lines.append(metric_line("node_nic_temperature_available", base_labels, 1 if found_direct_temperature else 0))
+
+    for zone, zone_type, value in thermal_zone_temperatures():
+        lines.append(metric_line(
+            "node_chassis_thermal_zone_temperature_celsius",
+            {"zone": zone, "type": zone_type},
+            value,
+        ))
+
+    fd, tmp_name = tempfile.mkstemp(prefix=".nic-temperature.", suffix=".prom", dir=str(OUTPUT_DIR))
+    with os.fdopen(fd, "w") as tmp_file:
+        tmp_file.write("\n".join(lines))
+        tmp_file.write("\n")
+    os.chmod(tmp_name, 0o644)
+    os.replace(tmp_name, OUTPUT_FILE)
+
+
+if __name__ == "__main__":
+    main()

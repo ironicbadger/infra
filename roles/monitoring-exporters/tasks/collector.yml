@@ -1,0 +1,310 @@
+---
+- name: Install Debian monitoring packages on {{ monitoring_collector.name }}
+  ansible.builtin.apt:
+    name:
+      - prometheus-node-exporter
+      - smartmontools
+      - ethtool
+      - python3
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when:
+    - monitoring_collector.package_manager == 'apt'
+    - monitoring_collector.install_node_exporter | default(true) | bool
+
+- name: Install Arch monitoring packages on {{ monitoring_collector.name }}
+  community.general.pacman:
+    name:
+      - prometheus-node-exporter
+      - smartmontools
+      - ethtool
+      - python
+    state: present
+    update_cache: true
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when:
+    - monitoring_collector.package_manager == 'pacman'
+    - monitoring_collector.install_node_exporter | default(true) | bool
+
+- name: Install Intel GPU tools on {{ monitoring_collector.name }}
+  ansible.builtin.apt:
+    name:
+      - intel-gpu-tools
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when:
+    - monitoring_collector.package_manager == 'apt'
+    - monitoring_collector.install_intel_gpu_textfile | default(false) | bool
+
+- name: Ensure node_exporter textfile directory exists on {{ monitoring_collector.name }}
+  ansible.builtin.file:
+    path: "{{ monitoring_node_exporter_textfile_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_node_exporter | default(true) | bool
+
+- name: Ensure node_exporter systemd override directory exists on {{ monitoring_collector.name }}
+  ansible.builtin.file:
+    path: /etc/systemd/system/prometheus-node-exporter.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_node_exporter | default(true) | bool
+
+- name: Configure node_exporter collectors on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: prometheus-node-exporter-override.conf.j2
+    dest: /etc/systemd/system/prometheus-node-exporter.service.d/override.conf
+    owner: root
+    group: root
+    mode: "0644"
+  register: monitoring_node_exporter_override
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_node_exporter | default(true) | bool
+
+- name: Restart node_exporter when config changes on {{ monitoring_collector.name }}
+  ansible.builtin.systemd_service:
+    name: prometheus-node-exporter
+    daemon_reload: true
+    enabled: true
+    state: restarted
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when:
+    - monitoring_collector.install_node_exporter | default(true) | bool
+    - monitoring_node_exporter_override.changed
+
+- name: Ensure node_exporter is running on {{ monitoring_collector.name }}
+  ansible.builtin.systemd_service:
+    name: prometheus-node-exporter
+    enabled: true
+    state: started
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_node_exporter | default(true) | bool
+
+- name: Install SMART textfile script on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: node-smart-textfile.py.j2
+    dest: /usr/local/sbin/node-smart-textfile
+    owner: root
+    group: root
+    mode: "0755"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_smart_textfile | default(false) | bool
+
+- name: Install SMART textfile systemd service on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: node-smart-textfile.service.j2
+    dest: /etc/systemd/system/node-smart-textfile.service
+    owner: root
+    group: root
+    mode: "0644"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_smart_textfile | default(false) | bool
+
+- name: Install SMART textfile systemd timer on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: node-smart-textfile.timer.j2
+    dest: /etc/systemd/system/node-smart-textfile.timer
+    owner: root
+    group: root
+    mode: "0644"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_smart_textfile | default(false) | bool
+
+- name: Enable SMART textfile timer on {{ monitoring_collector.name }}
+  ansible.builtin.systemd_service:
+    name: node-smart-textfile.timer
+    daemon_reload: true
+    enabled: true
+    state: started
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_smart_textfile | default(false) | bool
+
+- name: Run SMART textfile collector once on {{ monitoring_collector.name }}
+  ansible.builtin.systemd_service:
+    name: node-smart-textfile.service
+    state: started
+  changed_when: false
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_smart_textfile | default(false) | bool
+
+- name: Install NIC temperature textfile script on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: node-nic-temperature-textfile.py.j2
+    dest: /usr/local/sbin/node-nic-temperature-textfile
+    owner: root
+    group: root
+    mode: "0755"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_nic_temp_textfile | default(false) | bool
+
+- name: Install NIC temperature textfile systemd service on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: node-nic-temperature-textfile.service.j2
+    dest: /etc/systemd/system/node-nic-temperature-textfile.service
+    owner: root
+    group: root
+    mode: "0644"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_nic_temp_textfile | default(false) | bool
+
+- name: Install NIC temperature textfile systemd timer on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: node-nic-temperature-textfile.timer.j2
+    dest: /etc/systemd/system/node-nic-temperature-textfile.timer
+    owner: root
+    group: root
+    mode: "0644"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_nic_temp_textfile | default(false) | bool
+
+- name: Enable NIC temperature textfile timer on {{ monitoring_collector.name }}
+  ansible.builtin.systemd_service:
+    name: node-nic-temperature-textfile.timer
+    daemon_reload: true
+    enabled: true
+    state: started
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_nic_temp_textfile | default(false) | bool
+
+- name: Run NIC temperature textfile collector once on {{ monitoring_collector.name }}
+  ansible.builtin.systemd_service:
+    name: node-nic-temperature-textfile.service
+    state: started
+  changed_when: false
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_nic_temp_textfile | default(false) | bool
+
+- name: Install ZFS pool textfile script on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: node-zpool-textfile.py.j2
+    dest: /usr/local/sbin/node-zpool-textfile
+    owner: root
+    group: root
+    mode: "0755"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_zpool_textfile | default(false) | bool
+
+- name: Install ZFS pool textfile systemd service on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: node-zpool-textfile.service.j2
+    dest: /etc/systemd/system/node-zpool-textfile.service
+    owner: root
+    group: root
+    mode: "0644"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_zpool_textfile | default(false) | bool
+
+- name: Install ZFS pool textfile systemd timer on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: node-zpool-textfile.timer.j2
+    dest: /etc/systemd/system/node-zpool-textfile.timer
+    owner: root
+    group: root
+    mode: "0644"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_zpool_textfile | default(false) | bool
+
+- name: Enable ZFS pool textfile timer on {{ monitoring_collector.name }}
+  ansible.builtin.systemd_service:
+    name: node-zpool-textfile.timer
+    daemon_reload: true
+    enabled: true
+    state: started
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_zpool_textfile | default(false) | bool
+
+- name: Run ZFS pool textfile collector once on {{ monitoring_collector.name }}
+  ansible.builtin.systemd_service:
+    name: node-zpool-textfile.service
+    state: started
+  changed_when: false
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_zpool_textfile | default(false) | bool
+
+- name: Install Intel GPU textfile script on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: node-intel-gpu-textfile.py.j2
+    dest: /usr/local/sbin/node-intel-gpu-textfile
+    owner: root
+    group: root
+    mode: "0755"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_intel_gpu_textfile | default(false) | bool
+
+- name: Install Intel GPU textfile systemd service on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: node-intel-gpu-textfile.service.j2
+    dest: /etc/systemd/system/node-intel-gpu-textfile.service
+    owner: root
+    group: root
+    mode: "0644"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_intel_gpu_textfile | default(false) | bool
+
+- name: Install Intel GPU textfile systemd timer on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: node-intel-gpu-textfile.timer.j2
+    dest: /etc/systemd/system/node-intel-gpu-textfile.timer
+    owner: root
+    group: root
+    mode: "0644"
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_intel_gpu_textfile | default(false) | bool
+
+- name: Enable Intel GPU textfile timer on {{ monitoring_collector.name }}
+  ansible.builtin.systemd_service:
+    name: node-intel-gpu-textfile.timer
+    daemon_reload: true
+    enabled: true
+    state: started
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_intel_gpu_textfile | default(false) | bool
+
+- name: Run Intel GPU textfile collector once on {{ monitoring_collector.name }}
+  ansible.builtin.systemd_service:
+    name: node-intel-gpu-textfile.service
+    state: started
+  changed_when: false
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_intel_gpu_textfile | default(false) | bool
+
+- name: Install DCGM exporter systemd service on {{ monitoring_collector.name }}
+  ansible.builtin.template:
+    src: dcgm-exporter.service.j2
+    dest: /etc/systemd/system/dcgm-exporter.service
+    owner: root
+    group: root
+    mode: "0644"
+  register: monitoring_dcgm_service
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_gpu_exporter | default(false) | bool
+
+- name: Restart DCGM exporter when config changes on {{ monitoring_collector.name }}
+  ansible.builtin.systemd_service:
+    name: dcgm-exporter
+    daemon_reload: true
+    enabled: true
+    state: restarted
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when:
+    - monitoring_collector.install_gpu_exporter | default(false) | bool
+    - monitoring_dcgm_service.changed
+
+- name: Ensure DCGM exporter is running on {{ monitoring_collector.name }}
+  ansible.builtin.systemd_service:
+    name: dcgm-exporter
+    daemon_reload: true
+    enabled: true
+    state: started
+  delegate_to: "{{ monitoring_collector.inventory_hostname }}"
+  when: monitoring_collector.install_gpu_exporter | default(false) | bool

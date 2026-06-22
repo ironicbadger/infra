@@ -1,0 +1,3 @@
+---
+docker_compose_up_file: "{{ docker_compose_generator_output_path }}/compose.yaml"
+docker_compose_up_project: "{{ docker_compose_hostname | default(inventory_hostname) }}"

@@ -1,0 +1,3 @@
+[Service]
+ExecStart=
+ExecStart=/usr/bin/prometheus-node-exporter --web.listen-address=:{{ monitoring_node_exporter_port }} --collector.textfile.directory={{ monitoring_node_exporter_textfile_dir }} --collector.systemd --collector.processes --collector.interrupts --collector.pressure --collector.filesystem.mount-points-exclude=^/(dev|proc|run|sys|var/lib/docker/.+|var/lib/containers/storage/.+)($|/) --collector.filesystem.fs-types-exclude=^(autofs|binfmt_misc|bpf|cgroup2?|debugfs|devpts|devtmpfs|fusectl|hugetlbfs|mqueue|nsfs|overlay|proc|procfs|pstore|rpc_pipefs|securityfs|selinuxfs|squashfs|sysfs|tracefs)$

@@ -1,0 +1,11 @@
+[Unit]
+Description=Refresh Intel GPU metrics for Prometheus node_exporter
+
+[Timer]
+OnBootSec=60s
+OnUnitActiveSec={{ monitoring_intel_gpu_interval }}
+RandomizedDelaySec=10s
+Unit=node-intel-gpu-textfile.service
+
+[Install]
+WantedBy=timers.target

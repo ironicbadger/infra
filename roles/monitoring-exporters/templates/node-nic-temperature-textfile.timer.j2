@@ -1,0 +1,11 @@
+[Unit]
+Description=Refresh NIC and SFP temperature metrics for Prometheus node_exporter
+
+[Timer]
+OnBootSec=90s
+OnUnitActiveSec={{ monitoring_nic_temp_interval }}
+RandomizedDelaySec=15s
+Unit=node-nic-temperature-textfile.service
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,198 @@
+#!/usr/bin/env python3
+import json
+import os
+import pathlib
+import re
+import subprocess
+import tempfile
+
+OUTPUT_DIR = pathlib.Path("{{ monitoring_node_exporter_textfile_dir }}")
+OUTPUT_FILE = OUTPUT_DIR / "intel-gpu.prom"
+
+
+def run(cmd, timeout=None):
+    return subprocess.run(
+        cmd,
+        text=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        timeout=timeout,
+    )
+
+
+def label(value):
+    return str(value).replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+
+
+def number(value):
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return 1 if value else 0
+    if isinstance(value, (int, float)):
+        return value
+    match = re.search(r"-?\d+(?:\.\d+)?", str(value))
+    if match:
+        text = match.group(0)
+        return float(text) if "." in text else int(text)
+    return None
+
+
+def emit(lines, metric, labels, value):
+    parsed = number(value)
+    if parsed is None:
+        return
+    label_text = ",".join(f'{key}="{label(val)}"' for key, val in labels.items())
+    lines.append(f"{metric}" + "{" + label_text + "} " + str(parsed))
+
+
+def extract_json_objects(text):
+    objects = []
+    depth = 0
+    start = None
+    in_string = False
+    escaped = False
+
+    for idx, char in enumerate(text):
+        if in_string:
+            if escaped:
+                escaped = False
+            elif char == "\\":
+                escaped = True
+            elif char == '"':
+                in_string = False
+            continue
+        if char == '"':
+            in_string = True
+            continue
+        if char == "{":
+            if depth == 0:
+                start = idx
+            depth += 1
+        elif char == "}" and depth > 0:
+            depth -= 1
+            if depth == 0 and start is not None:
+                try:
+                    objects.append(json.loads(text[start : idx + 1]))
+                except json.JSONDecodeError:
+                    pass
+                start = None
+    return objects
+
+
+def intel_gpu_sample():
+    try:
+        result = run(["timeout", "5s", "intel_gpu_top", "-J", "-s", "1000"], timeout=7)
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        return None
+    samples = extract_json_objects(result.stdout)
+    if not samples:
+        return None
+    return samples[-1]
+
+
+def media_process_counts():
+    checks = {
+        "jellyfin": r"jellyfin",
+        "plex": r"Plex Media Server|Plex Transcoder|Plex Script Host|Plex Tuner Service",
+    }
+    counts = {}
+    for name, pattern in checks.items():
+        try:
+            result = run(["pgrep", "-af", pattern], timeout=2)
+        except (subprocess.TimeoutExpired, FileNotFoundError):
+            counts[name] = 0
+            continue
+        count = 0
+        for line in result.stdout.splitlines():
+            if "node-intel-gpu-textfile" in line or "pgrep -af" in line:
+                continue
+            count += 1
+        counts[name] = count
+    return counts
+
+
+def classify_client(client_name, client_data):
+    text = " ".join(
+        str(value)
+        for value in [
+            client_name,
+            client_data.get("name") if isinstance(client_data, dict) else "",
+            client_data.get("command") if isinstance(client_data, dict) else "",
+        ]
+    ).lower()
+    if "jellyfin" in text:
+        return "jellyfin"
+    if "plex" in text:
+        return "plex"
+    return "other"
+
+
+def client_engines(client_data):
+    if not isinstance(client_data, dict):
+        return {}
+    for key in ("engines", "engine-classes", "engine_classes"):
+        value = client_data.get(key)
+        if isinstance(value, dict):
+            return value
+    return {}
+
+
+def main():
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "# HELP node_intel_gpu_frequency_mhz Intel GPU frequency.",
+        "# TYPE node_intel_gpu_frequency_mhz gauge",
+        "# HELP node_intel_gpu_rc6_percent Intel GPU RC6 residency.",
+        "# TYPE node_intel_gpu_rc6_percent gauge",
+        "# HELP node_intel_gpu_power_watts Intel GPU power usage.",
+        "# TYPE node_intel_gpu_power_watts gauge",
+        "# HELP node_intel_gpu_engine_busy_percent Intel GPU engine busy percentage.",
+        "# TYPE node_intel_gpu_engine_busy_percent gauge",
+        "# HELP node_intel_gpu_engine_sema_percent Intel GPU engine semaphore wait percentage.",
+        "# TYPE node_intel_gpu_engine_sema_percent gauge",
+        "# HELP node_intel_gpu_engine_wait_percent Intel GPU engine wait percentage.",
+        "# TYPE node_intel_gpu_engine_wait_percent gauge",
+        "# HELP node_intel_gpu_client_engine_busy_percent Intel GPU client engine busy percentage.",
+        "# TYPE node_intel_gpu_client_engine_busy_percent gauge",
+        "# HELP node_media_process_count Plex and Jellyfin process count.",
+        "# TYPE node_media_process_count gauge",
+    ]
+
+    sample = intel_gpu_sample()
+    if sample:
+        frequency = sample.get("frequency", {})
+        emit(lines, "node_intel_gpu_frequency_mhz", {"type": "requested"}, frequency.get("requested"))
+        emit(lines, "node_intel_gpu_frequency_mhz", {"type": "actual"}, frequency.get("actual"))
+        emit(lines, "node_intel_gpu_rc6_percent", {}, sample.get("rc6", {}).get("value"))
+        for domain, value in sample.get("power", {}).items():
+            if domain == "unit":
+                continue
+            emit(lines, "node_intel_gpu_power_watts", {"domain": domain}, value)
+        for engine, values in sample.get("engines", {}).items():
+            emit(lines, "node_intel_gpu_engine_busy_percent", {"engine": engine}, values.get("busy"))
+            emit(lines, "node_intel_gpu_engine_sema_percent", {"engine": engine}, values.get("sema"))
+            emit(lines, "node_intel_gpu_engine_wait_percent", {"engine": engine}, values.get("wait"))
+        for client, values in sample.get("clients", {}).items():
+            process = classify_client(client, values)
+            for engine, engine_values in client_engines(values).items():
+                emit(
+                    lines,
+                    "node_intel_gpu_client_engine_busy_percent",
+                    {"client": client, "process": process, "engine": engine},
+                    engine_values.get("busy"),
+                )
+
+    for process, count in media_process_counts().items():
+        emit(lines, "node_media_process_count", {"process": process}, count)
+
+    fd, tmp_name = tempfile.mkstemp(prefix=".intel-gpu.", suffix=".prom", dir=str(OUTPUT_DIR))
+    with os.fdopen(fd, "w") as tmp_file:
+        tmp_file.write("\n".join(lines))
+        tmp_file.write("\n")
+    os.chmod(tmp_name, 0o644)
+    os.replace(tmp_name, OUTPUT_FILE)
+
+
+if __name__ == "__main__":
+    main()

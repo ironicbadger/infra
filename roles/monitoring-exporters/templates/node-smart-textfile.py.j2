@@ -1,0 +1,201 @@
+#!/usr/bin/env python3
+import json
+import os
+import pathlib
+import re
+import subprocess
+import sys
+import tempfile
+
+OUTPUT_DIR = pathlib.Path("{{ monitoring_node_exporter_textfile_dir }}")
+OUTPUT_FILE = OUTPUT_DIR / "smart.prom"
+
+
+def run(cmd):
+    return subprocess.run(cmd, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
+def label(value):
+    return str(value).replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
+
+
+def number(value):
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return 1 if value else 0
+    if isinstance(value, (int, float)):
+        return value
+    match = re.search(r"-?\d+(?:\.\d+)?", str(value))
+    if match:
+        text = match.group(0)
+        return float(text) if "." in text else int(text)
+    return None
+
+
+def emit(lines, metric, labels, value):
+    parsed = number(value)
+    if parsed is None:
+        return
+    label_text = ",".join(f'{key}="{label(val)}"' for key, val in labels.items())
+    lines.append(f"{metric}" + "{" + label_text + "} " + str(parsed))
+
+
+def emit_ata_attributes(lines, labels, data):
+    for attr in data.get("ata_smart_attributes", {}).get("table", []):
+        attr_labels = labels | {
+            "attribute_id": attr.get("id", "unknown"),
+            "attribute_name": attr.get("name", "unknown"),
+        }
+        emit(lines, "node_smart_ata_attribute_raw", attr_labels, attr.get("raw", {}).get("value", attr.get("raw", {}).get("string")))
+        emit(lines, "node_smart_ata_attribute_value", attr_labels, attr.get("value"))
+        emit(lines, "node_smart_ata_attribute_worst", attr_labels, attr.get("worst"))
+        emit(lines, "node_smart_ata_attribute_threshold", attr_labels, attr.get("thresh"))
+        lines.append(
+            "node_smart_ata_attribute_failed"
+            + "{"
+            + ",".join(f'{key}="{label(val)}"' for key, val in attr_labels.items())
+            + "} "
+            + ("1" if attr.get("when_failed") else "0")
+        )
+
+
+def scan_devices():
+    result = run(["smartctl", "--scan-open"])
+    devices = []
+    for raw_line in result.stdout.splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#"):
+            continue
+        parts = line.split()
+        device = parts[0]
+        device_type = None
+        if "-d" in parts:
+            idx = parts.index("-d")
+            if idx + 1 < len(parts):
+                device_type = parts[idx + 1]
+        devices.append((device, device_type))
+    return devices
+
+
+def smart_json(device, device_type):
+    cmd = ["smartctl", "-a", "-j"]
+    if device_type:
+        cmd.extend(["-d", device_type])
+    cmd.append(device)
+    result = run(cmd)
+    try:
+        return json.loads(result.stdout)
+    except json.JSONDecodeError:
+        print(f"smartctl JSON parse failed for {device}: {result.stderr}", file=sys.stderr)
+        return None
+
+
+def attr_raw(data, *names):
+    for attr in data.get("ata_smart_attributes", {}).get("table", []):
+        attr_name = attr.get("name", "")
+        if attr_name in names:
+            raw = attr.get("raw", {})
+            return raw.get("value", raw.get("string"))
+    return None
+
+
+def main():
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    lines = [
+        "# HELP node_smart_device_info SMART device metadata.",
+        "# TYPE node_smart_device_info gauge",
+        "# HELP node_smart_health_status SMART health status, 1 means passed.",
+        "# TYPE node_smart_health_status gauge",
+        "# HELP node_smart_temperature_celsius SMART reported drive temperature.",
+        "# TYPE node_smart_temperature_celsius gauge",
+        "# HELP node_smart_power_on_hours SMART reported power-on hours.",
+        "# TYPE node_smart_power_on_hours gauge",
+        "# HELP node_smart_percentage_used SMART/NVMe reported percentage used.",
+        "# TYPE node_smart_percentage_used gauge",
+        "# HELP node_smart_media_errors_total SMART/NVMe reported media errors.",
+        "# TYPE node_smart_media_errors_total counter",
+        "# HELP node_smart_user_capacity_bytes SMART reported user capacity.",
+        "# TYPE node_smart_user_capacity_bytes gauge",
+        "# HELP node_smart_ata_attribute_raw ATA SMART attribute raw value.",
+        "# TYPE node_smart_ata_attribute_raw gauge",
+        "# HELP node_smart_ata_attribute_value ATA SMART attribute normalized value.",
+        "# TYPE node_smart_ata_attribute_value gauge",
+        "# HELP node_smart_ata_attribute_worst ATA SMART attribute worst normalized value.",
+        "# TYPE node_smart_ata_attribute_worst gauge",
+        "# HELP node_smart_ata_attribute_threshold ATA SMART attribute failure threshold.",
+        "# TYPE node_smart_ata_attribute_threshold gauge",
+        "# HELP node_smart_ata_attribute_failed ATA SMART attribute failure state.",
+        "# TYPE node_smart_ata_attribute_failed gauge",
+        "# HELP node_smart_available_spare_percent NVMe available spare percentage.",
+        "# TYPE node_smart_available_spare_percent gauge",
+        "# HELP node_smart_available_spare_threshold_percent NVMe available spare threshold percentage.",
+        "# TYPE node_smart_available_spare_threshold_percent gauge",
+        "# HELP node_smart_critical_warning NVMe critical warning bit field.",
+        "# TYPE node_smart_critical_warning gauge",
+        "# HELP node_smart_unsafe_shutdowns_total NVMe unsafe shutdown count.",
+        "# TYPE node_smart_unsafe_shutdowns_total counter",
+        "# HELP node_smart_error_log_entries_total NVMe error log entry count.",
+        "# TYPE node_smart_error_log_entries_total counter",
+        "# HELP node_smart_controller_busy_time_minutes NVMe controller busy time in minutes.",
+        "# TYPE node_smart_controller_busy_time_minutes counter",
+    ]
+
+    for device, device_type in scan_devices():
+        data = smart_json(device, device_type)
+        if not data:
+            continue
+        model = (
+            data.get("model_name")
+            or data.get("device_model")
+            or data.get("model_number")
+            or "unknown"
+        )
+        serial = data.get("serial_number") or "unknown"
+        protocol = data.get("device", {}).get("protocol") or data.get("device", {}).get("type") or device_type or "unknown"
+        labels = {
+            "device": device,
+            "model": model,
+            "serial": serial,
+            "protocol": protocol,
+        }
+        lines.append(
+            'node_smart_device_info{device="%s",model="%s",serial="%s",protocol="%s"} 1'
+            % (label(device), label(model), label(serial), label(protocol))
+        )
+        emit(lines, "node_smart_health_status", labels, data.get("smart_status", {}).get("passed"))
+        emit(lines, "node_smart_user_capacity_bytes", labels, data.get("user_capacity", {}).get("bytes"))
+
+        temperature = data.get("temperature", {}).get("current")
+        if temperature is None:
+            temperature = data.get("nvme_smart_health_information_log", {}).get("temperature")
+        emit(lines, "node_smart_temperature_celsius", labels, temperature)
+
+        power_on = data.get("power_on_time", {}).get("hours")
+        if power_on is None:
+            power_on = data.get("nvme_smart_health_information_log", {}).get("power_on_hours")
+        if power_on is None:
+            power_on = attr_raw(data, "Power_On_Hours", "Power_On_Hours_and_Msec")
+        emit(lines, "node_smart_power_on_hours", labels, power_on)
+
+        nvme_log = data.get("nvme_smart_health_information_log", {})
+        emit(lines, "node_smart_available_spare_percent", labels, nvme_log.get("available_spare"))
+        emit(lines, "node_smart_available_spare_threshold_percent", labels, nvme_log.get("available_spare_threshold"))
+        emit(lines, "node_smart_critical_warning", labels, nvme_log.get("critical_warning"))
+        emit(lines, "node_smart_percentage_used", labels, nvme_log.get("percentage_used"))
+        emit(lines, "node_smart_media_errors_total", labels, nvme_log.get("media_errors"))
+        emit(lines, "node_smart_unsafe_shutdowns_total", labels, nvme_log.get("unsafe_shutdowns"))
+        emit(lines, "node_smart_error_log_entries_total", labels, nvme_log.get("num_err_log_entries"))
+        emit(lines, "node_smart_controller_busy_time_minutes", labels, nvme_log.get("controller_busy_time"))
+        emit_ata_attributes(lines, labels, data)
+
+    fd, tmp_name = tempfile.mkstemp(prefix=".smart.", suffix=".prom", dir=str(OUTPUT_DIR))
+    with os.fdopen(fd, "w") as tmp_file:
+        tmp_file.write("\n".join(lines))
+        tmp_file.write("\n")
+    os.chmod(tmp_name, 0o644)
+    os.replace(tmp_name, OUTPUT_FILE)
+
+
+if __name__ == "__main__":
+    main()

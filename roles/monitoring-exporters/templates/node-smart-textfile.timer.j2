@@ -1,0 +1,11 @@
+[Unit]
+Description=Refresh SMART metrics for Prometheus node_exporter
+
+[Timer]
+OnBootSec=2min
+OnUnitActiveSec={{ monitoring_smart_interval }}
+RandomizedDelaySec=60s
+Unit=node-smart-textfile.service
+
+[Install]
+WantedBy=timers.target

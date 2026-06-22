@@ -1,0 +1,101 @@
+{
+  "id": null,
+  "uid": "proxmox-ceph",
+  "title": "Proxmox and Ceph",
+  "tags": ["homelab", "proxmox", "ceph"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {"from": "now-6h", "to": "now"},
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Host SSH / PVE API TCP",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 0, "w": 8, "h": 5},
+      "targets": [{"expr": "probe_success{job=\"blackbox_tcp\",instance=~\"10.42.1.(91|92|93|10):(22|8006)\"}", "legendFormat": "{{ '{{instance}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "none", "mappings": [{"type": "value", "options": {"0": {"text": "down", "color": "red"}, "1": {"text": "up", "color": "green"}}}], "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 1}]}}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "none", "justifyMode": "auto"}
+    },
+    {
+      "type": "stat",
+      "title": "Ceph Health",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 8, "y": 0, "w": 8, "h": 5},
+      "targets": [{"expr": "ceph_health_status", "legendFormat": "health"}],
+      "fieldConfig": {"defaults": {"unit": "none", "mappings": [{"type": "value", "options": {"0": {"text": "OK", "color": "green"}, "1": {"text": "WARN", "color": "yellow"}, "2": {"text": "ERR", "color": "red"}}}], "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 1}, {"color": "red", "value": 2}]}}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "none", "justifyMode": "auto"}
+    },
+    {
+      "type": "stat",
+      "title": "OSDs Up / In",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 16, "y": 0, "w": 8, "h": 5},
+      "targets": [
+        {"expr": "sum(ceph_osd_up)", "legendFormat": "up"},
+        {"expr": "sum(ceph_osd_in)", "legendFormat": "in"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "none"}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area", "justifyMode": "auto"}
+    },
+    {
+      "type": "timeseries",
+      "title": "Ceph Pool Throughput",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 5, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "sum by (pool_id) (rate(ceph_pool_rd_bytes[5m]))", "legendFormat": "pool {{ '{{pool_id}}' }} read"},
+        {"expr": "sum by (pool_id) (rate(ceph_pool_wr_bytes[5m]))", "legendFormat": "pool {{ '{{pool_id}}' }} write"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "Bps"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Ceph OSD Latency",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 12, "y": 5, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "ceph_osd_commit_latency_ms", "legendFormat": "osd {{ '{{ceph_daemon}}' }} commit"},
+        {"expr": "ceph_osd_apply_latency_ms", "legendFormat": "osd {{ '{{ceph_daemon}}' }} apply"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "ms"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "10G Interfaces",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 13, "w": 24, "h": 8},
+      "targets": [
+        {"expr": "rate(node_network_receive_bytes_total{job=\"node\",host=~\"m90q-.*|meeseeks\",device=~\"nic.*|vmbr0|ens.*\"}[5m])", "legendFormat": "{{ '{{host}}' }} {{ '{{device}}' }} rx"},
+        {"expr": "rate(node_network_transmit_bytes_total{job=\"node\",host=~\"m90q-.*|meeseeks\",device=~\"nic.*|vmbr0|ens.*\"}[5m])", "legendFormat": "{{ '{{host}}' }} {{ '{{device}}' }} tx"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "Bps"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "M90q SFP+ / Slot Temperatures",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 21, "w": 16, "h": 8},
+      "targets": [
+        {"expr": "node_nic_temperature_celsius{host=~\"m90q-.*\"}", "legendFormat": "{{ '{{host}}' }} {{ '{{interface}}' }} {{ '{{sensor}}' }}"},
+        {"expr": "node_sfp_module_temperature_celsius{host=~\"m90q-.*\"}", "legendFormat": "{{ '{{host}}' }} {{ '{{interface}}' }} SFP"},
+        {"expr": "node_chassis_thermal_zone_temperature_celsius{host=~\"m90q-.*\",type=~\"SEN3|SEN4|SEN5|B0D4|pch_cometlake\"}", "legendFormat": "{{ '{{host}}' }} {{ '{{type}}' }} proxy"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "celsius"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "stat",
+      "title": "Direct NIC Temperature Sensors",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 16, "y": 21, "w": 8, "h": 8},
+      "targets": [{"expr": "node_nic_temperature_available{host=~\"m90q-.*\"}", "legendFormat": "{{ '{{host}}' }} {{ '{{interface}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "none", "mappings": [{"type": "value", "options": {"0": {"text": "proxy only", "color": "yellow"}, "1": {"text": "direct", "color": "green"}}}], "thresholds": {"mode": "absolute", "steps": [{"color": "yellow", "value": null}, {"color": "green", "value": 1}]}}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "none", "justifyMode": "auto"}
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+[Unit]
+Description=Write NIC and SFP temperature metrics for Prometheus node_exporter
+After=local-fs.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/node-nic-temperature-textfile

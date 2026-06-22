@@ -1,0 +1,88 @@
+{
+  "id": null,
+  "uid": "appnv-gpu",
+  "title": "AppNV GPU",
+  "tags": ["homelab", "gpu", "appnv"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {"from": "now-6h", "to": "now"},
+  "panels": [
+    {
+      "type": "stat",
+      "title": "DCGM Exporter Up",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "up{job=\"dcgm\",host=\"appnv\"}", "legendFormat": "appnv"}],
+      "fieldConfig": {"defaults": {"unit": "none", "mappings": [{"type": "value", "options": {"0": {"text": "down", "color": "red"}, "1": {"text": "up", "color": "green"}}}], "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 1}]}}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "none", "justifyMode": "auto"}
+    },
+    {
+      "type": "stat",
+      "title": "GPU Temperature",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 6, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "DCGM_FI_DEV_GPU_TEMP{host=\"appnv\"}", "legendFormat": "{{ '{{gpu}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "celsius"}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area", "justifyMode": "auto"}
+    },
+    {
+      "type": "stat",
+      "title": "GPU Utilization",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 12, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "DCGM_FI_DEV_GPU_UTIL{host=\"appnv\"}", "legendFormat": "{{ '{{gpu}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area", "justifyMode": "auto"}
+    },
+    {
+      "type": "stat",
+      "title": "GPU Power",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 18, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "DCGM_FI_DEV_POWER_USAGE{host=\"appnv\"}", "legendFormat": "{{ '{{gpu}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "watt"}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area", "justifyMode": "auto"}
+    },
+    {
+      "type": "timeseries",
+      "title": "Temperature",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 4, "w": 12, "h": 8},
+      "targets": [{"expr": "DCGM_FI_DEV_GPU_TEMP{host=\"appnv\"}", "legendFormat": "{{ '{{modelName}}' }} {{ '{{gpu}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "celsius"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Utilization",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 12, "y": 4, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "DCGM_FI_DEV_GPU_UTIL{host=\"appnv\"}", "legendFormat": "gpu {{ '{{gpu}}' }}"},
+        {"expr": "DCGM_FI_DEV_MEM_COPY_UTIL{host=\"appnv\"}", "legendFormat": "mem copy {{ '{{gpu}}' }}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Frame Buffer Used",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 12, "w": 12, "h": 8},
+      "targets": [{"expr": "DCGM_FI_DEV_FB_USED{host=\"appnv\"}", "legendFormat": "{{ '{{gpu}}' }} used"}],
+      "fieldConfig": {"defaults": {"unit": "decmbytes"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Power Usage",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 12, "y": 12, "w": 12, "h": 8},
+      "targets": [{"expr": "DCGM_FI_DEV_POWER_USAGE{host=\"appnv\"}", "legendFormat": "{{ '{{gpu}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "watt"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+services:
+  victoria-metrics:
+    image: victoriametrics/victoria-metrics:latest
+    container_name: victoria-metrics
+    command:
+      - -storageDataPath=/storage
+      - -retentionPeriod={{ monitoring_victoria_retention_period }}
+      - -httpListenAddr=:8428
+    volumes:
+      - "{{ appdata_path }}/apps/victoria-metrics:/storage"
+    restart: unless-stopped
+
+  vmagent:
+    image: victoriametrics/vmagent:latest
+    container_name: vmagent
+    command:
+      - -promscrape.config=/etc/vmagent/prometheus.yml
+      - -remoteWrite.url=http://victoria-metrics:8428/api/v1/write
+      - -remoteWrite.tmpDataPath=/vmagentdata
+    volumes:
+      - "{{ appdata_path }}/apps/vmagent:/etc/vmagent:ro"
+      - "{{ appdata_path }}/apps/vmagent-data:/vmagentdata"
+    depends_on:
+      - victoria-metrics
+      - blackbox-exporter
+    restart: unless-stopped
+
+  blackbox-exporter:
+    image: prom/blackbox-exporter:latest
+    container_name: blackbox-exporter
+    command:
+      - --config.file=/etc/blackbox_exporter/blackbox.yml
+    volumes:
+      - "{{ appdata_path }}/apps/blackbox-exporter:/etc/blackbox_exporter:ro"
+    cap_add:
+      - NET_RAW
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    user: "0:0"
+    ports:
+      - "3000:3000"
+    volumes:
+      - "{{ appdata_path }}/apps/grafana/data:/var/lib/grafana"
+      - "{{ appdata_path }}/apps/grafana/datasources:/etc/grafana/provisioning/datasources:ro"
+      - "{{ appdata_path }}/apps/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - "GF_SECURITY_ADMIN_PASSWORD={{ grafana_admin_password }}"
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_ANALYTICS_REPORTING_ENABLED=false
+      - GF_ANALYTICS_CHECK_FOR_UPDATES=false
+      - GF_SERVER_HTTP_PORT=3000
+    depends_on:
+      - victoria-metrics
+    restart: unless-stopped

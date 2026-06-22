@@ -33,6 +33,20 @@
           - compose
           - jellyfin-discovery
 
+  - hosts: monitoring
+    roles:
+      - role: monitoring-exporters
+        tags:
+          - monitoring
+      - role: ironicbadger.docker-compose-generator
+        tags:
+          - compose
+          - monitoring
+      - role: docker-compose-up
+        tags:
+          - compose
+          - monitoring
+
 ### LXCs
   - hosts: immich-app
     vars:

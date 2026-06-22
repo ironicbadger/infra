@@ -1,0 +1,106 @@
+global:
+  scrape_interval: 60s
+  scrape_timeout: 10s
+
+scrape_configs:
+  - job_name: vmagent
+    static_configs:
+      - targets:
+          - vmagent:8429
+        labels:
+          host: monitoring
+          role: monitoring
+
+  - job_name: victoria-metrics
+    static_configs:
+      - targets:
+          - victoria-metrics:8428
+        labels:
+          host: monitoring
+          role: monitoring
+
+  - job_name: node
+    scrape_interval: 60s
+    static_configs:
+{% for target in monitoring_collector_hosts if target.install_node_exporter | default(true) %}
+      - targets:
+          - {{ target.address }}:{{ monitoring_node_exporter_port }}
+        labels:
+          host: {{ target.name }}
+          role: {{ target.role }}
+{% endfor %}
+
+  - job_name: ceph
+    scrape_interval: 30s
+    static_configs:
+{% for target in monitoring_ceph_targets %}
+      - targets:
+          - {{ target.address }}:9283
+        labels:
+          host: {{ target.name }}
+          cluster: proxmox
+{% endfor %}
+
+  - job_name: zrepl
+    scrape_interval: 60s
+    static_configs:
+{% for target in monitoring_zrepl_targets %}
+      - targets:
+          - {{ target.address }}:{{ target.port }}
+        labels:
+          host: {{ target.name }}
+{% endfor %}
+
+  - job_name: dcgm
+    scrape_interval: 30s
+    static_configs:
+{% for target in monitoring_gpu_targets %}
+      - targets:
+          - {{ target.address }}:{{ target.port }}
+        labels:
+          host: {{ target.name }}
+{% endfor %}
+
+  - job_name: blackbox_tcp
+    scrape_interval: 30s
+    metrics_path: /probe
+    params:
+      module:
+        - tcp_connect
+    static_configs:
+      - targets:
+{% for target in monitoring_collector_hosts %}
+{% for port in target.blackbox_tcp_ports | default([]) %}
+          - {{ target.address }}:{{ port }}
+{% endfor %}
+{% endfor %}
+    relabel_configs:
+      - source_labels:
+          - __address__
+        target_label: __param_target
+      - source_labels:
+          - __param_target
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115
+
+  - job_name: blackbox_icmp
+    scrape_interval: 30s
+    metrics_path: /probe
+    params:
+      module:
+        - icmp
+    static_configs:
+      - targets:
+{% for target in monitoring_collector_hosts %}
+          - {{ target.address }}
+{% endfor %}
+    relabel_configs:
+      - source_labels:
+          - __address__
+        target_label: __param_target
+      - source_labels:
+          - __param_target
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox-exporter:9115

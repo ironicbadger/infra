@@ -1,0 +1,142 @@
+---
+# ironicbadger.docker-compose-generator
+host_timezone: "America/New_York"
+docker_compose_hostname: "monitoring"
+docker_compose_generator_output_path: "/root"
+docker_compose_generator_uid: "0"
+docker_compose_generator_gid: "0"
+docker_compose_generator_zfs_enabled: false
+disabled_compose_files: []
+
+appdata_path: /opt/monitoring
+
+# grafana
+grafana_admin_password: "{{ vault_grafana_admin_password }}"
+
+# monitoring stack
+monitoring_victoria_retention_period: "90d"
+monitoring_node_exporter_port: 9100
+monitoring_node_exporter_textfile_dir: /var/lib/node_exporter/textfile_collector
+monitoring_smart_interval: 10min
+monitoring_nic_temp_interval: 1min
+monitoring_zpool_interval: 1min
+monitoring_intel_gpu_interval: 30s
+monitoring_dcgm_exporter_image: nvcr.io/nvidia/k8s/dcgm-exporter:latest
+
+monitoring_collector_hosts:
+  - name: monitoring
+    inventory_hostname: monitoring.ktz.ts.net
+    address: 10.42.7.18
+    package_manager: apt
+    role: monitoring
+    install_node_exporter: true
+    install_smart_textfile: true
+    blackbox_tcp_ports:
+      - 22
+      - 3000
+
+  - name: m90q-1
+    inventory_hostname: m90q-1
+    address: 10.42.1.91
+    package_manager: apt
+    role: proxmox
+    install_node_exporter: true
+    install_smart_textfile: true
+    install_nic_temp_textfile: true
+    nic_temp_interfaces:
+      - nic0
+      - nic2
+    nic_temp_thermal_zone_types:
+      - SEN3
+      - SEN4
+      - SEN5
+      - B0D4
+      - pch_cometlake
+    blackbox_tcp_ports:
+      - 22
+      - 8006
+
+  - name: m90q-2
+    inventory_hostname: m90q-2
+    address: 10.42.1.92
+    package_manager: apt
+    role: proxmox
+    install_node_exporter: true
+    install_smart_textfile: true
+    install_nic_temp_textfile: true
+    nic_temp_interfaces:
+      - nic1
+    nic_temp_thermal_zone_types:
+      - SEN3
+      - SEN4
+      - SEN5
+      - B0D4
+      - pch_cometlake
+    blackbox_tcp_ports:
+      - 22
+      - 8006
+
+  - name: m90q-3
+    inventory_hostname: m90q-3
+    address: 10.42.1.93
+    package_manager: apt
+    role: proxmox
+    install_node_exporter: true
+    install_smart_textfile: true
+    install_nic_temp_textfile: true
+    nic_temp_interfaces:
+      - nic1
+    nic_temp_thermal_zone_types:
+      - SEN3
+      - SEN4
+      - SEN5
+      - B0D4
+      - pch_cometlake
+    blackbox_tcp_ports:
+      - 22
+      - 8006
+
+  - name: meeseeks
+    inventory_hostname: meeseeks.ktz.ts.net
+    address: 10.42.1.10
+    package_manager: apt
+    role: proxmox-storage
+    install_node_exporter: true
+    install_smart_textfile: true
+    install_zpool_textfile: true
+    install_intel_gpu_textfile: true
+    blackbox_tcp_ports:
+      - 22
+      - 8006
+      - 9811
+
+  - name: appnv
+    inventory_hostname: appnv.ktz.ts.net
+    address: 10.42.1.111
+    package_manager: pacman
+    role: app-vm
+    install_node_exporter: true
+    install_smart_textfile: false
+    install_gpu_exporter: true
+    blackbox_tcp_ports:
+      - 22
+      - 9400
+
+monitoring_ceph_config_delegate: m90q-1
+monitoring_ceph_targets:
+  - name: m90q-1
+    address: 10.42.1.91
+  - name: m90q-2
+    address: 10.42.1.92
+  - name: m90q-3
+    address: 10.42.1.93
+
+monitoring_zrepl_targets:
+  - name: meeseeks
+    address: 10.42.1.10
+    port: 9811
+
+monitoring_gpu_targets:
+  - name: appnv
+    address: 10.42.1.111
+    port: 9400

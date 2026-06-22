@@ -1,0 +1,130 @@
+{
+  "id": null,
+  "uid": "host-vital-signs",
+  "title": "Host Vital Signs",
+  "tags": ["homelab", "hosts"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {"from": "now-6h", "to": "now"},
+  "templating": {
+    "list": [
+      {
+        "name": "host",
+        "type": "query",
+        "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+        "query": "label_values(up{job=\"node\"}, host)",
+        "refresh": 1,
+        "includeAll": true,
+        "multi": true,
+        "allValue": ".*",
+        "current": {"selected": true, "text": "All", "value": "$__all"}
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Exporter Up",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 0, "w": 6, "h": 4},
+      "targets": [{"expr": "up{job=\"node\",host=~\"$host\"}", "legendFormat": "{{ '{{host}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "none", "mappings": [{"type": "value", "options": {"0": {"text": "down", "color": "red"}, "1": {"text": "up", "color": "green"}}}], "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 1}]}}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "none", "justifyMode": "auto"}
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU Busy",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 6, "y": 0, "w": 9, "h": 7},
+      "targets": [{"expr": "100 * (1 - avg by (host) (rate(node_cpu_seconds_total{job=\"node\",mode=\"idle\",host=~\"$host\"}[5m])))", "legendFormat": "{{ '{{host}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory Used",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 15, "y": 0, "w": 9, "h": 7},
+      "targets": [{"expr": "100 * (1 - (node_memory_MemAvailable_bytes{job=\"node\",host=~\"$host\"} / node_memory_MemTotal_bytes{job=\"node\",host=~\"$host\"}))", "legendFormat": "{{ '{{host}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Load 1m",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 7, "w": 8, "h": 7},
+      "targets": [{"expr": "node_load1{job=\"node\",host=~\"$host\"}", "legendFormat": "{{ '{{host}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "short"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Root Filesystem Free",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 8, "y": 7, "w": 8, "h": 7},
+      "targets": [{"expr": "100 * node_filesystem_avail_bytes{job=\"node\",host=~\"$host\",mountpoint=\"/\",fstype!=\"rootfs\"} / node_filesystem_size_bytes{job=\"node\",host=~\"$host\",mountpoint=\"/\",fstype!=\"rootfs\"}", "legendFormat": "{{ '{{host}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Temperatures",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 16, "y": 7, "w": 8, "h": 7},
+      "targets": [
+        {"expr": "node_hwmon_temp_celsius{job=\"node\",host=~\"$host\"}", "legendFormat": "{{ '{{host}}' }} {{ '{{chip}}' }} {{ '{{sensor}}' }}"},
+        {"expr": "node_smart_temperature_celsius{host=~\"$host\"}", "legendFormat": "{{ '{{host}}' }} {{ '{{device}}' }}"},
+        {"expr": "node_nic_temperature_celsius{host=~\"$host\"}", "legendFormat": "{{ '{{host}}' }} {{ '{{interface}}' }} {{ '{{sensor}}' }}"},
+        {"expr": "node_sfp_module_temperature_celsius{host=~\"$host\"}", "legendFormat": "{{ '{{host}}' }} {{ '{{interface}}' }} SFP"},
+        {"expr": "node_chassis_thermal_zone_temperature_celsius{host=~\"$host\"}", "legendFormat": "{{ '{{host}}' }} {{ '{{type}}' }}"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "celsius"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Network Throughput",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 14, "w": 12, "h": 7},
+      "targets": [
+        {"expr": "sum by (host) (rate(node_network_receive_bytes_total{job=\"node\",host=~\"$host\",device!~\"lo|veth.*|docker.*|br-.*|fw.*|tap.*\"}[5m]))", "legendFormat": "{{ '{{host}}' }} rx"},
+        {"expr": "sum by (host) (rate(node_network_transmit_bytes_total{job=\"node\",host=~\"$host\",device!~\"lo|veth.*|docker.*|br-.*|fw.*|tap.*\"}[5m]))", "legendFormat": "{{ '{{host}}' }} tx"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "Bps"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Disk IO",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 12, "y": 14, "w": 12, "h": 7},
+      "targets": [
+        {"expr": "sum by (host) (rate(node_disk_read_bytes_total{job=\"node\",host=~\"$host\",device!~\"loop.*|ram.*\"}[5m]))", "legendFormat": "{{ '{{host}}' }} read"},
+        {"expr": "sum by (host) (rate(node_disk_written_bytes_total{job=\"node\",host=~\"$host\",device!~\"loop.*|ram.*\"}[5m]))", "legendFormat": "{{ '{{host}}' }} write"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "Bps"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Pressure Stall CPU Waiting",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 21, "w": 12, "h": 7},
+      "targets": [{"expr": "rate(node_pressure_cpu_waiting_seconds_total{job=\"node\",host=~\"$host\"}[5m])", "legendFormat": "{{ '{{host}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "stat",
+      "title": "SMART Health",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 12, "y": 21, "w": 12, "h": 7},
+      "targets": [{"expr": "node_smart_health_status{host=~\"$host\"}", "legendFormat": "{{ '{{host}}' }} {{ '{{device}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "none", "mappings": [{"type": "value", "options": {"0": {"text": "failed", "color": "red"}, "1": {"text": "passed", "color": "green"}}}], "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 1}]}}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "none", "justifyMode": "auto"}
+    }
+  ]
+}

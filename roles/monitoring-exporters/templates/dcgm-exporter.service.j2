@@ -1,0 +1,15 @@
+[Unit]
+Description=NVIDIA DCGM Prometheus exporter
+After=docker.service
+Requires=docker.service
+
+[Service]
+Restart=always
+RestartSec=10
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker rm -f dcgm-exporter
+ExecStart=/usr/bin/docker run --rm --name dcgm-exporter --gpus all --network host {{ monitoring_dcgm_exporter_image }}
+ExecStop=/usr/bin/docker stop dcgm-exporter
+
+[Install]
+WantedBy=multi-user.target

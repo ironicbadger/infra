@@ -1,0 +1,11 @@
+---
+- name: Configure monitoring collectors
+  ansible.builtin.include_tasks: collector.yml
+  loop: "{{ monitoring_collector_hosts }}"
+  loop_control:
+    loop_var: monitoring_collector
+    label: "{{ monitoring_collector.name }}"
+
+- name: Configure Ceph Prometheus manager module
+  ansible.builtin.include_tasks: ceph.yml
+  when: monitoring_ceph_targets | default([]) | length > 0

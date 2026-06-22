@@ -1,0 +1,246 @@
+{
+  "id": null,
+  "uid": "meeseeks-vital-signs",
+  "title": "Meeseeks Vital Signs",
+  "tags": ["homelab", "meeseeks", "storage", "media"],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "time": {"from": "now-6h", "to": "now"},
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Node Exporter",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 0, "w": 5, "h": 4},
+      "targets": [{"expr": "up{job=\"node\",host=\"meeseeks\"}", "legendFormat": "node"}],
+      "fieldConfig": {"defaults": {"unit": "none", "mappings": [{"type": "value", "options": {"0": {"text": "down", "color": "red"}, "1": {"text": "up", "color": "green"}}}], "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 1}]}}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "none", "justifyMode": "auto"}
+    },
+    {
+      "type": "stat",
+      "title": "ZFS Pools",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 5, "y": 0, "w": 7, "h": 4},
+      "targets": [{"expr": "node_zpool_health_ok{host=\"meeseeks\"}", "legendFormat": "{{ '{{pool}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "none", "mappings": [{"type": "value", "options": {"0": {"text": "not online", "color": "red"}, "1": {"text": "online", "color": "green"}}}], "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 1}]}}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "none", "justifyMode": "auto"}
+    },
+    {
+      "type": "stat",
+      "title": "SMART Health",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 12, "y": 0, "w": 7, "h": 4},
+      "targets": [{"expr": "node_smart_health_status{host=\"meeseeks\"}", "legendFormat": "{{ '{{device}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "none", "mappings": [{"type": "value", "options": {"0": {"text": "failed", "color": "red"}, "1": {"text": "passed", "color": "green"}}}], "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 1}]}}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "none", "justifyMode": "auto"}
+    },
+    {
+      "type": "stat",
+      "title": "Media Processes",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 19, "y": 0, "w": 5, "h": 4},
+      "targets": [{"expr": "node_media_process_count{host=\"meeseeks\"}", "legendFormat": "{{ '{{process}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "none", "thresholds": {"mode": "absolute", "steps": [{"color": "red", "value": null}, {"color": "green", "value": 1}]}}, "overrides": []},
+      "options": {"reduceOptions": {"calcs": ["lastNotNull"], "fields": "", "values": false}, "orientation": "auto", "textMode": "auto", "colorMode": "value", "graphMode": "area", "justifyMode": "auto"}
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU Busy",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 4, "w": 8, "h": 7},
+      "targets": [{"expr": "100 * (1 - avg(rate(node_cpu_seconds_total{job=\"node\",host=\"meeseeks\",mode=\"idle\"}[5m])))", "legendFormat": "cpu"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory Used",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 8, "y": 4, "w": 8, "h": 7},
+      "targets": [{"expr": "100 * (1 - (node_memory_MemAvailable_bytes{job=\"node\",host=\"meeseeks\"} / node_memory_MemTotal_bytes{job=\"node\",host=\"meeseeks\"}))", "legendFormat": "memory"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Pressure Stall",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 16, "y": 4, "w": 8, "h": 7},
+      "targets": [
+        {"expr": "rate(node_pressure_cpu_waiting_seconds_total{job=\"node\",host=\"meeseeks\"}[5m])", "legendFormat": "cpu wait"},
+        {"expr": "rate(node_pressure_io_waiting_seconds_total{job=\"node\",host=\"meeseeks\"}[5m])", "legendFormat": "io wait"},
+        {"expr": "rate(node_pressure_memory_waiting_seconds_total{job=\"node\",host=\"meeseeks\"}[5m])", "legendFormat": "memory wait"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "CPU Core Temperatures",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 11, "w": 6, "h": 8},
+      "targets": [{"expr": "node_hwmon_temp_celsius{job=\"node\",host=\"meeseeks\",chip=~\".*coretemp.*\"}", "legendFormat": "{{ '{{sensor}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "celsius"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Spinner Drive Temperatures",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 6, "y": 11, "w": 6, "h": 8},
+      "targets": [{"expr": "node_smart_temperature_celsius{host=\"meeseeks\",device=~\"/dev/sd[a-j]\"}", "legendFormat": "{{ '{{device}}' }} {{ '{{model}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "celsius"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "NVMe and SSD Temperatures",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 12, "y": 11, "w": 6, "h": 8},
+      "targets": [{"expr": "node_smart_temperature_celsius{host=\"meeseeks\",device!~\"/dev/sd[a-j]\"}", "legendFormat": "{{ '{{device}}' }} {{ '{{model}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "celsius"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "System Temperatures",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 18, "y": 11, "w": 6, "h": 8},
+      "targets": [{"expr": "node_hwmon_temp_celsius{job=\"node\",host=\"meeseeks\",chip!~\".*coretemp.*|nvme_.*\"}", "legendFormat": "{{ '{{chip}}' }} {{ '{{sensor}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "celsius"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "ZFS Pool Capacity",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 19, "w": 12, "h": 8},
+      "targets": [{"expr": "node_zpool_capacity_percent{host=\"meeseeks\"}", "legendFormat": "{{ '{{pool}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100, "thresholds": {"mode": "absolute", "steps": [{"color": "green", "value": null}, {"color": "yellow", "value": 75}, {"color": "red", "value": 90}]}}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "ZFS Pool Free",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 12, "y": 19, "w": 12, "h": 8},
+      "targets": [{"expr": "node_zpool_free_bytes{host=\"meeseeks\"}", "legendFormat": "{{ '{{pool}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "bytes"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Disk Throughput",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 27, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "rate(node_disk_read_bytes_total{job=\"node\",host=\"meeseeks\",device=~\"sd[a-z]|nvme[0-9]n[0-9]\"}[5m])", "legendFormat": "{{ '{{device}}' }} read"},
+        {"expr": "rate(node_disk_written_bytes_total{job=\"node\",host=\"meeseeks\",device=~\"sd[a-z]|nvme[0-9]n[0-9]\"}[5m])", "legendFormat": "{{ '{{device}}' }} write"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "Bps"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Disk Busy",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 12, "y": 27, "w": 12, "h": 8},
+      "targets": [{"expr": "100 * rate(node_disk_io_time_seconds_total{job=\"node\",host=\"meeseeks\",device=~\"sd[a-z]|nvme[0-9]n[0-9]\"}[5m])", "legendFormat": "{{ '{{device}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Disk Latency",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 35, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "rate(node_disk_read_time_seconds_total{job=\"node\",host=\"meeseeks\",device=~\"sd[a-z]|nvme[0-9]n[0-9]\"}[5m]) / rate(node_disk_reads_completed_total{job=\"node\",host=\"meeseeks\",device=~\"sd[a-z]|nvme[0-9]n[0-9]\"}[5m])", "legendFormat": "{{ '{{device}}' }} read"},
+        {"expr": "rate(node_disk_write_time_seconds_total{job=\"node\",host=\"meeseeks\",device=~\"sd[a-z]|nvme[0-9]n[0-9]\"}[5m]) / rate(node_disk_writes_completed_total{job=\"node\",host=\"meeseeks\",device=~\"sd[a-z]|nvme[0-9]n[0-9]\"}[5m])", "legendFormat": "{{ '{{device}}' }} write"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "s"}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "ATA Problem Counters",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 12, "y": 35, "w": 12, "h": 8},
+      "targets": [{"expr": "node_smart_ata_attribute_raw{host=\"meeseeks\",attribute_name=~\"Reallocated_Sector_Ct|Reallocated_Event_Count|Current_Pending_Sector|Offline_Uncorrectable|UDMA_CRC_Error_Count|Reported_Uncorrect\"}", "legendFormat": "{{ '{{device}}' }} {{ '{{attribute_name}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "short", "min": 0}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "NVMe Wear and Spare",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 43, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "node_smart_percentage_used{host=\"meeseeks\",protocol=~\"NVMe|nvme\"}", "legendFormat": "{{ '{{device}}' }} used"},
+        {"expr": "node_smart_available_spare_percent{host=\"meeseeks\",protocol=~\"NVMe|nvme\"}", "legendFormat": "{{ '{{device}}' }} spare"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "NVMe Error Counters",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 12, "y": 43, "w": 12, "h": 8},
+      "targets": [
+        {"expr": "node_smart_media_errors_total{host=\"meeseeks\",protocol=~\"NVMe|nvme\"}", "legendFormat": "{{ '{{device}}' }} media errors"},
+        {"expr": "node_smart_error_log_entries_total{host=\"meeseeks\",protocol=~\"NVMe|nvme\"}", "legendFormat": "{{ '{{device}}' }} error log"},
+        {"expr": "node_smart_unsafe_shutdowns_total{host=\"meeseeks\",protocol=~\"NVMe|nvme\"}", "legendFormat": "{{ '{{device}}' }} unsafe shutdowns"}
+      ],
+      "fieldConfig": {"defaults": {"unit": "short", "min": 0}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Intel GPU Engine Busy",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 51, "w": 12, "h": 8},
+      "targets": [{"expr": "node_intel_gpu_engine_busy_percent{host=\"meeseeks\"}", "legendFormat": "{{ '{{engine}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Intel GPU Power",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 12, "y": 51, "w": 6, "h": 8},
+      "targets": [{"expr": "node_intel_gpu_power_watts{host=\"meeseeks\"}", "legendFormat": "{{ '{{domain}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "watt", "min": 0}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Intel GPU Frequency",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 18, "y": 51, "w": 6, "h": 8},
+      "targets": [{"expr": "node_intel_gpu_frequency_mhz{host=\"meeseeks\"}", "legendFormat": "{{ '{{type}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "none", "min": 0}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Intel GPU RC6",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 0, "y": 59, "w": 8, "h": 7},
+      "targets": [{"expr": "node_intel_gpu_rc6_percent{host=\"meeseeks\"}", "legendFormat": "rc6"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    },
+    {
+      "type": "timeseries",
+      "title": "Plex/Jellyfin GPU Clients",
+      "datasource": {"type": "prometheus", "uid": "victoriametrics"},
+      "gridPos": {"x": 8, "y": 59, "w": 16, "h": 7},
+      "targets": [{"expr": "node_intel_gpu_client_engine_busy_percent{host=\"meeseeks\",process=~\"plex|jellyfin\"}", "legendFormat": "{{ '{{process}}' }} {{ '{{client}}' }} {{ '{{engine}}' }}"}],
+      "fieldConfig": {"defaults": {"unit": "percent", "min": 0, "max": 100}, "overrides": []},
+      "options": {"legend": {"displayMode": "list", "placement": "bottom"}, "tooltip": {"mode": "multi", "sort": "none"}}
+    }
+  ]
+}

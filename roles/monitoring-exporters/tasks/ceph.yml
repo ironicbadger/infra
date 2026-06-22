@@ -1,0 +1,15 @@
+---
+- name: Enable Ceph Prometheus module
+  ansible.builtin.command: ceph mgr module enable prometheus
+  changed_when: false
+  delegate_to: "{{ monitoring_ceph_config_delegate }}"
+
+- name: Bind Ceph Prometheus module on all interfaces
+  ansible.builtin.command: ceph config set mgr mgr/prometheus/server_addr 0.0.0.0
+  changed_when: false
+  delegate_to: "{{ monitoring_ceph_config_delegate }}"
+
+- name: Set Ceph Prometheus module port
+  ansible.builtin.command: ceph config set mgr mgr/prometheus/server_port 9283
+  changed_when: false
+  delegate_to: "{{ monitoring_ceph_config_delegate }}"

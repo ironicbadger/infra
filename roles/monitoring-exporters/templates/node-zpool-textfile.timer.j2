@@ -1,0 +1,11 @@
+[Unit]
+Description=Refresh ZFS pool metrics for Prometheus node_exporter
+
+[Timer]
+OnBootSec=75s
+OnUnitActiveSec={{ monitoring_zpool_interval }}
+RandomizedDelaySec=15s
+Unit=node-zpool-textfile.service
+
+[Install]
+WantedBy=timers.target
