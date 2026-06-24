@@ -32,47 +32,47 @@ services:
     environment:
       - MYSQL_ROOT_PASSWORD={{ ktzblog_db_pass }}
     restart: unless-stopped
-  ktz-blog-cat:
-    image: ghost:5-alpine
-    container_name: ktz-blog-cat
-    volumes:
-      - "{{ appdata_path }}/ktz-blog-cat/content:/var/lib/ghost/content"
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.purrfectprose.rule=Host(`purrfectprose.com`)
-      - traefik.http.routers.purrfectprose.entrypoints=websecure
-      - traefik.http.routers.purrfectprose.tls.certresolver=cloudflare
-    environment:
-      - NODE_ENV=production
-      - url=https://purrfectprose.com
-      - database__client=mysql
-      - database__connection__host=ktz-blog-cat-db
-      - "database__connection__user={{ purrfect_db_user }}"
-      - "database__connection__password={{ purrfect_db_pass }}"
-      - database__connection__database=ghost
-      - security__staffDeviceVerification=false
-    depends_on:
-      - ktz-blog-cat-db
-    restart: unless-stopped
-  ktz-blog-cat-db:
-    image: mysql:8.4
-    container_name: ktz-blog-cat-db
-    volumes:
-      - "{{ appdata_path }}/ktz-blog-cat/db:/var/lib/mysql"
-    environment:
-      - "MYSQL_ROOT_PASSWORD={{ purrfect_db_pass }}"
-    restart: unless-stopped
-  ktz-blog-mum:
-    image: ghost:4-alpine
-    container_name: ktz-blog-mum
-    volumes:
-      - "{{ appdata_path }}/ktz-blog-mum:/var/lib/ghost/content"
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.mumblog.rule=Host(`{{ cloud_url_mum_blog }}`)
-      - traefik.http.routers.mumblog.entrypoints=websecure
-      - traefik.http.routers.mumblog.tls.certresolver=cloudflare
-    environment:
-      - NODE_ENV=production
-      - "url=https://{{ cloud_url_mum_blog }}"
-    restart: unless-stopped
+  # ktz-blog-cat:
+  #   image: ghost:5-alpine
+  #   container_name: ktz-blog-cat
+  #   volumes:
+  #     - "{{ appdata_path }}/ktz-blog-cat/content:/var/lib/ghost/content"
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.purrfectprose.rule=Host(`purrfectprose.com`)
+  #     - traefik.http.routers.purrfectprose.entrypoints=websecure
+  #     - traefik.http.routers.purrfectprose.tls.certresolver=cloudflare
+  #   environment:
+  #     - NODE_ENV=production
+  #     - url=https://purrfectprose.com
+  #     - database__client=mysql
+  #     - database__connection__host=ktz-blog-cat-db
+  #     - "database__connection__user={{ purrfect_db_user }}"
+  #     - "database__connection__password={{ purrfect_db_pass }}"
+  #     - database__connection__database=ghost
+  #     - security__staffDeviceVerification=false
+  #   depends_on:
+  #     - ktz-blog-cat-db
+  #   restart: unless-stopped
+  # ktz-blog-cat-db:
+  #   image: mysql:8.4
+  #   container_name: ktz-blog-cat-db
+  #   volumes:
+  #     - "{{ appdata_path }}/ktz-blog-cat/db:/var/lib/mysql"
+  #   environment:
+  #     - "MYSQL_ROOT_PASSWORD={{ purrfect_db_pass }}"
+  #   restart: unless-stopped
+  # ktz-blog-mum:
+  #   image: ghost:4-alpine
+  #   container_name: ktz-blog-mum
+  #   volumes:
+  #     - "{{ appdata_path }}/ktz-blog-mum:/var/lib/ghost/content"
+  #   labels:
+  #     - traefik.enable=true
+  #     - traefik.http.routers.mumblog.rule=Host(`{{ cloud_url_mum_blog }}`)
+  #     - traefik.http.routers.mumblog.entrypoints=websecure
+  #     - traefik.http.routers.mumblog.tls.certresolver=cloudflare
+  #   environment:
+  #     - NODE_ENV=production
+  #     - "url=https://{{ cloud_url_mum_blog }}"
+  #   restart: unless-stopped
