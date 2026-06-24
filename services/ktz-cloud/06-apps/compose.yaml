@@ -67,7 +67,7 @@ services:
       start_period: 30s
     restart: unless-stopped
   ktz-lychee-db:
-    image: mariadb:11.8.8
+    image: mariadb:12.3.2
     container_name: ktz-lychee-db
     volumes:
       - "{{ appdata_path }}/ktz-lychee/db:/var/lib/mysql"
