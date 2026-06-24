@@ -20,21 +20,37 @@ services:
       - https://paste.{{ domain_cloud }}
     restart: unless-stopped
   ktz-lychee:
-    image: lycheeorg/lychee:v6.10.2
+    image: ghcr.io/lycheeorg/lychee:v7.6.2
     container_name: ktz-lychee
     volumes:
-      - "{{ appdata_path }}/ktz-lychee/app/config:/conf"
-      - "{{ appdata_path }}/ktz-lychee/app/uploads:/uploads"
-      - "{{ appdata_path }}/ktz-lychee/app/sym:/sym"
-      - "{{ appdata_path }}/ktz-lychee/app/logs:/logs"
-      - "{{ appdata_path }}/ktz-lychee/app/tmp:/lychee-tmp"
+      - "{{ appdata_path }}/ktz-lychee/app/uploads:/app/public/uploads"
+      - "{{ appdata_path }}/ktz-lychee/app/storage-app:/app/storage/app"
+      - "{{ appdata_path }}/ktz-lychee/app/logs:/app/storage/logs"
+      - "{{ appdata_path }}/ktz-lychee/app/tmp:/app/storage/tmp"
+      - "{{ appdata_path }}/ktz-lychee/app/config/user.css:/app/public/dist/user.css"
+      - "{{ appdata_path }}/ktz-lychee/app/config/custom.js:/app/public/dist/custom.js"
+      - "{{ appdata_path }}/ktz-lychee/app/config/app-key:/run/secrets/lychee_app_key:ro"
     labels:
       - traefik.enable=true
       - traefik.http.routers.ktzlychee.rule=Host(`gallery.ktz.cloud`)
       - traefik.http.routers.ktzlychee.tls.certresolver=cloudflare
+      - traefik.http.services.ktzlychee.loadbalancer.server.port=8000
     environment:
+      - PUID=1000
+      - PGID=1000
+      - APP_KEY_FILE=/run/secrets/lychee_app_key
+      - APP_NAME=Lychee
+      - APP_ENV=production
+      - APP_DEBUG=false
       - "PHP_TZ={{ host_timezone }}"
+      - "APP_TIMEZONE={{ host_timezone }}"
       - "APP_URL=https://gallery.ktz.cloud"
+      - APP_FORCE_HTTPS=false
+      - LEGACY_V4_REDIRECT=false
+      - QUEUE_CONNECTION=sync
+      - SKIP_PERMISSIONS_CHECKS=yes
+      - SESSION_SECURE_COOKIE=false
+      - TRUSTED_PROXIES=null
       - DB_CONNECTION=mysql
       - DB_HOST=ktz-lychee-db
       - DB_PORT=3306
@@ -43,15 +59,23 @@ services:
       - "DB_PASSWORD={{ lychee_mysql_password }}"
     depends_on:
       - ktz-lychee-db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/up"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
     restart: unless-stopped
   ktz-lychee-db:
-    image: mariadb:10.8.2-focal
+    image: mariadb:11.8.8
     container_name: ktz-lychee-db
     volumes:
       - "{{ appdata_path }}/ktz-lychee/db:/var/lib/mysql"
     environment:
-      - "MYSQL_ROOT_PASSWORD={{ lychee_mysql_root_password }}"
-      - "MYSQL_PASSWORD={{ lychee_mysql_password }}"
-      - "MYSQL_DATABASE={{ lychee_mysql_database }}"
-      - "MYSQL_USER={{ lychee_mysql_user }}"
+      - MARIADB_AUTO_UPGRADE=1
+      - "MARIADB_ROOT_PASSWORD={{ lychee_mysql_root_password }}"
+      - "MARIADB_PASSWORD={{ lychee_mysql_password }}"
+      - "MARIADB_DATABASE={{ lychee_mysql_database }}"
+      - "MARIADB_USER={{ lychee_mysql_user }}"
+    stop_grace_period: 2m
     restart: unless-stopped
