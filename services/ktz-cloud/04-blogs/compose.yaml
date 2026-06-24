@@ -1,7 +1,7 @@
 services:
   # blogs
   ktz-blog:
-    image: ghost:5-alpine
+    image: ghost:6-alpine
     container_name: ktz-blog
     volumes:
       - "{{ appdata_path }}/ktz-blog/app:/var/lib/ghost/content"
