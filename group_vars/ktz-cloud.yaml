@@ -3,3 +3,16 @@
 # ironicbadger.docker-compose-generator
 host_timezone: "America/New_York"
 appdata_path: "/opt/appdata"
+
+# Bitflip Patreon Discord bot
+bitflip_patreon_bot_image: "ghcr.io/ironicbadger/bitflip-patreon-bot:latest"
+bitflip_patreon_bot_hostname: "discord-patreon-bot.bitflip.show"
+bitflip_patreon_bot_discord_client_id: "1521669453757288608"
+bitflip_patreon_bot_discord_guild_id: "1463371426521288765"
+bitflip_patreon_bot_patreon_campaign_id: "15898235"
+bitflip_patreon_bot_sync_interval_minutes: 60
+bitflip_patreon_bot_dry_run: "false"
+bitflip_patreon_bot_manage_discord_roles: "false"
+bitflip_patreon_bot_announcements_enabled: "true"
+bitflip_patreon_bot_announcement_channel_name: "chit-chat"
+bitflip_patreon_bot_thanks_tier_name: "terrabyte"
