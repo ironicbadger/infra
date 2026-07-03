@@ -8,7 +8,7 @@ configs:
 services:
   ## immich
   immich-server:
-    image: ghcr.io/immich-app/immich-server:release
+    image: ghcr.io/immich-app/immich-server:v3
     container_name: immich-server
     volumes:
       - /mnt/rust/photos/alex/immich/uploads:/usr/src/app/upload
@@ -18,7 +18,7 @@ services:
     ports:
       - 2283:2283
     environment:
-      - IMMICH_VERSION=release
+      - IMMICH_VERSION=v3
       - UPLOAD_LOCATION=./library
       - "DB_PASSWORD={{ immich_db_password }}"
       - "DB_USERNAME={{ immich_db_username }}"
@@ -46,18 +46,13 @@ services:
       - "POSTGRES_USER={{ immich_db_username }}"
       - "POSTGRES_DB={{ immich_db_name }}"
       - "POSTGRES_INITDB_ARGS='--data-checksums'"
+    shm_size: 128mb
     healthcheck:
-      test: >-
-        pg_isready --dbname="{{ immich_db_name }}" --username="{{ immich_db_username }}" || exit 1; Chksum="$$(psql --dbname="{{ immich_db_name }}" --username="{{ immich_db_username }}" --tuples-only --no-align --command='SELECT COALESCE(SUM(checksum_failures), 0) FROM pg_stat_database')"; echo "checksum failure count is $$Chksum"; [ "$$Chksum" = '0' ] || exit 1
-      interval: 5m
-      start_interval: 30s
-      start_period: 5m
-    command: >-
-      postgres -c shared_preload_libraries=vectors.so,vchord -c 'search_path="{{ immich_db_username }}", public, vectors' -c logging_collector=on -c max_wal_size=2GB -c shared_buffers=512MB -c wal_compression=on
+      disable: false
     restart: unless-stopped
   immichframe:
     container_name: immichframe
-    image: ghcr.io/immichframe/immichframe:latest
+    image: ghcr.io/immichframe/immichframe:v1.0.34.0
     volumes:
       - "{{ appdata_path }}/databases/immich/immichframe:/app/Config"
     ports:
@@ -72,7 +67,7 @@ services:
     restart: unless-stopped
   immichframe-family:
     container_name: immichframe-family
-    image: ghcr.io/immichframe/immichframe:latest
+    image: ghcr.io/immichframe/immichframe:v1.0.34.0
     network_mode: service:immichframe-family-ts
     environment:
       - TZ=America/New_York
