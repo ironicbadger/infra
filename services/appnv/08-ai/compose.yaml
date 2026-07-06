@@ -22,6 +22,7 @@ services:
     restart: unless-stopped
     environment:
       - MACHINE_LEARNING_PRELOAD__CLIP__TEXTUAL=ViT-SO400M-16-SigLIP2-384__webli
+      - MACHINE_LEARNING_PRELOAD__CLIP__VISUAL=ViT-SO400M-16-SigLIP2-384__webli
       - MACHINE_LEARNING_MODEL_TTL=0
     deploy:
       resources:
