@@ -49,6 +49,12 @@ pages:
                     url: https://wizarr.m.wd.ktz.me
                   - title: Seerr
                     url: https://seerr.m.wd.ktz.me
+                  - title: Audiobookshelf
+                    url: https://audiobooks.wd.ktz.me
+                  - title: Navidrome
+                    url: https://navidrome.m.wd.ktz.me
+                  - title: Calibre-Web Automated
+                    url: https://cwa.m.wd.ktz.me
               - title: Arr Stack
                 links:
                   - title: Prowlarr
@@ -67,29 +73,50 @@ pages:
                     url: https://paperless.m.wd.ktz.me
                   - title: Nextcloud
                     url: https://nc.ktz.cloud
+                  - title: Miniflux
+                    url: https://miniflux.m.wd.ktz.me
+                  - title: Wallabag
+                    url: https://wallabag.m.wd.ktz.me
               - title: Monitoring
                 links:
                   - title: Smokeping
                     url: https://smokeping.m.wd.ktz.me/smokeping
+                  - title: Tautulli
+                    url: https://tautulli.m.wd.ktz.me
+                  - title: Dockhand
+                    url: https://dockhand.m.wd.ktz.me
           - type: monitor
             cache: 1m
-            title: Infrastructure (wd)
+            title: Infrastructure (Raleigh)
             sites:
-              - title: Proxmox
-                url: https://px.wd.ktz.me
+              - title: m90q-1
+                url: https://10.42.1.91:8006/
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png
+                allow-insecure: true
+              - title: m90q-2
+                url: https://10.42.1.92:8006/
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png
+                allow-insecure: true
+              - title: m90q-3
+                url: https://10.42.1.93:8006/
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png
+                allow-insecure: true
+              - title: meeseeks
+                url: https://10.42.1.10:8006/
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png
+                allow-insecure: true
               - title: Home Assistant
                 url: https://ha.wd.ktz.me
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/home-assistant.png
-              - title: Blue Iris
-                url: https://bi.wd.ktz.me
-                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/blue-iris.png
               - title: AdGuard Home
                 url: https://dns.wd.ktz.me
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/adguard-home.png
-              - title: Unifi
+              - title: UniFi Network
                 url: https://unifi.wd.ktz.me
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/unifi.png
+              - title: UniFi Protect
+                url: https://unifi.ui.com/consoles/58D61F56FFDF0000000009A33C50000000000A2B17FB00000000691F250D:747289302/protect/dashboard
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/unifi-protect.png
               - title: tsidp
                 url: https://idp.ktz.ts.net
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/tailscale-light.png
@@ -97,25 +124,19 @@ pages:
             cache: 1m
             title: Infrastructure (external)
             sites:
-              - title: Proxmox (ts)
-                url: https://px.velociraptor-noodlefish.ts.net/
+              - title: Napoleon (Norfolk, UK)
+                url: https://napoleon.ktz.ts.net/
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png
-              - title: Proxmox (igloo)
+              - title: Igloo (Canada)
                 url: https://igloo.ktz.ts.net/
-                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png
-              - title: Proxmox (snowball)
-                url: https://snowball.ktz.ts.net/
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/proxmox.png
           - type: monitor
             cache: 1m
             title: IP KVMs
             sites:
-              - title: PiKVM m720q
+              - title: PiKVM — Lenovos
                 url: https://pikvm-lenovos.ktz.ts.net/
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/pikvm.png
-              - title: LibreSpeed (c137)
-                url: http://10.42.1.137:8008/
-                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/librespeed-light.png
 
           - type: monitor
             cache: 1m
@@ -133,6 +154,15 @@ pages:
               - title: Audiobookshelf
                 url: https://audiobooks.wd.ktz.me
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/audiobookshelf.png
+              - title: Navidrome
+                url: https://navidrome.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/navidrome.png
+              - title: Calibre-Web Automated
+                url: https://cwa.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/calibre-web.png
+              - title: Tautulli
+                url: https://tautulli.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/tautulli.png
           - type: monitor
             cache: 1m
             title: Arrr Matey!
@@ -165,6 +195,18 @@ pages:
               - title: Immich
                 url: https://immich.wd.ktz.me
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/immich.png
+              - title: Miniflux
+                url: https://miniflux.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/miniflux.png
+              - title: Wallabag
+                url: https://wallabag.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/wallabag.png
+              - title: TeslaMate
+                url: https://teslamate.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/teslamate.png
+              - title: TeslaMate Grafana
+                url: https://teslamate-grafana.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/grafana.png
           - type: monitor
             cache: 1m
             title: Monitoring & Access
@@ -172,3 +214,9 @@ pages:
               - title: Smokeping
                 url: https://smokeping.m.wd.ktz.me/smokeping
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/smokeping.png
+              - title: Ping Graph
+                url: https://ping.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/glance.png
+              - title: Dockhand
+                url: https://dockhand.m.wd.ktz.me
+                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/docker.png
