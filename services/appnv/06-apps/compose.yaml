@@ -32,6 +32,17 @@ services:
       - "POSTGRES_PASSWORD={{ miniflux_db_password }}"
       - "POSTGRES_DB={{ miniflux_db_name }}"
     restart: unless-stopped
+  radicale:
+    image: ghcr.io/kozea/radicale:stable
+    container_name: radicale
+    labels:
+      - traefik.enable=true
+      - "traefik.http.routers.radicale.rule=Host(`contacts.{{ domain_me }}`)"
+      - traefik.http.services.radicale.loadbalancer.server.port=5232
+    volumes:
+      - "{{ appdata_path }}/apps/radicale/config:/etc/radicale:ro"
+      - "{{ appdata_path }}/apps/radicale/data:/var/lib/radicale"
+    restart: unless-stopped
   wallabag:
     image: wallabag/wallabag:latest
     container_name: wallabag
