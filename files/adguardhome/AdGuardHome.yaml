@@ -165,7 +165,7 @@ filtering:
       answer: 10.42.1.137
       enabled: true
     - domain: '*.m.wd.ktz.me'
-      answer: 10.42.1.137
+      answer: 10.42.1.111
       enabled: true
     - domain: ha.wd.ktz.me
       answer: 10.42.1.99
@@ -173,14 +173,20 @@ filtering:
     - domain: '*.wd.ktz.me'
       answer: 10.42.0.53
       enabled: true
+    - domain: jf.demo.ktz.me
+      answer: 10.42.0.53
+      enabled: true
+    - domain: '*.demo.ktz.me'
+      answer: 192.168.1.10
+      enabled: true
     - domain: hass.ktz.me
       answer: 10.42.1.99
       enabled: true
     - domain: nc.ktz.cloud
-      answer: 10.42.1.137
+      answer: 10.42.1.111
       enabled: true
     - domain: audiobooks.wd.ktz.me
-      answer: 10.42.1.137
+      answer: 10.42.1.111
       enabled: true
     - domain: '*.norbert.ktz.me'
       answer: 192.168.17.100
