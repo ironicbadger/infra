@@ -23,7 +23,7 @@ services:
       - FETCHER_ALLOW_PRIVATE_NETWORKS=1
     restart: unless-stopped
   miniflux-db:
-    image: postgres:17
+    image: postgres:18
     container_name: miniflux-db
     volumes:
       - "{{ appdata_path }}/apps/miniflux/db:/var/lib/postgresql/data"
