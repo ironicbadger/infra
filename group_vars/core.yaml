@@ -84,7 +84,7 @@ caddy_endpoints:
         tls_insecure: true
       - friendly_name: fwd
         fqdn: fwd.wd.ktz.me
-        upstream: https://192.168.1.13:8006
+        upstream: https://10.42.1.13:8006
         tls_insecure: true
       ## Apps and Services
       - friendly_name: jellyfin
@@ -99,6 +99,14 @@ caddy_endpoints:
       - friendly_name: immichframe-family
         fqdn: immichframe-family.wd.ktz.me
         upstream: http://10.42.0.111:8081
+  ## DEMO
+  - friendly_name: wildcard for *.demo.ktz.me
+    fqdn: '*.demo.ktz.me'
+    tls_provider: cloudflare
+    wildcard_endpoints:
+      - friendly_name: jellyfin demo
+        fqdn: jf.demo.ktz.me
+        upstream: http://192.168.1.10:8096
   ## HOME
   - friendly_name: wildcard for *.home.ktz.me
     fqdn: '*.home.ktz.me'
