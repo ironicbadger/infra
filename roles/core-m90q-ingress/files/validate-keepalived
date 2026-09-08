@@ -1,0 +1,11 @@
+#!/usr/bin/python3
+"""Validate config, tolerating only the pre-existing VRRP password truncation warning."""
+import subprocess, sys
+r = subprocess.run(['/usr/sbin/keepalived', '-t', '-f', sys.argv[1]], capture_output=True, text=True)
+messages = [s for s in (r.stdout + r.stderr).splitlines() if s.strip()]
+if r.returncode == 0:
+    sys.exit(0)
+if r.returncode == 5 and messages and all('Truncating auth_pass to 8 characters' in s for s in messages):
+    sys.exit(0)
+sys.stderr.write(r.stderr)
+sys.exit(r.returncode)

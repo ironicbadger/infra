@@ -108,3 +108,14 @@ caddy_endpoints:
       - friendly_name: forgejo
         fqdn: git.home.ktz.me
         upstream: http://10.42.1.101:3000
+
+# Independent M90q ingress VIP. DNS/Caddy retain 10.42.0.53.
+m90q_ingress_enabled: true
+m90q_ingress_vip: '10.42.0.54'
+m90q_ingress_router_id: 54
+m90q_ingress_nodes:
+  - '10.42.1.121'
+  - '10.42.1.122'
+  - '10.42.1.123'
+# Preserve existing local/Tailscale addresses; reserve only the new VIP for HAProxy.
+caddy_bind_addresses: "{{ ((ansible_facts['all_ipv4_addresses'] + ansible_facts['all_ipv6_addresses']) | reject('equalto', m90q_ingress_vip) | reject('match', '^fe80:') | list + ['127.0.0.1', '::1', core_vip_cidr.split('/')[0]]) | unique | list }}"

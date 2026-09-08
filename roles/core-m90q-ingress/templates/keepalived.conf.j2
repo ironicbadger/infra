@@ -1,0 +1,23 @@
+vrrp_script chk_m90q_ingress {
+    script "/usr/local/bin/check-m90q-ingress"
+    interval 2
+    timeout 4
+    fall 2
+    rise 2
+    weight 0
+}
+
+vrrp_instance VI_M90Q_INGRESS {
+    state BACKUP
+    interface {{ core_network_interface }}
+    virtual_router_id {{ m90q_ingress_router_id }}
+    priority {{ keepalived_priority }}
+    advert_int 1
+    nopreempt
+    virtual_ipaddress {
+        {{ m90q_ingress_vip }}/{{ core_ipv4_prefix }} dev {{ core_network_interface }}
+    }
+    track_script {
+        chk_m90q_ingress
+    }
+}

@@ -1,0 +1,7 @@
+---
+- name: M90q ingress VIP and TLS passthrough
+  hosts: core
+  become: true
+  serial: 1
+  roles:
+    - core-m90q-ingress

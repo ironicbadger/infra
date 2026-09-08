@@ -1,0 +1,16 @@
+---
+- name: Restart Caddy for listener reservation
+  ansible.builtin.systemd:
+    name: caddy
+    state: restarted
+
+- name: Restart M90q TCP proxy
+  ansible.builtin.systemd:
+    name: m90q-ingress
+    daemon_reload: true
+    state: restarted
+
+- name: Reload Keepalived for M90q
+  ansible.builtin.systemd:
+    name: keepalived
+    state: reloaded

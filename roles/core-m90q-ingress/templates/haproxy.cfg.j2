@@ -1,0 +1,33 @@
+global
+    log /dev/log local0
+    user haproxy
+    group haproxy
+    maxconn 4096
+
+defaults
+    log global
+    mode tcp
+    timeout connect 3s
+    timeout client 1h
+    timeout server 1h
+    timeout check 2s
+
+frontend m90q_http
+    bind {{ m90q_ingress_vip }}:80
+    default_backend m90q_http_nodes
+
+frontend m90q_https
+    bind {{ m90q_ingress_vip }}:443
+    default_backend m90q_https_nodes
+
+backend m90q_http_nodes
+    balance roundrobin
+{% for address in m90q_ingress_nodes %}
+    server talos-{{ loop.index }} {{ address }}:30080 check inter 2s fall 2 rise 2 send-proxy-v2
+{% endfor %}
+
+backend m90q_https_nodes
+    balance roundrobin
+{% for address in m90q_ingress_nodes %}
+    server talos-{{ loop.index }} {{ address }}:30443 check inter 2s fall 2 rise 2 send-proxy-v2
+{% endfor %}

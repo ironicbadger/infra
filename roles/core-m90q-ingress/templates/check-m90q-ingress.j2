@@ -1,0 +1,11 @@
+#!/usr/bin/python3
+import socket, subprocess, sys
+if subprocess.run(['systemctl', 'is-active', '--quiet', 'm90q-ingress']).returncode:
+    sys.exit(1)
+for host in {{ m90q_ingress_nodes | to_json }}:
+    try:
+        with socket.create_connection((host, 30443), timeout=0.5):
+            sys.exit(0)
+    except OSError:
+        pass
+sys.exit(1)

@@ -1,3 +1,8 @@
+global_defs {
+  enable_script_security
+  script_user root
+}
+
 vrrp_script chk_adguard {
   script "{{ keepalived_check_script }}"
   interval {{ keepalived_check_interval }}
@@ -21,3 +26,7 @@ vrrp_instance {{ keepalived_instance_name }} {
     chk_adguard
   }
 }
+
+{% if m90q_ingress_enabled | default(false) %}
+include /etc/keepalived/conf.d/m90q-ingress.conf
+{% endif %}

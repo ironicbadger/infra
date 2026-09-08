@@ -1,0 +1,22 @@
+---
+- name: Install Caddy using shared role
+  ansible.builtin.import_role:
+    name: ironicbadger.caddy
+    tasks_from: install
+
+- name: Create Caddy configuration directory
+  ansible.builtin.file:
+    path: '{{ caddyfile_path }}'
+    state: directory
+    mode: '0755'
+
+- name: Render core Caddy routes with reserved ingress VIP listeners
+  ansible.builtin.template:
+    src: Caddyfile.j2
+    dest: '{{ caddyfile_path }}/Caddyfile'
+    owner: root
+    group: caddy
+    mode: '0640'
+    validate: '/usr/local/bin/caddy validate --config %s --adapter caddyfile'
+  no_log: true
+  notify: Restart core Caddy

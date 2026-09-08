@@ -1,0 +1,15 @@
+[Unit]
+Description=M90q ingress TCP proxy (TLS terminates in Traefik)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStartPre=/usr/sbin/haproxy -c -f /etc/haproxy/m90q.cfg
+ExecStart=/usr/sbin/haproxy -Ws -f /etc/haproxy/m90q.cfg -p /run/m90q-ingress.pid
+ExecReload=/bin/kill -USR2 $MAINPID
+Restart=on-failure
+RestartSec=2
+Type=notify
+
+[Install]
+WantedBy=multi-user.target

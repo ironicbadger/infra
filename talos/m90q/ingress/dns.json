@@ -1,0 +1,6 @@
+{
+  "zone": "ktz.me",
+  "records": [
+    {"type": "A", "name": "*.m90q.ktz.me", "content": "10.42.0.54", "proxied": false, "ttl": 300}
+  ]
+}

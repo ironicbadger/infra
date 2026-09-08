@@ -21,8 +21,12 @@
     - role: core-adguardhome
       tags: adguard
 
-    - role: ironicbadger.caddy
+    - role: core-caddy
       tags: caddy
+
+    - role: core-m90q-ingress
+      when: m90q_ingress_enabled | default(false)
+      tags: m90q-ingress
 
     - role: core-keepalived
       tags: keepalived

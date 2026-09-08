@@ -1,0 +1,103 @@
+---
+- name: Install TCP proxy
+  ansible.builtin.apt:
+    name: haproxy
+    state: present
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Permit standby listeners on floating IPv4 addresses
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_nonlocal_bind
+    value: '1'
+    sysctl_file: /etc/sysctl.d/90-m90q-ingress.conf
+    reload: true
+
+- name: Preserve original Caddy configuration
+  ansible.builtin.copy:
+    src: /etc/caddy/Caddyfile
+    dest: /etc/caddy/Caddyfile.pre-m90q
+    remote_src: true
+    force: false
+    mode: '0600'
+  no_log: true
+
+- name: Reserve the ingress VIP ports while preserving existing Caddy addresses
+  ansible.builtin.blockinfile:
+    path: /etc/caddy/Caddyfile
+    insertbefore: BOF
+    marker: '# {mark} M90Q LISTENER RESERVATION'
+    block: |
+      {
+          default_bind {{ caddy_bind_addresses | join(' ') }}
+          auto_https disable_redirects
+      }
+      http:// {
+          redir https://{host}{uri} permanent
+      }
+    validate: '/usr/local/bin/caddy validate --config %s --adapter caddyfile'
+  no_log: true
+  notify: Restart Caddy for listener reservation
+
+- name: Activate Caddy listener reservation before starting the proxy
+  ansible.builtin.meta: flush_handlers
+
+- name: Verify existing Caddy listener
+  ansible.builtin.wait_for:
+    host: '{{ core_ipv4_address }}'
+    port: 443
+    timeout: 20
+
+- name: Configure dedicated TCP proxy
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/m90q.cfg
+    mode: '0644'
+    validate: '/usr/sbin/haproxy -c -f %s'
+  notify: Restart M90q TCP proxy
+
+- name: Install dedicated TCP proxy unit
+  ansible.builtin.copy:
+    src: m90q-ingress.service
+    dest: /etc/systemd/system/m90q-ingress.service
+    mode: '0644'
+  notify: Restart M90q TCP proxy
+
+- name: Enable dedicated TCP proxy
+  ansible.builtin.systemd:
+    name: m90q-ingress
+    daemon_reload: true
+    enabled: true
+    state: started
+
+- name: Install ingress health check
+  ansible.builtin.template:
+    src: check-m90q-ingress.j2
+    dest: /usr/local/bin/check-m90q-ingress
+    mode: '0755'
+
+- name: Create Keepalived include directory
+  ansible.builtin.file:
+    path: /etc/keepalived/conf.d
+    state: directory
+    mode: '0755'
+
+- name: Configure independent ingress VIP
+  ansible.builtin.template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/conf.d/m90q-ingress.conf
+    mode: '0644'
+  notify: Reload Keepalived for M90q
+
+- name: Install strict Keepalived validator for existing configuration
+  ansible.builtin.copy:
+    src: validate-keepalived
+    dest: /usr/local/bin/validate-m90q-keepalived
+    mode: '0755'
+
+- name: Include ingress VIP without replacing the DNS configuration
+  ansible.builtin.lineinfile:
+    path: /etc/keepalived/keepalived.conf
+    line: 'include /etc/keepalived/conf.d/m90q-ingress.conf'
+    validate: '/usr/local/bin/validate-m90q-keepalived %s'
+  notify: Reload Keepalived for M90q
