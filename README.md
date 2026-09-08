@@ -134,3 +134,8 @@ The `core-network` role supports two backends configured via `network_backend`:
 - `networkmanager` - NetworkManager (Raspberry Pi OS)
 
 The role removes dhcpcd packages and writes a static `/etc/resolv.conf`.
+
+## M90q Talos cluster
+
+The infrastructure-only Talos cluster uses three local-disk VMs and external
+Ceph app storage. Inventory, access and recovery instructions: [talos/m90q](talos/m90q/README.md).

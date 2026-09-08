@@ -1,0 +1,10 @@
+{
+  "id": "ce4c980550dd2ab1b17bbf2b08801c7eb59418eafe8f279833297925d67c7515",
+  "customization": {
+    "systemExtensions": {
+      "officialExtensions": [
+        "siderolabs/qemu-guest-agent"
+      ]
+    }
+  }
+}

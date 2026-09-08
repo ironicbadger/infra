@@ -1,0 +1,44 @@
+{
+  "name": "m90q",
+  "talosVersion": "v1.13.8",
+  "kubernetesVersion": "1.36.2",
+  "endpoint": "https://10.42.1.120:6443",
+  "gateway": "10.42.0.254",
+  "prefix": 21,
+  "dns": [
+    "10.42.0.53"
+  ],
+  "podSubnet": "10.244.0.0/16",
+  "serviceSubnet": "10.96.0.0/12",
+  "sshGateway": "root@meeseeks",
+  "storage": "local",
+  "cores": 4,
+  "memoryMiB": 8192,
+  "diskGiB": 64,
+  "nodes": [
+    {
+      "name": "talos-m90q-1",
+      "host": "10.42.1.91",
+      "proxmoxNode": "m90q-1",
+      "vmid": 1201,
+      "ip": "10.42.1.121",
+      "mac": "02:54:00:12:01:01"
+    },
+    {
+      "name": "talos-m90q-2",
+      "host": "10.42.1.92",
+      "proxmoxNode": "m90q-2",
+      "vmid": 1202,
+      "ip": "10.42.1.122",
+      "mac": "02:54:00:12:01:02"
+    },
+    {
+      "name": "talos-m90q-3",
+      "host": "10.42.1.93",
+      "proxmoxNode": "m90q-3",
+      "vmid": 1203,
+      "ip": "10.42.1.123",
+      "mac": "02:54:00:12:01:03"
+    }
+  ]
+}
