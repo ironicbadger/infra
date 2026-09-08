@@ -52,7 +52,7 @@ services:
     restart: unless-stopped
   immichframe:
     container_name: immichframe
-    image: ghcr.io/immichframe/immichframe:v1.0.34.0
+    image: ghcr.io/immichframe/immichframe:v1.0.37.0
     volumes:
       - "{{ appdata_path }}/databases/immich/immichframe:/app/Config"
     ports:
@@ -67,7 +67,7 @@ services:
     restart: unless-stopped
   immichframe-family:
     container_name: immichframe-family
-    image: ghcr.io/immichframe/immichframe:v1.0.34.0
+    image: ghcr.io/immichframe/immichframe:v1.0.37.0
     network_mode: service:immichframe-family-ts
     environment:
       - TZ=America/New_York
