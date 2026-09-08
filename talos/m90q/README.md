@@ -1,6 +1,6 @@
 # M90q Talos cluster
 
-Created 2026-09-08. Three Talos VMs, one on each M90q. No application workloads.
+Created 2026-09-08. Three Talos VMs, one on each M90q. Headlamp is deployed for cluster administration; no application workloads migrated.
 
 | Proxmox host | VM | Name | Address | CPU / RAM | System disk |
 |---|---|---|---|---|---|
@@ -34,6 +34,15 @@ handles workload recovery across surviving nodes; replace a lost node locally.
   `https://m90q-ts-operator.ktz.ts.net`, using existing `tag:k8s-operator` and
   `tag:k8s` tags. OAuth credentials are encrypted in the k8s repo. No appdata
   has been migrated. Tailnet access was verified with `kubectl get nodes`.
+
+## Headlamp
+
+Headlamp 0.45.0 is available at https://m90q-headlamp.ktz.ts.net over Tailscale.
+It uses the existing tsidp at https://idp.ktz.ts.net with a dedicated client.
+The complete OIDC login and authenticated node listing were verified.
+`../k8s/clusters/m90q/talos/oidc.json` supplies the API server trust settings;
+`generate.py` includes these when regenerating configs. See the k8s README for
+credentials, RBAC and rolling configuration instructions.
 
 ## Access
 
@@ -90,13 +99,13 @@ are never touched. Retain remains the default for future application volumes.
 ## Verified on 2026-09-08
 
 - All three nodes Ready; all platform Deployments and DaemonSets ready.
-- Flux root/platform reconciliations and both HelmReleases healthy.
+- Flux root/platform reconciliations and all HelmReleases healthy.
 - Temporary Ceph PVC provisioned, mounted, written on node 1, remounted and read
   on node 2; cluster DNS resolved successfully. Test namespace and RBD image removed.
 - Rebooted node 1 while it owned the API VIP. VIP moved to node 2; twelve API
   readiness probes at three-second intervals all succeeded. Node 1 rejoined.
 - Talos health checks passed; etcd has three consistent voting members.
-- Ceph remains HEALTH_OK. No application manifests or persistent test volumes.
+- Ceph remains HEALTH_OK. No migrated applications or persistent test volumes.
 - Installation ISOs ejected after installation; all VMs boot only from local disk.
 - Encrypted etcd snapshot saved at
   `~/.local/share/talos-backups/m90q/20260908T160248Z.snapshot.age`.

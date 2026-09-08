@@ -14,6 +14,8 @@ secret=subprocess.check_output(['sops','decrypt',str(base/'secrets.sops.yaml')],
 schematic=json.loads((root/'schematic.json').read_text())['id']
 for n in cfg['nodes']:
     patch={'machine':{'network':{'nameservers':cfg['dns'],'interfaces':[{'interface':'ens18','dhcp':False,'addresses':[n['ip']+'/21'],'routes':[{'network':'0.0.0.0/0','gateway':cfg['gateway']}],'vip':{'ip':'10.42.1.120'}}]},'nodeLabels':{'topology.kubernetes.io/zone':n['proxmoxNode']},'features':{'kubePrism':{'enabled':True,'port':7445}}},'cluster':{'allowSchedulingOnControlPlanes':True,'network':{'cni':{'name':'none'},'podSubnets':[cfg['podSubnet']],'serviceSubnets':[cfg['serviceSubnet']]},'proxy':{'disabled':True}}}
+    if (base/'oidc.json').exists():
+        patch['cluster']['apiServer']={'extraArgs':json.loads((base/'oidc.json').read_text())}
     patchfile=base/(n['name']+'.patch.yaml');patchfile.write_text(json.dumps(patch,indent=2)+'\n---\napiVersion: v1alpha1\nkind: HostnameConfig\nauto: null\nhostname: '+n['name']+'\n')
     subprocess.run(['talosctl','gen','config','m90q',cfg['endpoint'],'--with-secrets',str(out/'secrets.yaml'),'--talos-version',cfg['talosVersion'],'--kubernetes-version',cfg['kubernetesVersion'],'--install-image',f"factory.talos.dev/installer/{schematic}:{cfg['talosVersion']}",'--config-patch','@'+str(patchfile),'--with-docs=false','--with-examples=false','--output-types','controlplane','--output',str(out/(n['name']+'.yaml')),'--force'],check=True)
     generated=out/(n['name']+'.yaml')
