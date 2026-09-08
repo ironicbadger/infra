@@ -30,8 +30,10 @@ handles workload recovery across surviving nodes; replace a lost node locally.
 - Ceph-CSI RBD 3.17.1 consumes existing Proxmox Ceph. Pool `k8s-m90q` has
   size=3, min_size=2 and autoscaling PGs. User `client.k8s-m90q` has access only
   to this pool. Default StorageClass `ceph-rbd` uses Retain and supports expansion.
-- Tailscale operator is pending restoration of old SOPS credentials or fresh
-  OAuth credentials. See the k8s cluster README. No appdata has been migrated.
+- Tailscale operator 1.102.3 exposes the authenticated API at
+  `https://m90q-ts-operator.ktz.ts.net`, using existing `tag:k8s-operator` and
+  `tag:k8s` tags. OAuth credentials are encrypted in the k8s repo. No appdata
+  has been migrated. Tailnet access was verified with `kubectl get nodes`.
 
 ## Access
 
