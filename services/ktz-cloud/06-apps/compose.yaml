@@ -20,7 +20,7 @@ services:
       - https://paste.{{ domain_cloud }}
     restart: unless-stopped
   ktz-lychee:
-    image: ghcr.io/lycheeorg/lychee:v7.6.2
+    image: ghcr.io/lycheeorg/lychee:v7.8.3
     container_name: ktz-lychee
     volumes:
       - "{{ appdata_path }}/ktz-lychee/app/uploads:/app/public/uploads"
