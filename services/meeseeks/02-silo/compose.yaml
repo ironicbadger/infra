@@ -1,0 +1,77 @@
+services:
+  silo:
+    image: ghcr.io/silo-server/silo-server:latest
+    container_name: silo
+    hostname: silo
+    devices:
+      - /dev/dri:/dev/dri
+    environment:
+      MODE: integrated
+      PORT: "8080"
+      JF_PORT: "8096"
+      SECRET_KEY: "{{ silo_secret_key }}"
+      DATABASE_URL: "postgres://silo:{{ silo_postgres_password }}@silo-postgres:5432/silo?sslmode=disable"
+      REDIS_URL: redis://silo-redis:6379
+      SILO_PLUGIN_CACHE_DIR: /var/lib/silo/plugins
+      SILO_PUBLIC_URL: http://meeseeks:8090
+      # Share this host with Jellyfin; use PostgreSQL defaults within its cap.
+      POSTGRES_TUNE: "off"
+      TZ: "{{ host_timezone }}"
+    ports:
+      - "8090:8080"
+      - "8097:8096"
+      - "13378:13378"
+    volumes:
+      - "{{ storage_path }}/media/movies:/mnt/media/movies:ro"
+      - "{{ storage_path }}/media/tv:/mnt/media/tv:ro"
+      - "{{ storage_path }}/media/audiobooks:/mnt/media/audiobooks:ro"
+      - "{{ storage_path }}/media/books:/mnt/media/books:ro"
+      - "{{ storage_path }}/media/comics:/mnt/media/comics:ro"
+      - "{{ appdata_path }}/mediaservers/silo/plugins:/var/lib/silo/plugins"
+      - "{{ appdata_path }}/mediaservers/silo/compat:/var/lib/silo/compat"
+      - "{{ appdata_path }}/mediaservers/silo/transcode:/tmp/silo-transcode"
+    networks:
+      - silo
+    depends_on:
+      silo-postgres:
+        condition: service_healthy
+      silo-redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+  silo-postgres:
+    image: pgvector/pgvector:pg18
+    container_name: silo-postgres
+    mem_limit: 2g
+    shm_size: 512mb
+    environment:
+      POSTGRES_USER: silo
+      POSTGRES_PASSWORD: "{{ silo_postgres_password }}"
+      POSTGRES_DB: silo
+    volumes:
+      - "{{ appdata_path }}/mediaservers/silo/postgres:/var/lib/postgresql"
+    networks:
+      - silo
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U silo -d silo"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+  silo-redis:
+    image: redis:alpine
+    container_name: silo-redis
+    volumes:
+      - "{{ appdata_path }}/mediaservers/silo/redis:/data"
+    networks:
+      - silo
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+networks:
+  silo:

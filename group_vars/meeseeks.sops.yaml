@@ -1,0 +1,17 @@
+silo_secret_key: ENC[AES256_GCM,data:Lp5mUGLPGCvYLhczcAzdv7hnyImQtqUQinp8M4zgKFY2qJDMHUkvA0M+kDRxf+7LdvaWMgmNBd/Sasyuad8vEw==,iv:ZzOS2v6vqJI7cNC9jAPEXs4B7dKtUUc1t0FnBOiJ5zM=,tag:gEAGkXGN7bM3g7fWnMMLiQ==,type:str]
+silo_postgres_password: ENC[AES256_GCM,data:4xjwFr2bkSk7iRY+MA2j41kPhgQ7O0jd+fbgr5DuunMxHfG8CE6Z088OjawHLQs8,iv:n0nJiPcTBOjRZIrMeC18LcIW0F4XTO84TXGDs85CoQw=,tag:+KsbpFYrSUf0PUTMNFRUVQ==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBHZWRpQ01CczhYMkl1cTRW
+            YTlZMjI1MHBtdERaOHNPR3J6TVUrdjhheUVRCklWVlI5U1ZLUFhJdENUM3lQc1pi
+            ZjVmdU14UG9NZzVteEdkbXdkQjkxZFEKLS0tIERENVhTRUxmR2NvZlpaY2tmS0lu
+            TEhvNGQrYmJNckU5RUFyOHRYSTk1VkEKeo/xMgssgNdb13xDBT5oOTtkqG0fimKv
+            7+AIeRCA0589HY4kXueJzdZ6q/dmXHSslrQWvptzlYuQieY3yKdh+w==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1helw9qcwl8lfy8xwm5cecnn2ljxlafhlplg3dehpk7ma4l94695qmqm9zg
+    lastmodified: "2026-09-07T11:26:37Z"
+    mac: ENC[AES256_GCM,data:ealXxeWPDEugwXeXsS2IAvxz7wbxcClka5qz9iGna/AYgLvoCsvLZbr0mQFHBrGGBzIai/kpluRCj6oZemGVrlLMtDtybK5vGsBwJ9LV3naMyy3Pdf4nEJjfpYXIIt2rno+/Hr3TXBWvdT5hUcEyVmMF9i7HzaTUGihLzZJhbec=,iv:0tG9IgvHhQ+Duey+v7WRDzE/IcTaw/Fa0ESiDulbUqo=,tag:8i7Vzh56J4c13wOryl8L9A==,type:str]
+    unencrypted_suffix: _unencrypted
+    version: 3.13.3
