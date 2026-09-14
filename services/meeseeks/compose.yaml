@@ -1,14 +1,25 @@
 services:
 ## media servers
   jellyfin:
-    image: jellyfin/jellyfin
+    image: jellyfin/jellyfin:12
     container_name: jellyfin
     hostname: jellyfin
+    # Preserve the running host's scheduling priority.
+    cpu_shares: 262144
+    blkio_config:
+      weight: 1000
+    oom_score_adj: -1000
+    cap_add:
+      - SYS_NICE
+    ulimits:
+      nice: -20
+      rtprio: 99
+    entrypoint: ["/usr/bin/nice", "-n", "-20", "/jellyfin/jellyfin"]
     devices:
       - /dev/dri:/dev/dri
     volumes:
       - "{{ appdata_path }}/mediaservers/jellyfin:/config"
-      - "{{ storage_path }}:{{ storage_path }}:ro"
+      - "{{ storage_path }}/media:{{ storage_path }}/media:ro"
       - /mnt/downloads:/downloads:ro
     labels:
       - traefik.enable=true
