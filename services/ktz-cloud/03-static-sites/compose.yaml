@@ -33,7 +33,7 @@ services:
     image: nginx
     container_name: alleycat
     volumes:
-      - "{{ appdata_path }}/website-alleycat:/usr/share/nginx/html:ro"
+      - "{{ appdata_path }}/website-alleycat/dist:/usr/share/nginx/html:ro"
     labels:
       - traefik.enable=true
       - traefik.http.routers.alleycat.rule=Host(`alleycatmusictuition.com`)
