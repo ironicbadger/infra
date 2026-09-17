@@ -74,3 +74,38 @@ services:
       - "PGID={{ docker_compose_generator_gid }}"
       - PORT=8000
     restart: unless-stopped
+  actual-budget:
+    image: actualbudget/actual-server:26.9.0@sha256:552beab3dec8c93d46b8b9245612d63c3f123b8a45063a474f53e229b17621d3
+    container_name: actual-budget
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5006:5006"
+    volumes:
+      - /mnt/nvmeu2/appdata/apps/actual-budget/data:/data
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: root_default
+      traefik.http.routers.actual-budget.rule: "Host(`actual.{{ m_wd_domain_me }}`)"
+      traefik.http.routers.actual-budget.entrypoints: websecure
+      traefik.http.routers.actual-budget.tls: "true"
+      traefik.http.routers.actual-budget.tls.certresolver: cloudflare
+      traefik.http.routers.actual-budget.middlewares: actual-budget-private
+      traefik.http.routers.actual-budget.observability.accesslogs: "false"
+      traefik.http.routers.actual-budget.observability.tracing: "false"
+      traefik.http.middlewares.actual-budget-private.ipallowlist.sourcerange: "10.42.0.0/21,100.64.0.0/10,fd7a:115c:a1e0::/48,127.0.0.1/32"
+      traefik.http.services.actual-budget.loadbalancer.server.port: "5006"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    logging:
+      driver: none
+    mem_limit: 1g
+    cpus: 2
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:5006/').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      start_period: 10s
+      start_interval: 2s
+      timeout: 10s
+      retries: 3
