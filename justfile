@@ -58,3 +58,7 @@ sub-add URL *NAME:
 # optionally use --force to force reinstall all requirements
 reqs *FORCE:
 	ansible-galaxy install -r requirements.yaml {{FORCE}}
+
+# Reconcile Actual only, preserving unrelated live appnv services
+actual:
+  ansible-playbook -b playbooks/actual-budget.yaml

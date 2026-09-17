@@ -1,0 +1,110 @@
+---
+- name: Install backup encryption from signed Arch packages
+  community.general.pacman:
+    name: age
+    state: present
+
+- name: Create protected Actual directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+  loop:
+    - /etc/actual-budget
+    - /opt/actual-budget-ops
+    - /var/lib/actual-budget
+    - /var/lib/actual-budget-backups
+    - /var/lib/actual-budget-sync
+
+- name: Install operational code
+  tags: actual-ops
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/opt/actual-budget-ops/{{ item }}"
+    owner: root
+    group: root
+    mode: '0700'
+  loop: [operate.py, setup.py]
+
+- name: Install pinned API build context
+  ansible.builtin.copy:
+    src: sync/
+    dest: /opt/actual-budget-ops/sync/
+    directory_mode: '0700'
+    owner: root
+    group: root
+    mode: '0600'
+  register: actual_sync_source
+
+- name: Inspect API image
+  ansible.builtin.command: docker image inspect local/actual-budget-sync:26.9.0
+  register: actual_sync_image
+  changed_when: false
+  failed_when: false
+  no_log: true
+
+- name: Build pinned API runner
+  ansible.builtin.command: docker build --tag local/actual-budget-sync:26.9.0 /opt/actual-budget-ops/sync
+  when: actual_sync_source.changed or actual_sync_image.rc != 0
+  no_log: true
+
+- name: Generate host restore-test key once
+  ansible.builtin.command:
+    cmd: age-keygen -o /etc/actual-budget/backup-key.txt
+    creates: /etc/actual-budget/backup-key.txt
+  no_log: true
+
+- name: Read host public recipient
+  ansible.builtin.command: age-keygen -y /etc/actual-budget/backup-key.txt
+  register: actual_host_recipient
+  changed_when: false
+  no_log: true
+
+- name: Encrypt for host restore tests and existing off-host SOPS recovery key
+  ansible.builtin.copy:
+    content: "{{ actual_host_recipient.stdout }}\nage1helw9qcwl8lfy8xwm5cecnn2ljxlafhlplg3dehpk7ma4l94695qmqm9zg\n"
+    dest: /etc/actual-budget/recipients.txt
+    owner: root
+    group: root
+    mode: '0600'
+  no_log: true
+
+- name: Validate existing private HTTPS mapping without changing other listeners
+  ansible.builtin.command: tailscale serve status --json
+  register: actual_serve
+  changed_when: false
+
+- name: Require private Actual HTTPS and preserve existing 8443 service
+  ansible.builtin.assert:
+    that:
+      - (actual_serve.stdout | from_json).Web['appnv.ktz.ts.net:9443'].Handlers['/'].Proxy == 'http://127.0.0.1:5006'
+      - (actual_serve.stdout | from_json).Web['appnv.ktz.ts.net:8443'].Handlers['/'].Proxy == 'http://127.0.0.1:8787'
+      - "(((actual_serve.stdout | from_json).AllowFunnel | default({})).values() | select('equalto', true) | list | length) == 0"
+
+- name: Back up, restore-test, and adopt Actual into root Compose project
+  ansible.builtin.command: /opt/actual-budget-ops/operate.py deploy
+  register: actual_deploy
+  changed_when: true
+
+- name: Install operational units
+  ansible.builtin.template:
+    src: "{{ item }}.j2"
+    dest: "/etc/systemd/system/{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop:
+    - actual-budget@.service
+    - actual-budget-backup.timer
+    - actual-budget-sync.timer
+    - actual-budget-restore.timer
+
+- name: Enable backup, sync and restore timers
+  ansible.builtin.systemd_service:
+    name: "actual-budget-{{ item }}.timer"
+    enabled: true
+    state: started
+    daemon_reload: true
+  loop: [backup, sync, restore]

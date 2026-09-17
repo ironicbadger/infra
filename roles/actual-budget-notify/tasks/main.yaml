@@ -1,0 +1,49 @@
+---
+- name: Protect Hermes monitor and encrypted backup storage
+  ansible.builtin.file:
+    path: /var/lib/actual-budget-monitor
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+- name: Install monitor
+  ansible.builtin.copy:
+    src: notify.py
+    dest: /var/lib/actual-budget-monitor/notify.py
+    owner: root
+    group: root
+    mode: '0700'
+- name: Install Hermes monitor service
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/actual-budget-monitor.service
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Actual Budget Telegram alerts and encrypted backup copy
+      After=network-online.target
+      [Service]
+      Type=oneshot
+      User=root
+      UMask=0077
+      ExecStart=/var/lib/actual-budget-monitor/notify.py
+      TimeoutStartSec=10min
+      StandardOutput=journal
+      StandardError=null
+- name: Install monitor timer
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/actual-budget-monitor.timer
+    mode: '0644'
+    content: |
+      [Unit]
+      Description=Check Actual Budget every five minutes
+      [Timer]
+      OnBootSec=5min
+      OnUnitActiveSec=5min
+      [Install]
+      WantedBy=timers.target
+- name: Enable monitor
+  ansible.builtin.systemd_service:
+    name: actual-budget-monitor.timer
+    enabled: true
+    state: started
+    daemon_reload: true

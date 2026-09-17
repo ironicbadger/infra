@@ -1,0 +1,8 @@
+[Unit]
+Description=Weekly isolated Actual Budget restore test
+[Timer]
+OnCalendar=Sun *-*-* 04:00:00
+Persistent=true
+Unit=actual-budget@restore.service
+[Install]
+WantedBy=timers.target
