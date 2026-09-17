@@ -1,0 +1,9 @@
+[Unit]
+Description=Daily encrypted Actual Budget backup
+[Timer]
+OnCalendar=*-*-* 03:00:00
+RandomizedDelaySec=10min
+Persistent=true
+Unit=actual-budget@backup.service
+[Install]
+WantedBy=timers.target

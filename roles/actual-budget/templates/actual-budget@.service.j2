@@ -1,0 +1,17 @@
+[Unit]
+Description=Actual Budget %i
+After=docker.service tailscaled.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=root
+UMask=0077
+ExecStart=/opt/actual-budget-ops/operate.py %i
+TimeoutStartSec=30min
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/var/lib/actual-budget /var/lib/actual-budget-backups /var/lib/actual-budget-sync /run/lock
+StandardOutput=journal
+StandardError=null

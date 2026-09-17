@@ -1,0 +1,28 @@
+---
+# Service-scoped entrypoint: use the normal generator without replacing unrelated
+# live appnv definitions. The fragment is also picked up by `just compose appnv`.
+- hosts: appnv
+  become: true
+  vars:
+    services_directory: "{{ playbook_dir }}/../services/appnv/"
+    docker_compose_hostname: 11-actual-budget
+    docker_compose_generator_output_path: /etc/actual-budget/render
+    docker_compose_generator_uid: "0"
+    docker_compose_generator_gid: "0"
+  pre_tasks:
+    - name: Protect Actual configuration parent
+      ansible.builtin.file:
+        path: /etc/actual-budget
+        state: directory
+        owner: root
+        group: root
+        mode: '0700'
+  roles:
+    - ironicbadger.docker-compose-generator
+    - actual-budget
+
+- hosts: actual_notify
+  become: true
+  gather_facts: false
+  roles:
+    - actual-budget-notify
