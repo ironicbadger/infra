@@ -21,7 +21,7 @@ services:
     restart: unless-stopped
 
   whisperx:
-    image: ghcr.io/macnow/whisperx-api:v1.11.6
+    image: ghcr.io/macnow/whisperx-api:v1.14.0
     container_name: whisperx
     network_mode: service:whisperx-ts
     depends_on:
