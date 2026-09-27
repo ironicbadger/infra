@@ -1,6 +1,6 @@
 services:
   stamp-book:
-    image: ghcr.io/ironicbadger/ktz-usa-stamp-tracker:v1.1.0@sha256:3da6a488dff4615ee7371f40f8c453041f48ff2bb5f0d2f61cf6376ecc56e6f2
+    image: ghcr.io/ironicbadger/ktz-usa-stamp-tracker:v1.1.2@sha256:c60e24cc84b57ccdb8615cd4f5eed5a4e192a5a85d694f5667099b2351a55a70
     container_name: stamp-book
     restart: unless-stopped
     init: true

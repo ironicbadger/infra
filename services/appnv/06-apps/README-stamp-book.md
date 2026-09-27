@@ -25,7 +25,8 @@ Then on appnv, create `data/` owned by 1000:1000 and a root-owned, mode-0700
 `secrets/` directory. Store the issued OIDC secret as
 `secrets/oidc-client-secret`, owned by 1000:1000 with mode 0400. The secret
 is not stored in Git. Preserve the entire dataset when backing up/restoring.
-Initial snapshot: `nvmeu2/appdata/apps/stamp-book@initial-deployment-20260927`.
+Pre-release snapshots: `@pre-v1.1.0-20260927`, `@pre-v1.1.1-20260927` and
+`@pre-v1.1.2-20260927`; existing zrepl retention manages older snapshots.
 
 ## Authentication
 
@@ -62,7 +63,7 @@ logout, and matching DNS answers from both AdGuard servers.
 
 ## Versioned updates and recovery
 
-Production is pinned to v1.1.0 and its registry digest. Every startup creates a
+Production is pinned to v1.1.2 and its registry digest. Every startup creates a
 verified SQLite + uploads snapshot before migrations, retaining the last seven
 successful startup snapshots under `data/backups/`. Manual release backups are
 in `manual-backups/` and are outside that rotation. Migration failure or failed
@@ -77,3 +78,12 @@ and compared field-for-field across all nine original tables. The dataset is
 included in recursive appdata zrepl jobs, but replication health must be checked.
 A separate pre-upgrade archive is retained on igloo under
 `/z2tank/backups/stamp-book-manual/`.
+
+The v1.1.2 homepage shares the reader shell, starts directly with book progress,
+and places the sun/moon icon beside Edit mode in the top navigation. Desktop and
+320px mobile navigation were checked; there is no horizontal overflow.
+
+Replication verified (2026-09-27): igloo's appdata job completed and the received
+dataset exists at `z2tank/backups/meeseeks/data/nvmeu2/appdata/apps/stamp-book`.
+The manual pre-1.1.0 and pre-1.1.1 archives on igloo were verified independently.
+Snowball is still unreachable and is not a second verified replica.
