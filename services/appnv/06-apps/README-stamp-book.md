@@ -26,7 +26,7 @@ Then on appnv, create `data/` owned by 1000:1000 and a root-owned, mode-0700
 `secrets/oidc-client-secret`, owned by 1000:1000 with mode 0400. The secret
 is not stored in Git. Preserve the entire dataset when backing up/restoring.
 Pre-release snapshots: `@pre-v1.1.0-20260927`, `@pre-v1.1.1-20260927` and
-`@pre-v1.1.2-20260927`; existing zrepl retention manages older snapshots.
+`@pre-v1.1.2-20260927`, `@pre-v1.1.3-20260927`; existing zrepl retention manages older snapshots.
 
 ## Authentication
 
@@ -63,7 +63,7 @@ logout, and matching DNS answers from both AdGuard servers.
 
 ## Versioned updates and recovery
 
-Production is pinned to v1.1.2 and its registry digest. Every startup creates a
+Production is pinned to v1.1.3 and its registry digest. Every startup creates a
 verified SQLite + uploads snapshot before migrations, retaining the last seven
 successful startup snapshots under `data/backups/`. Manual release backups are
 in `manual-backups/` and are outside that rotation. Migration failure or failed
@@ -87,3 +87,6 @@ Replication verified (2026-09-27): igloo's appdata job completed and the receive
 dataset exists at `z2tank/backups/meeseeks/data/nvmeu2/appdata/apps/stamp-book`.
 The manual pre-1.1.0 and pre-1.1.1 archives on igloo were verified independently.
 Snowball is still unreachable and is not a second verified replica.
+
+In v1.1.3, site locator previews open interactive Google Maps using the place
+name and full state names. The map caption includes the same link.
