@@ -161,6 +161,9 @@ filtering:
   parental_block_host: family-block.dns.adguard.com
   safebrowsing_block_host: standard-block.dns.adguard.com
   rewrites:
+    - domain: stampbook.wd.ktz.me
+      answer: 10.42.1.111
+      enabled: true
     - domain: jf.wd.ktz.me
       answer: 10.42.1.137
       enabled: true

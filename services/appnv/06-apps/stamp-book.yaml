@@ -1,0 +1,48 @@
+services:
+  stamp-book:
+    image: ghcr.io/ironicbadger/ktz-usa-stamp-tracker:v1.1.0@sha256:3da6a488dff4615ee7371f40f8c453041f48ff2bb5f0d2f61cf6376ecc56e6f2
+    container_name: stamp-book
+    restart: unless-stopped
+    init: true
+    stop_grace_period: 60s
+    ports:
+      - "127.0.0.1:8770:8770"
+    environment:
+      HOST: "0.0.0.0"
+      PORT: "8770"
+      DATA_DIR: /data
+      AUTH_MODE: oidc
+      ORIGIN: https://stampbook.wd.ktz.me
+      OIDC_PROVIDER: tsidp
+      OIDC_ISSUER: https://idp.ktz.ts.net
+      OIDC_CLIENT_ID: "70b1626d03fe8800910e5f9a6b7a3489"
+      OIDC_CLIENT_SECRET_FILE: /run/secrets/oidc_client_secret
+      OIDC_CLIENT_AUTH_METHOD: client_secret_post
+      OIDC_ALLOWED_SUBJECTS: "userid:58536423898758261,userid:5480194786358962"
+    secrets:
+      - source: stamp_book_oidc_client_secret
+        target: oidc_client_secret
+    volumes:
+      - type: bind
+        source: /mnt/nvmeu2/appdata/apps/stamp-book/data
+        target: /data
+        bind:
+          create_host_path: false
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: root_default
+      traefik.http.routers.stamp-book.rule: "Host(`stampbook.wd.ktz.me`)"
+      traefik.http.routers.stamp-book.entrypoints: websecure
+      traefik.http.routers.stamp-book.tls: "true"
+      traefik.http.routers.stamp-book.tls.certresolver: cloudflare
+      traefik.http.services.stamp-book.loadbalancer.server.port: "8770"
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:8770/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+secrets:
+  stamp_book_oidc_client_secret:
+    file: /mnt/nvmeu2/appdata/apps/stamp-book/secrets/oidc-client-secret
