@@ -27,8 +27,8 @@ services:
     volumes:
       - "{{ appdata_path }}/mediaservers/storyteller/data:/data:rw"
       - "{{ appdata_path }}/mediaservers/storyteller/config:/config:ro"
-      - "{{ storage_path }}/media/books:/books:ro"
-      - "{{ storage_path }}/media/audiobooks:/audiobooks:ro"
+      - "{{ storage_path }}/media/books:/books"
+      - "{{ storage_path }}/media/audiobooks:/audiobooks"
     labels:
       - traefik.enable=true
       - "traefik.http.routers.storyteller.rule=Host(`storyteller.{{ m_wd_domain_me }}`)"
