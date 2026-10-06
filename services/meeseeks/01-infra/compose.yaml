@@ -1,0 +1,17 @@
+services:
+  arcane-agent:
+    image: ghcr.io/getarcaneapp/agent:latest
+    container_name: arcane-agent
+    cgroup: host
+    environment:
+      - EDGE_AGENT=true
+      - EDGE_TRANSPORT=poll
+      - MANAGER_API_URL=https://arcane.m.wd.ktz.me
+      - PUID=1000
+      - PGID=1000
+    env_file:
+      - "{{ appdata_path }}/apps/arcane-agent.env"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - "{{ appdata_path }}/apps/arcane-agent:/app/data"
+    restart: unless-stopped

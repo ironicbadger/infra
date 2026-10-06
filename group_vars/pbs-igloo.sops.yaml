@@ -1,0 +1,19 @@
+pbs_admin_user: ENC[AES256_GCM,data:COFkTg/t5Uo=,iv:1cO/BD8ozkASVTtyc7oY4W2lKih0qeTt2J9xOhMB4YE=,tag:lMGf+5lZXKNcVxgmvpsaVg==,type:str]
+pbs_admin_password: ENC[AES256_GCM,data:DfilbvwQ72F/38JnBRjZkycLMEl3IFnCDkXgqeygwXgonlwKS6uexQ==,iv:Irlm7YlxLNHo51DcjhLfH0zW/+z/jpruhsKzt1zqfcE=,tag:OVtadRfJHEk9ESDAB+ETIQ==,type:str]
+pbs_pve_token_id: ENC[AES256_GCM,data:Hy3d1r69UdP1kzzx8jfu/g==,iv:Xi2QoTXZNfMOtSS31tGrnwZ7jYL87QBG94pxttpkXeY=,tag:Q23SmzN3J3gG0rcUHeZZDA==,type:str]
+pbs_pve_token_secret: ENC[AES256_GCM,data:b76LsJ2UPd/AbkFh3a9Jl+4QnZH5D2ZBBeKnxDnHDyI5UnJe,iv:6Opm2Z5jgW2XDmZSLELOSuaxBv5qF0eif12V9ls7Bk0=,tag:cnhhQBQ70yAzQ/7s9HeI3A==,type:str]
+sops:
+    age:
+        - enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSBmTDBKRlg2TXN1eHZjbnRZ
+            dEJjdldad1lVQVcyMlM5cktjL2cxc3pwVmpRCkV2RnowK3JyUnUvNVJ2WHA3YU9i
+            a3BKVDd2TU9XVVBOcDJlbDNNa0ZFYUEKLS0tIDlQTkREbVNOY1ZqTHBIblhIbEc2
+            ZzhnQnQyeDZOaUErYzNsMTlabFIrU3MKTT+QsgIVV756yjIPBrx/b7ROVrO3Nbmr
+            xlkXKQpSFISVrECbhueBRzCTlvAr1nS6oIERa69DzDMPUHrFXq4Ssw==
+            -----END AGE ENCRYPTED FILE-----
+          recipient: age1helw9qcwl8lfy8xwm5cecnn2ljxlafhlplg3dehpk7ma4l94695qmqm9zg
+    lastmodified: "2026-09-16T03:18:21Z"
+    mac: ENC[AES256_GCM,data:p85y1jJc1qw3YYBFkR4G3D5Q+jIjNqBkN0y0EuO6LvqmwgS8tAGl73AnyTlz+zbKoZhmvNOvMW0sYTmO+CfFbeJizBtHuYiCZQwRqYbo6GFuQ3UAe3sfdP2YbUgPKDVfDw6HoNLlgOP/x+5mWOKGJ11cuZs2pfuK2qSBeFHqhfg=,iv:sW/pBnZJ1IiEhoQgJiOZakFRTNSVcDJzLUdA5wNgcSk=,tag:xVkxkTj7fsVZORijkHb6Ag==,type:str]
+    unencrypted_suffix: _unencrypted
+    version: 3.13.3
