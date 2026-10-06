@@ -35,31 +35,6 @@ services:
       - --certificatesresolvers.cloudflare.acme.storage=/letsencrypt/acme.json
       - --serversTransport.insecureSkipVerify=true
     restart: unless-stopped
-  arcane:
-    image: ghcr.io/getarcaneapp/manager:latest
-    container_name: arcane
-    cgroup: host
-    labels:
-      - traefik.enable=true
-      - "traefik.http.routers.arcane.rule=Host(`arcane.{{ m_wd_domain_me }}`)"
-      - traefik.http.services.arcane.loadbalancer.server.port=3552
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - "{{ appdata_path }}/apps/arcane:/app/data"
-    env_file:
-      - "{{ appdata_path }}/apps/arcane.env"
-    environment:
-      - APP_URL=https://arcane.{{ m_wd_domain_me }}
-      - PUID={{ docker_compose_generator_uid }}
-      - PGID={{ docker_compose_generator_gid }}
-      - TZ={{ host_timezone }}
-    healthcheck:
-      test: [CMD, ./arcane, health, --timeout, 2s]
-      interval: 10s
-      timeout: 3s
-      retries: 5
-      start_period: 15s
-    restart: unless-stopped
   dockhand:
     image: fnsys/dockhand:latest
     container_name: dockhand
