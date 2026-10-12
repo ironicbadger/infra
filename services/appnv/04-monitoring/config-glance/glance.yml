@@ -81,8 +81,6 @@ pages:
                 links:
                   - title: Smokeping
                     url: https://smokeping.m.wd.ktz.me/smokeping
-                  - title: Tautulli
-                    url: https://tautulli.m.wd.ktz.me
                   - title: Dockhand
                     url: https://dockhand.m.wd.ktz.me
           - type: monitor
@@ -160,9 +158,6 @@ pages:
               - title: Calibre-Web Automated
                 url: https://cwa.m.wd.ktz.me
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/calibre-web.png
-              - title: Tautulli
-                url: https://tautulli.m.wd.ktz.me
-                icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/tautulli.png
           - type: monitor
             cache: 1m
             title: Arrr Matey!
