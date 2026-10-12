@@ -9,7 +9,7 @@ services:
     security_opt: ["no-new-privileges:true"]
     tmpfs:
       - /tmp
-      - /var/cache/nginx
+      - /var/cache/nginx:uid=101,gid=101,mode=0700
     volumes:
       - "{{ appdata_path }}/glowbug/site:/srv:ro"
       - "{{ appdata_path }}/glowbug/config/nginx.conf:/etc/nginx/nginx.conf:ro"
