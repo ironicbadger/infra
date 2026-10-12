@@ -1,5 +1,25 @@
 services:
   # static sites
+  glowbug:
+    image: nginx:stable-alpine
+    container_name: glowbug
+    user: "101:101"
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+    volumes:
+      - "{{ appdata_path }}/glowbug/site:/srv:ro"
+      - "{{ appdata_path }}/glowbug/config/nginx.conf:/etc/nginx/nginx.conf:ro"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.glowbug.rule=Host(`glowbug.io`)
+      - traefik.http.routers.glowbug.entrypoints=websecure
+      - traefik.http.routers.glowbug.tls.certresolver=cloudflare
+      - traefik.http.services.glowbug.loadbalancer.server.port=8080
+    restart: unless-stopped
   pms-wiki:
     image: ghcr.io/ironicbadger/pms-wiki:latest
     container_name: pms-wiki

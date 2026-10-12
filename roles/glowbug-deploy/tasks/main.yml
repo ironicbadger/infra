@@ -1,0 +1,44 @@
+---
+- name: Create the restricted Glowbug deployment account
+  ansible.builtin.user:
+    name: glowbug-deploy
+    shell: /bin/sh
+    create_home: true
+    password_lock: true
+  become: true
+
+- name: Create the Glowbug application directory for normal config deployment
+  ansible.builtin.file:
+    path: "{{ appdata_path }}/glowbug"
+    state: directory
+    owner: "{{ docker_compose_generator_uid | default('1000') }}"
+    group: "{{ docker_compose_generator_gid | default('1000') }}"
+    mode: "0755"
+  become: true
+
+- name: Create Glowbug static release storage
+  ansible.builtin.file:
+    path: "{{ appdata_path }}/glowbug/site"
+    state: directory
+    owner: glowbug-deploy
+    group: glowbug-deploy
+    mode: "0755"
+  become: true
+
+- name: Install the bounded static archive receiver
+  ansible.builtin.copy:
+    src: deploy.py
+    dest: /usr/local/bin/glowbug-deploy
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Authorize only static-site deployment with this key
+  ansible.posix.authorized_key:
+    user: glowbug-deploy
+    path: /home/glowbug-deploy/.ssh/authorized_keys
+    key: "{{ lookup('file', role_path + '/files/deploy.pub') }}"
+    key_options: 'restrict,command="/usr/local/bin/glowbug-deploy"'
+    state: present
+  become: true

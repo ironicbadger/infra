@@ -79,6 +79,8 @@
 ## vps
   - hosts: ktz-cloud
     roles:
+      - role: glowbug-deploy
+        tags: glowbug-deploy
       - role: ironicbadger.docker-compose-generator
         tags: compose
 
