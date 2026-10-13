@@ -181,6 +181,8 @@ pages:
             cache: 1m
             title: Apps
             sites:
+              - title: Stampbook
+                url: https://stampbook.apps.glowbug.io/
               - title: Paperless
                 url: https://paperless.m.wd.ktz.me
                 icon: https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/png/paperless-ngx.png

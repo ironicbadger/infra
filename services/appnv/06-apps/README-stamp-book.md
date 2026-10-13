@@ -90,3 +90,17 @@ Snowball is still unreachable and is not a second verified replica.
 
 In v1.1.3, site locator previews open interactive Google Maps using the place
 name and full state names. The map caption includes the same link.
+
+## Application health check
+
+The Docker health check requests the local application root, rather than
+`/healthz`, so application data validation failures make the container unhealthy.
+It accepts HTTP 2xx and 3xx, without following redirects to the external identity
+provider. Requests time out after four seconds; Docker checks every 30 seconds
+and marks the container unhealthy after three failures. This tests the initial
+application response, not the complete authenticated workflow.
+
+Glance monitors https://stampbook.apps.glowbug.io/ in its Apps section. Traefik
+may remove an unhealthy container from routing, so external checks can report
+HTTP 404 instead of the application's underlying HTTP 400. Inspect the Docker
+health result and local application response when diagnosing such failures.
