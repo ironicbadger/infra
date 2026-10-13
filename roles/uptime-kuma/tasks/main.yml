@@ -97,3 +97,7 @@
     creates: "{{ appdata_path }}/apps/uptime-kuma/.infra-bootstrap-complete"
   become: true
   no_log: true
+  register: kuma_bootstrap
+  until: kuma_bootstrap.rc == 0
+  retries: 3
+  delay: 5

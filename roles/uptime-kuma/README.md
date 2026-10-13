@@ -49,5 +49,8 @@ apart. They validate DNS, trusted TLS, and HTTP responses, following up to five
 redirects. They do not test authenticated application workflows. History retention
 is 90 days. No notification providers or notifications are configured.
 
+Smokeping uses `/smokeping/` over HTTPS because its root redirects to HTTP,
+which is intentionally outside the monitor's ACL grant.
+
 Stampbook's existing HTTP 400 is deliberately shown as down. Its container health
 endpoint is not substituted for the broken application response.
