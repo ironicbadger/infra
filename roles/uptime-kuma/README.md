@@ -52,8 +52,9 @@ is 90 days. No notification providers or notifications are configured.
 Smokeping uses `/smokeping/` over HTTPS because its root redirects to HTTP,
 which is intentionally outside the monitor's ACL grant.
 
-Stampbook's existing HTTP 400 is deliberately shown as down. Its container health
-endpoint is not substituted for the broken application response.
+Stampbook's root response is checked rather than its liveness endpoint. Its
+previous HTTP 400 from a Limited edition stamp was resolved by upgrading the
+application from v1.1.3 to v1.2.8 on 2026-10-12; historical failures remain visible.
 
 ## Short-lived certificates
 

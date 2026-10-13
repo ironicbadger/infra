@@ -104,3 +104,16 @@ Glance monitors https://stampbook.apps.glowbug.io/ in its Apps section. Traefik
 may remove an unhealthy container from routing, so external checks can report
 HTTP 404 instead of the application's underlying HTTP 400. Inspect the Docker
 health result and local application response when diagnosing such failures.
+
+## 2026-10-12 compatibility repair
+
+Upgraded appnv on igloo from v1.1.3 to the published v1.2.8 image, pinned by digest.
+The saved collection already contained a `limited` stamp, which requires v1.2.0
+or later. No stamp types or collection records were rewritten. A verified manual
+backup is retained at
+`/mnt/nvmeu2/appdata/apps/stamp-book/release-backups/pre-v1.2.8-20261012`.
+The release was tested on a restored copy before deployment: the home page and
+Wright Brothers National Memorial page returned HTTP 200 with all 439 records
+and the Limited edition stamp retained. The application also creates its normal
+verified startup backup. Do not roll this collection back to v1.1.3; that binary
+cannot read its stamp types.

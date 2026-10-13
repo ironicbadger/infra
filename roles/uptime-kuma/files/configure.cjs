@@ -31,9 +31,7 @@ function call(event, ...args) {
                 timeout: 15, maxretries: 2, maxredirects: 5, upsideDown: false,
                 ignoreTls: false, expiryNotification: false, active: true,
                 accepted_statuscodes: ['200-299', '300-399'], notificationIDList: {},
-                conditions: [], description: app.name === 'Stampbook'
-                    ? 'Existing pinned application rejects a stamp with type limited; report this HTTP failure honestly.'
-                    : 'Checks public hostname, trusted TLS, reverse proxy, and application response over Tailscale.'
+                conditions: [], description: 'Checks public hostname, trusted TLS, reverse proxy, and application response over Tailscale.'
             });
             id = result.monitorID;
         }
