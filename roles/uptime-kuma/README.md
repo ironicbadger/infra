@@ -54,3 +54,23 @@ which is intentionally outside the monitor's ACL grant.
 
 Stampbook's existing HTTP 400 is deliberately shown as down. Its container health
 endpoint is not substituted for the broken application response.
+
+## Short-lived certificates
+
+Traefik on ktz-cloud and appnv selects Let's Encrypt's `shortlived` ACME profile
+and uses `certificatesDuration=160` hours for renewal scheduling. The installed
+Traefik 3.7 versions start renewal with two days remaining and retry every two
+hours. The profile requests the shorter lifetime; the duration setting alone
+does not change what the CA issues.
+
+Existing certificates remain in their ACME stores and switch profiles when they
+next renew. This deployment does not force replacement of valid certificates.
+
+The appnv runtime Compose file retains migration-specific settings that are not
+all represented in the older service fragments. To update only ACME profile
+arguments without replacing those settings, use `scripts/traefik-shortlived.py`
+on the host's existing Compose file, validate it with `docker compose config
+--quiet`, and recreate only the Traefik service. The script discovers all existing
+ACME resolvers, including appnv's `glowbug` resolver, and saves a root-readable
+backup before its first change. Do not regenerate appnv's full Compose file from
+the older fragments without reconciling the migration settings first.
