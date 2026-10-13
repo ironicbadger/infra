@@ -1,0 +1,78 @@
+[
+  {
+    "name": "Actual Budget",
+    "url": "https://actual.apps.glowbug.io/"
+  },
+  {
+    "name": "Dashboard",
+    "url": "https://apps.glowbug.io/"
+  },
+  {
+    "name": "Audiobookshelf",
+    "url": "https://audiobooks.apps.glowbug.io/"
+  },
+  {
+    "name": "Bambuddy",
+    "url": "https://bambuddy.apps.glowbug.io/"
+  },
+  {
+    "name": "Contacts / Radicale",
+    "url": "https://contacts.apps.glowbug.io/"
+  },
+  {
+    "name": "Calibre Web Automated",
+    "url": "https://cwa.apps.glowbug.io/"
+  },
+  {
+    "name": "Dockhand",
+    "url": "https://dockhand.apps.glowbug.io/"
+  },
+  {
+    "name": "Glance",
+    "url": "https://glance.apps.glowbug.io/"
+  },
+  {
+    "name": "LibreSpeed",
+    "url": "https://librespeed.apps.glowbug.io/"
+  },
+  {
+    "name": "Miniflux",
+    "url": "https://miniflux.apps.glowbug.io/"
+  },
+  {
+    "name": "Navidrome",
+    "url": "https://navidrome.apps.glowbug.io/"
+  },
+  {
+    "name": "Nextcloud",
+    "url": "https://nc.apps.glowbug.io/"
+  },
+  {
+    "name": "Paperless",
+    "url": "https://paperless.apps.glowbug.io/"
+  },
+  {
+    "name": "Paperless AI",
+    "url": "https://paperlessai.apps.glowbug.io/"
+  },
+  {
+    "name": "Ping Graph",
+    "url": "https://ping.apps.glowbug.io/"
+  },
+  {
+    "name": "Smokeping",
+    "url": "https://smokeping.apps.glowbug.io/smokeping/"
+  },
+  {
+    "name": "Stampbook",
+    "url": "https://stampbook.apps.glowbug.io/"
+  },
+  {
+    "name": "Wallabag",
+    "url": "https://wallabag.apps.glowbug.io/"
+  },
+  {
+    "name": "Wizarr",
+    "url": "https://wizarr.apps.glowbug.io/"
+  }
+]

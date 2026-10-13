@@ -1,0 +1,14 @@
+[Unit]
+Description=Preserve Tailscale source addresses for the private HTTPS allowlist
+After=docker.service tailscaled.service
+Wants=docker.service tailscaled.service
+PartOf=docker.service tailscaled.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/bin/sh -c '/usr/sbin/iptables -t nat -C POSTROUTING -s 100.64.0.0/10 -p tcp -m conntrack --ctorigdst 100.94.249.30 --ctorigdstport 443 -m comment --comment kuma-tailnet-source -j ACCEPT 2>/dev/null || /usr/sbin/iptables -t nat -I POSTROUTING 1 -s 100.64.0.0/10 -p tcp -m conntrack --ctorigdst 100.94.249.30 --ctorigdstport 443 -m comment --comment kuma-tailnet-source -j ACCEPT'
+ExecStop=-/usr/sbin/iptables -t nat -D POSTROUTING -s 100.64.0.0/10 -p tcp -m conntrack --ctorigdst 100.94.249.30 --ctorigdstport 443 -m comment --comment kuma-tailnet-source -j ACCEPT
+
+[Install]
+WantedBy=multi-user.target

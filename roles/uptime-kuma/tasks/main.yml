@@ -1,0 +1,99 @@
+---
+- name: Create Kuma storage and bootstrap directories
+  ansible.builtin.file:
+    path: "{{ appdata_path }}/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0700"
+  loop:
+    - apps/uptime-kuma
+    - uptime-kuma-bootstrap
+    - uptime-kuma-private
+  become: true
+
+- name: Generate the initial administrator credential once
+  ansible.builtin.command:
+    argv:
+      - python3
+      - -c
+      - |
+        import json, os, secrets, sys
+        fd = os.open(sys.argv[1], os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, 'w') as output:
+            json.dump({'username': 'alex', 'password': secrets.token_urlsafe(36)}, output)
+      - "{{ appdata_path }}/uptime-kuma-private/admin.json"
+    creates: "{{ appdata_path }}/uptime-kuma-private/admin.json"
+  become: true
+  no_log: true
+
+- name: Install the initial monitor inventory and bootstrap client
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ appdata_path }}/uptime-kuma-bootstrap/{{ item }}"
+    owner: root
+    group: root
+    mode: "0600"
+  loop:
+    - configure.cjs
+    - monitors.json
+  become: true
+
+- name: Preserve the previous generated Compose file
+  ansible.builtin.copy:
+    src: /home/ironicbadger/compose.yaml
+    dest: "{{ appdata_path }}/uptime-kuma-private/compose.before-kuma.yaml"
+    remote_src: true
+    force: false
+    owner: root
+    group: root
+    mode: "0600"
+  become: true
+  no_log: true
+
+- name: Generate the host Compose configuration from infra services
+  ansible.builtin.include_role:
+    name: ironicbadger.docker-compose-generator
+    apply:
+      tags: uptime-kuma
+  vars:
+    docker_compose_generator_output_path: /home/ironicbadger
+
+- name: Validate the generated Compose configuration
+  ansible.builtin.command: docker compose -f /home/ironicbadger/compose.yaml config --quiet
+  changed_when: false
+  become: true
+
+- name: Install preservation of Tailscale client addresses for HTTPS
+  ansible.builtin.template:
+    src: kuma-tailnet-source.service.j2
+    dest: /etc/systemd/system/kuma-tailnet-source.service
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  register: kuma_tailnet_unit
+
+- name: Enable preservation of Tailscale client addresses
+  ansible.builtin.systemd_service:
+    name: kuma-tailnet-source
+    daemon_reload: "{{ kuma_tailnet_unit.changed }}"
+    enabled: true
+    state: "{{ 'restarted' if kuma_tailnet_unit.changed else 'started' }}"
+  become: true
+
+- name: Deploy Uptime Kuma and its HTTPS proxy
+  community.docker.docker_compose_v2:
+    project_src: /home/ironicbadger
+    services: [uptime-kuma, traefik]
+    state: present
+    wait: true
+    wait_timeout: 180
+  become: true
+
+- name: Seed the administrator, app monitors, and private status page once
+  ansible.builtin.command:
+    argv: [docker, exec, uptime-kuma, node, /bootstrap/configure.cjs]
+    creates: "{{ appdata_path }}/apps/uptime-kuma/.infra-bootstrap-complete"
+  become: true
+  no_log: true

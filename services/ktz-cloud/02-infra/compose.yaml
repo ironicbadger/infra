@@ -13,3 +13,23 @@ services:
       - TSIDP_ENABLE_STS=1
       - TSIDP_USE_FUNNEL=1
     restart: unless-stopped
+  uptime-kuma:
+    image: "{{ uptime_kuma_image | default('louislam/uptime-kuma:2@sha256:9912da7d7d9b6ddc0c2d904beb84d24689c1ed9c33b81419eb9008663a92a329') }}"
+    container_name: uptime-kuma
+    restart: unless-stopped
+    volumes:
+      - "{{ appdata_path }}/apps/uptime-kuma:/app/data"
+      - "{{ appdata_path }}/uptime-kuma-bootstrap:/bootstrap:ro"
+      - "{{ appdata_path }}/uptime-kuma-private/admin.json:/run/secrets/kuma-admin.json:ro"
+    environment:
+      TZ: "{{ host_timezone }}"
+      UPTIME_KUMA_DB_TYPE: sqlite
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.uptime-kuma.rule: "Host(`{{ uptime_kuma_hostname | default('status.apps.glowbug.io') }}`)"
+      traefik.http.routers.uptime-kuma.entrypoints: websecure
+      traefik.http.routers.uptime-kuma.tls: "true"
+      traefik.http.routers.uptime-kuma.tls.certresolver: cloudflare
+      traefik.http.routers.uptime-kuma.middlewares: uptime-kuma-tailnet
+      traefik.http.middlewares.uptime-kuma-tailnet.ipallowlist.sourcerange: "100.64.0.0/10"
+      traefik.http.services.uptime-kuma.loadbalancer.server.port: "3001"
