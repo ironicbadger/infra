@@ -8,7 +8,7 @@ configs:
 services:
   ## immich
   immich-server:
-    image: ghcr.io/immich-app/immich-server:v3
+    image: ghcr.io/immich-app/immich-server:v3.3.3
     container_name: immich-server
     volumes:
       - /mnt/rust/photos/alex/immich/uploads:/usr/src/app/upload
@@ -18,7 +18,6 @@ services:
     ports:
       - 2283:2283
     environment:
-      - IMMICH_VERSION=v3
       - UPLOAD_LOCATION=./library
       - "DB_PASSWORD={{ immich_db_password }}"
       - "DB_USERNAME={{ immich_db_username }}"
@@ -37,7 +36,7 @@ services:
     container_name: immich-redis
     restart: unless-stopped
   immich-database:
-    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
     container_name: immich-database
     volumes:
       - "{{ appdata_path }}/databases/immich/db:/var/lib/postgresql/data"
@@ -98,4 +97,11 @@ services:
     configs:
       - source: immichframe-family-ts-serve
         target: /config/serve.json
+    restart: unless-stopped
+
+  immich-machine-learning:
+    image: ghcr.io/immich-app/immich-machine-learning:v3.3.3
+    container_name: immich-machine-learning
+    volumes:
+      - '{{ appdata_path }}/databases/immich/model-cache:/cache'
     restart: unless-stopped

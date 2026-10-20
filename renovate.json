@@ -1,8 +1,23 @@
 {
- "$schema": "https://docs.renovatebot.com/renovate-schema.json",
- "extends": [
-   "config:recommended"
- ],
- "baseBranches": ["main"],
- "enabled": true
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "baseBranches": [
+    "main"
+  ],
+  "enabled": true,
+  "packageRules": [
+    {
+      "matchDatasources": [
+        "docker"
+      ],
+      "matchPackageNames": [
+        "ghcr.io/immich-app/immich-server",
+        "ghcr.io/immich-app/immich-machine-learning"
+      ],
+      "groupName": "Immich",
+      "pinDigests": true
+    }
+  ]
 }
