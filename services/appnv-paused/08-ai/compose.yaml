@@ -13,7 +13,7 @@ services:
       - "{{ appdata_path }}/apps/dumbot:/data"
     restart: unless-stopped
   immich-machine-learning:
-    image: ghcr.io/immich-app/immich-machine-learning:v3.3.3-cuda
+    image: ghcr.io/immich-app/immich-machine-learning:v3.3.5-cuda@sha256:ba820b5b2ce199ef085bd5a42f092218f16994149019c5ab252bf387c22a99b4
     container_name: immich-machine-learning
     ports:
       - 3003:3003
