@@ -13,6 +13,7 @@ zrepl_hold_package: false  # Set to true to prevent package updates
 # Service configuration
 zrepl_service_enabled: true
 zrepl_service_state: "started"
+zrepl_tailscale_bind_address: ""
 
 # Global logging configuration
 zrepl_logging:

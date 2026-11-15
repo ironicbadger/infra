@@ -1,0 +1,15 @@
+services:
+  openttd:
+    image: ghcr.io/ropenttd/openttd:15.3
+    container_name: openttd
+    user: "{{ docker_compose_generator_uid }}:{{ docker_compose_generator_gid }}"
+    stdin_open: true
+    tty: true
+    environment:
+      - loadgame=last-autosave
+    ports:
+      - 3979:3979/tcp
+      - 3979:3979/udp
+    volumes:
+      - "{{ appdata_path }}/apps/openttd:/config"
+    restart: unless-stopped

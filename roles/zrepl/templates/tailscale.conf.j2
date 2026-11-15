@@ -1,0 +1,11 @@
+# Ansible managed: tailscaled being active does not guarantee its address exists.
+[Unit]
+Wants=tailscaled.service network-online.target
+After=tailscaled.service network-online.target
+StartLimitIntervalSec=0
+
+[Service]
+ExecStartPre=/bin/sh -c 'until /usr/sbin/ip -4 -o addr show dev tailscale0 2>/dev/null | /usr/bin/grep -Fq " inet {{ zrepl_tailscale_bind_address }}/"; do /bin/sleep 2; done'
+TimeoutStartSec=90
+Restart=on-failure
+RestartSec=10

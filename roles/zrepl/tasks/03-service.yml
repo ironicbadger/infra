@@ -1,6 +1,23 @@
 ---
 # Manage zrepl service
 
+- name: Create zrepl systemd override directory
+  file:
+    path: /etc/systemd/system/zrepl.service.d
+    state: directory
+    mode: '0755'
+  when: zrepl_tailscale_bind_address | length > 0
+  become: true
+
+- name: Wait for the Tailscale bind address before starting zrepl
+  template:
+    src: tailscale.conf.j2
+    dest: /etc/systemd/system/zrepl.service.d/tailscale.conf
+    mode: '0644'
+  when: zrepl_tailscale_bind_address | length > 0
+  become: true
+  notify: restart zrepl
+
 - name: Ensure zrepl service is enabled and started
   systemd:
     name: zrepl

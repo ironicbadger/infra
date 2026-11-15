@@ -26,6 +26,10 @@ zrepl_jobs:
   # Push appdata to igloo
   - name: "igloo_appdata"
     type: push
+    replication:
+      concurrency:
+        steps: 8
+        size_estimates: 4
     connect:
       type: "tcp"
       address: "{{ zrepl_targets.igloo }}"
@@ -51,6 +55,10 @@ zrepl_jobs:
   # Push data to igloo
   - name: "igloo_data"
     type: push
+    replication:
+      concurrency:
+        steps: 8
+        size_estimates: 4
     connect:
       type: "tcp"
       address: "{{ zrepl_targets.igloo }}"
@@ -76,6 +84,10 @@ zrepl_jobs:
   # Push media to igloo, excluding movies and tv
   - name: "igloo_media"
     type: push
+    replication:
+      concurrency:
+        steps: 8
+        size_estimates: 4
     connect:
       type: "tcp"
       address: "{{ zrepl_targets.igloo }}"
@@ -103,6 +115,10 @@ zrepl_jobs:
   # Push photos to igloo
   - name: "igloo_photos"
     type: push
+    replication:
+      concurrency:
+        steps: 8
+        size_estimates: 4
     connect:
       type: "tcp"
       address: "{{ zrepl_targets.igloo }}"
@@ -128,6 +144,10 @@ zrepl_jobs:
   # Push video to igloo
   - name: "igloo_video"
     type: push
+    replication:
+      concurrency:
+        steps: 8
+        size_estimates: 4
     connect:
       type: "tcp"
       address: "{{ zrepl_targets.igloo }}"

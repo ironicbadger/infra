@@ -1,0 +1,205 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" role="img" aria-labelledby="title desc">
+  <title id="title">m90q-3 Proxmox HA failover tube map, 2026-05-21 EDT</title>
+  <desc id="desc">A dark tube-map style schematic showing the m90q-3 network fault, HA isolation, Proxmox HA fencing, and workload recovery.</desc>
+  <defs>
+    <style>
+      .bg { fill: #1f272a; }
+      .title { font-family: Arial, Helvetica, sans-serif; font-size: 50px; font-weight: 800; fill: #f7fafc; letter-spacing: 0; }
+      .subtitle { font-family: Arial, Helvetica, sans-serif; font-size: 22px; font-weight: 700; fill: #c7d0d8; letter-spacing: 0; }
+      .route { fill: none; stroke-width: 18; stroke-linecap: round; stroke-linejoin: round; }
+      .routeThin { fill: none; stroke-width: 10; stroke-linecap: round; }
+      .fault { stroke: #ff4f64; }
+      .isolation { stroke: #f6b92b; }
+      .control { stroke: #28bfe7; }
+      .recovery { stroke: #28d69b; }
+      .stationDot { fill: #f7fafc; stroke: #1f272a; stroke-width: 5; }
+      .stationCore { fill: #1f272a; }
+      .interchangeOuter { fill: #1f272a; stroke: #f7fafc; stroke-width: 6; }
+      .interchangeInner { fill: #f7fafc; }
+      .leader { stroke: #6b7780; stroke-width: 1.5; stroke-linecap: round; opacity: 0.55; }
+      .time { font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-weight: 800; fill: #c7d0d8; letter-spacing: 0; }
+      .name { font-family: Arial, Helvetica, sans-serif; font-size: 20px; font-weight: 800; fill: #f7fafc; letter-spacing: 0; }
+      .detail { font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-weight: 700; fill: #c7d0d8; letter-spacing: 0; }
+      .legendText { font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: 800; fill: #dce5ec; letter-spacing: 0; }
+      .lineLabel { font-family: Arial, Helvetica, sans-serif; font-size: 13px; font-weight: 800; fill: #172026; letter-spacing: 0; text-anchor: middle; dominant-baseline: middle; }
+      .linePill { fill: #f7fafc; }
+      .footer { font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: 700; fill: #c7d0d8; letter-spacing: 0; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1920" height="1080"/>
+
+  <text class="title" x="90" y="72">m90q-3 Proxmox HA Failover Map</text>
+  <text class="subtitle" x="92" y="110">2026-05-21 EDT | Tube-map schematic of fault, fencing, relocation, and recovery</text>
+
+  <g id="legend" transform="translate(1040,76)">
+    <line class="routeThin fault" x1="0" y1="0" x2="74" y2="0"/>
+    <text class="legendText" x="92" y="6">Network fault</text>
+    <line class="routeThin isolation" x1="252" y1="0" x2="326" y2="0"/>
+    <text class="legendText" x="344" y="6">Isolation</text>
+    <line class="routeThin control" x1="446" y1="0" x2="520" y2="0"/>
+    <text class="legendText" x="538" y="6">HA control</text>
+    <line class="routeThin recovery" x1="0" y1="42" x2="74" y2="42"/>
+    <text class="legendText" x="92" y="48">Workload recovery</text>
+  </g>
+
+  <g id="routes">
+    <path class="route fault" d="M180 330H430H1040H1260"/>
+    <path class="route isolation" d="M430 330L560 460H820"/>
+    <path class="route control" d="M1260 330V460L1390 590L1520 720"/>
+    <path class="route recovery" d="M1520 720H1600H1715"/>
+    <path class="route recovery" d="M1600 720L1670 630H1715"/>
+    <path class="route recovery" d="M1600 720L1670 810H1715"/>
+  </g>
+
+  <g id="line-labels">
+    <rect class="linePill" x="548" y="310" width="120" height="24" rx="12"/>
+    <text class="lineLabel" x="608" y="322">FAULT</text>
+    <rect class="linePill" x="624" y="440" width="132" height="24" rx="12"/>
+    <text class="lineLabel" x="690" y="452">ISOLATION</text>
+    <rect class="linePill" x="1306" y="508" width="108" height="24" rx="12"/>
+    <text class="lineLabel" x="1360" y="520">HA</text>
+    <rect class="linePill" x="1508" y="740" width="140" height="24" rx="12"/>
+    <text class="lineLabel" x="1578" y="752">RECOVERY</text>
+  </g>
+
+  <g id="station-markers">
+    <g transform="translate(180,330)">
+      <circle class="stationDot" r="12"/><circle class="stationCore" r="4"/>
+    </g>
+    <g transform="translate(430,330)">
+      <circle class="interchangeOuter" r="20"/><circle class="interchangeInner" r="7"/>
+    </g>
+    <g transform="translate(560,460)">
+      <circle class="stationDot" r="12"/><circle class="stationCore" r="4"/>
+    </g>
+    <g transform="translate(820,460)">
+      <circle class="stationDot" r="12"/><circle class="stationCore" r="4"/>
+    </g>
+    <g transform="translate(1040,330)">
+      <circle class="stationDot" r="12"/><circle class="stationCore" r="4"/>
+    </g>
+    <g transform="translate(1260,330)">
+      <circle class="interchangeOuter" r="22"/><circle class="interchangeInner" r="8"/>
+    </g>
+    <g transform="translate(1260,460)">
+      <circle class="stationDot" r="12"/><circle class="stationCore" r="4"/>
+    </g>
+    <g transform="translate(1390,590)">
+      <circle class="stationDot" r="12"/><circle class="stationCore" r="4"/>
+    </g>
+    <g transform="translate(1520,720)">
+      <circle class="interchangeOuter" r="22"/><circle class="interchangeInner" r="8"/>
+    </g>
+    <g transform="translate(1600,720)">
+      <circle class="stationDot" r="12"/><circle class="stationCore" r="4"/>
+    </g>
+    <g transform="translate(1715,630)">
+      <circle class="stationDot" r="12"/><circle class="stationCore" r="4"/>
+    </g>
+    <g transform="translate(1715,720)">
+      <circle class="stationDot" r="12"/><circle class="stationCore" r="4"/>
+    </g>
+    <g transform="translate(1715,810)">
+      <circle class="stationDot" r="12"/><circle class="stationCore" r="4"/>
+    </g>
+  </g>
+
+  <g id="leaders">
+    <line class="leader" x1="180" y1="314" x2="180" y2="250"/>
+    <line class="leader" x1="430" y1="354" x2="430" y2="392"/>
+    <line class="leader" x1="560" y1="476" x2="500" y2="540"/>
+    <line class="leader" x1="820" y1="476" x2="770" y2="540"/>
+    <line class="leader" x1="1040" y1="314" x2="1040" y2="250"/>
+    <line class="leader" x1="1260" y1="354" x2="1260" y2="392"/>
+    <line class="leader" x1="1260" y1="476" x2="1210" y2="540"/>
+    <line class="leader" x1="1390" y1="606" x2="1328" y2="660"/>
+    <line class="leader" x1="1520" y1="742" x2="1472" y2="802"/>
+  </g>
+
+  <g id="labels">
+    <g transform="translate(128,210)">
+      <text class="time" x="0" y="0">00:13:24</text>
+      <text class="name" x="0" y="25">NIC adapter removed</text>
+      <text class="detail" x="0" y="49">ixgbe FWSM=0xFFFFFFFF</text>
+    </g>
+
+    <g transform="translate(330,396)">
+      <text class="time" x="0" y="0">00:13:26</text>
+      <text class="name" x="0" y="25">vmbr0 loses uplink</text>
+      <text class="detail" x="0" y="49">nic1 enters disabled state</text>
+    </g>
+
+    <g transform="translate(430,544)">
+      <text class="time" x="0" y="0">00:13:31</text>
+      <text class="name" x="0" y="25">quorum lost</text>
+      <text class="detail" x="0" y="49">node becomes non-primary</text>
+    </g>
+
+    <g transform="translate(730,544)">
+      <text class="time" x="0" y="0">00:14:19</text>
+      <text class="name" x="0" y="25">watchdog reboot</text>
+      <text class="detail" x="0" y="49">new boot starts 00:14:59</text>
+    </g>
+
+    <g transform="translate(972,210)">
+      <text class="time" x="0" y="0">00:15:01</text>
+      <text class="name" x="0" y="25">10G link returns</text>
+      <text class="detail" x="0" y="49">node briefly rejoins</text>
+    </g>
+
+    <g transform="translate(1190,396)">
+      <text class="time" x="0" y="0">00:15:15</text>
+      <text class="name" x="0" y="25">NIC fault repeats</text>
+      <text class="detail" x="0" y="49">m90q-3 remains isolated</text>
+    </g>
+
+    <g transform="translate(1086,544)">
+      <text class="time" x="0" y="0">00:15:23</text>
+      <text class="name" x="0" y="25">HA master takeover</text>
+      <text class="detail" x="0" y="49">meeseeks acquires manager lock</text>
+    </g>
+
+    <g transform="translate(1138,664)">
+      <text class="time" x="0" y="0">00:16:23</text>
+      <text class="name" x="0" y="25">fencing begins</text>
+      <text class="detail" x="0" y="49">ct:2000, ct:2001, vm:1001</text>
+    </g>
+
+    <g transform="translate(1260,806)">
+      <text class="time" x="0" y="0">00:16:33</text>
+      <text class="name" x="0" y="25">fence acknowledged</text>
+      <text class="detail" x="0" y="49">recovery assigned to target nodes</text>
+    </g>
+
+    <g transform="translate(1542,782)">
+      <text class="time" x="0" y="0">00:16:37</text>
+      <text class="name" x="0" y="25">LRMs start</text>
+      <text class="detail" x="0" y="49">m90q-2 and m90q-1</text>
+    </g>
+
+  </g>
+
+  <g id="terminals">
+    <g transform="translate(1750,608)">
+      <text class="time" x="0" y="0">00:17:09</text>
+      <text class="name" x="0" y="26">vm:1001</text>
+      <text class="detail" x="0" y="50">started on m90q-2</text>
+    </g>
+    <g transform="translate(1750,698)">
+      <text class="time" x="0" y="0">00:17:22</text>
+      <text class="name" x="0" y="26">ct:2000</text>
+      <text class="detail" x="0" y="50">started on m90q-2</text>
+    </g>
+    <g transform="translate(1750,788)">
+      <text class="time" x="0" y="0">00:17:23</text>
+      <text class="name" x="0" y="26">ct:2001</text>
+      <text class="detail" x="0" y="50">started on m90q-1</text>
+    </g>
+  </g>
+
+  <g id="footer" transform="translate(90,960)">
+    <line class="routeThin fault" x1="0" y1="0" x2="82" y2="0"/>
+    <text class="footer" x="104" y="6">RCA: the ixgbe NIC backing nic1 disappeared from m90q-3, dropping vmbr0 and corosync. HA fenced the isolated node and recovered vm:1001, ct:2000, and ct:2001 on surviving nodes.</text>
+  </g>
+</svg>

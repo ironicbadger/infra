@@ -26,6 +26,7 @@ package_list:
   - which
 
 # zrepl configuration - using new unified job structure
+zrepl_tailscale_bind_address: "100.91.74.29"
 zrepl_jobs:
   # Sink for meeseeks push jobs. The dataset was renamed from the old c137 path
   # to preserve the existing replicated snapshot history.
