@@ -1,0 +1,71 @@
+configs:
+  uhf-ts-serve:
+    # Port 8000 matches UHF's manual DVR setup. Both listeners are tailnet-only.
+    content: |
+      {
+        "TCP": { "443": { "HTTPS": true }, "8000": { "HTTP": true } },
+        "Web": {
+          "$${TS_CERT_DOMAIN}:443": { "Handlers": { "/": { "Proxy": "http://127.0.0.1:8000" } } },
+          "$${TS_CERT_DOMAIN}:8000": { "Handlers": { "/": { "Proxy": "http://127.0.0.1:8000" } } }
+        },
+        "AllowFunnel": { "$${TS_CERT_DOMAIN}:443": false, "$${TS_CERT_DOMAIN}:8000": false }
+      }
+
+services:
+  uhf-ts:
+    image: tailscale/tailscale:latest
+    container_name: uhf-ts
+    hostname: uhf
+    environment:
+      TS_HOSTNAME: uhf
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_SERVE_CONFIG: /config/serve.json
+      TS_AUTH_ONCE: "true"
+      # Allow time for the first interactive enrollment shown in the sidecar logs.
+      TS_BOOT_TIMEOUT: 10m
+      TS_USERSPACE: "false"
+      TS_ENABLE_HEALTH_CHECK: "true"
+      TS_LOCAL_ADDR_PORT: 127.0.0.1:41234
+    configs:
+      - source: uhf-ts-serve
+        target: /config/serve.json
+    volumes:
+      - "{{ appdata_path }}/mediaservers/uhf/tailscale:/var/lib/tailscale"
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1:41234/healthz"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    restart: unless-stopped
+
+  uhf-server:
+    image: swapplications/uhf-server:2.2.1
+    container_name: uhf-server
+    user: "{{ docker_compose_generator_uid }}:{{ docker_compose_generator_gid }}"
+    init: true
+    network_mode: service:uhf-ts
+    depends_on:
+      uhf-ts:
+        condition: service_healthy
+        restart: true
+    command: ["uhf-server", "--host", "127.0.0.1", "--recordings-dir", "/recordings", "--enable-commercial-detection"]
+    environment:
+      TZ: "{{ host_timezone }}"
+    volumes:
+      - type: bind
+        source: "{{ appdata_path }}/mediaservers/uhf/db"
+        target: /var/lib/uhf-server
+        bind:
+          create_host_path: false
+      - type: bind
+        # Igloo's z2tank/appnv/media/uhf-recordings via AppNV's rust-media VirtioFS mount.
+        source: "{{ storage_path }}/media/uhf-recordings"
+        target: /recordings
+        bind:
+          create_host_path: false
+    restart: unless-stopped
