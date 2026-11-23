@@ -1,6 +1,7 @@
 configs:
   uhf-ts-serve:
-    # Port 8000 matches UHF's manual DVR setup. Both listeners are tailnet-only.
+    # For manual DVR setup on iOS and tvOS, use uhf.ktz.ts.net on HTTPS port 443.
+    # Port 8000 serves plain HTTP. Both listeners are tailnet-only.
     content: |
       {
         "TCP": { "443": { "HTTPS": true }, "8000": { "HTTP": true } },
