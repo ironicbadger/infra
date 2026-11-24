@@ -1,6 +1,6 @@
 services:
   immich-machine-learning:
-    image: ghcr.io/immich-app/immich-machine-learning:v3.3.3-cuda
+    image: ghcr.io/immich-app/immich-machine-learning:v3.4.2-cuda@sha256:0a8aeaeb6771da78c4f54bc00b429b113267db50aa121aa6e30f78ef86a31e33
     container_name: immich-machine-learning
     ports:
       - 3003:3003
