@@ -8,7 +8,7 @@ configs:
 services:
   ## immich
   immich-server:
-    image: ghcr.io/immich-app/immich-server:v3.3.3
+    image: ghcr.io/immich-app/immich-server:v3.4.2@sha256:fc880c1bf665b4aab1e74c15e56ab871225989cd546536e6b77e771869af06bd
     container_name: immich-server
     volumes:
       - /mnt/rust/photos/alex/immich/uploads:/usr/src/app/upload
@@ -100,7 +100,7 @@ services:
     restart: unless-stopped
 
   immich-machine-learning:
-    image: ghcr.io/immich-app/immich-machine-learning:v3.3.3
+    image: ghcr.io/immich-app/immich-machine-learning:v3.4.2@sha256:739405742a79bd7447227c553bb62ed5491aa36acf00bc667af7f9c93b6fae91
     container_name: immich-machine-learning
     volumes:
       - '{{ appdata_path }}/databases/immich/model-cache:/cache'
