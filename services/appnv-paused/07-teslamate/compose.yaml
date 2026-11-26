@@ -24,7 +24,7 @@ services:
       - mosquitto
 
   teslamate-db:
-    image: postgres:18-trixie
+    image: postgres:19-trixie
     container_name: teslamate-db
     restart: always
     environment:
